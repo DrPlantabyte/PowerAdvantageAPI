@@ -4,3 +4,6 @@
 /gradlew
 /gradlew.bat
 /bin/*
+/.gradle/*
+*.index
+*~
