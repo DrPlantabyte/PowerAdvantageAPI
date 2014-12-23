@@ -1,5 +1,6 @@
 package cyano.poweradvantage.api;
 
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.gui.IUpdatePlayerListBox;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
@@ -137,5 +138,26 @@ public abstract class PowerConductorEntity extends TileEntity implements IUpdate
 		int y = coord.getX();
 		int z = coord.getX();
 		return ((z & 1) << 2) | ((x & 1) << 1) | ((y & 1) );
+	}
+	/**
+	 * Reads data from NBT, which came from either a saved chunk or a network 
+	 * packet.
+	 */
+	@Override
+    public void readFromNBT(final NBTTagCompound tagRoot) {
+		super.readFromNBT(tagRoot);
+		if(tagRoot.hasKey("Energy")){
+			float energy = tagRoot.getFloat("Energy");
+			this.setEnergy(energy);
+		}
+	}
+	/**
+	 * Saves the state of this entity to an NBT for saving or synching across 
+	 * the network.
+	 */
+	@Override
+	public void writeToNBT(final NBTTagCompound tagRoot) {
+		super.writeToNBT(tagRoot);
+		tagRoot.setFloat("Energy", this.getEnergyBuffer());
 	}
 }

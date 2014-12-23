@@ -14,6 +14,9 @@ public class PowerAdvantage
     public static final String NAME = "Power Advantage";
     public static final String VERSION = "0.0.1";
 
+    
+    Tester test = new Tester();
+    
     @SidedProxy(clientSide="cyano.poweradvantage.ClientProxy", serverSide="cyano.poweradvantage.ServerProxy")
     public static Proxy proxy;
     
@@ -23,6 +26,8 @@ public class PowerAdvantage
     	Configuration config = new Configuration(event.getSuggestedConfigurationFile());
     	config.load();
     	// TODO
+    	test.preInit(event, proxy, config);
+    	
     	config.save();
     }
     
@@ -30,12 +35,14 @@ public class PowerAdvantage
     public void init(FMLInitializationEvent event)
     {
 		// TODO
+    	test.init(event, proxy);
     }
     
     @EventHandler
     public void postInit(FMLPostInitializationEvent event)
     {
     	// TODO
+    	test.postInit(event, proxy);
     }
     
 }

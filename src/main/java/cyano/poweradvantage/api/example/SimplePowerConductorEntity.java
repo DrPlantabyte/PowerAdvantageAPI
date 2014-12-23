@@ -1,4 +1,4 @@
-package cyano.poweradvantage.api.simple;
+package cyano.poweradvantage.api.example;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
@@ -13,9 +13,9 @@ public class SimplePowerConductorEntity extends PowerConductorEntity {
 	private final float energyRequestSize;
 	private float energyBuffer = 0;
 	
-	public SimplePowerConductorEntity(String type, float bufferSize){
-		energyBufferSize = bufferSize;
-		this.type = new ConductorType(type);
+	public SimplePowerConductorEntity(){
+		energyBufferSize = 90f;
+		this.type = new ConductorType("Energy");
 		energyRequestSize = energyBufferSize / 6;
 	}
 	
