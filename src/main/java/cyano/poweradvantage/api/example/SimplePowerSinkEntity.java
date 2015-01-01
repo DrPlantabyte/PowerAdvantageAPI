@@ -5,6 +5,8 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.inventory.SlotFurnaceFuel;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatComponentTranslation;
@@ -26,8 +28,8 @@ public class SimplePowerSinkEntity extends PowerSinkEntity  implements ISidedInv
 	private ItemStack[] inventory = new ItemStack[2];
 	private final int[] insertableSlots = {0};
 	private final int[] extractableSlots = {1};
-    private int cookTime;
-    private int totalCookTime;
+    private short cookTime;
+    private short totalCookTime;
     
     private boolean isCooking = false;
     
@@ -75,55 +77,90 @@ public class SimplePowerSinkEntity extends PowerSinkEntity  implements ISidedInv
 
 	@Override
 	public void tickUpdate(boolean isServerWorld) {
-		final boolean flag = this.isBurning();
-		boolean flag2 = false;
-		if (this.isBurning()) {
-			--this.furnaceBurnTime;
-		}
-		if (!this.worldObj.isRemote) {
-			if (!this.isBurning() && (this.furnaceItemStacks[1] == null || this.furnaceItemStacks[0] == null)) {
-				if (!this.isBurning() && this.cookTime > 0) {
-					this.cookTime = MathHelper.clamp_int(this.cookTime - 2, 0, this.totalCookTime);
+		if(isServerWorld){
+			final boolean flag = this.isBurning();
+			boolean flag2 = false;
+			if(cookTime >= getSmeltTime(inventory[0]) && this.canSmelt(this.inventory[0], this.inventory[1])){
+				// finished smelting current item
+				ItemStack done = FurnaceRecipes.instance().getSmeltingResult(this.inventory[0]);
+				if(this.inventory[1] == null){
+					this.inventory[1] = done.copy();
+				} else {
+					this.inventory[1].stackSize += done.stackSize;
 				}
+				this.inventory[0].stackSize--;
+				if(this.inventory[0].stackSize < 1){
+					this.inventory[0] = null;
+				}
+				cookTime = 0;
 			}
-			else {
-				if (!this.isBurning() && this.canSmelt()) {
-					final int itemBurnTime = getItemBurnTime(this.furnaceItemStacks[1]);
-					this.furnaceBurnTime = itemBurnTime;
-					this.currentItemBurnTime = itemBurnTime;
-					if (this.isBurning()) {
-						flag2 = true;
-						if (this.furnaceItemStacks[1] != null) {
-							final ItemStack itemStack = this.furnaceItemStacks[1];
-							--itemStack.stackSize;
-							if (this.furnaceItemStacks[1].stackSize == 0) {
-								this.furnaceItemStacks[1] = this.furnaceItemStacks[1].getItem().getContainerItem(this.furnaceItemStacks[1]);
-							}
-						}
-					}
-				}
-				if (this.isBurning() && this.canSmelt()) {
-					++this.cookTime;
-					if (this.cookTime == this.totalCookTime) {
-						this.cookTime = 0;
-						this.totalCookTime = this.func_174904_a(this.furnaceItemStacks[0]);
-						this.smeltItem();
-						flag2 = true;
-					}
-				}
-				else {
-					this.cookTime = 0;
-				}
+			if(this.getEnergyBuffer() >= energyPerTick && this.canSmelt(this.inventory[0], this.inventory[1])){
+				this.subtractEnergy(energyPerTick);
+				this.cookTime++;
+			} else if(cookTime > 0){
+				this.cookTime--;
+			}
+			if(cookTime > 0){
+				this.isCooking = true;
+			} else {
+				this.isCooking = false;
 			}
 			if (flag != this.isBurning()) {
 				flag2 = true;
-				BlockFurnace.setState(this.isBurning(), this.worldObj, this.pos);
+				BlockSimplePoweredFurnace.setState(this.isBurning(), this.worldObj, this.pos);
+			}
+			if (flag2) {
+				this.markDirty();
 			}
 		}
-		if (flag2) {
-			this.markDirty();
-		}
 	}
+	
+	/**
+	 * Reads data from NBT, which came from either a saved chunk or a network 
+	 * packet.
+	 */
+	@Override
+    public void readFromNBT(final NBTTagCompound tagRoot) {
+		super.readFromNBT(tagRoot);
+		if(tagRoot.hasKey("Items")){
+	        final NBTTagList nbttaglist = tagRoot.getTagList("Items", 10);
+			this.inventory = new ItemStack[this.getSizeInventory()];
+	        for (int i = 0; i < nbttaglist.tagCount(); ++i) {
+	            final NBTTagCompound itemTag = nbttaglist.getCompoundTagAt(i);
+	            final byte slotIndex = itemTag.getByte("Slot");
+	            if (slotIndex >= 0 && slotIndex < this.inventory.length) {
+	                this.inventory[slotIndex] = ItemStack.loadItemStackFromNBT(itemTag);
+	            }
+	        }
+		}
+		if(tagRoot.hasKey("CookTime")) this.cookTime = tagRoot.getShort("CookTime");
+        if (tagRoot.hasKey("CustomName", 8)) {
+            this.customName = tagRoot.getString("CustomName");
+        }
+	}
+	/**
+	 * Saves the state of this entity to an NBT for saving or synching across 
+	 * the network.
+	 */
+	@Override
+	public void writeToNBT(final NBTTagCompound tagRoot) {
+		super.writeToNBT(tagRoot);
+		tagRoot.setShort("CookTime", cookTime);
+		final NBTTagList nbttaglist = new NBTTagList();
+        for (int i = 0; i < this.inventory.length; ++i) {
+            if (this.inventory[i] != null) {
+                final NBTTagCompound itemTag = new NBTTagCompound();
+                itemTag.setByte("Slot", (byte)i);
+                this.inventory[i].writeToNBT(itemTag);
+                nbttaglist.appendTag(itemTag);
+            }
+        }
+        tagRoot.setTag("Items", nbttaglist);
+        if (this.hasCustomName()) {
+        	tagRoot.setString("CustomName", this.customName);
+        }
+	}
+	
 	
 	public boolean isBurning() {
         return isCooking;
@@ -175,6 +212,11 @@ public class SimplePowerSinkEntity extends PowerSinkEntity  implements ISidedInv
         final int result = outputSlot.stackSize + output.stackSize;
         return result <= 64 && result <= outputSlot.getMaxStackSize();
     }
+    
+    public void setCustomInventoryName(final String newName) {
+        this.customName = newName;
+    }
+    
 	
 ///// ISidedInventory methods /////
 	@Override
@@ -227,11 +269,11 @@ public class SimplePowerSinkEntity extends PowerSinkEntity  implements ISidedInv
     public void setField(final int fieldIndex, final int fieldValue) {
         switch (fieldIndex) {
             case 0: {
-                this.cookTime = fieldValue;
+                this.cookTime = (short)fieldValue;
                 break;
             }
             case 1: {
-                this.totalCookTime = fieldValue;
+                this.totalCookTime = (short)fieldValue;
                 break;
             }
         }

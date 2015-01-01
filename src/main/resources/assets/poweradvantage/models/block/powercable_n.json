@@ -1,0 +1,6 @@
+{
+    "parent": "poweradvantage:block/pipe_n",
+    "textures": {
+        "texture": "blocks/iron_block"
+    }
+}

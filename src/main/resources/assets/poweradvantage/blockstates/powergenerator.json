@@ -1,0 +1,8 @@
+{
+    "variants": {
+        "facing=north": { "model": "poweradvantage:powergenerator" },
+        "facing=south": { "model": "poweradvantage:powergenerator", "y": 180 },
+        "facing=west":  { "model": "poweradvantage:powergenerator", "y": 270 },
+        "facing=east":  { "model": "poweradvantage:powergenerator", "y": 90 }
+    }
+}

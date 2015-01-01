@@ -1,0 +1,6 @@
+{
+    "parent": "poweradvantage:block/pipe_ensw",
+    "textures": {
+        "texture": "blocks/iron_block"
+    }
+}

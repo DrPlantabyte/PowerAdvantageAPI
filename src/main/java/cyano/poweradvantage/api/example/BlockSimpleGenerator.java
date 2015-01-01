@@ -1,30 +1,36 @@
 package cyano.poweradvantage.api.example;
 
-import com.google.common.base.Predicate;
+import java.util.Random;
+
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockContainer;
+import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockState;
-import net.minecraft.inventory.Container;
-import net.minecraft.inventory.InventoryHelper;
-import net.minecraft.item.ItemStack;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Container;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.InventoryHelper;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.block.Block;
-import net.minecraft.util.BlockPos;
-import net.minecraft.world.World;
-import net.minecraft.item.Item;
-import java.util.Random;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.block.properties.IProperty;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.PropertyDirection;
-import net.minecraft.block.BlockContainer;
 
-public class BlockSimpleGenerator extends BlockContainer {
+import com.google.common.base.Predicate;
+
+import cyano.poweradvantage.api.ConductorType;
+import cyano.poweradvantage.api.ITypedConductor;
+
+public class BlockSimpleGenerator extends BlockContainer implements ITypedConductor {
 
 
     public static final PropertyDirection FACING;
@@ -34,17 +40,24 @@ public class BlockSimpleGenerator extends BlockContainer {
     public static BlockSimpleGenerator globalBlockInstance_unlit = null;
     public static BlockSimpleGenerator globalBlockInstance_lit = null;
     
-	protected BlockSimpleGenerator(final boolean isBurning) {
+	public BlockSimpleGenerator(final boolean isBurning) {
         super(Material.rock);
         this.setDefaultState(this.blockState.getBaseState().withProperty((IProperty)FACING, (Comparable)EnumFacing.NORTH));
         this.isBurning = isBurning;
         if(globalBlockInstance_unlit == null && isBurning == false){
         	globalBlockInstance_unlit = this;
+    	    this.setCreativeTab(CreativeTabs.tabDecorations);
         }
         if(globalBlockInstance_lit == null && isBurning == true){
         	globalBlockInstance_lit = this;
         }
     }
+	
+	private static final ConductorType type = new ConductorType("Energy");
+	@Override
+	public ConductorType getEnergyType() {
+		return type;
+	}
 
     @Override
     public Item getItemDropped(final IBlockState state, final Random prng, final int i3) {

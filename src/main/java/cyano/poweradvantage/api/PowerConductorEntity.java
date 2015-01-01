@@ -16,16 +16,9 @@ import net.minecraft.util.EnumFacing;
  * @author DrCyano
  *
  */
-public abstract class PowerConductorEntity extends TileEntity implements IUpdatePlayerListBox{
+public abstract class PowerConductorEntity extends TileEntity implements IUpdatePlayerListBox, ITypedConductor{
 	
 	private final int powerUpdateInterval = 16;
-	
-	/**
-	 * Gets the energy type of this conductor. Most conductors can only interact 
-	 * with other conductors of the same type. 
-	 * @return The energy type f this conductor
-	 */
-	public abstract ConductorType getEnergyType();
 	
 	/**
 	 * Gets the amount of energy that can be stored in this conductor.
