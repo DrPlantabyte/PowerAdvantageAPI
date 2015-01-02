@@ -180,7 +180,7 @@ public class BlockSimpleConductor extends PowerConductorBlock implements ITileEn
 		return new SimplePowerConductorEntity();
 	}
 
-	private static final ConductorType type = new ConductorType("Energy");
+	private static final ConductorType type = new ConductorType("energy");
 	@Override
 	public ConductorType getEnergyType() {
 		return type;

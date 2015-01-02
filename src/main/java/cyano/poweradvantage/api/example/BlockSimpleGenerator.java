@@ -27,6 +27,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import com.google.common.base.Predicate;
 
+import cyano.poweradvantage.PowerAdvantage;
 import cyano.poweradvantage.api.ConductorType;
 import cyano.poweradvantage.api.ITypedConductor;
 
@@ -39,9 +40,9 @@ public class BlockSimpleGenerator extends BlockContainer implements ITypedConduc
 
     public static BlockSimpleGenerator globalBlockInstance_unlit = null;
     public static BlockSimpleGenerator globalBlockInstance_lit = null;
-    
-	public BlockSimpleGenerator(final boolean isBurning) {
-        super(Material.rock);
+    private final int guiID;
+	public BlockSimpleGenerator(final boolean isBurning, int guiID) {
+        super(Material.piston);
         this.setDefaultState(this.blockState.getBaseState().withProperty((IProperty)FACING, (Comparable)EnumFacing.NORTH));
         this.isBurning = isBurning;
         if(globalBlockInstance_unlit == null && isBurning == false){
@@ -51,9 +52,10 @@ public class BlockSimpleGenerator extends BlockContainer implements ITypedConduc
         if(globalBlockInstance_lit == null && isBurning == true){
         	globalBlockInstance_lit = this;
         }
+        this.guiID = guiID;
     }
 	
-	private static final ConductorType type = new ConductorType("Energy");
+	private static final ConductorType type = new ConductorType("energy");
 	@Override
 	public ConductorType getEnergyType() {
 		return type;
@@ -130,16 +132,19 @@ public class BlockSimpleGenerator extends BlockContainer implements ITypedConduc
     }
     
     @Override
-    public boolean onBlockActivated(final World w, final BlockPos coord, final IBlockState state, final EntityPlayer player, 
-    		final EnumFacing face, final float f1, final float f2, final float f3) {
+    public boolean onBlockActivated(final World w, final BlockPos coord, final IBlockState bs, 
+    		final EntityPlayer player, final EnumFacing facing, final float f1, final float f2, 
+    		final float f3) {
         if (w.isRemote) {
             return true;
         }
         final TileEntity tileEntity = w.getTileEntity(coord);
-        if (tileEntity instanceof SimplePowerSourceEntity) {
-            player.displayGUIChest((IInventory)tileEntity);
+        if (tileEntity == null || player.isSneaking()) {
+        	return false;
         }
+        player.openGui(PowerAdvantage.getInstance(), guiID, w, coord.getX(), coord.getY(), coord.getZ());
         return true;
+       
     }
     
     public static void setState(final boolean isBurning, final World world, final BlockPos coord) {

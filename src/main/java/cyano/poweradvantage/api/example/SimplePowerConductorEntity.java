@@ -15,7 +15,7 @@ public class SimplePowerConductorEntity extends PowerConductorEntity {
 	
 	public SimplePowerConductorEntity(){
 		energyBufferSize = 90f;
-		this.type = new ConductorType("Energy");
+		this.type = new ConductorType("energy");
 		energyRequestSize = energyBufferSize / 6;
 	}
 	

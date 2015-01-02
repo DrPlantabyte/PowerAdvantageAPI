@@ -14,6 +14,7 @@ public class PowerAdvantage
     public static final String NAME = "Power Advantage";
     public static final String VERSION = "0.0.1";
 
+    private static PowerAdvantage instance;
     
     Tester test = new Tester();
     
@@ -23,6 +24,7 @@ public class PowerAdvantage
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
+    	instance = this;
     	Configuration config = new Configuration(event.getSuggestedConfigurationFile());
     	config.load();
     	// TODO
@@ -44,5 +46,9 @@ public class PowerAdvantage
     	// TODO
     	test.postInit(event, proxy);
     }
+
+	public static PowerAdvantage getInstance() {
+		return instance;
+	}
     
 }

@@ -27,6 +27,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import com.google.common.base.Predicate;
 
+import cyano.poweradvantage.PowerAdvantage;
 import cyano.poweradvantage.api.ConductorType;
 import cyano.poweradvantage.api.ITypedConductor;
 
@@ -38,8 +39,10 @@ public class BlockSimplePoweredFurnace  extends BlockContainer implements ITyped
 
     public static BlockSimplePoweredFurnace instance_unlit = null;
     public static BlockSimplePoweredFurnace instance_lit = null;
+    
+    final int guiID;
 	
-	public BlockSimplePoweredFurnace(boolean burning) {
+	public BlockSimplePoweredFurnace(boolean burning, int guiID) {
 		super(Material.piston);
         this.setDefaultState(this.blockState.getBaseState().withProperty((IProperty)BlockSimplePoweredFurnace.FACING, (Comparable)EnumFacing.NORTH));
         this.isBurning = burning;
@@ -49,9 +52,10 @@ public class BlockSimplePoweredFurnace  extends BlockContainer implements ITyped
         	instance_unlit = this;
     	    this.setCreativeTab(CreativeTabs.tabDecorations);
         }
+        this.guiID = guiID;
 	}
 	
-	private static final ConductorType type = new ConductorType("Energy");
+	private static final ConductorType type = new ConductorType("energy");
 	@Override
 	public ConductorType getEnergyType() {
 		return type;
@@ -141,10 +145,12 @@ public class BlockSimplePoweredFurnace  extends BlockContainer implements ITyped
             return true;
         }
         final TileEntity tileEntity = w.getTileEntity(coord);
-        if (tileEntity instanceof SimplePowerSinkEntity) {
-            player.displayGUIChest((IInventory)tileEntity);
+        if (tileEntity == null || player.isSneaking()) {
+        	return false;
         }
+        player.openGui(PowerAdvantage.getInstance(), guiID, w, coord.getX(), coord.getY(), coord.getZ());
         return true;
+       
     }
     
     public static void setState(final boolean burning, final World w, final BlockPos coord) {

@@ -7,13 +7,16 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityFurnace;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.MathHelper;
 import cyano.poweradvantage.api.ConductorType;
+import cyano.poweradvantage.api.PowerConductorEntity;
 import cyano.poweradvantage.api.PowerSinkEntity;
 
 public class SimplePowerSinkEntity extends PowerSinkEntity  implements ISidedInventory{
@@ -46,33 +49,28 @@ public class SimplePowerSinkEntity extends PowerSinkEntity  implements ISidedInv
 	
 	@Override
 	public ConductorType getEnergyType() {
-		// TODO Auto-generated method stub
-		return null;
+		return type;
 	}
 
 	@Override
 	public float getEnergyBufferCapacity() {
-		// TODO Auto-generated method stub
-		return 0;
+		return energyBufferSize;
 	}
 
 	@Override
 	public float getEnergyBuffer() {
-		// TODO Auto-generated method stub
-		return 0;
+		return energyBuffer;
 	}
 
 	@Override
 	public void setEnergy(float energy) {
-		// TODO Auto-generated method stub
-		
+		energyBuffer = energy;
 	}
 
 	@Override
 	public boolean canPushEnergyTo(EnumFacing blockFace,
 			ConductorType requestType) {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override
@@ -191,8 +189,51 @@ public class SimplePowerSinkEntity extends PowerSinkEntity  implements ISidedInv
 	
 	@Override
 	public void powerUpdate() {
-		// TODO Auto-generated method stub
-		
+		if(getEnergyBuffer() < getEnergyBufferCapacity()){
+			// get power from neighbors who have more than this conductor
+			this.tryEnergyPullFrom(EnumFacing.UP);
+			this.tryEnergyPullFrom(EnumFacing.NORTH);
+			this.tryEnergyPullFrom(EnumFacing.WEST);
+			this.tryEnergyPullFrom(EnumFacing.SOUTH);
+			this.tryEnergyPullFrom(EnumFacing.EAST);
+			this.tryEnergyPullFrom(EnumFacing.DOWN);
+		}
+	}
+	
+	void tryEnergyPullFrom(EnumFacing dir){
+		float deficit = getEnergyBufferCapacity() - getEnergyBuffer();
+		if(deficit > 0){
+			EnumFacing otherDir = null;
+			BlockPos coord = null;
+			switch(dir){
+			case UP:
+				coord = getPos().add(0,1,0);
+				otherDir = EnumFacing.DOWN;
+			case DOWN:
+				coord = getPos().add(0,-1,0);
+				otherDir = EnumFacing.UP;
+			case NORTH:
+				coord = getPos().add(0,0,-1);
+				otherDir = EnumFacing.SOUTH;
+			case SOUTH:
+				coord = getPos().add(0,0,1);
+				otherDir = EnumFacing.NORTH;
+			case EAST:
+				coord = getPos().add(1,0,0);
+				otherDir = EnumFacing.WEST;
+			case WEST:
+				coord = getPos().add(-1,0,0);
+				otherDir = EnumFacing.EAST;
+			}
+			TileEntity e = getWorld().getTileEntity(coord);
+			if(e instanceof PowerConductorEntity){
+				PowerConductorEntity pce = (PowerConductorEntity)e;
+				if(pce.canPullEnergyFrom(otherDir, type)
+						&& pce.getEnergyBuffer() > this.getEnergyBuffer()){
+					this.addEnergy(-1*pce.subtractEnergy(deficit));
+				}
+			}
+		}
 	}
 	
 	public static boolean canSmelt(ItemStack inputSlot, ItemStack outputSlot) {
