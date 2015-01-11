@@ -1,4 +1,4 @@
-package cyano.poweradvantage;
+package cyano.poweradvantage.api.example;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -11,6 +11,9 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import cyano.poweradvantage.ClientProxy;
+import cyano.poweradvantage.PowerAdvantage;
+import cyano.poweradvantage.Proxy;
 import cyano.poweradvantage.api.example.*;
 
 public class Tester {
@@ -24,10 +27,10 @@ public class Tester {
 		
 		NetworkRegistry.INSTANCE.registerGuiHandler(PowerAdvantage.getInstance(), new TesterGUIHandler());
 		int id_gen = TesterGUIHandler.addGUI(new SimpleMachineGUI(new ResourceLocation(
-				PowerAdvantage.MODID+":textures/gui/container/simplegenerator.png"),176,78,new Integer2D[] {new Integer2D(56,53)}));
+				PowerAdvantage.MODID+":textures/gui/container/simplegenerator.png"),new Integer2D[] {new Integer2D(56,53)}));
 		NetworkRegistry.INSTANCE.registerGuiHandler(PowerAdvantage.getInstance(), new TesterGUIHandler());
 		int id_fur = TesterGUIHandler.addGUI(new SimpleMachineGUI(new ResourceLocation(
-				PowerAdvantage.MODID+":textures/gui/container/simplefurnace.png"),176,78,new Integer2D[] 
+				PowerAdvantage.MODID+":textures/gui/container/simplefurnace.png"),new Integer2D[] 
 						{new Integer2D(56,17),new Integer2D(116,35)}));
 		
 

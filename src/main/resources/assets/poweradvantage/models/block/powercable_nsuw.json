@@ -1,6 +1,6 @@
 {
     "parent": "poweradvantage:block/pipe_nsuw",
     "textures": {
-        "texture": "blocks/iron_block"
+        "texture": "poweradvantage:blocks/powercable"
     }
 }

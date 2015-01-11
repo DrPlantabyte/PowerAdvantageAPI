@@ -1,5 +1,6 @@
 package cyano.poweradvantage.api.example;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
@@ -14,9 +15,9 @@ public class SimplePowerConductorEntity extends PowerConductorEntity {
 	private float energyBuffer = 0;
 	
 	public SimplePowerConductorEntity(){
-		energyBufferSize = 90f;
+		energyBufferSize = 32f;
 		this.type = new ConductorType("energy");
-		energyRequestSize = energyBufferSize / 6;
+		energyRequestSize = 16f;
 	}
 	
 	@Override
@@ -61,39 +62,47 @@ public class SimplePowerConductorEntity extends PowerConductorEntity {
 	public void powerUpdate() {
 		if(getEnergyBuffer() < getEnergyBufferCapacity()){
 			// get power from neighbors who have more than this conductor
-			this.tryEnergyPullFrom(EnumFacing.UP);
-			this.tryEnergyPullFrom(EnumFacing.NORTH);
-			this.tryEnergyPullFrom(EnumFacing.WEST);
-			this.tryEnergyPullFrom(EnumFacing.SOUTH);
-			this.tryEnergyPullFrom(EnumFacing.EAST);
-			this.tryEnergyPullFrom(EnumFacing.DOWN);
+			IBlockState bs = this.worldObj.getBlockState(this.pos);
+			
+			if((Boolean)bs.getValue(BlockSimpleConductor.UP))this.tryEnergyPullFrom(EnumFacing.UP);
+			if((Boolean)bs.getValue(BlockSimpleConductor.NORTH))this.tryEnergyPullFrom(EnumFacing.NORTH);
+			if((Boolean)bs.getValue(BlockSimpleConductor.WEST))this.tryEnergyPullFrom(EnumFacing.WEST);
+			if((Boolean)bs.getValue(BlockSimpleConductor.SOUTH))this.tryEnergyPullFrom(EnumFacing.SOUTH);
+			if((Boolean)bs.getValue(BlockSimpleConductor.EAST))this.tryEnergyPullFrom(EnumFacing.EAST);
+			if((Boolean)bs.getValue(BlockSimpleConductor.DOWN))this.tryEnergyPullFrom(EnumFacing.DOWN);
 		}
 	}
 	
 	void tryEnergyPullFrom(EnumFacing dir){
-		float deficit = Math.max(getEnergyBufferCapacity() - getEnergyBuffer(), energyRequestSize);
+		float deficit = Math.min(getEnergyBufferCapacity() - getEnergyBuffer(), energyRequestSize);
 		if(deficit > 0){
 			EnumFacing otherDir = null;
 			BlockPos coord = null;
 			switch(dir){
 			case UP:
-				coord = getPos().add(0,1,0);
+				coord = getPos().up();
 				otherDir = EnumFacing.DOWN;
+				break;
 			case DOWN:
-				coord = getPos().add(0,-1,0);
+				coord = getPos().down();
 				otherDir = EnumFacing.UP;
+				break;
 			case NORTH:
-				coord = getPos().add(0,0,-1);
+				coord = getPos().north();
 				otherDir = EnumFacing.SOUTH;
+				break;
 			case SOUTH:
-				coord = getPos().add(0,0,1);
+				coord = getPos().south();
 				otherDir = EnumFacing.NORTH;
+				break;
 			case EAST:
-				coord = getPos().add(1,0,0);
+				coord = getPos().east();
 				otherDir = EnumFacing.WEST;
+				break;
 			case WEST:
-				coord = getPos().add(-1,0,0);
+				coord = getPos().west();
 				otherDir = EnumFacing.EAST;
+				break;
 			}
 			TileEntity e = getWorld().getTileEntity(coord);
 			if(e instanceof PowerConductorEntity){

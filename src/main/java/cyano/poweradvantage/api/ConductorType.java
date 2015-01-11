@@ -48,4 +48,12 @@ public class ConductorType {
 	public static boolean areSameType(ConductorType a, ConductorType b){
 		return a.hashCode() == b.hashCode();
 	}
+	/**
+	 * Returns the energy type name
+	 * @return the energy type name
+	 */
+	@Override
+	public String toString(){
+		return type;
+	}
 }

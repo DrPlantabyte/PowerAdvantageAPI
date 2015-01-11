@@ -18,7 +18,7 @@ import net.minecraft.util.EnumFacing;
  */
 public abstract class PowerConductorEntity extends TileEntity implements IUpdatePlayerListBox, ITypedConductor{
 	
-	private final int powerUpdateInterval = 16;
+	private final int powerUpdateInterval = 8;
 	
 	/**
 	 * Gets the amount of energy that can be stored in this conductor.
@@ -107,7 +107,7 @@ public abstract class PowerConductorEntity extends TileEntity implements IUpdate
 	 */
 	public abstract void tickUpdate(boolean isServerWorld);
 	/**
-	 * Updates the power status. This method is called avery few ticks and is 
+	 * Updates the power status. This method is called every few ticks and is 
 	 * only called on the server world.
 	 */
 	public abstract void powerUpdate();

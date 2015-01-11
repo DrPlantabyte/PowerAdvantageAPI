@@ -80,16 +80,7 @@ public class SimplePowerSinkEntity extends PowerSinkEntity  implements ISidedInv
 			boolean flag2 = false;
 			if(cookTime >= getSmeltTime(inventory[0]) && this.canSmelt(this.inventory[0], this.inventory[1])){
 				// finished smelting current item
-				ItemStack done = FurnaceRecipes.instance().getSmeltingResult(this.inventory[0]);
-				if(this.inventory[1] == null){
-					this.inventory[1] = done.copy();
-				} else {
-					this.inventory[1].stackSize += done.stackSize;
-				}
-				this.inventory[0].stackSize--;
-				if(this.inventory[0].stackSize < 1){
-					this.inventory[0] = null;
-				}
+				smeltItem();
 				cookTime = 0;
 			}
 			if(this.getEnergyBuffer() >= energyPerTick && this.canSmelt(this.inventory[0], this.inventory[1])){
@@ -169,21 +160,18 @@ public class SimplePowerSinkEntity extends PowerSinkEntity  implements ISidedInv
 	}
 	
 	public void smeltItem() {
-        if (this.canSmelt(inventory[0],inventory[1])) {
-            final ItemStack output = FurnaceRecipes.instance().getSmeltingResult(inventory[0]);
-            if (this.inventory[1] == null) {
-                this.inventory[1] = output.copy();
-            }
-            else if (this.inventory[1].getItem() == output.getItem()) {
-                final ItemStack outputSlot = this.inventory[1];
-                outputSlot.stackSize += output.stackSize;
-            }
-            
-            final ItemStack src = this.inventory[0];
-            --src.stackSize;
-            if (this.inventory[0].stackSize <= 0) {
-                this.inventory[0] = null;
-            }
+        final ItemStack output = FurnaceRecipes.instance().getSmeltingResult(inventory[0]);
+        if (this.inventory[1] == null) {
+            this.inventory[1] = output.copy();
+        } else {
+            final ItemStack outputSlot = this.inventory[1];
+            outputSlot.stackSize += output.stackSize;
+        }
+        
+        final ItemStack src = this.inventory[0];
+        src.stackSize--;
+        if (this.inventory[0].stackSize <= 0) {
+            this.inventory[0] = null;
         }
     }
 	
@@ -207,23 +195,29 @@ public class SimplePowerSinkEntity extends PowerSinkEntity  implements ISidedInv
 			BlockPos coord = null;
 			switch(dir){
 			case UP:
-				coord = getPos().add(0,1,0);
+				coord = getPos().up();
 				otherDir = EnumFacing.DOWN;
+				break;
 			case DOWN:
-				coord = getPos().add(0,-1,0);
+				coord = getPos().down();
 				otherDir = EnumFacing.UP;
+				break;
 			case NORTH:
-				coord = getPos().add(0,0,-1);
+				coord = getPos().north();
 				otherDir = EnumFacing.SOUTH;
+				break;
 			case SOUTH:
-				coord = getPos().add(0,0,1);
+				coord = getPos().south();
 				otherDir = EnumFacing.NORTH;
+				break;
 			case EAST:
-				coord = getPos().add(1,0,0);
+				coord = getPos().east();
 				otherDir = EnumFacing.WEST;
+				break;
 			case WEST:
-				coord = getPos().add(-1,0,0);
+				coord = getPos().west();
 				otherDir = EnumFacing.EAST;
+				break;
 			}
 			TileEntity e = getWorld().getTileEntity(coord);
 			if(e instanceof PowerConductorEntity){
@@ -247,11 +241,11 @@ public class SimplePowerSinkEntity extends PowerSinkEntity  implements ISidedInv
         if (outputSlot == null) {
             return true;
         }
-        if (!outputSlot.isItemEqual(inputSlot)) {
-            return false;
+        if (outputSlot.isItemEqual(output)) {
+        	final int stackSize = outputSlot.stackSize + output.stackSize;
+        	return stackSize <= 64 && stackSize <= outputSlot.getMaxStackSize();
         }
-        final int result = outputSlot.stackSize + output.stackSize;
-        return result <= 64 && result <= outputSlot.getMaxStackSize();
+        return false;
     }
     
     public void setCustomInventoryName(final String newName) {

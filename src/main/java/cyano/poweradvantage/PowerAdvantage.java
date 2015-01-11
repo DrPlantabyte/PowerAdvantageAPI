@@ -1,5 +1,6 @@
 package cyano.poweradvantage;
 
+import cyano.poweradvantage.api.example.Tester;
 import net.minecraft.init.Blocks;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -12,11 +13,13 @@ public class PowerAdvantage
 {
     public static final String MODID = "poweradvantage";
     public static final String NAME = "Power Advantage";
-    public static final String VERSION = "0.0.1";
+    public static final String VERSION = "0.0.2";
 
+    public static boolean DEMO_MODE = false;
+    
     private static PowerAdvantage instance;
     
-    Tester test = new Tester();
+    private Tester test = null;
     
     @SidedProxy(clientSide="cyano.poweradvantage.ClientProxy", serverSide="cyano.poweradvantage.ServerProxy")
     public static Proxy proxy;
@@ -27,8 +30,19 @@ public class PowerAdvantage
     	instance = this;
     	Configuration config = new Configuration(event.getSuggestedConfigurationFile());
     	config.load();
+    	
+    	// demonstration code and examples
+    	// TODO: default to false
+    	//DEMO_MODE = config.getBoolean("demo", "options", false,
+    	DEMO_MODE = config.getBoolean("demo", "options", true,
+ "If true, then example machines will be loaded. For testing/example use only!");
+    	
     	// TODO
-    	test.preInit(event, proxy, config);
+    	
+    	if(DEMO_MODE){
+    		test = new Tester();
+        	test.preInit(event, proxy, config);
+    	}
     	
     	config.save();
     }
@@ -37,14 +51,14 @@ public class PowerAdvantage
     public void init(FMLInitializationEvent event)
     {
 		// TODO
-    	test.init(event, proxy);
+    	if(DEMO_MODE)test.init(event, proxy);
     }
     
     @EventHandler
     public void postInit(FMLPostInitializationEvent event)
     {
     	// TODO
-    	test.postInit(event, proxy);
+    	if(DEMO_MODE)test.postInit(event, proxy);
     }
 
 	public static PowerAdvantage getInstance() {

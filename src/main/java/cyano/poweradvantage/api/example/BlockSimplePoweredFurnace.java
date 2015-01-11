@@ -30,6 +30,7 @@ import com.google.common.base.Predicate;
 import cyano.poweradvantage.PowerAdvantage;
 import cyano.poweradvantage.api.ConductorType;
 import cyano.poweradvantage.api.ITypedConductor;
+import cyano.poweradvantage.api.PowerConductorEntity;
 
 public class BlockSimplePoweredFurnace  extends BlockContainer implements ITypedConductor{
 
@@ -44,6 +45,7 @@ public class BlockSimplePoweredFurnace  extends BlockContainer implements ITyped
 	
 	public BlockSimplePoweredFurnace(boolean burning, int guiID) {
 		super(Material.piston);
+    	super.setHardness(0.5f);
         this.setDefaultState(this.blockState.getBaseState().withProperty((IProperty)BlockSimplePoweredFurnace.FACING, (Comparable)EnumFacing.NORTH));
         this.isBurning = burning;
         if(instance_lit == null && burning){
@@ -54,6 +56,15 @@ public class BlockSimplePoweredFurnace  extends BlockContainer implements ITyped
         }
         this.guiID = guiID;
 	}
+	
+
+	 // TODO: remove testing code
+	    @Override
+	    public void onBlockClicked(World w, BlockPos p, EntityPlayer player){
+	    	if(w.isRemote)return;
+	    	PowerConductorEntity e = (PowerConductorEntity)w.getTileEntity(p);
+	    	player.addChatMessage(new net.minecraft.util.ChatComponentText(e.getEnergyType()+": "+e.getEnergyBuffer()));
+	    }
 	
 	private static final ConductorType type = new ConductorType("energy");
 	@Override
@@ -152,6 +163,7 @@ public class BlockSimplePoweredFurnace  extends BlockContainer implements ITyped
         return true;
        
     }
+    
     
     public static void setState(final boolean burning, final World w, final BlockPos coord) {
         final IBlockState blockState = w.getBlockState(coord);

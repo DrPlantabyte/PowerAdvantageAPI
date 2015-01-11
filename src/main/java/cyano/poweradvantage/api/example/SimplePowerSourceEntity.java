@@ -44,6 +44,7 @@ public class SimplePowerSourceEntity extends PowerSourceEntity implements ISided
 			insertableSlots[i] = i;
 	}
 	
+	
 	@Override
     public void readFromNBT(final NBTTagCompound tagRoot) {
         super.readFromNBT(tagRoot);
@@ -108,7 +109,6 @@ public class SimplePowerSourceEntity extends PowerSourceEntity implements ISided
 			ConductorType requestType) {
 		return ConductorType.areSameType(getEnergyType(), requestType);
 	}
-
 
 	@Override
 	public void tickUpdate(boolean isServerWorld) {

@@ -11,6 +11,8 @@ import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
@@ -22,6 +24,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import cyano.poweradvantage.api.ConductorType;
 import cyano.poweradvantage.api.ITypedConductor;
 import cyano.poweradvantage.api.PowerConductorBlock;
+import cyano.poweradvantage.api.PowerConductorEntity;
 
 public class BlockSimpleConductor extends PowerConductorBlock implements ITileEntityProvider{
 	
@@ -35,6 +38,7 @@ public class BlockSimpleConductor extends PowerConductorBlock implements ITileEn
     
     public BlockSimpleConductor(){
     	super(Material.piston);
+    	super.setHardness(0.5f);
 	    this.setDefaultState(this.blockState.getBaseState()
 	    		.withProperty(WEST, false)
 	    		.withProperty(DOWN, false)
@@ -43,6 +47,14 @@ public class BlockSimpleConductor extends PowerConductorBlock implements ITileEn
 	    		.withProperty(UP, false)
 	    		.withProperty(NORTH, false));
 	    this.setCreativeTab(CreativeTabs.tabDecorations);
+    }
+    
+    // TODO: remove testing code
+    @Override
+    public void onBlockClicked(World w, BlockPos p, EntityPlayer player){
+    	if(w.isRemote)return;
+    	PowerConductorEntity e = (PowerConductorEntity)w.getTileEntity(p);
+    	player.addChatMessage(new net.minecraft.util.ChatComponentText(e.getEnergyType()+": "+e.getEnergyBuffer()));
     }
     
     @Override

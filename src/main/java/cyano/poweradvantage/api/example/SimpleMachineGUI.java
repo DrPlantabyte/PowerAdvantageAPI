@@ -24,10 +24,10 @@ public class SimpleMachineGUI implements ITileEntityGUI {
 	protected final int guiWidth, guiHeight;
 	protected final Integer2D[] inventorySlotCoordinates;
 	
-	public SimpleMachineGUI(ResourceLocation guiImage, int guiImageWidth, int guiImageHeight, Integer2D[] inventorySlotCoordinates){
+	public SimpleMachineGUI(ResourceLocation guiImage, Integer2D[] inventorySlotCoordinates){
 		this.guiDisplayImage = guiImage;
-		this.guiHeight = guiImageHeight;
-		this.guiWidth = guiImageWidth;
+		this.guiWidth = 176;
+		this.guiHeight = 222;
 		this.inventorySlotCoordinates = inventorySlotCoordinates;
 	}
 	
@@ -41,7 +41,7 @@ public class SimpleMachineGUI implements ITileEntityGUI {
 				this.addSlotToContainer(new net.minecraft.inventory.Slot(entity,index,pt.X,pt.Y));
 				index++;
 			}
-			bindPlayerInventory(playerItems, 132+9);
+			bindPlayerInventory(playerItems, 140);
 		}
 		
 		@Override
@@ -60,31 +60,41 @@ public class SimpleMachineGUI implements ITileEntityGUI {
 			}
 		}
 		
-//		@Override
-//		public ItemStack transferStackInSlot(final EntityPlayer player, final int slotIndex) {
-//			ItemStack copy = null;
-//			final Slot slot = (Slot)this.inventorySlots.get(slotIndex);
-//			if (slot != null && slot.getHasStack()) {
-//				final ItemStack stack = slot.getStack();
-//				copy = stack.copy();
-//				if (slotIndex < inventorySlotCoordinates.length) {
-//					if (!this.mergeItemStack(stack, inventorySlotCoordinates.length, this.inventorySlots.size(), true)) {
-//						return null;
-//					}
-//				}
-//				else if (!this.mergeItemStack(stack, 0, inventorySlotCoordinates.length, false)) {
-//					return null;
-//				}
-//				if (stack.stackSize == 0) {
-//					slot.putStack(null);
-//				}
-//				else {
-//					slot.onSlotChanged();
-//				}
-//			}
-//			return copy;
-//		}
-//		
+		@Override
+		public ItemStack transferStackInSlot(EntityPlayer player, int slot) {
+			ItemStack stack = null;
+			Slot slotObject = (Slot) inventorySlots.get(slot);
+
+			//null checks and checks if the item can be stacked (maxStackSize > 1)
+			if (slotObject != null && slotObject.getHasStack()) {
+				ItemStack stackInSlot = slotObject.getStack();
+				stack = stackInSlot.copy();
+
+				//merges the item into player inventory since its in the tileEntity
+				if (slot < 9) {
+					if (!this.mergeItemStack(stackInSlot, 0, 35, true)) {
+						return null;
+					}
+				}
+				//places it into the tileEntity is possible since its in the player inventory
+				else if (!this.mergeItemStack(stackInSlot, 0, 9, false)) {
+					return null;
+				}
+
+				if (stackInSlot.stackSize == 0) {
+					slotObject.putStack(null);
+				} else {
+					slotObject.onSlotChanged();
+				}
+
+				if (stackInSlot.stackSize == stack.stackSize) {
+					return null;
+				}
+				slotObject.onPickupFromSlot(player, stackInSlot);
+			}
+			return stack;
+		}
+		
 	}
 	
 	public void drawGUIDecorations(Object srcEntity){}
@@ -93,6 +103,9 @@ public class SimpleMachineGUI implements ITileEntityGUI {
 		private final Object entity;
 		public GUIContainer(InventoryPlayer playerItems, IInventory entity) {
 			super(new Container(playerItems,entity));
+//System.out.println("Size: "+this.xSize+"x"+this.ySize+" at coordinate ("+this.guiLeft+","+this.guiTop+")");
+			this.xSize = guiWidth;
+			this.ySize = guiHeight;
 			this.entity = entity;
 		}
 		@Override
@@ -101,10 +114,9 @@ public class SimpleMachineGUI implements ITileEntityGUI {
 			this.mc.renderEngine.bindTexture(playerInventoryBox);
 			int x = (width - xSize) / 2;
 			int y = (height - ySize) / 2;
-			final int inventoryYOffset = 132; // this many pixels of space for main GUI
 			final int playerInventoryWidth = 176;
-			final int playerInventoryHeight = 91;
-			this.drawTexturedModalRect(x, y + inventoryYOffset, 0, 0, playerInventoryWidth, playerInventoryHeight); // x, y, textureOffsetX, textureOffsetY, width, height)
+			final int playerInventoryHeight = 222;
+			this.drawTexturedModalRect(x, y, 0, 0, playerInventoryWidth, playerInventoryHeight); // x, y, textureOffsetX, textureOffsetY, width, height)
 			this.mc.renderEngine.bindTexture(guiDisplayImage);
 			this.drawTexturedModalRect(x, y, 0, 0, guiWidth, guiHeight); // x, y, textureOffsetX, textureOffsetY, width, height)
 			drawGUIDecorations(entity);
