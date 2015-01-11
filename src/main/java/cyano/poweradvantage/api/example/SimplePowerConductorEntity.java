@@ -15,9 +15,9 @@ public class SimplePowerConductorEntity extends PowerConductorEntity {
 	private float energyBuffer = 0;
 	
 	public SimplePowerConductorEntity(){
-		energyBufferSize = 32f;
+		energyBufferSize = 90f;
 		this.type = new ConductorType("energy");
-		energyRequestSize = 16f;
+		energyRequestSize = energyBufferSize / 6;
 	}
 	
 	@Override
@@ -64,12 +64,12 @@ public class SimplePowerConductorEntity extends PowerConductorEntity {
 			// get power from neighbors who have more than this conductor
 			IBlockState bs = this.worldObj.getBlockState(this.pos);
 			
-			if((Boolean)bs.getValue(BlockSimpleConductor.UP))this.tryEnergyPullFrom(EnumFacing.UP);
-			if((Boolean)bs.getValue(BlockSimpleConductor.NORTH))this.tryEnergyPullFrom(EnumFacing.NORTH);
-			if((Boolean)bs.getValue(BlockSimpleConductor.WEST))this.tryEnergyPullFrom(EnumFacing.WEST);
-			if((Boolean)bs.getValue(BlockSimpleConductor.SOUTH))this.tryEnergyPullFrom(EnumFacing.SOUTH);
-			if((Boolean)bs.getValue(BlockSimpleConductor.EAST))this.tryEnergyPullFrom(EnumFacing.EAST);
-			if((Boolean)bs.getValue(BlockSimpleConductor.DOWN))this.tryEnergyPullFrom(EnumFacing.DOWN);
+			this.tryEnergyPullFrom(EnumFacing.UP);
+			this.tryEnergyPullFrom(EnumFacing.NORTH);
+			this.tryEnergyPullFrom(EnumFacing.WEST);
+			this.tryEnergyPullFrom(EnumFacing.SOUTH);
+			this.tryEnergyPullFrom(EnumFacing.EAST);
+			this.tryEnergyPullFrom(EnumFacing.DOWN);
 		}
 	}
 	

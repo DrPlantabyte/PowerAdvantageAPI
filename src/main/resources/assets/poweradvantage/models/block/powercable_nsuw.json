@@ -1,5 +1,5 @@
 {
-    "parent": "poweradvantage:block/pipe_nsuw",
+    "parent": "poweradvantage:block/pipe2_nsuw",
     "textures": {
         "texture": "poweradvantage:blocks/powercable"
     }

@@ -13,7 +13,7 @@ public class PowerAdvantage
 {
     public static final String MODID = "poweradvantage";
     public static final String NAME = "Power Advantage";
-    public static final String VERSION = "0.0.2";
+    public static final String VERSION = "0.0.3";
 
     public static boolean DEMO_MODE = false;
     
