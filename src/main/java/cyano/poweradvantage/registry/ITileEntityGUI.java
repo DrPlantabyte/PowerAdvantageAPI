@@ -1,4 +1,4 @@
-package cyano.poweradvantage.api.example;
+package cyano.poweradvantage.registry;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;

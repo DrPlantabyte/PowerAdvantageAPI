@@ -15,6 +15,9 @@ import cyano.poweradvantage.ClientProxy;
 import cyano.poweradvantage.PowerAdvantage;
 import cyano.poweradvantage.Proxy;
 import cyano.poweradvantage.api.example.*;
+import cyano.poweradvantage.api.simple.util.SimpleMachineGUI;
+import cyano.poweradvantage.math.Integer2D;
+import cyano.poweradvantage.registry.MachineGUIRegistry;
 
 public class Tester {
 	public void preInit(FMLPreInitializationEvent event, Proxy proxy, Configuration config)
@@ -25,11 +28,9 @@ public class Tester {
 	public void init(FMLInitializationEvent event, Proxy proxy)
     {
 		
-		NetworkRegistry.INSTANCE.registerGuiHandler(PowerAdvantage.getInstance(), new TesterGUIHandler());
-		int id_gen = TesterGUIHandler.addGUI(new SimpleMachineGUI(new ResourceLocation(
+		int id_gen = MachineGUIRegistry.addGUI(new SimpleMachineGUI(new ResourceLocation(
 				PowerAdvantage.MODID+":textures/gui/container/simplegenerator.png"),new Integer2D[] {new Integer2D(56,53)}));
-		NetworkRegistry.INSTANCE.registerGuiHandler(PowerAdvantage.getInstance(), new TesterGUIHandler());
-		int id_fur = TesterGUIHandler.addGUI(new SimpleMachineGUI(new ResourceLocation(
+		int id_fur = MachineGUIRegistry.addGUI(new SimpleMachineGUI(new ResourceLocation(
 				PowerAdvantage.MODID+":textures/gui/container/simplefurnace.png"),new Integer2D[] 
 						{new Integer2D(56,17),new Integer2D(116,35)}));
 		

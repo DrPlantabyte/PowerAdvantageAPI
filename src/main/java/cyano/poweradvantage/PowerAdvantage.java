@@ -1,13 +1,20 @@
 package cyano.poweradvantage;
 
-import cyano.poweradvantage.api.example.Tester;
-import net.minecraft.init.Blocks;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.event.*;
-import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import cyano.poweradvantage.api.example.Tester;
+import cyano.poweradvantage.registry.MachineGUIRegistry;
 
+// NOTE: other mods dependant on this one need to add the following to their @Mod annotation:
+// dependencies = "required-after:poweradvantage" 
 @Mod(modid = PowerAdvantage.MODID, version = PowerAdvantage.VERSION, name=PowerAdvantage.NAME)
 public class PowerAdvantage
 {
@@ -23,6 +30,8 @@ public class PowerAdvantage
     
     @SidedProxy(clientSide="cyano.poweradvantage.ClientProxy", serverSide="cyano.poweradvantage.ServerProxy")
     public static Proxy proxy;
+    
+    
     
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
@@ -50,6 +59,9 @@ public class PowerAdvantage
     @EventHandler
     public void init(FMLInitializationEvent event)
     {
+
+		NetworkRegistry.INSTANCE.registerGuiHandler(PowerAdvantage.getInstance(), MachineGUIRegistry.getInstance());
+    	
 		// TODO
     	if(DEMO_MODE)test.init(event, proxy);
     }

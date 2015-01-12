@@ -1,4 +1,4 @@
-package cyano.poweradvantage.api.example;
+package cyano.poweradvantage.math;
 
 public class Integer2D {
 	public final int X,Y;

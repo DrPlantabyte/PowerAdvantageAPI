@@ -1,6 +1,5 @@
-package cyano.poweradvantage.api.example;
+package cyano.poweradvantage.api.simple.util;
 
-import java.awt.geom.Point2D;
 
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
@@ -14,6 +13,8 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 import cyano.poweradvantage.PowerAdvantage;
+import cyano.poweradvantage.math.Integer2D;
+import cyano.poweradvantage.registry.ITileEntityGUI;
 
 public class SimpleMachineGUI implements ITileEntityGUI {
 
@@ -28,7 +29,11 @@ public class SimpleMachineGUI implements ITileEntityGUI {
 		this.guiDisplayImage = guiImage;
 		this.guiWidth = 176;
 		this.guiHeight = 222;
-		this.inventorySlotCoordinates = inventorySlotCoordinates;
+		if(inventorySlotCoordinates == null){
+			this.inventorySlotCoordinates = new Integer2D[0];
+		} else {
+			this.inventorySlotCoordinates = inventorySlotCoordinates;
+		}
 	}
 	
 	public class Container extends net.minecraft.inventory.Container{
