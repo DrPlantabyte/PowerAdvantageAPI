@@ -1,4 +1,4 @@
-package cyano.poweradvantage.api.example;
+package cyano.poweradvantage.api.example.scrap;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -173,7 +173,7 @@ public class SimplePowerSourceEntity extends PowerSourceEntity implements ISided
     }
 
 
-    
+    @Override
     public void setCustomInventoryName(final String newName) {
         this.customName = newName;
     }

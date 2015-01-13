@@ -1,4 +1,4 @@
-package cyano.poweradvantage.api.example;
+package cyano.poweradvantage.api.example.scrap;
 
 import java.util.Random;
 

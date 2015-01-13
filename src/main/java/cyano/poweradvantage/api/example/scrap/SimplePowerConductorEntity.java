@@ -1,4 +1,4 @@
-package cyano.poweradvantage.api.example;
+package cyano.poweradvantage.api.example.scrap;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;

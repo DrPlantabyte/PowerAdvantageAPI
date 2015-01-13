@@ -15,11 +15,17 @@ import cyano.poweradvantage.ClientProxy;
 import cyano.poweradvantage.PowerAdvantage;
 import cyano.poweradvantage.Proxy;
 import cyano.poweradvantage.api.example.*;
-import cyano.poweradvantage.api.simple.util.SimpleMachineGUI;
+import cyano.poweradvantage.api.example.scrap.BlockSimpleConductor;
+import cyano.poweradvantage.api.example.scrap.BlockSimpleGenerator;
+import cyano.poweradvantage.api.example.scrap.BlockSimplePoweredFurnace;
+import cyano.poweradvantage.api.example.scrap.SimplePowerConductorEntity;
+import cyano.poweradvantage.api.example.scrap.SimplePowerSinkEntity;
+import cyano.poweradvantage.api.example.scrap.SimplePowerSourceEntity;
+import cyano.poweradvantage.api.simple.SimpleMachineGUI;
 import cyano.poweradvantage.math.Integer2D;
 import cyano.poweradvantage.registry.MachineGUIRegistry;
 
-public class Tester {
+public class ExamplePowerMod {
 	public void preInit(FMLPreInitializationEvent event, Proxy proxy, Configuration config)
     {
 		//
@@ -27,6 +33,10 @@ public class Tester {
 	
 	public void init(FMLInitializationEvent event, Proxy proxy)
     {
+		
+		
+		
+		
 		
 		int id_gen = MachineGUIRegistry.addGUI(new SimpleMachineGUI(new ResourceLocation(
 				PowerAdvantage.MODID+":textures/gui/container/simplegenerator.png"),new Integer2D[] {new Integer2D(56,53)}));

@@ -10,7 +10,8 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
-import cyano.poweradvantage.api.example.Tester;
+import net.minecraftforge.oredict.OreDictionary;
+import cyano.poweradvantage.api.example.ExamplePowerMod;
 import cyano.poweradvantage.registry.MachineGUIRegistry;
 
 // NOTE: other mods dependant on this one need to add the following to their @Mod annotation:
@@ -26,7 +27,7 @@ public class PowerAdvantage
     
     private static PowerAdvantage instance;
     
-    private Tester test = null;
+    private ExamplePowerMod exampleMod = null;
     
     @SidedProxy(clientSide="cyano.poweradvantage.ClientProxy", serverSide="cyano.poweradvantage.ServerProxy")
     public static Proxy proxy;
@@ -49,11 +50,13 @@ public class PowerAdvantage
     	// TODO
     	
     	if(DEMO_MODE){
-    		test = new Tester();
-        	test.preInit(event, proxy, config);
+    		exampleMod = new ExamplePowerMod();
+        	exampleMod.preInit(event, proxy, config);
     	}
     	
     	config.save();
+    	
+    	//OreDictionary.initVanillaEntries();
     }
     
     @EventHandler
@@ -63,14 +66,14 @@ public class PowerAdvantage
 		NetworkRegistry.INSTANCE.registerGuiHandler(PowerAdvantage.getInstance(), MachineGUIRegistry.getInstance());
     	
 		// TODO
-    	if(DEMO_MODE)test.init(event, proxy);
+    	if(DEMO_MODE)exampleMod.init(event, proxy);
     }
     
     @EventHandler
     public void postInit(FMLPostInitializationEvent event)
     {
     	// TODO
-    	if(DEMO_MODE)test.postInit(event, proxy);
+    	if(DEMO_MODE)exampleMod.postInit(event, proxy);
     }
 
 	public static PowerAdvantage getInstance() {

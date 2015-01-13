@@ -17,5 +17,14 @@ public abstract class PowerSourceEntity extends PowerConductorEntity{
 	public boolean canPushEnergyTo(EnumFacing blockFace, ConductorType requestType){
 		return false;
 	}
+	/**
+	 * This method is invoked when the block is placed using an item that has 
+	 * been renamed. Implementations can carry the name over to the placed 
+	 * block, but that feature is optional.
+	 * @param newName The name of the item that was placed.
+	 */
+	public void setCustomInventoryName(String newName){
+		// optional method
+	}
 	
 }

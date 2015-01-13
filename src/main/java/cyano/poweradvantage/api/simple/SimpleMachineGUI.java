@@ -1,4 +1,4 @@
-package cyano.poweradvantage.api.simple.util;
+package cyano.poweradvantage.api.simple;
 
 
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -102,7 +102,7 @@ public class SimpleMachineGUI implements ITileEntityGUI {
 		
 	}
 	
-	public void drawGUIDecorations(Object srcEntity){}
+	public void drawGUIDecorations(Object srcEntity, GUIContainer guiContainer, int x, int y){}
 	
 	public class GUIContainer extends net.minecraft.client.gui.inventory.GuiContainer{
 		private final Object entity;
@@ -124,7 +124,7 @@ public class SimpleMachineGUI implements ITileEntityGUI {
 			this.drawTexturedModalRect(x, y, 0, 0, playerInventoryWidth, playerInventoryHeight); // x, y, textureOffsetX, textureOffsetY, width, height)
 			this.mc.renderEngine.bindTexture(guiDisplayImage);
 			this.drawTexturedModalRect(x, y, 0, 0, guiWidth, guiHeight); // x, y, textureOffsetX, textureOffsetY, width, height)
-			drawGUIDecorations(entity);
+			drawGUIDecorations(entity, this, x, y);
 		}
 		
 	}
