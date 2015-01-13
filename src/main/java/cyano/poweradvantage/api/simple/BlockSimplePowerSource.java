@@ -47,7 +47,7 @@ public abstract class BlockSimplePowerSource  extends BlockContainer implements 
 	
 	
 	@Override
-    public abstract TileEntity createNewTileEntity(final World p_createNewTileEntity_1_, final int p_createNewTileEntity_2_);
+    public abstract TileEntity createNewTileEntity(final World world, final int metaDataValue);
 	
 	@Override
 	public ConductorType getEnergyType() {

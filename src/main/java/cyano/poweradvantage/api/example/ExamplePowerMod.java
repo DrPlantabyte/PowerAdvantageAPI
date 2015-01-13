@@ -35,7 +35,16 @@ public class ExamplePowerMod {
     {
 		
 		
+		int rsGen_guiID = MachineGUIRegistry.addGUI(new RedstoneGeneratorGUI());
+		Block rsGen_block = new RedstoneGeneratorBlock(rsGen_guiID,PowerAdvantage.getInstance());
+		rsGen_block.setUnlocalizedName(PowerAdvantage.MODID+"."+"redstone_generator");
+		GameRegistry.registerBlock(rsGen_block,"redstone_generator");
+		GameRegistry.registerTileEntity(RedstoneGeneratorTileEntity.class,PowerAdvantage.MODID+"."+"redstone_generator");
 		
+		
+		if(proxy instanceof ClientProxy){
+			registerItemRender(net.minecraft.item.Item.getItemFromBlock(rsGen_block),"redstone_generator");
+		}
 		
 		
 		int id_gen = MachineGUIRegistry.addGUI(new SimpleMachineGUI(new ResourceLocation(
