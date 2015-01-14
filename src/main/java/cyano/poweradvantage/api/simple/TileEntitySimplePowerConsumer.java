@@ -2,30 +2,31 @@ package cyano.poweradvantage.api.simple;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
-import net.minecraft.inventory.SlotFurnaceFuel;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.tileentity.TileEntityFurnace;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IChatComponent;
 import cyano.poweradvantage.api.ConductorType;
-import cyano.poweradvantage.api.PowerSourceEntity;
+import cyano.poweradvantage.api.PowerConductorEntity;
+import cyano.poweradvantage.api.PowerSinkEntity;
 
-public abstract class TileEntitySimplePowerSource extends PowerSourceEntity implements ISidedInventory{
+public abstract class TileEntitySimplePowerConsumer extends PowerSinkEntity implements ISidedInventory {
 
 	private final ConductorType type;
 	private final float energyBufferSize;
 	private float energyBuffer = 0;
 	
-    private String customName = null;
+	private String customName = null;
     
     private final String unlocalizedName;
 
     
-    public TileEntitySimplePowerSource(ConductorType type,float energyBufferSize, String unlocalizedName){
+    public TileEntitySimplePowerConsumer(ConductorType type,float energyBufferSize, String unlocalizedName){
     	this.type = type;
     	this.energyBufferSize = energyBufferSize;
     	this.unlocalizedName = unlocalizedName;
@@ -37,17 +38,68 @@ public abstract class TileEntitySimplePowerSource extends PowerSourceEntity impl
     
     protected abstract ItemStack[] getInventory();
     
-	public abstract int[] getDataFieldArray();
+
+	public abstract  int[] getDataFieldArray();
     
     @Override
     public abstract void tickUpdate(boolean isServerWorld);
     
     @Override
-	public void powerUpdate(){
-    	// Do nothing (adjacent conductors will pull energy out)
-    }
+	public void powerUpdate() {
+		if(getEnergyBuffer() < getEnergyBufferCapacity()){
+			// get power from neighbors who have more than this conductor
+			this.tryEnergyPullFrom(EnumFacing.UP);
+			this.tryEnergyPullFrom(EnumFacing.NORTH);
+			this.tryEnergyPullFrom(EnumFacing.WEST);
+			this.tryEnergyPullFrom(EnumFacing.SOUTH);
+			this.tryEnergyPullFrom(EnumFacing.EAST);
+			this.tryEnergyPullFrom(EnumFacing.DOWN);
+		}
+	}
+	
+	protected void tryEnergyPullFrom(EnumFacing dir){
+		float deficit = getEnergyBufferCapacity() - getEnergyBuffer();
+		if(deficit > 0){
+			EnumFacing otherDir = null;
+			BlockPos coord = null;
+			switch(dir){
+			case UP:
+				coord = getPos().up();
+				otherDir = EnumFacing.DOWN;
+				break;
+			case DOWN:
+				coord = getPos().down();
+				otherDir = EnumFacing.UP;
+				break;
+			case NORTH:
+				coord = getPos().north();
+				otherDir = EnumFacing.SOUTH;
+				break;
+			case SOUTH:
+				coord = getPos().south();
+				otherDir = EnumFacing.NORTH;
+				break;
+			case EAST:
+				coord = getPos().east();
+				otherDir = EnumFacing.WEST;
+				break;
+			case WEST:
+				coord = getPos().west();
+				otherDir = EnumFacing.EAST;
+				break;
+			}
+			TileEntity e = getWorld().getTileEntity(coord);
+			if(e instanceof PowerConductorEntity){
+				PowerConductorEntity pce = (PowerConductorEntity)e;
+				if(pce.canPullEnergyFrom(otherDir, type)
+						&& pce.getEnergyBuffer() > this.getEnergyBuffer()){
+					this.addEnergy(-1*pce.subtractEnergy(deficit));
+				}
+			}
+		}
+	}
     
-    
+
     @Override
     public void readFromNBT(final NBTTagCompound tagRoot) {
         super.readFromNBT(tagRoot);
@@ -109,14 +161,13 @@ public abstract class TileEntitySimplePowerSource extends PowerSourceEntity impl
 		energyBuffer = energy;
 		
 	}
-	
-
 	@Override
-	public boolean canPullEnergyFrom(EnumFacing blockFace,
+	public boolean canPushEnergyTo(EnumFacing blockFace,
 			ConductorType requestType) {
-		return ConductorType.areSameType(getEnergyType(), requestType);
+		return ConductorType.areSameType(type, requestType);
 	}
 	
+
 
     public void setCustomInventoryName(final String newName) {
         this.customName = newName;

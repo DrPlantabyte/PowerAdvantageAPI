@@ -73,11 +73,6 @@ public class RedstoneGeneratorTileEntity extends TileEntitySimplePowerSource {
 		return (float)burnTime / (float) ticksPerFuel;
 	}
 
-	@Override
-	public void powerUpdate() {
-		// Do nothing (adjacent conductors will pull energy out)
-	}
-
 	
 	@Override
     public void writeToNBT(final NBTTagCompound tagRoot) {
@@ -89,7 +84,11 @@ public class RedstoneGeneratorTileEntity extends TileEntitySimplePowerSource {
     public void readFromNBT(final NBTTagCompound tagRoot) {
         super.readFromNBT(tagRoot);
         // inventory is already handled by the TileEntitySimplePowerSource class
-        this.burnTime = tagRoot.getShort("BurnTime");
+        if(tagRoot.hasKey("BurnTime")){
+        	this.burnTime = tagRoot.getShort("BurnTime");
+        } else {
+        	this.burnTime = 0;
+        }
 	}
 	
 	@Override

@@ -29,14 +29,14 @@ import cyano.poweradvantage.api.ConductorType;
 import cyano.poweradvantage.api.ITypedConductor;
 import cyano.poweradvantage.api.PowerSourceEntity;
 
-public abstract class BlockSimplePowerSource  extends BlockContainer implements ITypedConductor {
+public abstract class BlockSimplePowerConsumer  extends BlockContainer implements ITypedConductor {
 	private final int guiID;
 	private final ConductorType type;
 	private final Object guiHandlerOwner;
 
     public static final PropertyDirection FACING = PropertyDirection.create("facing", (Predicate)EnumFacing.Plane.HORIZONTAL);
     
-	public BlockSimplePowerSource(Material blockMaterial, float hardness, ConductorType energyType, int guiHandlerID, Object ownerOfGUIHandler){
+	public BlockSimplePowerConsumer(Material blockMaterial, float hardness, ConductorType energyType, int guiHandlerID, Object ownerOfGUIHandler){
 		super(blockMaterial);
 		this.guiID = guiHandlerID;
 		this.type = energyType;
@@ -105,7 +105,7 @@ public abstract class BlockSimplePowerSource  extends BlockContainer implements 
     @Override
     public void breakBlock(final World world, final BlockPos coord, final IBlockState bs) {
         final TileEntity tileEntity = world.getTileEntity(coord);
-        if (tileEntity instanceof TileEntitySimplePowerSource) {
+        if (tileEntity instanceof TileEntitySimplePowerConsumer) {
             InventoryHelper.dropInventoryItems(world, coord, (IInventory)tileEntity);
             world.updateComparatorOutputLevel(coord, this);
         }
