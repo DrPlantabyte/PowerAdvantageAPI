@@ -1,0 +1,6 @@
+{
+    "parent": "poweradvantage:block/pipe3_dnu",
+    "textures": {
+        "texture": "poweradvantage:blocks/example_redstone_conductor"
+    }
+}

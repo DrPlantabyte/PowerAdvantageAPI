@@ -1,0 +1,8 @@
+{
+    "parent": "block/orientable",
+    "textures": {
+        "top": "poweradvantage:blocks/example_redstone_furnace_side",
+        "front": "poweradvantage:blocks/example_redstone_furnace_front",
+        "side": "poweradvantage:blocks/example_redstone_furnace_side"
+    }
+}

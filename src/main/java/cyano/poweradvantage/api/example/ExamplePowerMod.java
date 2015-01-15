@@ -37,13 +37,27 @@ public class ExamplePowerMod {
 		
 		int rsGen_guiID = MachineGUIRegistry.addGUI(new RedstoneGeneratorGUI());
 		Block rsGen_block = new RedstoneGeneratorBlock(rsGen_guiID,PowerAdvantage.getInstance());
-		rsGen_block.setUnlocalizedName(PowerAdvantage.MODID+"."+"redstone_generator");
-		GameRegistry.registerBlock(rsGen_block,"redstone_generator");
-		GameRegistry.registerTileEntity(RedstoneGeneratorTileEntity.class,PowerAdvantage.MODID+"."+"redstone_generator");
+		rsGen_block.setUnlocalizedName(PowerAdvantage.MODID+"."+"example_redstone_generator");
+		GameRegistry.registerBlock(rsGen_block,"example_redstone_generator");
+		GameRegistry.registerTileEntity(RedstoneGeneratorTileEntity.class,PowerAdvantage.MODID+"."+"example_redstone_generator");
+		
+
+		int rsFurn_guiID = MachineGUIRegistry.addGUI(new RedstoneGeneratorGUI());
+		Block rsFurn_block = new RedstoneFurnaceBlock(rsFurn_guiID,PowerAdvantage.getInstance());
+		rsFurn_block.setUnlocalizedName(PowerAdvantage.MODID+"."+"example_redstone_furnace");
+		GameRegistry.registerBlock(rsFurn_block,"example_redstone_furnace");
+		GameRegistry.registerTileEntity(RedstoneFurnaceTileEntity.class,PowerAdvantage.MODID+"."+"example_redstone_furnace");
+		
+		Block rsCon_block = new RedstonePowerConductorBlock();
+		rsCon_block.setUnlocalizedName("example_redstone_conductor");
+		GameRegistry.registerBlock(rsCon_block,"example_redstone_conductor");
+		GameRegistry.registerTileEntity(RedstonePowerConductorTileEntity.class,PowerAdvantage.MODID+"."+"example_redstone_conductor");
 		
 		
 		if(proxy instanceof ClientProxy){
-			registerItemRender(net.minecraft.item.Item.getItemFromBlock(rsGen_block),"redstone_generator");
+			registerItemRender(net.minecraft.item.Item.getItemFromBlock(rsGen_block),"example_redstone_generator");
+			registerItemRender(net.minecraft.item.Item.getItemFromBlock(rsFurn_block),"example_redstone_conductor");
+			registerItemRender(net.minecraft.item.Item.getItemFromBlock(rsCon_block),"example_redstone_furnace");
 		}
 		
 		
