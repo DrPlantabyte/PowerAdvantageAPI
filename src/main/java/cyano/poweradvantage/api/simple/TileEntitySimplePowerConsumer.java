@@ -1,10 +1,14 @@
 package cyano.poweradvantage.api.simple;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.Packet;
+import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
@@ -172,6 +176,38 @@ public abstract class TileEntitySimplePowerConsumer extends PowerSinkEntity impl
     public void setCustomInventoryName(final String newName) {
         this.customName = newName;
     }
+
+
+    
+    // SYNCHRONIZATION OF DATA FIELDS
+    public NBTTagCompound createDataFieldUpdateTag(){
+    	this.prepareDataFieldsForSync();
+    	int[] dataFields = this.getDataFieldArray();
+    	NBTTagCompound nbtTag = new NBTTagCompound();
+    	nbtTag.setIntArray("[]", dataFields);
+    	return nbtTag;
+    }
+
+    public void readDataFieldUpdateTag(NBTTagCompound tag){
+    	int[] newData = tag.getIntArray("[]");
+    	System.arraycopy(newData, 0, this.getDataFieldArray(), 0, Math.min(newData.length, this.getDataFieldArray().length));
+    	this.onDataFieldUpdate();
+    }
+
+    public abstract void onDataFieldUpdate();
+    public abstract void prepareDataFieldsForSync();
+    
+    @Override 
+    public Packet getDescriptionPacket(){
+    	NBTTagCompound nbtTag = createDataFieldUpdateTag();
+    	return new S35PacketUpdateTileEntity(this.pos, 0, nbtTag);
+    }
+
+    @Override
+    public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity packet) {
+    	readDataFieldUpdateTag(packet.getNbtCompound());
+    }
+
     
 ///// ISidedInventory methods /////
 	@Override

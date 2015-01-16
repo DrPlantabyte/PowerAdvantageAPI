@@ -7,7 +7,7 @@ import net.minecraft.util.EnumFacing;
 import cyano.poweradvantage.api.ConductorType;
 import cyano.poweradvantage.api.PowerConductorEntity;
 
-public abstract class TileEntitySimplePowerConductor extends PowerConductorEntity  {
+public abstract class TileEntitySimplePowerConductor extends PowerConductorEntity{
 	private final ConductorType type;
 	private final float energyBufferSize;
 	private final float energyRequestSize;

@@ -17,8 +17,9 @@ public class RedstoneFurnaceTileEntity extends TileEntitySimplePowerConsumer {
 	private final int[] insertableSlots = {0};
 	private final int[] extractableSlots = {1};
 	
-	private int[] dataFields = new int[1];
+	private int[] dataFields = new int[2];
 	private static final int DATAFIELD_COOKTIME = 0; // index in the dataFields array
+	private static final int DATAFIELD_ENERGY = 1; // index in the dataFields array
 	
     /*private*/ short cookTime;
 
@@ -59,6 +60,20 @@ public class RedstoneFurnaceTileEntity extends TileEntitySimplePowerConsumer {
 	@Override
 	public int[] getDataFieldArray() {
 		return dataFields;
+	}
+	
+
+	@Override
+	public void onDataFieldUpdate() {
+		// used for server-to-client sync
+		this.cookTime = (short)dataFields[DATAFIELD_COOKTIME];
+		this.setEnergy(Float.intBitsToFloat(dataFields[DATAFIELD_ENERGY]));
+	}
+	
+	@Override
+	public void prepareDataFieldsForSync(){
+		dataFields[DATAFIELD_COOKTIME] = cookTime;
+		dataFields[DATAFIELD_ENERGY] = Float.floatToIntBits(this.getEnergyBuffer());
 	}
 
 	private float oldEnergy = 0f;
@@ -170,4 +185,5 @@ public class RedstoneFurnaceTileEntity extends TileEntitySimplePowerConsumer {
 		}
 		return (float) cookTime / (float)getSmeltTime(inventory[0]);
 	}
+
 }

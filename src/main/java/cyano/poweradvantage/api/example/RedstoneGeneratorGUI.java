@@ -19,7 +19,7 @@ public class RedstoneGeneratorGUI extends SimpleMachineGUI {
 		if(srcEntity instanceof RedstoneGeneratorTileEntity){
 			int flameHeight = (int)(((RedstoneGeneratorTileEntity)srcEntity).getBurnFraction() * 14);
 			guiContainer.mc.renderEngine.bindTexture(guiDisplayImage);
-			guiContainer.drawTexturedModalRect(x+79, y+42, 177, 14-flameHeight, 14, flameHeight); // x, y, textureOffsetX, textureOffsetY, width, height)
+			guiContainer.drawTexturedModalRect(x+79, y+42+flameHeight, 177, 14-flameHeight, 14, flameHeight); // x, y, textureOffsetX, textureOffsetY, width, height)
 			
 		}
 	}

@@ -12,8 +12,9 @@ import cyano.poweradvantage.api.simple.TileEntitySimplePowerSource;
 public class RedstoneGeneratorTileEntity extends TileEntitySimplePowerSource {
 
 	private ItemStack[] inventory = new ItemStack[1];
-	private int[] dataFields = new int[1];
+	private int[] dataFields = new int[2];
 	private static final int DATAFIELD_BURNTIME = 0; // index in the dataFields array
+	private static final int DATAFIELD_ENERGY = 1; // index in the dataFields array
 	
     private short burnTime;
     private final float energyPerFuelTick = 4.0f;
@@ -109,6 +110,19 @@ public class RedstoneGeneratorTileEntity extends TileEntitySimplePowerSource {
 	@Override
 	public int[] getDataFieldArray() {
 		return dataFields;
+	}
+	
+	@Override
+	public void onDataFieldUpdate() {
+		// used for server-to-client sync
+		this.burnTime = (short)dataFields[DATAFIELD_BURNTIME];
+		this.setEnergy(Float.intBitsToFloat(dataFields[DATAFIELD_ENERGY]));
+	}
+	
+	@Override
+	public void prepareDataFieldsForSync(){
+		dataFields[DATAFIELD_BURNTIME] = burnTime;
+		dataFields[DATAFIELD_ENERGY] = Float.floatToIntBits(this.getEnergyBuffer());
 	}
 	
 	@Override
