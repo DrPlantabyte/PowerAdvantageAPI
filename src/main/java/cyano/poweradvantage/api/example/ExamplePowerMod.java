@@ -15,12 +15,6 @@ import cyano.poweradvantage.ClientProxy;
 import cyano.poweradvantage.PowerAdvantage;
 import cyano.poweradvantage.Proxy;
 import cyano.poweradvantage.api.example.*;
-import cyano.poweradvantage.api.example.scrap.BlockSimpleConductor;
-import cyano.poweradvantage.api.example.scrap.BlockSimpleGenerator;
-import cyano.poweradvantage.api.example.scrap.BlockSimplePoweredFurnace;
-import cyano.poweradvantage.api.example.scrap.SimplePowerConductorEntity;
-import cyano.poweradvantage.api.example.scrap.SimplePowerSinkEntity;
-import cyano.poweradvantage.api.example.scrap.SimplePowerSourceEntity;
 import cyano.poweradvantage.api.simple.SimpleMachineGUI;
 import cyano.poweradvantage.math.Integer2D;
 import cyano.poweradvantage.registry.MachineGUIRegistry;
@@ -58,46 +52,6 @@ public class ExamplePowerMod {
 			registerItemRender(net.minecraft.item.Item.getItemFromBlock(rsGen_block),"example_redstone_generator");
 			registerItemRender(net.minecraft.item.Item.getItemFromBlock(rsCon_block),"example_redstone_conductor");
 			registerItemRender(net.minecraft.item.Item.getItemFromBlock(rsFurn_block),"example_redstone_furnace");
-		}
-		
-		
-		int id_gen = MachineGUIRegistry.addGUI(new SimpleMachineGUI(new ResourceLocation(
-				PowerAdvantage.MODID+":textures/gui/container/simplegenerator.png"),new Integer2D[] {new Integer2D(56,53)}));
-		int id_fur = MachineGUIRegistry.addGUI(new SimpleMachineGUI(new ResourceLocation(
-				PowerAdvantage.MODID+":textures/gui/container/simplefurnace.png"),new Integer2D[] 
-						{new Integer2D(56,17),new Integer2D(116,35)}));
-		
-
-		//
-		Block cable = new BlockSimpleConductor();
-		cable.setUnlocalizedName(PowerAdvantage.MODID+"."+"powercable");
-		GameRegistry.registerBlock(cable,"powercable");
-		GameRegistry.registerTileEntity(SimplePowerConductorEntity.class,PowerAdvantage.MODID+"."+"SimplePowerConductorEntity");
-
-		Block poweredFurnaceUnlit = new BlockSimplePoweredFurnace(false,id_fur);
-		poweredFurnaceUnlit.setUnlocalizedName(PowerAdvantage.MODID+"."+"powerfurnace");
-		GameRegistry.registerBlock(poweredFurnaceUnlit,"powerfurnace");
-		Block poweredFurnaceLit = new BlockSimplePoweredFurnace(true,id_fur);
-		poweredFurnaceLit.setUnlocalizedName(PowerAdvantage.MODID+"."+"powerfurnace_lit");
-		GameRegistry.registerBlock(poweredFurnaceLit,"powerfurnace_lit");
-		GameRegistry.registerTileEntity(SimplePowerSourceEntity.class,PowerAdvantage.MODID+"."+"SimplePowerSourceEntity");
-		
-		
-		
-		Block powergen = new BlockSimpleGenerator(false,id_gen);
-		powergen.setUnlocalizedName(PowerAdvantage.MODID+"."+"powergenerator");
-		GameRegistry.registerBlock(powergen,"powergenerator");
-		Block powergenLit = new BlockSimpleGenerator(true,id_gen);
-		powergenLit.setUnlocalizedName(PowerAdvantage.MODID+"."+"powergenerator_lit");
-		GameRegistry.registerBlock(powergenLit,"powergenerator_lit");
-		GameRegistry.registerTileEntity(SimplePowerSinkEntity.class,PowerAdvantage.MODID+"."+"SimplePowerSinkEntity");
-		
-		if(proxy instanceof ClientProxy){
-			registerItemRender(net.minecraft.item.Item.getItemFromBlock(cable),"powercable");
-			registerItemRender(net.minecraft.item.Item.getItemFromBlock(poweredFurnaceUnlit),"powerfurnace");
-			registerItemRender(net.minecraft.item.Item.getItemFromBlock(poweredFurnaceLit),"powerfurnace_lit");
-			registerItemRender(net.minecraft.item.Item.getItemFromBlock(powergen),"powergenerator");
-			registerItemRender(net.minecraft.item.Item.getItemFromBlock(powergenLit),"powergenerator_lit");
 		}
 		
 		

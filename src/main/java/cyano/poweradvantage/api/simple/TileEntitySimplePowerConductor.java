@@ -16,7 +16,8 @@ public abstract class TileEntitySimplePowerConductor extends PowerConductorEntit
 	public TileEntitySimplePowerConductor(ConductorType energyType, float bufferSize){
 		this.type = energyType;
 		this.energyBufferSize = bufferSize;
-		this.energyRequestSize = this.energyBufferSize * 0.25f; 
+		this.energyRequestSize = this.energyBufferSize;
+		//this.energyRequestSize = this.energyBufferSize * 0.25f; 
 	}
 	@Override
 	public ConductorType getEnergyType() {

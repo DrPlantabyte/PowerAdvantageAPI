@@ -64,7 +64,7 @@ public class RedstoneGeneratorTileEntity extends TileEntitySimplePowerSource {
 						this.inventory[0] = null;
 					}
 				}
-			} else {
+			} else if(this.isBurning() && this.getEnergyBuffer() < this.getEnergyBufferCapacity()) {
 				// is burning, add energy to buffer
 				this.addEnergy(energyPerFuelTick);
 			}
@@ -75,9 +75,10 @@ public class RedstoneGeneratorTileEntity extends TileEntitySimplePowerSource {
 				// this is where you'd call setState(this.isBurning(), this.worldObj, this.pos) 
 				// if you wanted to make the block change apearance when active
 			}
-		}
-		if (flag2) {
-			this.markDirty();
+			if (flag2) {
+				worldObj.markBlockForUpdate(this.pos);
+				this.markDirty();
+			}
 		}
 	}
 	

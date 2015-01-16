@@ -6,7 +6,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import cyano.poweradvantage.PowerAdvantage;
 import cyano.poweradvantage.api.ConductorType;
-import cyano.poweradvantage.api.example.scrap.BlockSimplePoweredFurnace;
 import cyano.poweradvantage.api.simple.TileEntitySimplePowerConsumer;
 
 
