@@ -14,8 +14,10 @@ public class RedstoneFurnaceGUI  extends SimpleMachineGUI {
 	@Override 
 	public void drawGUIDecorations(Object srcEntity, GUIContainer guiContainer, int x, int y){
 		// draw flame
-		if(srcEntity instanceof RedstoneGeneratorTileEntity){
-			int arrowLength = (int)(((RedstoneFurnaceTileEntity)srcEntity).getCookFraction() * 24);
+		if(srcEntity instanceof RedstoneFurnaceTileEntity){
+			float cookFraction = ((RedstoneFurnaceTileEntity)srcEntity).getCookFraction();
+			int arrowLength = (int)(cookFraction * 24f);
+			System.out.println("Draw arrow "+((RedstoneFurnaceTileEntity)srcEntity).cookTime);
 			guiContainer.mc.renderEngine.bindTexture(guiDisplayImage);
 			guiContainer.drawTexturedModalRect(x+79, y+35, 177, 15, arrowLength, 17); // x, y, textureOffsetX, textureOffsetY, width, height)
 			

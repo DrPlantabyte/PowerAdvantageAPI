@@ -20,7 +20,7 @@ public class RedstoneFurnaceTileEntity extends TileEntitySimplePowerConsumer {
 	private int[] dataFields = new int[1];
 	private static final int DATAFIELD_COOKTIME = 0; // index in the dataFields array
 	
-    private short cookTime;
+    /*private*/ short cookTime;
 
     private final float ENERGY_PER_TICK = 2f;
     private final int COOKING_PER_TICK = 2;
@@ -61,11 +61,24 @@ public class RedstoneFurnaceTileEntity extends TileEntitySimplePowerConsumer {
 		return dataFields;
 	}
 
+	private float oldEnergy = 0f;
+	private short oldCookTime = 0;
 	@Override
 	public void tickUpdate(boolean isServerWorld) {
 		if(isServerWorld){
 			final boolean flag = this.isBurning();
 			boolean flag2 = false;
+			if(worldObj.getWorldTime() % 8 == 0){
+				// GUI synchronization
+				if(this.getEnergyBuffer() != oldEnergy){
+					flag2 = true;
+					oldEnergy = this.getEnergyBuffer();
+				}
+				if(this.cookTime != oldCookTime){
+					flag2 = true;
+					oldCookTime = this.cookTime;
+				}
+			}
 			if(cookTime >= getSmeltTime(inventory[0]) && this.canSmelt(this.inventory[0], this.inventory[1])){
 				// finished smelting current item
 				smeltItem();
@@ -84,6 +97,7 @@ public class RedstoneFurnaceTileEntity extends TileEntitySimplePowerConsumer {
 				// if you wanted to show that the machine is active
 			}
 			if (flag2) {
+				worldObj.markBlockForUpdate(this.pos);
 				this.markDirty();
 			}
 		}

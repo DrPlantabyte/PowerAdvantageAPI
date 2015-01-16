@@ -90,7 +90,7 @@ public abstract class BlockSimplePowerConductor  extends PowerConductorBlock imp
         final boolean connectUp = this.canConnectTo(world, coord.up());
         final boolean connectDown = this.canConnectTo(world, coord.down());
         
-        float radius = 4f / 16f / 2f;
+        float radius = pipeRadius;
         float rminus = 0.5f - radius;
         float rplus = 0.5f + radius;
         

@@ -28,41 +28,56 @@ public class RedstoneGeneratorTileEntity extends TileEntitySimplePowerSource {
 		return inventory;
 	}
 
+	
+	private float oldEnergy = 0f;
+	private short oldBurnTime = 0;
 	@Override
 	public void tickUpdate(boolean isServerWorld) {
 		final boolean flag = this.isBurning();
-        boolean flag2 = false;
-        if (this.isBurning()) {
-            this.burnTime--;
-        }
-        if (isServerWorld) {
-            
-                if (!this.isBurning() && this.getEnergyBuffer() < this.getEnergyBufferCapacity() && isItemValidForSlot(0,this.inventory[0])) {
-                    final int itemBurnTime = ticksPerFuel;
-                    this.burnTime = itemBurnTime;
-                    flag2 = true;
-                    if (this.inventory[0] != null) {
-                        final ItemStack itemStack = this.inventory[0];
-                        itemStack.stackSize--;
-                        if (this.inventory[0].stackSize <= 0) {
-                            this.inventory[0] = null;
-                        }
-                    }
-                } else {
-                	// is burning, add energy to buffer
-                	this.addEnergy(energyPerFuelTick);
-                }
-                
-            
-            if (flag != this.isBurning()) {
-                flag2 = true;
-                // this is where you'd call setState(this.isBurning(), this.worldObj, this.pos) 
-                // if you wanted to make the block change apearance when active
-            }
-        }
-        if (flag2) {
-            this.markDirty();
-        }
+		boolean flag2 = false;
+
+		if (this.isBurning()) {
+			this.burnTime--;
+		}
+		if (isServerWorld) {
+			if(worldObj.getWorldTime() % 8 == 0){
+				// GUI synchronization
+				if(this.getEnergyBuffer() != oldEnergy){
+					flag2 = true;
+					oldEnergy = this.getEnergyBuffer();
+				}
+				if(this.burnTime != oldBurnTime){
+					flag2 = true;
+					oldBurnTime = this.burnTime;
+				}
+			}
+
+			if (!this.isBurning() && this.getEnergyBuffer() < this.getEnergyBufferCapacity() && isItemValidForSlot(0,this.inventory[0])) {
+				final int itemBurnTime = ticksPerFuel;
+				this.burnTime = itemBurnTime;
+				flag2 = true;
+				if (this.inventory[0] != null) {
+					final ItemStack itemStack = this.inventory[0];
+					itemStack.stackSize--;
+					if (this.inventory[0].stackSize <= 0) {
+						this.inventory[0] = null;
+					}
+				}
+			} else {
+				// is burning, add energy to buffer
+				this.addEnergy(energyPerFuelTick);
+			}
+
+
+			if (flag != this.isBurning()) {
+				flag2 = true;
+				// this is where you'd call setState(this.isBurning(), this.worldObj, this.pos) 
+				// if you wanted to make the block change apearance when active
+			}
+		}
+		if (flag2) {
+			this.markDirty();
+		}
 	}
 	
 	public boolean isBurning() {

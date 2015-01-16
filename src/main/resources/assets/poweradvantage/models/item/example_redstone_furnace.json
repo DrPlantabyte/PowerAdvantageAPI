@@ -1,5 +1,5 @@
 {
-    "parent": "poweradvantage:block/example_redstone_generator",
+    "parent": "poweradvantage:block/example_redstone_furnace",
     "display": {
         "thirdperson": {
             "rotation": [ 10, -45, 170 ],
