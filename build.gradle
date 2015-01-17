@@ -17,6 +17,12 @@ buildscript {
 
 apply plugin: 'forge'
 
+allprojects {
+    apply plugin: 'java'
+    sourceCompatibility = 1.7
+    targetCompatibility = 1.7
+}
+
 version = "0.0.3"
 group= "cyano.poweradvantage" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "PowerAdvantage"
