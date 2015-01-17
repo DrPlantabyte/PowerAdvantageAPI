@@ -13,11 +13,12 @@ public abstract class TileEntitySimplePowerConductor extends PowerConductorEntit
 	private final float energyRequestSize;
 	private float energyBuffer = 0;
 	
+	private boolean isEmpty = true;
+	
 	public TileEntitySimplePowerConductor(ConductorType energyType, float bufferSize){
 		this.type = energyType;
 		this.energyBufferSize = bufferSize;
-		this.energyRequestSize = this.energyBufferSize;
-		//this.energyRequestSize = this.energyBufferSize * 0.25f; 
+		this.energyRequestSize = this.energyBufferSize * 0.25f; 
 	}
 	@Override
 	public ConductorType getEnergyType() {
@@ -37,7 +38,7 @@ public abstract class TileEntitySimplePowerConductor extends PowerConductorEntit
 	@Override
 	public void setEnergy(float energy) {
 		energyBuffer = energy;
-		
+		isEmpty = energy <= 0;
 	}
 
 	@Override
@@ -57,60 +58,39 @@ public abstract class TileEntitySimplePowerConductor extends PowerConductorEntit
 		// do nothing
 	}
 
+	
+	private static final EnumFacing[] faces = {EnumFacing.UP,EnumFacing.SOUTH,EnumFacing.EAST,EnumFacing.NORTH,EnumFacing.WEST,EnumFacing.DOWN};
+	
 	@Override
 	public void powerUpdate() {
-		if(getEnergyBuffer() < getEnergyBufferCapacity()){
-			// get power from neighbors who have more than this conductor
-			IBlockState bs = this.worldObj.getBlockState(this.pos);
-			
-			this.tryEnergyPullFrom(EnumFacing.UP);
-			this.tryEnergyPullFrom(EnumFacing.NORTH);
-			this.tryEnergyPullFrom(EnumFacing.WEST);
-			this.tryEnergyPullFrom(EnumFacing.SOUTH);
-			this.tryEnergyPullFrom(EnumFacing.EAST);
-			this.tryEnergyPullFrom(EnumFacing.DOWN);
-		}
-	}
-	
-	void tryEnergyPullFrom(EnumFacing dir){
-		float deficit = Math.min(getEnergyBufferCapacity() - getEnergyBuffer(), energyRequestSize);
-		if(deficit > 0){
-			EnumFacing otherDir = null;
-			BlockPos coord = null;
-			switch(dir){
-			case UP:
-				coord = getPos().up();
-				otherDir = EnumFacing.DOWN;
-				break;
-			case DOWN:
-				coord = getPos().down();
-				otherDir = EnumFacing.UP;
-				break;
-			case NORTH:
-				coord = getPos().north();
-				otherDir = EnumFacing.SOUTH;
-				break;
-			case SOUTH:
-				coord = getPos().south();
-				otherDir = EnumFacing.NORTH;
-				break;
-			case EAST:
-				coord = getPos().east();
-				otherDir = EnumFacing.WEST;
-				break;
-			case WEST:
-				coord = getPos().west();
-				otherDir = EnumFacing.EAST;
-				break;
-			}
-			TileEntity e = getWorld().getTileEntity(coord);
-			if(e instanceof PowerConductorEntity){
-				PowerConductorEntity pce = (PowerConductorEntity)e;
-				if(pce.canPullEnergyFrom(otherDir, type)
-						&& pce.getEnergyBuffer() > this.getEnergyBuffer()){
-					this.addEnergy(-1*pce.subtractEnergy(deficit));
+		if(isEmpty)return;
+		float myDeficit = this.energyBufferSize - this.energyBuffer;
+		float availableEnergy = Math.min(energyBuffer, energyRequestSize);
+		final BlockPos[] coords = new BlockPos[6];
+		coords[0] = this.pos.down();
+		coords[1] = this.pos.north();
+		coords[2] = this.pos.west();
+		coords[3] = this.pos.south();
+		coords[4] = this.pos.east();
+		coords[5] = this.pos.up();
+		final PowerConductorEntity[] neighbors = new PowerConductorEntity[6];
+		final float[] deficits = new float[6];
+		int count = 0;
+		float sum = 0;
+		for(int n = 0; n < 6; n++){
+			TileEntity e = worldObj.getTileEntity(coords[n]);
+			if(e instanceof PowerConductorEntity && ((PowerConductorEntity)e).canPushEnergyTo(faces[n], type)){
+				deficits[count] = (((PowerConductorEntity)e).getEnergyBufferCapacity() - ((PowerConductorEntity)e).getEnergyBuffer()); // positive number
+				if(deficits[count] > 0 && deficits[count] > myDeficit){
+					neighbors[count] = (PowerConductorEntity)e;
+					sum += deficits[count];
+					count++;
 				}
 			}
+		}
+		float c  = availableEnergy / sum;
+		for(int n = 0; n < count; n++){
+			this.subtractEnergy(neighbors[n].addEnergy(availableEnergy / count));//deficits[n] * c));
 		}
 	}
 }

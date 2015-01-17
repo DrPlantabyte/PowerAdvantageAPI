@@ -50,58 +50,9 @@ public abstract class TileEntitySimplePowerConsumer extends PowerSinkEntity impl
     
     @Override
 	public void powerUpdate() {
-		if(getEnergyBuffer() < getEnergyBufferCapacity()){
-			// get power from neighbors who have more than this conductor
-			this.tryEnergyPullFrom(EnumFacing.UP);
-			this.tryEnergyPullFrom(EnumFacing.NORTH);
-			this.tryEnergyPullFrom(EnumFacing.WEST);
-			this.tryEnergyPullFrom(EnumFacing.SOUTH);
-			this.tryEnergyPullFrom(EnumFacing.EAST);
-			this.tryEnergyPullFrom(EnumFacing.DOWN);
-		}
+    	// do nothing
 	}
 	
-	protected void tryEnergyPullFrom(EnumFacing dir){
-		float deficit = getEnergyBufferCapacity() - getEnergyBuffer();
-		if(deficit > 0){
-			EnumFacing otherDir = null;
-			BlockPos coord = null;
-			switch(dir){
-			case UP:
-				coord = getPos().up();
-				otherDir = EnumFacing.DOWN;
-				break;
-			case DOWN:
-				coord = getPos().down();
-				otherDir = EnumFacing.UP;
-				break;
-			case NORTH:
-				coord = getPos().north();
-				otherDir = EnumFacing.SOUTH;
-				break;
-			case SOUTH:
-				coord = getPos().south();
-				otherDir = EnumFacing.NORTH;
-				break;
-			case EAST:
-				coord = getPos().east();
-				otherDir = EnumFacing.WEST;
-				break;
-			case WEST:
-				coord = getPos().west();
-				otherDir = EnumFacing.EAST;
-				break;
-			}
-			TileEntity e = getWorld().getTileEntity(coord);
-			if(e instanceof PowerConductorEntity){
-				PowerConductorEntity pce = (PowerConductorEntity)e;
-				if(pce.canPullEnergyFrom(otherDir, type)
-						&& pce.getEnergyBuffer() > this.getEnergyBuffer()){
-					this.addEnergy(-1*pce.subtractEnergy(deficit));
-				}
-			}
-		}
-	}
     
 
     @Override

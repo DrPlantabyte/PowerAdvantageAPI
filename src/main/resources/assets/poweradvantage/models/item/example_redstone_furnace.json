@@ -1,5 +1,6 @@
 {
     "parent": "poweradvantage:block/example_redstone_furnace",
+    "y":90,
     "display": {
         "thirdperson": {
             "rotation": [ 10, -45, 170 ],

@@ -1,5 +1,5 @@
 {
-    "parent": "poweradvantage:block/powercable_ns",
+    "parent": "poweradvantage:block/example_redstone_conductor_ns",
     "ambientocclusion": false,
     "display": {
         "thirdperson": {

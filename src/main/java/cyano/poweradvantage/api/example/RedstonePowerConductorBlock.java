@@ -20,7 +20,7 @@ public class RedstonePowerConductorBlock extends BlockSimplePowerConductor{
 
 	
 	 public RedstonePowerConductorBlock() {
-		super(Material.piston, 0.5f, 0.32f, new ConductorType("redstone"));
+		super(Material.piston, 0.5f, 0.25f, new ConductorType("redstone"));
 	}
 
 	@Override

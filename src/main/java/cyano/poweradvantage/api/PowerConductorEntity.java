@@ -153,4 +153,5 @@ public abstract class PowerConductorEntity extends TileEntity implements IUpdate
 		super.writeToNBT(tagRoot);
 		tagRoot.setFloat("Energy", this.getEnergyBuffer());
 	}
+	
 }
