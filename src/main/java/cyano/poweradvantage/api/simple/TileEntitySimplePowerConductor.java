@@ -6,6 +6,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import cyano.poweradvantage.api.ConductorType;
 import cyano.poweradvantage.api.PowerConductorEntity;
+import cyano.poweradvantage.api.PowerSinkEntity;
 
 public abstract class TileEntitySimplePowerConductor extends PowerConductorEntity{
 	private final ConductorType type;
@@ -74,23 +75,31 @@ public abstract class TileEntitySimplePowerConductor extends PowerConductorEntit
 		coords[4] = this.pos.east();
 		coords[5] = this.pos.up();
 		final PowerConductorEntity[] neighbors = new PowerConductorEntity[6];
-		final float[] deficits = new float[6];
+		final float[] buffers = new float[6];
 		int count = 0;
-		float sum = 0;
+		float sum = energyBuffer;
 		for(int n = 0; n < 6; n++){
 			TileEntity e = worldObj.getTileEntity(coords[n]);
 			if(e instanceof PowerConductorEntity && ((PowerConductorEntity)e).canPushEnergyTo(faces[n], type)){
-				deficits[count] = (((PowerConductorEntity)e).getEnergyBufferCapacity() - ((PowerConductorEntity)e).getEnergyBuffer()); // positive number
-				if(deficits[count] > 0 && deficits[count] > myDeficit){
+				if(e instanceof PowerSinkEntity) { // make sinks always appear empty
 					neighbors[count] = (PowerConductorEntity)e;
-					sum += deficits[count];
 					count++;
+					continue;
 				}
+				neighbors[count] = (PowerConductorEntity)e;
+				sum += ((PowerConductorEntity)e).getEnergyBuffer();
+				count++;
 			}
 		}
-		float c  = availableEnergy / sum;
+		if(count == 0) return;
+		float ave = sum / (count+1);
 		for(int n = 0; n < count; n++){
-			this.subtractEnergy(neighbors[n].addEnergy(availableEnergy / count));//deficits[n] * c));
+			if(neighbors[n] instanceof PowerSinkEntity){
+				neighbors[n].addEnergy(ave);
+			}else {
+				neighbors[n].setEnergy(ave);
+			}
 		}
+		this.setEnergy(ave);
 	}
 }

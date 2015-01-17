@@ -6,7 +6,7 @@ import cyano.poweradvantage.api.simple.TileEntitySimplePowerConductor;
 public class RedstonePowerConductorTileEntity extends TileEntitySimplePowerConductor {
 
 	public RedstonePowerConductorTileEntity() {
-		super(new ConductorType("redstone"), 384);
+		super(new ConductorType("redstone"), 100);
 	}
 
 }
