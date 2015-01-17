@@ -1,9 +1,12 @@
 package cyano.poweradvantage.api;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 
-public abstract class PowerSinkEntity extends PowerConductorEntity{
-	// TODO: implementation
+public abstract class PowerSinkEntity extends PowerMachineEntity{
 
 	/**
 	 * Determine whether or not another conductor is allowed to withdraw energy 
@@ -16,13 +19,20 @@ public abstract class PowerSinkEntity extends PowerConductorEntity{
 	public boolean canPullEnergyFrom(EnumFacing blockFace, ConductorType requestType){
 		return false;
 	}
-	/**
-	 * This method is invoked when the block is placed using an item that has 
-	 * been renamed. Implementations can carry the name over to the placed 
-	 * block, but that feature is optional.
-	 * @param newName The name of the item that was placed.
-	 */
-	public void setCustomInventoryName(String newName){
-		// optional method
+
+	// TODO: documentation
+	@Override
+	public void powerUpdate() {
+		super.powerUpdate();
+		// implementations should handle power requests
+	}
+	
+	
+
+    /** Maps power-source to power-limit */
+	private Set<PowerSourceEntity> powerSources = new HashSet<PowerSourceEntity>();
+	@Override
+	public Set<PowerSourceEntity> getKnownPowerSources() {
+		return powerSources;
 	}
 }

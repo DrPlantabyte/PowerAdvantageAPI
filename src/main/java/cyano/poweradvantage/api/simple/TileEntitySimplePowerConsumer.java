@@ -1,5 +1,8 @@
 package cyano.poweradvantage.api.simple;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
@@ -18,12 +21,15 @@ import net.minecraft.util.IChatComponent;
 import cyano.poweradvantage.api.ConductorType;
 import cyano.poweradvantage.api.PowerConductorEntity;
 import cyano.poweradvantage.api.PowerSinkEntity;
+import cyano.poweradvantage.api.PowerSourceEntity;
 
 public abstract class TileEntitySimplePowerConsumer extends PowerSinkEntity implements ISidedInventory {
 
 	private final ConductorType type;
 	private final float energyBufferSize;
 	private float energyBuffer = 0;
+	
+
 	
 	private String customName = null;
     
@@ -50,10 +56,17 @@ public abstract class TileEntitySimplePowerConsumer extends PowerSinkEntity impl
     
     @Override
 	public void powerUpdate() {
-    	// do nothing
+    	super.powerUpdate();
+    	float powerNeed = this.getEnergyBufferCapacity() - this.getEnergyBuffer();
+    	if(powerNeed > 0){
+    		// ask sources for power
+        	Set<PowerSourceEntity> sources = this.getKnownPowerSources();
+        	for(PowerSourceEntity src : sources){
+        		src.requestPower(this, powerNeed);
+        	}
+    	}
 	}
 	
-    
 
     @Override
     public void readFromNBT(final NBTTagCompound tagRoot) {

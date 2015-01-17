@@ -1,10 +1,14 @@
 package cyano.poweradvantage.api;
 
-import net.minecraft.nbt.NBTTagCompound;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import cyano.poweradvantage.api.simple.TileEntitySimplePowerConductor;
 import net.minecraft.server.gui.IUpdatePlayerListBox;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumFacing;
 /**
  * This class is the super-class for all powered blocks. Wires are plain 
  * conductors, but generators and machines are also conductors (they should 
@@ -20,72 +24,6 @@ public abstract class PowerConductorEntity extends TileEntity implements IUpdate
 	
 	private final int powerUpdateInterval = 8;
 	
-	/**
-	 * Gets the amount of energy that can be stored in this conductor.
-	 * @return Size of the energy buffer
-	 */
-	public abstract float getEnergyBufferCapacity();
-	/**
-	 * Gets the amount of energy stored in this conductor
-	 * @return The amount of energy in the buffer
-	 */
-	public abstract float getEnergyBuffer();
-	/**
-	 * Sets the amount of energy in the buffer
-	 * @param energy The energy to be added to the buffer
-	 */
-	public abstract void setEnergy(float energy); 
-	/**
-	 * Adds energy to this conductor, up to the maximum allowed energy. The 
-	 * amount of energy that was actually added (or subtracted) to the energy 
-	 * buffer is returned. 
-	 * @param energy The amount of energy to add (can be negative to subtract 
-	 * energy).
-	 * @return The actual change to the internal energy buffer.
-	 */
-	public float addEnergy(float energy){
-		float newValue = this.getEnergyBuffer() + energy;
-		if(newValue < 0){
-			float delta = -1 * this.getEnergyBuffer();
-			this.setEnergy(0); 
-			return delta;
-		} else if(newValue > this.getEnergyBufferCapacity()){
-			float delta = this.getEnergyBufferCapacity() - this.getEnergyBuffer();
-			this.setEnergy(this.getEnergyBufferCapacity());
-			return delta;
-		}
-		this.setEnergy(newValue);
-		return energy;
-	}
-	/**
-	 * Subtracts energy from the energy buffer and returns the actual change to 
-	 * the energy buffer (which may not be as much as requested). This method 
-	 * simply multiplies the input energy value by -1 and then calls the method 
-	 * addEnergy(...).  
-	 * @param energy The amount of energy to subtract.
-	 * @return The actual change to the internal energy buffer
-	 */
-	public float subtractEnergy(float energy){
-		return addEnergy(-1 * energy);
-	}
-	/**
-	 * Determine whether or not another conductor is allowed to withdraw energy 
-	 * from this conductor on the indicated face of this block. 
-	 * @param blockFace The face of this block from which we are asking to pull 
-	 * energy. 
-	 * @param requestType The energy type requested
-	 * @return True if energy can be pulled from this face, false otherwise
-	 */
-	public abstract boolean canPullEnergyFrom(EnumFacing blockFace, ConductorType requestType);
-	/**
-	 * Determine whether or not another conductor is allowed to add energy to  
-	 * this conductor on the indicated face of this block. 
-	 * @param blockFace The face of this block from which we are asking to push 
-	 * energy. 
-	 * @param requestType The energy type requested
-	 * @return True if energy can be pulled from this face, false otherwise
-	 */
-	public abstract boolean canPushEnergyTo(EnumFacing blockFace, ConductorType requestType);
 	
 	/**
 	 * Method net.minecraft.server.gui.IUpdatePlayerListBox.update() is invoked 
@@ -110,9 +48,29 @@ public abstract class PowerConductorEntity extends TileEntity implements IUpdate
 	 * Updates the power status. This method is called every few ticks and is 
 	 * only called on the server world.
 	 */
-	public abstract void powerUpdate();
+	public void powerUpdate() {
+		safeSyncPowerSourceData(worldObj.getTileEntity(this.getPos().up()));
+		safeSyncPowerSourceData(worldObj.getTileEntity(this.getPos().north()));
+		safeSyncPowerSourceData(worldObj.getTileEntity(this.getPos().west()));
+		safeSyncPowerSourceData(worldObj.getTileEntity(this.getPos().south()));
+		safeSyncPowerSourceData(worldObj.getTileEntity(this.getPos().east()));
+		safeSyncPowerSourceData(worldObj.getTileEntity(this.getPos().down()));
+		revalidatePowerSourceList();
+	}
+	
+
+	protected void safeSyncPowerSourceData(TileEntity other){
+		if(other instanceof PowerConductorEntity)syncPowerSourceData((PowerConductorEntity)other);
+	}
+	
+	protected void syncPowerSourceData(PowerConductorEntity other){
+		if(other instanceof PowerSourceEntity){
+			this.getKnownPowerSources().add((PowerSourceEntity)other);
+		}
+		this.getKnownPowerSources().addAll(other.getKnownPowerSources());
+	}
 	/**
-	 * Returns flase if this code is executing on the client and true if this 
+	 * Returns false if this code is executing on the client and true if this 
 	 * code is executing on the server
 	 * @return true if on server world, false otherwise
 	 */
@@ -132,26 +90,35 @@ public abstract class PowerConductorEntity extends TileEntity implements IUpdate
 		int z = coord.getX();
 		return ((z & 1) << 2) | ((x & 1) << 1) | ((y & 1) );
 	}
+	
 	/**
-	 * Reads data from NBT, which came from either a saved chunk or a network 
-	 * packet.
+	 * Removes destroyed and obsolete TileEntities from the list of power 
+	 * sources.
 	 */
-	@Override
-    public void readFromNBT(final NBTTagCompound tagRoot) {
-		super.readFromNBT(tagRoot);
-		if(tagRoot.hasKey("Energy")){
-			float energy = tagRoot.getFloat("Energy");
-			this.setEnergy(energy);
+	protected void revalidatePowerSourceList(){
+		java.util.Set<PowerSourceEntity> powerSources = getKnownPowerSources();
+		List<PowerSourceEntity> invalidEntities = new ArrayList<>();
+		for(PowerSourceEntity src : powerSources){
+			if(src.isInvalid()){
+				// remove destroyed tile entities
+				invalidEntities.add(src);
+			}
 		}
+		powerSources.removeAll(invalidEntities);
 	}
-	/**
-	 * Saves the state of this entity to an NBT for saving or synching across 
-	 * the network.
-	 */
-	@Override
-	public void writeToNBT(final NBTTagCompound tagRoot) {
-		super.writeToNBT(tagRoot);
-		tagRoot.setFloat("Energy", this.getEnergyBuffer());
+
+	/** Maps power-source to power-limit */
+	private Set<PowerSourceEntity> powerSources = new HashSet<PowerSourceEntity>();
+	public Set<PowerSourceEntity> getKnownPowerSources() {
+		return powerSources;
 	}
 	
+	@Override
+	public String toString(){
+		return this.getClass().getSimpleName()+"@("+this.getPos().getX()+","+this.getPos().getY()+","+this.getPos().getZ()+")";
+	}
+	
+	public int hashCode(){
+		return this.getPos().hashCode();
+	}
 }

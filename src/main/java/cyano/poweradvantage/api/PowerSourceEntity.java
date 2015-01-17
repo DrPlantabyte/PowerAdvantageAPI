@@ -1,9 +1,12 @@
 package cyano.poweradvantage.api;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 import net.minecraft.util.EnumFacing;
 
-public abstract class PowerSourceEntity extends PowerConductorEntity{
-	// TODO: implementation
+public abstract class PowerSourceEntity extends PowerMachineEntity{
 	
 
 	/**
@@ -17,14 +20,22 @@ public abstract class PowerSourceEntity extends PowerConductorEntity{
 	public boolean canPushEnergyTo(EnumFacing blockFace, ConductorType requestType){
 		return false;
 	}
-	/**
-	 * This method is invoked when the block is placed using an item that has 
-	 * been renamed. Implementations can carry the name over to the placed 
-	 * block, but that feature is optional.
-	 * @param newName The name of the item that was placed.
-	 */
-	public void setCustomInventoryName(String newName){
-		// optional method
-	}
 	
+	/**
+	 * Implementation should add the request to a queue (most likely a HashMap) 
+	 * so that this power source entity can distribute power to all requesting 
+	 * sinks on powerUpdate()
+	 * @param petitioner The power sink that wants power
+	 * @param amount The amount of power requested
+	 * @return Returns true is the request was accepted, false if the request 
+	 * was rejected.
+	 */
+	public abstract boolean requestPower(PowerSinkEntity petitioner, float amount);
+	
+	
+	// TODO: documentation
+	@Override
+	public void powerUpdate() {
+		// do nothing, but implementations should handle power requests
+	}
 }
