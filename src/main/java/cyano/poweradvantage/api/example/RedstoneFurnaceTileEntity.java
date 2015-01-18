@@ -122,7 +122,7 @@ public class RedstoneFurnaceTileEntity extends TileEntitySimplePowerConsumer {
 
 	
 	private int getSmeltTime(ItemStack item){
-		return net.minecraft.tileentity.TileEntityFurnace.getItemBurnTime(item);
+		return 200;
 	}
 	
 	private void smeltItem() {
