@@ -1,9 +1,21 @@
 package cyano.poweradvantage.api;
 
 import net.minecraft.util.EnumFacing;
-
+/**
+ * This is the superclass for machines that consume power. See also 
+ * <b>cyano.poweradvantage.api.simple.TileEntitySimplePowerConsumer</b>
+ * <p>
+ * Powered machines are divided into two categories: Sources and Sinks. Both are 
+ * types of Conductors, but Sources produce power (and therefore refuse to 
+ * accept power from other conductors) and sinks consume power (and therefore do 
+ * not share the power that they have). If you wanted to make a machine that does 
+ * both, make is a sink that also pushes energy onto neighboring conductors in 
+ * the powerUpdate() function.
+ * </p>
+ * @author DrCyano
+ *
+ */
 public abstract class PowerSinkEntity extends PowerConductorEntity{
-	// TODO: implementation
 
 	/**
 	 * Determine whether or not another conductor is allowed to withdraw energy 

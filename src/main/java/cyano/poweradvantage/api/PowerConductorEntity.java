@@ -6,9 +6,12 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 /**
- * This class is the super-class for all powered blocks. Wires are plain 
+ * This class is the superclass for all powered blocks. Wires are plain 
  * conductors, but generators and machines are also conductors (they should 
- * extend the PowerSourceEntity and PowerSinkEntity classes respectively). 
+ * extend the PowerSourceEntity and PowerSinkEntity classes respectively). If 
+ * you are making an add-on mod, you probably want to extend the 
+ * <b>cyano.poweradvantage.api.simple.TileEntitySimplePowerConduit</b> class 
+ * instead of this class.
  * <p>
  * Conceptually, a conductor is any block that has an internal energy buffer, 
  * which can be added-to or subtracted-from by adjacent (conductor) blocks.

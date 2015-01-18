@@ -13,10 +13,10 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import cyano.poweradvantage.api.ConductorType;
 import cyano.poweradvantage.api.PowerConductorEntity;
-import cyano.poweradvantage.api.simple.BlockSimplePowerConductor;
-import cyano.poweradvantage.api.simple.TileEntitySimplePowerConductor;
+import cyano.poweradvantage.api.simple.BlockSimplePowerConduit;
+import cyano.poweradvantage.api.simple.TileEntitySimplePowerConduit;
 
-public class RedstonePowerConductorBlock extends BlockSimplePowerConductor{
+public class RedstonePowerConductorBlock extends BlockSimplePowerConduit{
 
 	
 	 public RedstonePowerConductorBlock() {
@@ -31,7 +31,7 @@ public class RedstonePowerConductorBlock extends BlockSimplePowerConductor{
 	    }
 
 	@Override
-	public TileEntity createNewTileEntity(World world, int metaDataValue) {
+	public PowerConductorEntity createNewTileEntity(World world, int metaDataValue) {
 		return new RedstonePowerConductorTileEntity();
 	}
 	

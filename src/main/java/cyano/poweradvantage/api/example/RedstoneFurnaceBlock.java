@@ -7,6 +7,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import cyano.poweradvantage.api.ConductorType;
 import cyano.poweradvantage.api.PowerConductorEntity;
+import cyano.poweradvantage.api.PowerSinkEntity;
 import cyano.poweradvantage.api.simple.BlockSimplePowerConsumer;
 
 public class RedstoneFurnaceBlock extends BlockSimplePowerConsumer{
@@ -23,7 +24,7 @@ public class RedstoneFurnaceBlock extends BlockSimplePowerConsumer{
     }
 	
 	@Override
-	public TileEntity createNewTileEntity(World world, int metaDataValue) {
+	public PowerSinkEntity createNewTileEntity(World world, int metaDataValue) {
 		return new RedstoneFurnaceTileEntity();
 	}
 

@@ -7,6 +7,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import cyano.poweradvantage.api.ConductorType;
 import cyano.poweradvantage.api.PowerConductorEntity;
+import cyano.poweradvantage.api.PowerSourceEntity;
 import cyano.poweradvantage.api.simple.BlockSimplePowerSource;
 
 public class RedstoneGeneratorBlock extends BlockSimplePowerSource{
@@ -23,7 +24,7 @@ public class RedstoneGeneratorBlock extends BlockSimplePowerSource{
     }
 	
 	@Override
-	public TileEntity createNewTileEntity(World world,
+	public PowerSourceEntity createNewTileEntity(World world,
 			int metaDataValue) {
 		return new RedstoneGeneratorTileEntity();
 	}

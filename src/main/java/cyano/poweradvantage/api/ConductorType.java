@@ -1,8 +1,16 @@
 package cyano.poweradvantage.api;
-
+/**
+ * This class is used to identify different types of power. It is optimized for 
+ * high-performance type-comparisons, especially if you use the 
+ * <b>areSameType(ConductorType a, ConductorType b)</b> static function.
+ * @author DrCyano
+ *
+ */
 public class ConductorType {
 
+	/** type identifier */
 	private final String type;
+	/** cached hash-code for high-performance type checking */
 	private final int hashCache;
 	/**
 	 * Constructor for ConductorType. The type of a conductor is described by 
@@ -18,7 +26,7 @@ public class ConductorType {
 		hashCache = type.hashCode();
 	}
 	/**
-	 * Faster hash-code that relies on cached value
+	 * Faster hash-code implementation that relies on cached value
 	 */
 	@Override
 	public int hashCode(){

@@ -99,7 +99,10 @@ public class RedstoneFurnaceTileEntity extends TileEntitySimplePowerConsumer {
 				cookTime = 0;
 				flag2 = true;
 			}
-			if(this.getEnergyBuffer() >= ENERGY_PER_TICK && this.canSmelt(this.inventory[0], this.inventory[1])){
+			if(this.getEnergyBuffer() >= ENERGY_PER_TICK 
+					&& this.canSmelt(this.inventory[0], this.inventory[1]) 
+					&& !worldObj.isBlockPowered(getPos()) // disable on redstone signal
+					){
 				this.subtractEnergy(ENERGY_PER_TICK);
 				this.cookTime += COOKING_PER_TICK;
 			} else if(cookTime > 0){

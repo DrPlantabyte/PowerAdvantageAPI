@@ -2,9 +2,12 @@
     "parent": "poweradvantage:block/example_redstone_furnace",
     "display": {
         "thirdperson": {
-            "rotation": [ 10, 45, 170 ],
+            "rotation": [ 10, -45, 170 ],
             "translation": [ 0, 1.5, -2.75 ],
             "scale": [ 0.375, 0.375, 0.375 ]
+        },
+        "gui": {
+            "rotation": [ 0, -90, 0 ]
         }
     }
 }
