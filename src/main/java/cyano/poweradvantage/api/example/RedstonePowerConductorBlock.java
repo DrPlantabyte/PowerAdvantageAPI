@@ -4,6 +4,7 @@ import java.util.Random;
 
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
@@ -21,6 +22,7 @@ public class RedstonePowerConductorBlock extends BlockSimplePowerConduit{
 	
 	 public RedstonePowerConductorBlock() {
 		super(Material.piston, 0.5f, 0.20f, new ConductorType("redstone"));
+		super.setCreativeTab(CreativeTabs.tabMisc);
 	}
 
 	@Override

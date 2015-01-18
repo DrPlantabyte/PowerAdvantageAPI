@@ -1,6 +1,7 @@
 package cyano.poweradvantage.api.example;
 
 import net.minecraft.block.material.Material;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
@@ -14,6 +15,7 @@ public class RedstoneFurnaceBlock extends BlockSimplePowerConsumer{
 
 	public RedstoneFurnaceBlock(int guiHandlerID, Object ownerOfGUIHandler) {
 		super(Material.piston, 0.5f, new ConductorType("redstone"), guiHandlerID, ownerOfGUIHandler);
+		super.setCreativeTab(CreativeTabs.tabMisc);
 	}
 
 	@Override
@@ -21,6 +23,7 @@ public class RedstoneFurnaceBlock extends BlockSimplePowerConsumer{
     	if(w.isRemote)return;
     	PowerConductorEntity e = (PowerConductorEntity)w.getTileEntity(p);
     	player.addChatMessage(new net.minecraft.util.ChatComponentText(e.getEnergyType()+": "+e.getEnergyBuffer()));
+    	
     }
 	
 	@Override
