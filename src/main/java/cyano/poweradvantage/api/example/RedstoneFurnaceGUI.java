@@ -18,7 +18,7 @@ public class RedstoneFurnaceGUI  extends SimpleMachineGUI {
 			float cookFraction = ((RedstoneFurnaceTileEntity)srcEntity).getCookFraction();
 			int arrowLength = (int)(cookFraction * 24f);
 			guiContainer.mc.renderEngine.bindTexture(guiDisplayImage);
-			guiContainer.drawTexturedModalRect(x+79, y+36, 177, 14, arrowLength, 17); // x, y, textureOffsetX, textureOffsetY, width, height)
+			guiContainer.drawTexturedModalRect(x+79, y+35, 177, 14, arrowLength, 17); // x, y, textureOffsetX, textureOffsetY, width, height)
 			
 		}
 	}

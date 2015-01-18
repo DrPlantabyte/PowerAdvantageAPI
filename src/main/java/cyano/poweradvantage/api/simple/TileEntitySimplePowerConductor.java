@@ -19,7 +19,7 @@ public abstract class TileEntitySimplePowerConductor extends PowerConductorEntit
 	public TileEntitySimplePowerConductor(ConductorType energyType, float bufferSize){
 		this.type = energyType;
 		this.energyBufferSize = bufferSize;
-		this.energyRequestSize = this.energyBufferSize * 0.25f; 
+		this.energyRequestSize = this.energyBufferSize;// * 0.25f; 
 	}
 	@Override
 	public ConductorType getEnergyType() {
@@ -95,11 +95,10 @@ public abstract class TileEntitySimplePowerConductor extends PowerConductorEntit
 		float ave = sum / (count+1);
 		for(int n = 0; n < count; n++){
 			if(neighbors[n] instanceof PowerSinkEntity){
-				neighbors[n].addEnergy(ave);
+				this.subtractEnergy(neighbors[n].addEnergy(ave));
 			}else {
-				neighbors[n].setEnergy(ave);
+				this.subtractEnergy(neighbors[n].addEnergy(ave - neighbors[n].getEnergyBuffer()));
 			}
 		}
-		this.setEnergy(ave);
 	}
 }
