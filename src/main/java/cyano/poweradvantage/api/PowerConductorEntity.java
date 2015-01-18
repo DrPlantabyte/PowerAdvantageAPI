@@ -1,9 +1,6 @@
 package cyano.poweradvantage.api;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import cyano.poweradvantage.api.simple.TileEntitySimplePowerConductor;
 import net.minecraft.server.gui.IUpdatePlayerListBox;
@@ -24,6 +21,9 @@ public abstract class PowerConductorEntity extends TileEntity implements IUpdate
 	
 	private final int powerUpdateInterval = 8;
 	
+
+	/** Maps power-source to conductor that is the next one closer to the source */
+	private Map<PowerSourceEntity, PowerConductorEntity> powerSources = new HashMap<>();
 	
 	/**
 	 * Method net.minecraft.server.gui.IUpdatePlayerListBox.update() is invoked 
@@ -107,9 +107,7 @@ public abstract class PowerConductorEntity extends TileEntity implements IUpdate
 		powerSources.removeAll(invalidEntities);
 	}
 
-	/** Maps power-source to power-limit */
-	private Set<PowerSourceEntity> powerSources = new HashSet<PowerSourceEntity>();
-	public Set<PowerSourceEntity> getKnownPowerSources() {
+	public Map<PowerSourceEntity,PowerConductorEntity> getKnownPowerSources() {
 		return powerSources;
 	}
 	
