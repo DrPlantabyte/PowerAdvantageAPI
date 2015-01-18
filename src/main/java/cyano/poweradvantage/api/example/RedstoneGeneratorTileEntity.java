@@ -53,7 +53,11 @@ public class RedstoneGeneratorTileEntity extends TileEntitySimplePowerSource {
 				}
 			}
 
-			if (!this.isBurning() && this.getEnergyBuffer() < this.getEnergyBufferCapacity() && isItemValidForSlot(0,this.inventory[0])) {
+			if (!this.isBurning() 
+					&& this.getEnergyBuffer() < this.getEnergyBufferCapacity() 
+					&& isItemValidForSlot(0,this.inventory[0]) 
+					&& !worldObj.isBlockPowered(getPos()) // disable on redstone signal
+					) {
 				final int itemBurnTime = ticksPerFuel;
 				this.burnTime = itemBurnTime;
 				flag2 = true;

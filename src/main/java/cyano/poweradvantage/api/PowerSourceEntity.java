@@ -1,13 +1,21 @@
 package cyano.poweradvantage.api;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
 import net.minecraft.util.EnumFacing;
-
-public abstract class PowerSourceEntity extends PowerMachineEntity{
-	
+/**
+ * This is the superclass for machines that produce power. See also 
+ * <b>cyano.poweradvantage.api.simple.TileEntitySimplePowerSource</b>
+ * <p>
+ * Powered machines are divided into two categories: Sources and Sinks. Both are 
+ * types of Conductors, but Sources produce power (and therefore refuse to 
+ * accept power from other conductors) and sinks consume power (and therefore do 
+ * not share the power that they have). If you wanted to make a machine that does 
+ * both, make is a sink that also pushes energy onto neighboring conductors in 
+ * the powerUpdate() function.
+ * </p>
+ * @author DrCyano
+ *
+ */
+public abstract class PowerSourceEntity extends PowerConductorEntity{
 
 	/**
 	 * Determine whether or not another conductor is allowed to add energy to  
@@ -20,22 +28,14 @@ public abstract class PowerSourceEntity extends PowerMachineEntity{
 	public boolean canPushEnergyTo(EnumFacing blockFace, ConductorType requestType){
 		return false;
 	}
-	
 	/**
-	 * Implementation should add the request to a queue (most likely a HashMap) 
-	 * so that this power source entity can distribute power to all requesting 
-	 * sinks on powerUpdate()
-	 * @param petitioner The power sink that wants power
-	 * @param amount The amount of power requested
-	 * @return Returns true is the request was accepted, false if the request 
-	 * was rejected.
+	 * This method is invoked when the block is placed using an item that has 
+	 * been renamed. Implementations can carry the name over to the placed 
+	 * block, but that feature is optional.
+	 * @param newName The name of the item that was placed.
 	 */
-	public abstract boolean requestPower(PowerSinkEntity petitioner, float amount);
-	
-	
-	// TODO: documentation
-	@Override
-	public void powerUpdate() {
-		// do nothing, but implementations should handle power requests
+	public void setCustomInventoryName(String newName){
+		// optional method
 	}
+	
 }
