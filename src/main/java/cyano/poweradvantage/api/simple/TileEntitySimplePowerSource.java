@@ -576,9 +576,9 @@ public abstract class TileEntitySimplePowerSource extends PowerSourceEntity impl
 	/**
 	 * Determines whether another block (such as a Hopper) is allowed to pull an 
 	 * item from this block out through a given face
-	 * @param The inventory slot (index) of the item in question
-	 * @param The item to be pulled
-	 * @param The side of the block through which to pull the item
+	 * @param slot The inventory slot (index) of the item in question
+	 * @param targetItem The item to be pulled
+	 * @param side The side of the block through which to pull the item
 	 * @return true if the item is allowed to be pulled, false otherwise
 	 */
 	@Override
@@ -590,9 +590,9 @@ public abstract class TileEntitySimplePowerSource extends PowerSourceEntity impl
 	/**
 	 * Determines whether another block (such as a Hopper) is allowed to put an 
 	 * item into this block through a given face
-	 * @param The inventory slot (index) of the item in question
-	 * @param The item to be inserted
-	 * @param The side of the block through which to insertt the item
+	 * @param slot The inventory slot (index) of the item in question
+	 * @param srcItem The item to be inserted
+	 * @param side The side of the block through which to insertt the item
 	 * @return true if the item is allowed to be inserted, false otherwise
 	 */
 	@Override
@@ -612,7 +612,7 @@ public abstract class TileEntitySimplePowerSource extends PowerSourceEntity impl
 	 * furnace).<br><br>
 	 * The default implementation here makes all inventory slots accessible from 
 	 * all sides.
-	 * @param The side of this block through which the other entity wants to 
+	 * @param side The side of this block through which the other entity wants to 
 	 * access the inventory 
 	 * @return An array listing all of the inventory indices that are accessible 
 	 * through the given side of this block
