@@ -15,6 +15,7 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.oredict.OreDictionary;
 import cyano.poweradvantage.api.example.ExamplePowerMod;
+import cyano.poweradvantage.registry.CrusherRecipeRegistry;
 import cyano.poweradvantage.registry.MachineGUIRegistry;
 
 // NOTE: other mods dependant on this one need to add the following to their @Mod annotation:
@@ -98,6 +99,9 @@ public class PowerAdvantage
     public void postInit(FMLPostInitializationEvent event)
     {
     	if(DEMO_MODE)exampleMod.postInit(event, proxy);
+    	
+    	// clear the crusher recipe cache in case some recipes were made out-of-date by other mods
+    	CrusherRecipeRegistry.getInstance().clearCache(); 
     }
 /**
  * Gets a singleton instance of this mod. Is null until the completion of the 
