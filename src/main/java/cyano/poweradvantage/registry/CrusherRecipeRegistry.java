@@ -1,11 +1,13 @@
 package cyano.poweradvantage.registry;
 
+import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import cyano.poweradvantage.registry.recipe.*;
 
 public class CrusherRecipeRegistry {
 	
-	
+	private final Set<ICrusherRecipe> recipes = new LinkedHashSet<>(); 
 	
 	private static final Lock initLock = new ReentrantLock();
 	private static CrusherRecipeRegistry instance = null;
