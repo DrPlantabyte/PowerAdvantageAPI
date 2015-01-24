@@ -1,10 +1,7 @@
 package cyano.poweradvantage;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.fml.common.FMLLog;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -12,10 +9,12 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 import cyano.poweradvantage.api.example.ExamplePowerMod;
+import cyano.poweradvantage.events.CrushedBlockHarvestEventHandler;
 import cyano.poweradvantage.registry.CrusherRecipeRegistry;
+import cyano.poweradvantage.registry.FuelRegistry;
 import cyano.poweradvantage.registry.MachineGUIRegistry;
 
 // NOTE: other mods dependant on this one need to add the following to their @Mod annotation:
@@ -73,6 +72,8 @@ public class PowerAdvantage
     	
     	config.save();
     	
+    	cyano.poweradvantage.item.Items.initializeItems(event);
+    	
     	// keep this comment, it is useful for finding Vanilla recipes
     	//OreDictionary.initVanillaEntries();
     }
@@ -87,7 +88,9 @@ public class PowerAdvantage
     {
 
 		NetworkRegistry.INSTANCE.registerGuiHandler(PowerAdvantage.getInstance(), MachineGUIRegistry.getInstance());
-    	
+		MinecraftForge.EVENT_BUS.register(new CrushedBlockHarvestEventHandler());
+		GameRegistry.registerFuelHandler(FuelRegistry.getInstance());
+		
     	if(DEMO_MODE)exampleMod.init(event, proxy);
     }
 

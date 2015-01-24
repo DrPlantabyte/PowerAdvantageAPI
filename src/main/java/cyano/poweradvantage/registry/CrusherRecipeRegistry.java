@@ -129,7 +129,7 @@ public class CrusherRecipeRegistry {
 		}
 	}
 	
-	private static class ItemLookupReference{
+	private static final class ItemLookupReference{
 		final Item item;
 		final int metaData;
 		final int hashCache;

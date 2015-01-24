@@ -3,7 +3,10 @@ package cyano.poweradvantage.item;
 import java.util.HashSet;
 import java.util.Set;
 
+import cyano.poweradvantage.registry.CrusherRecipeRegistry;
+import cyano.poweradvantage.registry.recipe.ICrusherRecipe;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
@@ -17,7 +20,7 @@ public class ItemRockHammer extends net.minecraft.item.ItemTool{
         this.setCreativeTab(CreativeTabs.tabTools);
 	}
 
-	public ItemRockHammer createTool(int toolLevel){
+	public static ItemRockHammer createTool(int toolLevel){
 		final ToolMaterial material;
 		switch(toolLevel){
 			case 1:
@@ -46,11 +49,27 @@ public class ItemRockHammer extends net.minecraft.item.ItemTool{
 	@Override
     public boolean onBlockDestroyed(final ItemStack tool, final World world, 
     		final Block target, final BlockPos coord, final EntityLivingBase player) {
-		// TODO: replace drop with crushed recipe
+		IBlockState bs = world.getBlockState(coord);
+		ICrusherRecipe recipe = getCrusherRecipe(bs);
 		return super.onBlockDestroyed(tool, world, target, coord, player);
+		
+		// TODO: replace drop with crushed recipe
+		
 	}
-	protected boolean isCrushableBlock(Block b){
-		// TODO: implementation
-		return false;
+	protected boolean isCrushableBlock(IBlockState block){
+		return getCrusherRecipe(block) != null;
+	}
+	protected boolean isCrushableBlock(Block block){
+		return getCrusherRecipe(block) != null;
+	}
+	
+	protected ICrusherRecipe getCrusherRecipe(Block block){
+		return getCrusherRecipe(block.getDefaultState());
+	}
+	
+	protected ICrusherRecipe getCrusherRecipe(IBlockState block){
+		int meta = block.getBlock().getMetaFromState(block);
+		ItemStack is = new ItemStack(block.getBlock(), 1, meta);
+		return CrusherRecipeRegistry.getInstance().getRecipeForInputItem(is);
 	}
 }

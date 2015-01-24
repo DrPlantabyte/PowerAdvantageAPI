@@ -1,4 +1,7 @@
 language_support_goals=english (en_US,en_EN,en_CA,en_GB, en_AU, en_PT), spanish (es_MX,es_ES), chinese (zh_CN), japanese (ja_JA), portugese (pt_BR), german (de_DE)
+
+item.poweradvantage.powderedCoal.name=Carbon Dust
+
 tile.poweradvantage.powercable.name=Power Cable
 tile.poweradvantage.powerfurnace.name=Powered Furnace
 tile.poweradvantage.powerfurnace_lit.name=Powered Furnace (lit)
