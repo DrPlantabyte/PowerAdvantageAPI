@@ -16,6 +16,7 @@ public class Items {
 	public static Item diamond_rockHammer;
 	public static Item powderedCoal;
 	
+	
 	public static void initializeItems(FMLPreInitializationEvent event){
 		stone_rockHammer = init(ItemRockHammer.createTool(0),"stone_rockhammer",CreativeTabs.tabTools);
 		iron_rockHammer = init(ItemRockHammer.createTool(1),"iron_rockhammer",CreativeTabs.tabTools);
