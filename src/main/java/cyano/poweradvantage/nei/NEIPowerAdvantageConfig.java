@@ -20,10 +20,8 @@ public class NEIPowerAdvantageConfig implements IConfigureNEI{
 
 	@Override
 	public void loadConfig() {
-		CrusherRecipeHandler crusherHandler = new CrusherRecipeHandler();
-		codechicken.nei.api.API.registerRecipeHandler(crusherHandler);
-		codechicken.nei.api.API.registerUsageHandler(crusherHandler);
-	//	codechicken.nei.api.API.setGuiOffset(/*class of GUI of the machine*/, 0/*x*/, 0/*y*/);
+	//	codechicken.nei.api.API.registerRecipeHandler(Handler);
+	//	codechicken.nei.api.API.registerUsageHandler(Handler);
 		// TODO register NEI stuff
 	}
 
