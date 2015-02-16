@@ -1,19 +1,16 @@
 package cyano.poweradvantage;
 
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
-import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.oredict.OreDictionary;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import cyano.poweradvantage.api.example.ExamplePowerMod;
-import cyano.poweradvantage.events.CrushedBlockHarvestEventHandler;
-import cyano.poweradvantage.registry.CrusherRecipeRegistry;
 import cyano.poweradvantage.registry.FuelRegistry;
 import cyano.poweradvantage.registry.MachineGUIRegistry;
 
@@ -26,7 +23,7 @@ import cyano.poweradvantage.registry.MachineGUIRegistry;
  * @author DrCyano
  *
  */
-@Mod(modid = PowerAdvantage.MODID, version = PowerAdvantage.VERSION, name=PowerAdvantage.NAME)
+@Mod(modid = PowerAdvantage.MODID, version = PowerAdvantage.VERSION, name=PowerAdvantage.NAME, dependencies = "required-after:basemetals")
 public class PowerAdvantage
 {
 	/** The identifier for this mod */
@@ -42,9 +39,6 @@ public class PowerAdvantage
     private static PowerAdvantage instance;
     /** Demo mod content */
     private ExamplePowerMod exampleMod = null;
-    /** This proxy is used to divide client-only content from server-side execution */
-    @SidedProxy(clientSide="cyano.poweradvantage.ClientProxy", serverSide="cyano.poweradvantage.ServerProxy")
-    public static Proxy proxy;
     
     
     /**
@@ -67,16 +61,30 @@ public class PowerAdvantage
     	
     	if(DEMO_MODE){
     		exampleMod = new ExamplePowerMod();
-        	exampleMod.preInit(event, proxy, config);
+        	exampleMod.preInit(event, config);
     	}
     	
     	config.save();
     	
-    	cyano.poweradvantage.item.Items.initializeItems(event);
     	
     	// keep this comment, it is useful for finding Vanilla recipes
     	//OreDictionary.initVanillaEntries();
-    }
+    	if(event.getSide() == Side.CLIENT){
+			clientPreInit(event);
+		}
+		if(event.getSide() == Side.SERVER){
+			serverPreInit(event);
+		}
+	}
+	
+	@SideOnly(Side.CLIENT)
+	private void clientPreInit(FMLPreInitializationEvent event){
+		// client-only code
+	}
+	@SideOnly(Side.SERVER)
+	private void serverPreInit(FMLPreInitializationEvent event){
+		// client-only code
+	}
 
     /**
      * Initialization step. Used for adding renderers and most content to the 
@@ -88,11 +96,29 @@ public class PowerAdvantage
     {
 
 		NetworkRegistry.INSTANCE.registerGuiHandler(PowerAdvantage.getInstance(), MachineGUIRegistry.getInstance());
-		MinecraftForge.EVENT_BUS.register(new CrushedBlockHarvestEventHandler());
 		GameRegistry.registerFuelHandler(FuelRegistry.getInstance());
 		
-    	if(DEMO_MODE)exampleMod.init(event, proxy);
-    }
+    	if(DEMO_MODE)exampleMod.init(event);
+    	
+    	if(event.getSide() == Side.CLIENT){
+			clientInit(event);
+		}
+		if(event.getSide() == Side.SERVER){
+			serverInit(event);
+		}
+	}
+	
+
+	@SideOnly(Side.CLIENT)
+	private void clientInit(FMLInitializationEvent event){
+		// client-only code
+		cyano.basemetals.init.Items.registerItemRenders(event);
+		cyano.basemetals.init.Blocks.registerItemRenders(event);
+	}
+	@SideOnly(Side.SERVER)
+	private void serverInit(FMLInitializationEvent event){
+		// client-only code
+	}
 
     /**
      * Post-initialization step. Used for cross-mod options
@@ -101,11 +127,19 @@ public class PowerAdvantage
     @EventHandler
     public void postInit(FMLPostInitializationEvent event)
     {
-    	if(DEMO_MODE)exampleMod.postInit(event, proxy);
+    	if(DEMO_MODE)exampleMod.postInit(event);
     	
-    	// clear the crusher recipe cache in case some recipes were made out-of-date by other mods
-    	CrusherRecipeRegistry.getInstance().clearCache(); 
     }
+	
+
+	@SideOnly(Side.CLIENT)
+	private void clientPostInit(FMLPostInitializationEvent event){
+		// client-only code
+	}
+	@SideOnly(Side.SERVER)
+	private void serverPostInit(FMLPostInitializationEvent event){
+		// client-only code
+	}
 /**
  * Gets a singleton instance of this mod. Is null until the completion of the 
  * pre-initialization step

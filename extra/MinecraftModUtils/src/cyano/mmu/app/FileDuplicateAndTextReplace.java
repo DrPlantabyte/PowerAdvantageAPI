@@ -16,7 +16,6 @@
  */
 package cyano.mmu.app;
 
-import static cyano.mmu.app.TextReplacer.charset;
 import cyano.mmu.util.FormGUI;
 import cyano.mmu.util.GUIHelper;
 import java.io.File;
@@ -42,7 +41,7 @@ public class FileDuplicateAndTextReplace {
 	 * @param args the command line arguments
 	 */
 	public static void main(String[] args) {
-		final File[] files = GUIHelper.askForFiles(new File("/mnt/MediaDrive/Programming/Minecraft Mods/1.8.0/mod-src/base-metals/src/main/resources/assets/basemetals"));//System.getProperty("user.dir")));
+		final File[] files = GUIHelper.askForFiles(new File(System.getProperty("user.dir")));
 		Map<String,String> data = FormGUI.getUserInput("filename keyword","keyword replacement");
 		final String inputText = data.get("filename keyword");
 		final String replacementText = data.get("keyword replacement");

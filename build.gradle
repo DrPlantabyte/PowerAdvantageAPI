@@ -29,7 +29,7 @@ group= "cyano.poweradvantage" // http://maven.apache.org/guides/mini/guide-namin
 archivesBaseName = "PowerAdvantage"
 
 minecraft {
-    version = "1.8-11.14.0.1281-1.8"
+    version = "1.8-11.14.0.1299"
     runDir = "eclipse"
     
     // the mappings can be changed at any time, and must be in the following format.
@@ -43,7 +43,8 @@ minecraft {
 dependencies {
     compile files(
         'lib/NEI/CodeChickenCore-1.8-1.0.5.34-dev.jar',
-        'lib/NEI/NotEnoughItems-1.8-1.0.5.84-dev.jar'
+        'lib/NEI/NotEnoughItems-1.8-1.0.5.84-dev.jar',
+        'lib/BaseMetals/basemetals-1.1.0-dev.jar'
     )
 
 }

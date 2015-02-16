@@ -4,28 +4,22 @@ import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.item.Item;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import cyano.poweradvantage.ClientProxy;
+import net.minecraftforge.fml.relauncher.Side;
 import cyano.poweradvantage.PowerAdvantage;
-import cyano.poweradvantage.Proxy;
-import cyano.poweradvantage.api.example.*;
-import cyano.poweradvantage.api.simple.SimpleMachineGUI;
-import cyano.poweradvantage.math.Integer2D;
 import cyano.poweradvantage.registry.MachineGUIRegistry;
 
 public class ExamplePowerMod {
-	public void preInit(FMLPreInitializationEvent event, Proxy proxy, Configuration config)
+	public void preInit(FMLPreInitializationEvent event,  Configuration config)
     {
 		//
     }
 	
-	public void init(FMLInitializationEvent event, Proxy proxy)
+	public void init(FMLInitializationEvent event)
     {
 		
 		
@@ -48,7 +42,7 @@ public class ExamplePowerMod {
 		GameRegistry.registerTileEntity(RedstonePowerConductorTileEntity.class,PowerAdvantage.MODID+"."+"example_redstone_conductor");
 		
 		
-		if(proxy instanceof ClientProxy){
+		if(event.getSide() == Side.CLIENT){
 			registerItemRender(net.minecraft.item.Item.getItemFromBlock(rsGen_block),"example_redstone_generator");
 			registerItemRender(net.minecraft.item.Item.getItemFromBlock(rsCon_block),"example_redstone_conductor");
 			registerItemRender(net.minecraft.item.Item.getItemFromBlock(rsFurn_block),"example_redstone_furnace");
@@ -61,7 +55,7 @@ public class ExamplePowerMod {
 		Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(i, 0, new ModelResourceLocation(PowerAdvantage.MODID+":"+itemName, "inventory"));
 	}
 	
-	public void postInit(FMLPostInitializationEvent event, Proxy proxy)
+	public void postInit(FMLPostInitializationEvent event)
     {
 		//
     }
