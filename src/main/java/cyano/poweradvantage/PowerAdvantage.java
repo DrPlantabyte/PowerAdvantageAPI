@@ -65,7 +65,11 @@ public class PowerAdvantage
     	}
     	
     	config.save();
+		// TODO: have a "post-apocalypse" mode where certain key technologies are not craftable but can be found in treasure chests
+		// TODO: have a "invention" mode where certain key technologies are dependant on other technologies to be crafted, forcing players to advance up a tech tree
     	
+    	cyano.poweradvantage.init.Blocks.init();
+    	cyano.poweradvantage.init.Items.init();
     	
     	// keep this comment, it is useful for finding Vanilla recipes
     	//OreDictionary.initVanillaEntries();
@@ -97,6 +101,10 @@ public class PowerAdvantage
 
 		NetworkRegistry.INSTANCE.registerGuiHandler(PowerAdvantage.getInstance(), MachineGUIRegistry.getInstance());
 		GameRegistry.registerFuelHandler(FuelRegistry.getInstance());
+	
+		cyano.poweradvantage.init.Fuels.init();
+		cyano.poweradvantage.init.Recipes.init();
+		cyano.poweradvantage.init.Villages.init();  
 		
     	if(DEMO_MODE)exampleMod.init(event);
     	

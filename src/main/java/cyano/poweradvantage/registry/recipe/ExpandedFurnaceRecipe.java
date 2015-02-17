@@ -9,6 +9,7 @@ import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.world.World;
+import net.minecraftforge.oredict.OreDictionary;
 
 /**
  * Power Advantage introduces furnaces with crafting grids. Like normal crafting 
@@ -74,4 +75,17 @@ public abstract class ExpandedFurnaceRecipe {
 	
 	@Override
 	public abstract boolean equals(Object other);
+
+	public abstract boolean usesItem(ItemStack input);
+	
+	protected boolean areOreDictionaryItemsEqual(ItemStack a, ItemStack b){
+		if(a == null || b == null){
+			ItemStack.areItemsEqual(a, b);
+		}
+		if(a.getMetadata() == OreDictionary.WILDCARD_VALUE || b.getMetadata() == OreDictionary.WILDCARD_VALUE){
+			return a.getItem() == b.getItem();
+		} else {
+			return ItemStack.areItemsEqual(a, b);
+		}
+	}
 }

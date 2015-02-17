@@ -72,7 +72,11 @@ public class FuelRegistry implements IFuelHandler{
 	@Override
 	public int getBurnTime(ItemStack item) {
 		// see TileEntityFurnace.getItemBurnTime(...) for reference
-		return burnMap.get(new ItemLookupReference(item)).intValue();
+		Number value = burnMap.get(new ItemLookupReference(item));
+		if(value == null){
+			return 0;
+		}
+		return value.intValue();
 	}
 	
 	private static final class ItemLookupReference{

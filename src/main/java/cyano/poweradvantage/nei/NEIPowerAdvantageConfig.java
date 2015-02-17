@@ -20,8 +20,9 @@ public class NEIPowerAdvantageConfig implements IConfigureNEI{
 
 	@Override
 	public void loadConfig() {
-	//	codechicken.nei.api.API.registerRecipeHandler(Handler);
-	//	codechicken.nei.api.API.registerUsageHandler(Handler);
+		ExpandedFurnaceShapedHandler shaped = new ExpandedFurnaceShapedHandler();
+		codechicken.nei.api.API.registerRecipeHandler(shaped);
+		codechicken.nei.api.API.registerUsageHandler(shaped);
 		// TODO register NEI stuff
 	}
 

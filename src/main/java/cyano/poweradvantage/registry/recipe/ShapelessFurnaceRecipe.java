@@ -1,9 +1,12 @@
 package cyano.poweradvantage.registry.recipe;
 
+import java.util.List;
+
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.world.World;
+import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
@@ -59,6 +62,29 @@ public class ShapelessFurnaceRecipe extends ExpandedFurnaceRecipe{
 				}
 				return true;
 			} 
+		}
+		return false;
+	}
+	
+
+	@Override
+	public boolean usesItem(ItemStack input) {
+		if(input == null) return false;
+		List formula = recipe.getInput();
+		for(Object i : formula){
+			if(i instanceof ItemStack && areOreDictionaryItemsEqual(input,(ItemStack)i)) return true;
+			if(i instanceof List<?> ){
+				List l = (List<ItemStack>)i;
+				for(Object i2 : l){
+					if(i2 instanceof ItemStack && areOreDictionaryItemsEqual(input,(ItemStack)i2)) return true;
+				}
+			}
+			if(i instanceof String){
+				List<ItemStack> l = OreDictionary.getOres((String)i);
+				for(ItemStack i2 : l){
+					if(areOreDictionaryItemsEqual(input,(ItemStack)i2)) return true;
+				}
+			}
 		}
 		return false;
 	}
