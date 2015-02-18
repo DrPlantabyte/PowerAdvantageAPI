@@ -115,7 +115,11 @@ public class ExpandedFurnaceShapedHandler extends TemplateRecipeHandler{
 		return PowerAdvantage.MODID+":textures/gui/nei/nei_expanded_furnace.png";
 	}
 	
-	
+	@Override
+	public void drawExtras(int recipe) {
+		drawProgressBar(87, 43, 176, 0, 14, 14, 48, 7);
+		drawProgressBar(83, 24, 176, 14, 24, 16, 48, 0);
+	}
 
 	@Override
 	public TemplateRecipeHandler newInstance() {

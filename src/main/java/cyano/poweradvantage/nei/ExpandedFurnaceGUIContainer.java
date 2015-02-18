@@ -22,12 +22,6 @@ public class ExpandedFurnaceGUIContainer extends GuiContainer{
 		int y = (height - ySize) / 2;
 		this.mc.renderEngine.bindTexture(guiDisplayImage);
 		this.drawTexturedModalRect(x, y, 0, 0, 176, 76); // x, y, textureOffsetX, textureOffsetY, width, height)
-		int flamePercent = (int)(System.currentTimeMillis() % 4000) / 40;
-		int h = 14 * (100-flamePercent) / 100;
-		int w = 24 * flamePercent / 100;
-// TODO: figure out why animation isn't displaying
-		if(h > 0)this.drawTexturedModalRect(x+93, y+55-h, 176, 14-h, 14, h); // x, y, textureOffsetX, textureOffsetY, width, height)
-		if(w > 0)this.drawTexturedModalRect(x+88, y+34, 176, 14, w, 16); // x, y, textureOffsetX, textureOffsetY, width, height)
 	}
 	
 
