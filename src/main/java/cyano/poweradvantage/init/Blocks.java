@@ -12,6 +12,8 @@ public abstract class Blocks {
 	public static void init(){
 		if(initDone) return;
 		
+		// TODO: add Power Gauge block that displays the power in a neighboring conductor
+		// TODO: add fluid pipes
 		
 		initDone = true;
 	}
