@@ -23,7 +23,10 @@ public class NEIPowerAdvantageConfig implements IConfigureNEI{
 		ExpandedFurnaceShapedHandler shaped = new ExpandedFurnaceShapedHandler();
 		codechicken.nei.api.API.registerRecipeHandler(shaped);
 		codechicken.nei.api.API.registerUsageHandler(shaped);
-		// TODO register NEI stuff
+
+		ExpandedFurnaceShapelessHandler shapeless = new ExpandedFurnaceShapelessHandler();
+		codechicken.nei.api.API.registerRecipeHandler(shapeless);
+		codechicken.nei.api.API.registerUsageHandler(shapeless);
 	}
 
 }
