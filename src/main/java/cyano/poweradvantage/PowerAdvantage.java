@@ -35,6 +35,7 @@ import cyano.poweradvantage.registry.MachineGUIRegistry;
  * Steam Powered Drill
  * Steam Powered Lift (pushes up special lift blocks, like an extendable piston)
  * Steam Powered Assembler (auto-crafter)
+ * Musket (slow-loading ranged weapon)
  * Steam Powered Defense Cannon (manual aiming and requires redstone trigger)
  * Oil-Burning Steam Boiler
  * Bioreactor (slowly makes liquid fuel from organic matter)
@@ -45,22 +46,107 @@ import cyano.poweradvantage.registry.MachineGUIRegistry;
  * Solar Generator
  * Water Turbine Generator
  * Wind Turbine Generator 
+ * Electric Boiler (makes steam power from electricity)
  * Electric Battery
  * Electric Furnace
  * Electric Arc Furnace (expanded furnace 3x3)
  * Electric Rock Crusher
  * Electric Drill
  * Electric Assembler
+ * Revolver Pistol (six-shots between slow reloads)
  * Electric Defense Cannon (auto-aiming and automatically attacks hostile mobs)
+ * Electric Lift (electric version of steam lift)
  * Electric Tools
  * Electric Charging Station
  * Electric Robot Station
  * Robots:
  * - Farm-bot (farms)
- * - Kill-bot (kills mobs)
+ * - Lumber-bot (cuts and plants trees)
+ * - Kill-bot (kills mobs with arrows or bullets)
  * - Drill-bot (digs)
- * - Builder-bot (builds villager homes)
+ * - Construction-bot (builds villager homes)
+ * - Chef-bot (cooks food)
+ * - Fish-bot (fishes)
  * 
+ * -- MagicAdvantage -- (power from colored mana)
+ * Mana:
+ * - Red (fire)
+ * - Blue (water)
+ * - White (air)
+ * - Brown (earth)
+ * - Purple (darkness, not found naturally in overworld)
+ * - Yellow (light, not found naturally in overworld)
+ * mana crystal generates in the world and slowly grow over time 
+ * fully grown mana crystals are hazardous to be near and sprout new crystals in neighboring air blocks
+ * mining a mana crystal drops mana
+ * magical machines are powered by mana and have extra effects depending on mane used for power
+ * Mana Pool (stores mana and powers near-by magic machines)
+ * Mana Focus (giant crystal that extends the range of the mana pool)
+ * Red Mana Condenser (turns fuel into red mana)
+ * Blue Mana Condenser (generates blue mana if submerged in water)
+ * Brown Mana Condenser (turns plants into brown mana)
+ * White Mana Condenser (generates white mana while high in the sky)
+ * Yellow Mana Condenser (generates yellow mana while sunlight shines on it)
+ * Purple Mana Condenser (hurts nearby entities and generates purple mana)
+ * Magical Excavator (mines the area)
+ * - red mana: smelt items as they're mined
+ * - blue mana: mine faster
+ * - brown mana: fill mined area with dirt
+ * - white mana: mine larger area
+ * - yellow mana: occasionally mines a duplicate block (+10% yield)
+ * - purple mana: destroy worthless blocks instead of mining them
+ * Magical Conjurer (summons entities/items)
+ * - red mana: random treasure chest loot item
+ * - blue mana: random fishing result
+ * - brown mana: random ore or crop
+ * - white mana: random animal
+ * - yellow mana: random mana shard
+ * - purple mana: random hostile mob, occasionally from Nether
+ * Magical Spirit Shrine
+ * - red mana: attacks hostile mobs and smelts near-by blocks (turns trees into charcoal and cobblestone into stone)
+ * - blue mana: plants crops and trees using items in nearby chests
+ * - brown mana: adds mining haste effect to nearby players
+ * - white mana: harvests crops and leaves and picks-up nearby items and puts them in a chest
+ * - yellow mana: lights up the area (places fae lights)
+ * - purple mana: hurts all mobs and steals from player inventories
+ * Magical Furnace (expanded furnace 3x3)
+ * - red mana: smelts more items per mana shard
+ * - blue mana: unsmelts items
+ * - brown mana: has small change of spitting out a random mana shard after each smelt
+ * - white mana: smelts faster (but does not smelt more items per mana shard)
+ * - yellow mana: has chance of not consuming input items
+ * - purple mana: smelts super fast, with 12.5% loss
+ * Magical Mystery Box (does stuff to items placed inside)
+ * - red mana: smelts items
+ * - blue mana: turns water buckets into ice blocks, lava buckets into obsidian
+ * - brown mana: grows/duplicates plant items
+ * - white mana: crafts blocks into fancier forms (e.g. stone into stone bricks)
+ * - yellow mana: repairs items
+ * - purple mana: destroys items, creating XP orbs
+ * 
+ * -- QuantumAdvantage -- (wireless power)
+ * Fusion Generator (burns water for electricity)
+ * Quantum Entanglement Generator (powered by electricity, wirelessly sends power to quantum machines and also recharges quantum batteries in player inventories)
+ * Quantum Relay (range extender for Quantum Entanglement Generator)
+ * Quantum Furnace (super-fast 3x3 expanded furnace)
+ * Quantum Teleporter
+ * Quantum Disassembler (like crusher, but also yields 1 stone block per ore)
+ * Quantum Defense Cannon (automatically hurts all enemy mobs within range)
+ * Quantum Quarry (like BuildCraft Quarry)
+ * Quantum Farm (manages farming in nearby area)
+ * Quantum Tools (powered by a quantum battery in player inventory)
+ * Ray Gun (gun with no reload time, powered by a quantum battery in player inventory)
+ * Private Quantum Storage Chest (like  ender chest with bigger inventory)
+ * Public Quantum Storage Chest (like ender chest, but all players on same team have access)
+ * Quantum Shield (worn as chestplate, provides full armor protection and repairs with quantum energy)
+ * Quantum Goggles (worn as helmet, lets user see ores and entity through walls and see in the dark)
+ * Quantum Leg Enhancements (worn as leggings, bestows fast speed and player can walk up 1-block height change without jumping)
+ * Quantum Shoes (slow fall and air jumping, allows for primitive flight)
+ * Instant XXX (place on ground to make building instantly appear)
+ * Instant Camp
+ * Instant Farm
+ * Instant House
+ * Instant Castle
  */
 
 /**
