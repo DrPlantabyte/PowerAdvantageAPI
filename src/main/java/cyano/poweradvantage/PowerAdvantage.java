@@ -16,6 +16,53 @@ import cyano.poweradvantage.registry.MachineGUIRegistry;
 
 // NOTE: other mods dependant on this one need to add the following to their @Mod annotation:
 // dependencies = "required-after:poweradvantage" 
+
+// TODO: list
+/* TODO list
+ * drain block
+ * fluid pipes
+ * spigot block
+ * gauge block
+ * item chute
+ * example crusher machine
+ * example expanded furnace machine
+ * -- SteamAdvantage mod --
+ * Coal-Fired Steam Boiler
+ * Boiler Tank
+ * Steam Conduit
+ * Steam Powered Rock Crusher
+ * Steam Powered Blast Furnace (expanded furnace 2x2)
+ * Steam Powered Drill
+ * Steam Powered Lift (pushes up special lift blocks, like an extendable piston)
+ * Steam Powered Assembler (auto-crafter)
+ * Steam Powered Defense Cannon (manual aiming and requires redstone trigger)
+ * Oil-Burning Steam Boiler
+ * Bioreactor (slowly makes liquid fuel from organic matter)
+ * -- ElectricalAdvantage --
+ * Electricity Conduit
+ * Steam Powered Generator
+ * Combustion Generator (fuel burning)
+ * Solar Generator
+ * Water Turbine Generator
+ * Wind Turbine Generator 
+ * Electric Battery
+ * Electric Furnace
+ * Electric Arc Furnace (expanded furnace 3x3)
+ * Electric Rock Crusher
+ * Electric Drill
+ * Electric Assembler
+ * Electric Defense Cannon (auto-aiming and automatically attacks hostile mobs)
+ * Electric Tools
+ * Electric Charging Station
+ * Electric Robot Station
+ * Robots:
+ * - Farm-bot (farms)
+ * - Kill-bot (kills mobs)
+ * - Drill-bot (digs)
+ * - Builder-bot (builds villager homes)
+ * 
+ */
+
 /**
  * This is the main mod class for Power Advantage. Forge/FML will create an 
  * instance of this class and call its initializer functions. There are some 
