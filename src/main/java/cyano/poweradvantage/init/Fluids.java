@@ -2,7 +2,7 @@ package cyano.poweradvantage.init;
 
 import net.minecraftforge.fluids.*;
 
-public class Fluids {
+public abstract class Fluids {
 
 
 	private static boolean initDone = false;

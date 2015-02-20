@@ -2,10 +2,7 @@ package cyano.poweradvantage.api.simple;
 
 import java.util.Random;
 
-import com.google.common.base.Predicate;
-
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyDirection;
@@ -13,7 +10,6 @@ import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.Item;
@@ -22,17 +18,16 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import cyano.poweradvantage.PowerAdvantage;
+
+import com.google.common.base.Predicate;
+
 import cyano.poweradvantage.api.ConductorType;
+import cyano.poweradvantage.api.GUIBlock;
 import cyano.poweradvantage.api.ITypedConductor;
 import cyano.poweradvantage.api.PowerSinkEntity;
 import cyano.poweradvantage.api.PowerSourceEntity;
-import cyano.poweradvantage.api.example.RedstoneGeneratorBlock;
-import cyano.poweradvantage.api.example.RedstoneGeneratorGUI;
-import cyano.poweradvantage.registry.MachineGUIRegistry;
 /**
  * This block class provides all of the standard code for creating a machine 
  * block with an inventory and user interface that receives power from adjacent 
@@ -46,10 +41,8 @@ GameRegistry.registerBlock(myMachineBlock,"my_machine");
  * @author DrCyano
  *
  */
-public abstract class BlockSimplePowerConsumer  extends BlockContainer implements ITypedConductor {
-	private final int guiID;
+public abstract class BlockSimplePowerConsumer  extends GUIBlock implements ITypedConductor {
 	private final ConductorType type;
-	private final Object guiHandlerOwner;
 	/**
 	 * Blockstate property
 	 */
@@ -79,9 +72,9 @@ public abstract class BlockSimplePowerConsumer  extends BlockContainer implement
      */
 	public BlockSimplePowerConsumer(Material blockMaterial, float hardness, ConductorType energyType, int guiHandlerID, Object ownerOfGUIHandler){
 		super(blockMaterial);
-		this.guiID = guiHandlerID;
+		this.setGuiID(guiHandlerID);
 		this.type = energyType;
-		this.guiHandlerOwner = ownerOfGUIHandler;
+		this.setGuiOwner(ownerOfGUIHandler);
     	super.setHardness(hardness);
 	}
 	
@@ -148,28 +141,7 @@ public abstract class BlockSimplePowerConsumer  extends BlockContainer implement
     
     
     
-    /**
-     * Override of default block behavior to show the player the GUI for this 
-     * block
-     * @return true if the interaction resulted in opening the GUI, false 
-     * otherwise
-     */
-    @Override
-    public boolean onBlockActivated(final World w, final BlockPos coord, final IBlockState bs, 
-    		final EntityPlayer player, final EnumFacing facing, final float f1, final float f2, 
-    		final float f3) {
-        if (w.isRemote) {
-            return true;
-        }
-        final TileEntity tileEntity = w.getTileEntity(coord);
-        if (tileEntity == null || player.isSneaking()) {
-        	return false;
-        }
-        // open GUI
-        if(guiHandlerOwner == null) return false;
-        player.openGui(guiHandlerOwner, guiID, w, coord.getX(), coord.getY(), coord.getZ());
-        return true;
-    }
+    
     /**
      * Destroys the TileEntity associated with this block when this block 
      * breaks.

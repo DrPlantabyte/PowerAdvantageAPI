@@ -9,6 +9,8 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.lwjgl.opengl.GL11;
 
@@ -104,6 +106,7 @@ guiContainer.drawTexturedModalRect(x+79, y+35, 0, 0, arrowLength, 17); // x, y, 
 	 * @return An instance of net.minecraft.client.gui.inventory.GuiContainer
 	 */
 	@Override
+	@SideOnly(Side.CLIENT)
 	public GuiContainer getContainerGUI(TileEntity e, EntityPlayer player) {
 		return new GUIContainer(player.inventory,(IInventory)e);
 	}
@@ -187,6 +190,8 @@ guiContainer.drawTexturedModalRect(x+79, y+35, 0, 0, arrowLength, 17); // x, y, 
 	 * net.minecraft.client.gui.inventory.GuiContainer to fulfill the 
 	 * requirements of the interface ITileEntityGUI.
 	 */
+
+	@SideOnly(Side.CLIENT)
 	public class GUIContainer extends net.minecraft.client.gui.inventory.GuiContainer{
 		private final Object entity;
 		public GUIContainer(InventoryPlayer playerItems, IInventory entity) {

@@ -2,6 +2,9 @@ language_support_goals=english (en_US,en_EN,en_CA,en_GB, en_AU, en_PT), spanish 
 nei.poweradvantage.recipehandler.shapelessfurnace.name=Large Furnace (Shapeless)
 nei.poweradvantage.recipehandler.shapedfurnace.name=Large Furnace (Shaped)
 
+tile.poweradvantage.fluid_drain.name=Drain
+
+
 tile.poweradvantage.powercable.name=Power Cable
 tile.poweradvantage.powerfurnace.name=Powered Furnace
 tile.poweradvantage.powerfurnace_lit.name=Powered Furnace (lit)

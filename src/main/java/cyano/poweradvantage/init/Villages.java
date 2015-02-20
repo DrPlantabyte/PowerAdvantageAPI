@@ -7,6 +7,8 @@ public abstract class Villages {
 	public static void init(){
 		if(initDone) return;
 		
+		Entities.init();
+		
 		initDone = true;
 	}
 }

@@ -1,11 +1,17 @@
 package cyano.poweradvantage.fluids.block;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.ISidedInventory;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.gui.IUpdatePlayerListBox;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.IChatComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
@@ -14,19 +20,20 @@ import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fluids.IFluidHandler;
+import net.minecraftforge.fml.common.FMLLog;
 
 
-public class DrainTileEntity extends TileEntity implements IUpdatePlayerListBox, IFluidHandler{
+public class FluidDrainTileEntity extends TileEntity implements IUpdatePlayerListBox, IFluidHandler, ISidedInventory{
 
 	public final FluidTank tank = new FluidTank( FluidContainerRegistry.BUCKET_VOLUME );
 	
 	private final int updateInterval = 20;
 	private final int updateOffset;
 	
-	public DrainTileEntity(World w){
-		updateOffset = (int)(w.getTotalWorldTime() % updateInterval);
+	public FluidDrainTileEntity(World w, int i){
+		updateOffset = w.rand.nextInt( updateInterval);
 	}
-	public DrainTileEntity(){
+	public FluidDrainTileEntity(){
 		updateOffset = 0;
 	}
 	
@@ -37,14 +44,17 @@ public class DrainTileEntity extends TileEntity implements IUpdatePlayerListBox,
 		if(!worldObj.isRemote){
 			// server-side
 			if((worldObj.getTotalWorldTime() + updateOffset) % updateInterval == 0){
+				FMLLog.info("Drain contains "+ tank.getFluidAmount() + " units of " + tank.getFluid()); // TODO: remove debug code
 				if(tank.getFluidAmount() <= 0){
 					IBlockState bs = worldObj.getBlockState(this.pos.up());
 					if(bs.getBlock() instanceof IFluidBlock){
 						IFluidBlock block = (IFluidBlock)bs.getBlock();
+						FMLLog.info("Drain right under a block of "+ block.getFluid()); // TODO: remove debug code
 						Fluid fluid = block.getFluid();
 						if(fluid != null){
 							if(block.canDrain(worldObj, this.pos.up())){
 								// is source block
+								FMLLog.info("Drain right under source block"); // TODO: remove debug code
 								tank.fill(new FluidStack(fluid,FluidContainerRegistry.BUCKET_VOLUME), true);
 								worldObj.setBlockToAir(this.pos.up());
 								this.markDirty();
@@ -85,6 +95,7 @@ public class DrainTileEntity extends TileEntity implements IUpdatePlayerListBox,
 								}while(limit > 0);
 								if(limit > 0 && ((IFluidBlock)worldObj.getBlockState(coord).getBlock()).canDrain(worldObj, coord)){
 									// found source block
+									FMLLog.info("Drain found source block at"+coord); // TODO: remove debug code
 									tank.fill(new FluidStack(fluid,FluidContainerRegistry.BUCKET_VOLUME), true);
 									worldObj.setBlockToAir(coord);
 									this.markDirty();
@@ -95,6 +106,15 @@ public class DrainTileEntity extends TileEntity implements IUpdatePlayerListBox,
 				}
 			}
 		}
+	}
+	
+	public FluidStack getFluid(){
+		if(tank.getFluidAmount() <= 0) return null;
+		return tank.getFluid();
+	}
+	
+	public int getFluidCapacity(){
+		return tank.getCapacity();
 	}
 	
 	///// Synchronization /////
@@ -119,7 +139,7 @@ public class DrainTileEntity extends TileEntity implements IUpdatePlayerListBox,
 	
 	///// Boiler Plate /////
 	
-	
+	private String customName = null;
 	///// IFluidHandler /////
 
 	@Override
@@ -168,5 +188,111 @@ public class DrainTileEntity extends TileEntity implements IUpdatePlayerListBox,
 		if(tank.getFluid() == null)return null;
 		return tank.getFluid().getFluid();
 	}
+	
+
+	///// ISidedInventroy /////
+	
+	@Override
+	public void clear() {
+		// do nothing
+		
+	}
+	@Override
+	public void closeInventory(EntityPlayer arg0) {
+		// do nothing
+		
+	}
+	@Override
+	public ItemStack decrStackSize(int arg0, int arg1) {
+		// do nothing
+		return null;
+	}
+	@Override
+	public int getField(int arg0) {
+		// do nothing
+		return 0;
+	}
+	@Override
+	public int getFieldCount() {
+		// do nothing
+		return 0;
+	}
+	@Override
+	public int getInventoryStackLimit() {
+		// do nothing
+		return 0;
+	}
+	@Override
+	public int getSizeInventory() {
+		// do nothing
+		return 0;
+	}
+	@Override
+	public ItemStack getStackInSlot(int arg0) {
+		// do nothing
+		return null;
+	}
+	@Override
+	public ItemStack getStackInSlotOnClosing(int arg0) {
+		// do nothing
+		return null;
+	}
+	@Override
+	public boolean isItemValidForSlot(int arg0, ItemStack arg1) {
+	// do nothing
+		return false;
+	}
+	@Override
+	public boolean isUseableByPlayer(final EntityPlayer p_isUseableByPlayer_1_) {
+	    return this.worldObj.getTileEntity(this.pos) == this && p_isUseableByPlayer_1_.getDistanceSq((double)this.pos.getX() + 0.5, (double)this.pos.getY() + 0.5, (double)this.pos.getZ() + 0.5) <= 64.0;
+	}
+	@Override
+	public void openInventory(EntityPlayer arg0) {
+		// do nothing
+		
+	}
+	@Override
+	public void setField(int arg0, int arg1) {
+		// do nothing
+		
+	}
+	@Override
+	public void setInventorySlotContents(int arg0, ItemStack arg1) {
+		// do nothing
+		
+	}
+	@Override
+    public IChatComponent getDisplayName() {
+        if (this.hasCustomName()) {
+            return new ChatComponentText(this.getName());
+        }
+        return new ChatComponentTranslation(this.getName(), new Object[0]);
+    }
+	@Override
+	public String getName() {
+        return this.hasCustomName() ? this.customName : cyano.poweradvantage.init.Blocks.fluid_drain.getUnlocalizedName();
+	}
+	@Override
+	public boolean hasCustomName() {
+		return this.customName != null;
+	}
+	@Override
+	public boolean canExtractItem(int arg0, ItemStack arg1, EnumFacing arg2) {
+		// do nothing
+		return false;
+	}
+	@Override
+	public boolean canInsertItem(int arg0, ItemStack arg1, EnumFacing arg2) {
+		// do nothing
+		return false;
+	}
+	@Override
+	public int[] getSlotsForFace(EnumFacing arg0) {
+		return new int[0];
+	}
+	
+
+	
+	
 	//////////
 }

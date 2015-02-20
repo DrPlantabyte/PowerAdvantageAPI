@@ -2,6 +2,8 @@ package cyano.poweradvantage.registry;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * This interface is used to combine the two different classes of a block GUI 
@@ -25,5 +27,6 @@ public interface ITileEntityGUI {
 	 * @param player The player that is going to use the GUI
 	 * @return An instance of net.minecraft.client.gui.inventory.GuiContainer
 	 */
+	@SideOnly(Side.CLIENT)
 	public abstract net.minecraft.client.gui.inventory.GuiContainer getContainerGUI(TileEntity e, EntityPlayer player);
 }

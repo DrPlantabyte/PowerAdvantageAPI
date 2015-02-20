@@ -26,6 +26,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import cyano.poweradvantage.PowerAdvantage;
 import cyano.poweradvantage.api.ConductorType;
+import cyano.poweradvantage.api.GUIBlock;
 import cyano.poweradvantage.api.ITypedConductor;
 import cyano.poweradvantage.api.PowerSourceEntity;
 
@@ -42,10 +43,8 @@ GameRegistry.registerBlock(myMachineBlock,"my_machine");
  * @author DrCyano
  *
  */
-public abstract class BlockSimplePowerSource  extends BlockContainer implements ITypedConductor {
-	private final int guiID;
+public abstract class BlockSimplePowerSource  extends GUIBlock implements ITypedConductor {
 	private final ConductorType type;
-	private final Object guiHandlerOwner;
 
 	/**
 	 * Blockstate property
@@ -76,9 +75,9 @@ public abstract class BlockSimplePowerSource  extends BlockContainer implements 
      */
 	public BlockSimplePowerSource(Material blockMaterial, float hardness, ConductorType energyType, int guiHandlerID, Object ownerOfGUIHandler){
 		super(blockMaterial);
-		this.guiID = guiHandlerID;
+		this.setGuiID(guiHandlerID);
 		this.type = energyType;
-		this.guiHandlerOwner = ownerOfGUIHandler;
+		this.setGuiOwner(ownerOfGUIHandler);
     	super.setHardness(hardness);
 	}
 	
@@ -139,33 +138,6 @@ public abstract class BlockSimplePowerSource  extends BlockContainer implements 
         		((PowerSourceEntity)tileEntity).setCustomInventoryName(srcItemStack.getDisplayName());
         	}
         }
-    }
-    
-    
-    
-    
-
-    /**
-     * Override of default block behavior to show the player the GUI for this 
-     * block
-     * @return true if the interaction resulted in opening the GUI, false 
-     * otherwise
-     */
-    @Override
-    public boolean onBlockActivated(final World w, final BlockPos coord, final IBlockState bs, 
-    		final EntityPlayer player, final EnumFacing facing, final float f1, final float f2, 
-    		final float f3) {
-        if (w.isRemote) {
-            return true;
-        }
-        final TileEntity tileEntity = w.getTileEntity(coord);
-        if (tileEntity == null || player.isSneaking()) {
-        	return false;
-        }
-        // open GUI
-        if(guiHandlerOwner == null) return false;
-        player.openGui(guiHandlerOwner, guiID, w, coord.getX(), coord.getY(), coord.getZ());
-        return true;
     }
     
     /**
