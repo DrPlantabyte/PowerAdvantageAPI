@@ -131,32 +131,43 @@ public class FluidDrainTileEntity extends TileEntity implements IUpdatePlayerLis
 						int limit = 16;
 						BlockPos coord = this.pos.up();
 						do{
-
+							
 							int Q = (Integer)worldObj.getBlockState(coord).getValue(BlockDynamicLiquid.LEVEL); // 0 for source block, 1-7 for flowing blocks (lower number = closer to source)
+							FMLLog.info("Block at "+ coord + ": "+ worldObj.getBlockState(coord).getBlock().getUnlocalizedName() + " " + mapToString(worldObj.getBlockState(coord).getProperties())); // TODO: remove debug code
+							FMLLog.info("Neighbor at "+ coord.north() + ": "+ worldObj.getBlockState(coord.north()).getBlock().getUnlocalizedName() + " " + mapToString(worldObj.getBlockState(coord.north()).getProperties())); // TODO: remove debug code
+							FMLLog.info("Neighbor at "+ coord.east() + ": "+ worldObj.getBlockState(coord.east()).getBlock().getUnlocalizedName() + " " + mapToString(worldObj.getBlockState(coord.east()).getProperties())); // TODO: remove debug code
+							FMLLog.info("Neighbor at "+ coord.south() + ": "+ worldObj.getBlockState(coord.south()).getBlock().getUnlocalizedName() + " " + mapToString(worldObj.getBlockState(coord.south()).getProperties())); // TODO: remove debug code
+							FMLLog.info("Neighbor at "+ coord.west() + ": "+ worldObj.getBlockState(coord.west()).getBlock().getUnlocalizedName() + " " + mapToString(worldObj.getBlockState(coord.west()).getProperties())); // TODO: remove debug code
 							if(Q == 0){
 								// source block
 								break;
 							} else {
+								
 								if(worldObj.getBlockState(coord.up()).getBlock() instanceof BlockLiquid
 										&& worldObj.getBlockState(coord.up()).getBlock().getMaterial() == m){
 									coord = coord.up();
+									FMLLog.info("Up");
 								} else {
 									if(worldObj.getBlockState(coord.north()).getBlock() instanceof BlockLiquid
 											&& worldObj.getBlockState(coord.north()).getBlock().getMaterial() == m
-											&& (Integer)worldObj.getBlockState(coord.north()).getValue(BlockDynamicLiquid.LEVEL) < Q){
+											&& ((Integer)worldObj.getBlockState(coord.north()).getValue(BlockDynamicLiquid.LEVEL) < Q  || (Integer)worldObj.getBlockState(coord.north()).getValue(BlockDynamicLiquid.LEVEL) == 9)){
 										coord = coord.north();
+										FMLLog.info("North");
 									} else if(worldObj.getBlockState(coord.east()).getBlock() instanceof BlockLiquid
 											&& worldObj.getBlockState(coord.east()).getBlock().getMaterial() == m
-											&& (Integer)worldObj.getBlockState(coord.east()).getValue(BlockDynamicLiquid.LEVEL) < Q){
+											&& ((Integer)worldObj.getBlockState(coord.east()).getValue(BlockDynamicLiquid.LEVEL) < Q  || (Integer)worldObj.getBlockState(coord.east()).getValue(BlockDynamicLiquid.LEVEL) == 9)){
 										coord = coord.east();
+										FMLLog.info("East");
 									} else if(worldObj.getBlockState(coord.south()).getBlock() instanceof BlockLiquid
 											&& worldObj.getBlockState(coord.south()).getBlock().getMaterial() == m
-											&& (Integer)worldObj.getBlockState(coord.south()).getValue(BlockDynamicLiquid.LEVEL) < Q){
+											&& ((Integer)worldObj.getBlockState(coord.south()).getValue(BlockDynamicLiquid.LEVEL) < Q  || (Integer)worldObj.getBlockState(coord.south()).getValue(BlockDynamicLiquid.LEVEL) == 9)){
 										coord = coord.south();
+										FMLLog.info("South");
 									} else if(worldObj.getBlockState(coord.west()).getBlock() instanceof BlockLiquid
 											&& worldObj.getBlockState(coord.west()).getBlock().getMaterial() == m
-											&& (Integer)worldObj.getBlockState(coord.west()).getValue(BlockDynamicLiquid.LEVEL) < Q){
+											&& ((Integer)worldObj.getBlockState(coord.west()).getValue(BlockDynamicLiquid.LEVEL) < Q  || (Integer)worldObj.getBlockState(coord.west()).getValue(BlockDynamicLiquid.LEVEL) == 9)){
 										coord = coord.west();
+										FMLLog.info("West");
 									} else {
 										// failed to find upstream block
 										limit = 0;
