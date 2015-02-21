@@ -38,14 +38,19 @@ public class FluidDrainTileEntity extends TileEntity implements IUpdatePlayerLis
 
 	public final FluidTank tank = new FluidTank( FluidContainerRegistry.BUCKET_VOLUME );
 	
-	private final int updateInterval = 20;
+	private final static int updateInterval = 20;
 	private final int updateOffset;
 	
 	public FluidDrainTileEntity(World w, int i){
-		updateOffset = w.rand.nextInt( updateInterval);
+		this(w.rand.nextInt( updateInterval));
+		
 	}
+	public FluidDrainTileEntity(int tickOffset){
+		updateOffset = tickOffset;
+	}
+	
 	public FluidDrainTileEntity(){
-		updateOffset = 0;
+		this(0);
 	}
 	
 	///// Logic and implementation /////
@@ -70,7 +75,7 @@ public class FluidDrainTileEntity extends TileEntity implements IUpdatePlayerLis
 								FMLLog.info("Drain right under source block"); // TODO: remove debug code
 								tank.fill(new FluidStack(fluid,FluidContainerRegistry.BUCKET_VOLUME), true);
 								worldObj.setBlockToAir(this.pos.up());
-								this.markDirty();
+								this.sync();
 							} else {
 								// is flowing block, follow upstream to find source block
 								int limit = 16;
@@ -111,7 +116,7 @@ public class FluidDrainTileEntity extends TileEntity implements IUpdatePlayerLis
 									FMLLog.info("Drain found source block at"+coord); // TODO: remove debug code
 									tank.fill(new FluidStack(fluid,FluidContainerRegistry.BUCKET_VOLUME), true);
 									worldObj.setBlockToAir(coord);
-									this.markDirty();
+									this.sync();
 								}
 							}
 						}
@@ -172,13 +177,19 @@ public class FluidDrainTileEntity extends TileEntity implements IUpdatePlayerLis
 								return;
 							}
 							worldObj.setBlockToAir(coord);
-							this.markDirty();
+							this.sync();
 						}
 
 					}
 				}
 			}
 		}
+	}
+	
+	public void sync(){
+		// cause data update to be sent to client
+		worldObj.markBlockForUpdate(getPos());
+		this.markDirty();
 	}
 	
 	private String mapToString(ImmutableMap properties) {
@@ -230,7 +241,7 @@ public class FluidDrainTileEntity extends TileEntity implements IUpdatePlayerLis
      * @return A synchronization NBT holding values from the 
      * <code>getDataFieldArray()</code> array
      */
-    public NBTTagCompound createDataFieldUpdateTag(){
+    public NBTTagCompound createUpdateTag(){
     	NBTTagCompound nbtTag = new NBTTagCompound();
     	tank.writeToNBT(nbtTag);
     	return nbtTag;
@@ -242,7 +253,7 @@ public class FluidDrainTileEntity extends TileEntity implements IUpdatePlayerLis
      * @param nbtTag A synchronization NBT holding values from the 
      * <code>getDataFieldArray()</code> array
      */
-    public void readDataFieldUpdateTag(NBTTagCompound nbtTag){
+    public void readUpdateTag(NBTTagCompound nbtTag){
     	tank.readFromNBT(nbtTag);
     }
 
@@ -251,7 +262,7 @@ public class FluidDrainTileEntity extends TileEntity implements IUpdatePlayerLis
      */
     @Override 
     public Packet getDescriptionPacket(){
-    	NBTTagCompound nbtTag = createDataFieldUpdateTag();
+    	NBTTagCompound nbtTag = createUpdateTag();
     	return new S35PacketUpdateTileEntity(this.pos, 0, nbtTag);
     }
     /**
@@ -259,7 +270,7 @@ public class FluidDrainTileEntity extends TileEntity implements IUpdatePlayerLis
      */
     @Override
     public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity packet) {
-    	readDataFieldUpdateTag(packet.getNbtCompound());
+    	readUpdateTag(packet.getNbtCompound());
     }
 	
 	///// Boiler Plate /////
@@ -275,12 +286,12 @@ public class FluidDrainTileEntity extends TileEntity implements IUpdatePlayerLis
 		FluidStack resourceCopy = resource.copy();
 		int totalUsed = 0;
 		totalUsed += tank.fill(resourceCopy, doFill);
-		this.markDirty();
+		this.sync();
 		return totalUsed;
 	}
 	@Override
 	public FluidStack drain(EnumFacing from, int maxEmpty, boolean doDrain) {
-		if(doDrain) this.markDirty();
+		if(doDrain) this.sync();
 		return tank.drain(maxEmpty, doDrain);
 	}
 	@Override
@@ -289,7 +300,7 @@ public class FluidDrainTileEntity extends TileEntity implements IUpdatePlayerLis
 			return null;
 		if (!resource.isFluidEqual(tank.getFluid()))
 			return null;
-		if(doDrain) this.markDirty();
+		if(doDrain) this.sync();
 		return drain(from, resource.amount, doDrain);
 	}
 	private FluidTankInfo[] tankInfo = new FluidTankInfo[1];
