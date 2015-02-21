@@ -1,6 +1,11 @@
 package cyano.poweradvantage.fluids.block;
 
+import com.google.common.collect.ImmutableMap;
+
+import net.minecraft.block.BlockDynamicLiquid;
 import net.minecraft.block.BlockLiquid;
+import net.minecraft.block.BlockStaticLiquid;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -50,7 +55,7 @@ public class FluidDrainTileEntity extends TileEntity implements IUpdatePlayerLis
 		if(!worldObj.isRemote){
 			// server-side
 			if((worldObj.getTotalWorldTime() + updateOffset) % updateInterval == 0){
-				FMLLog.info("Drain contains "+ tank.getFluidAmount() + " units of " + tank.getFluid().getUnlocalizedName()); // TODO: remove debug code
+				if(tank.getFluid() != null)FMLLog.info("Drain contains "+ tank.getFluidAmount() + " units of " + tank.getFluid().getUnlocalizedName()); // TODO: remove debug code
 				if(tank.getFluidAmount() <= 0){
 					IBlockState bs = worldObj.getBlockState(this.pos.up());
 					FMLLog.info("Looking for fluids, found "+bs.getBlock().getUnlocalizedName()+" ("+bs.getBlock().getClass().getName()+")"); // TODO: remove debug code
@@ -113,22 +118,82 @@ public class FluidDrainTileEntity extends TileEntity implements IUpdatePlayerLis
 					} else if(bs.getBlock() instanceof BlockLiquid){
 						// Minecraft fluid
 						BlockLiquid block = (BlockLiquid)bs.getBlock();
-						FMLLog.info("Drain right under a vanilla block of "+ block.getUnlocalizedName()); // TODO: remove debug code
-						if(block == Blocks.water){
-							tank.fill(new FluidStack(FluidRegistry.WATER,FluidContainerRegistry.BUCKET_VOLUME), true);
-							worldObj.setBlockToAir(this.pos.up());
-							this.markDirty();
-						} else if(block == Blocks.lava){
-							tank.fill(new FluidStack(FluidRegistry.LAVA,FluidContainerRegistry.BUCKET_VOLUME), true);
-							worldObj.setBlockToAir(this.pos.up());
+						FMLLog.info("Drain right under a vanilla block of "+ block.getUnlocalizedName() + " " + mapToString(bs.getProperties())); // TODO: remove debug code
+
+						// flowing minecraft fluid block
+						Material m = block.getMaterial();
+						// is flowing block, follow upstream to find source block
+						int limit = 16;
+						BlockPos coord = this.pos.up();
+						do{
+
+							int Q = (Integer)worldObj.getBlockState(coord).getValue(BlockDynamicLiquid.LEVEL); // 0 for source block, 1-7 for flowing blocks (lower number = closer to source)
+							if(Q == 0){
+								// source block
+								break;
+							} else {
+								if(worldObj.getBlockState(coord.up()).getBlock() instanceof BlockLiquid
+										&& worldObj.getBlockState(coord.up()).getBlock().getMaterial() == m){
+									coord = coord.up();
+								} else {
+									if(worldObj.getBlockState(coord.north()).getBlock() instanceof BlockLiquid
+											&& worldObj.getBlockState(coord.north()).getBlock().getMaterial() == m
+											&& (Integer)worldObj.getBlockState(coord.north()).getValue(BlockDynamicLiquid.LEVEL) < Q){
+										coord = coord.north();
+									} else if(worldObj.getBlockState(coord.east()).getBlock() instanceof BlockLiquid
+											&& worldObj.getBlockState(coord.east()).getBlock().getMaterial() == m
+											&& (Integer)worldObj.getBlockState(coord.east()).getValue(BlockDynamicLiquid.LEVEL) < Q){
+										coord = coord.east();
+									} else if(worldObj.getBlockState(coord.south()).getBlock() instanceof BlockLiquid
+											&& worldObj.getBlockState(coord.south()).getBlock().getMaterial() == m
+											&& (Integer)worldObj.getBlockState(coord.south()).getValue(BlockDynamicLiquid.LEVEL) < Q){
+										coord = coord.south();
+									} else if(worldObj.getBlockState(coord.west()).getBlock() instanceof BlockLiquid
+											&& worldObj.getBlockState(coord.west()).getBlock().getMaterial() == m
+											&& (Integer)worldObj.getBlockState(coord.west()).getValue(BlockDynamicLiquid.LEVEL) < Q){
+										coord = coord.west();
+									} else {
+										// failed to find upstream block
+										limit = 0;
+									}
+								}
+							}
+							limit--;
+						}while(limit > 0);
+						if(limit > 0 && worldObj.getBlockState(coord).getBlock() instanceof BlockStaticLiquid){
+							// found source block
+							FMLLog.info("Drain found source block at"+coord); // TODO: remove debug code
+							if(m == Material.water){
+								tank.fill(new FluidStack(FluidRegistry.WATER,FluidContainerRegistry.BUCKET_VOLUME), true);
+							} else if(m == Material.lava){
+								tank.fill(new FluidStack(FluidRegistry.LAVA,FluidContainerRegistry.BUCKET_VOLUME), true);
+							} else {
+								FMLLog.warning("Liquid source block at "+coord+" has unknown fluid material "+m); // TODO: remove debug code
+								return;
+							}
+							worldObj.setBlockToAir(coord);
 							this.markDirty();
 						}
+
 					}
 				}
 			}
 		}
 	}
 	
+	private String mapToString(ImmutableMap properties) {
+		// TODO delete this method
+		StringBuilder sb = new StringBuilder();
+		sb.append("{");
+		boolean first = true;
+		for(Object key : properties.keySet()){
+			if(!first)sb.append(",");
+			sb.append(String.valueOf(key)).append("=").append(String.valueOf(properties.get(key)));
+			first = false;
+		}
+		sb.append("}");
+		return sb.toString();
+	}
 	public FluidStack getFluid(){
 		if(tank.getFluidAmount() <= 0) return null;
 		return tank.getFluid();
