@@ -36,6 +36,15 @@ public abstract class GUIBlock extends net.minecraft.block.BlockContainer{
 	}
 	
 	/**
+	 * 3 = normal cube?
+	 * -1 = special renderer?
+	 */
+	@Override
+    public int getRenderType() {
+        return 3;
+    }
+	
+	/**
      * Override of default block behavior to show the player the GUI for this 
      * block
      * @return true if the interaction resulted in opening the GUI, false 

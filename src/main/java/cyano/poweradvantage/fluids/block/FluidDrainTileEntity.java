@@ -1,10 +1,15 @@
 package cyano.poweradvantage.fluids.block;
 
+import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.Packet;
+import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.server.gui.IUpdatePlayerListBox;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
@@ -15,6 +20,7 @@ import net.minecraft.util.IChatComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidTankInfo;
@@ -44,10 +50,12 @@ public class FluidDrainTileEntity extends TileEntity implements IUpdatePlayerLis
 		if(!worldObj.isRemote){
 			// server-side
 			if((worldObj.getTotalWorldTime() + updateOffset) % updateInterval == 0){
-				FMLLog.info("Drain contains "+ tank.getFluidAmount() + " units of " + tank.getFluid()); // TODO: remove debug code
+				FMLLog.info("Drain contains "+ tank.getFluidAmount() + " units of " + tank.getFluid().getUnlocalizedName()); // TODO: remove debug code
 				if(tank.getFluidAmount() <= 0){
 					IBlockState bs = worldObj.getBlockState(this.pos.up());
+					FMLLog.info("Looking for fluids, found "+bs.getBlock().getUnlocalizedName()+" ("+bs.getBlock().getClass().getName()+")"); // TODO: remove debug code
 					if(bs.getBlock() instanceof IFluidBlock){
+						// Forge fluid
 						IFluidBlock block = (IFluidBlock)bs.getBlock();
 						FMLLog.info("Drain right under a block of "+ block.getFluid()); // TODO: remove debug code
 						Fluid fluid = block.getFluid();
@@ -102,6 +110,19 @@ public class FluidDrainTileEntity extends TileEntity implements IUpdatePlayerLis
 								}
 							}
 						}
+					} else if(bs.getBlock() instanceof BlockLiquid){
+						// Minecraft fluid
+						BlockLiquid block = (BlockLiquid)bs.getBlock();
+						FMLLog.info("Drain right under a vanilla block of "+ block.getUnlocalizedName()); // TODO: remove debug code
+						if(block == Blocks.water){
+							tank.fill(new FluidStack(FluidRegistry.WATER,FluidContainerRegistry.BUCKET_VOLUME), true);
+							worldObj.setBlockToAir(this.pos.up());
+							this.markDirty();
+						} else if(block == Blocks.lava){
+							tank.fill(new FluidStack(FluidRegistry.LAVA,FluidContainerRegistry.BUCKET_VOLUME), true);
+							worldObj.setBlockToAir(this.pos.up());
+							this.markDirty();
+						}
 					}
 				}
 			}
@@ -137,6 +158,45 @@ public class FluidDrainTileEntity extends TileEntity implements IUpdatePlayerLis
 		root.setTag("Tank", tankTag);
 	}
 	
+	/**
+     * Creates a NBT to send a synchronization update using this block's data 
+     * field array (see <code>getDataFieldArray()</code>). Before this method 
+     * executes, it calls <code>prepareDataFieldsForSync()</code>.
+     * @return A synchronization NBT holding values from the 
+     * <code>getDataFieldArray()</code> array
+     */
+    public NBTTagCompound createDataFieldUpdateTag(){
+    	NBTTagCompound nbtTag = new NBTTagCompound();
+    	tank.writeToNBT(nbtTag);
+    	return nbtTag;
+    }
+    /**
+     * Reads a synchronization update NBT and stores it in this blocks data 
+     * field array (see <code>getDataFieldArray()</code>). After this method 
+     * executes, it calls <code>onDataFieldUpdate()</code>.
+     * @param nbtTag A synchronization NBT holding values from the 
+     * <code>getDataFieldArray()</code> array
+     */
+    public void readDataFieldUpdateTag(NBTTagCompound nbtTag){
+    	tank.readFromNBT(nbtTag);
+    }
+
+    /**
+     * Turns the data field NBT into a network packet
+     */
+    @Override 
+    public Packet getDescriptionPacket(){
+    	NBTTagCompound nbtTag = createDataFieldUpdateTag();
+    	return new S35PacketUpdateTileEntity(this.pos, 0, nbtTag);
+    }
+    /**
+     * Receives the network packet made by <code>getDescriptionPacket()</code>
+     */
+    @Override
+    public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity packet) {
+    	readDataFieldUpdateTag(packet.getNbtCompound());
+    }
+	
 	///// Boiler Plate /////
 	
 	private String customName = null;
@@ -150,10 +210,12 @@ public class FluidDrainTileEntity extends TileEntity implements IUpdatePlayerLis
 		FluidStack resourceCopy = resource.copy();
 		int totalUsed = 0;
 		totalUsed += tank.fill(resourceCopy, doFill);
+		this.markDirty();
 		return totalUsed;
 	}
 	@Override
 	public FluidStack drain(EnumFacing from, int maxEmpty, boolean doDrain) {
+		if(doDrain) this.markDirty();
 		return tank.drain(maxEmpty, doDrain);
 	}
 	@Override
@@ -162,6 +224,7 @@ public class FluidDrainTileEntity extends TileEntity implements IUpdatePlayerLis
 			return null;
 		if (!resource.isFluidEqual(tank.getFluid()))
 			return null;
+		if(doDrain) this.markDirty();
 		return drain(from, resource.amount, doDrain);
 	}
 	private FluidTankInfo[] tankInfo = new FluidTankInfo[1];

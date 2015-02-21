@@ -256,8 +256,8 @@ public class PowerAdvantage
 	@SideOnly(Side.CLIENT)
 	private void clientInit(FMLInitializationEvent event){
 		// client-only code
-		cyano.basemetals.init.Items.registerItemRenders(event);
-		cyano.basemetals.init.Blocks.registerItemRenders(event);
+		cyano.poweradvantage.init.Items.registerItemRenders(event);
+		cyano.poweradvantage.init.Blocks.registerItemRenders(event);
 	}
 	@SideOnly(Side.SERVER)
 	private void serverInit(FMLInitializationEvent event){
