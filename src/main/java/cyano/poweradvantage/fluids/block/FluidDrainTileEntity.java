@@ -60,19 +60,15 @@ public class FluidDrainTileEntity extends TileEntity implements IUpdatePlayerLis
 		if(!worldObj.isRemote){
 			// server-side
 			if((worldObj.getTotalWorldTime() + updateOffset) % updateInterval == 0){
-				if(tank.getFluid() != null)FMLLog.info("Drain contains "+ tank.getFluidAmount() + " units of " + tank.getFluid().getUnlocalizedName()); // TODO: remove debug code
 				if(tank.getFluidAmount() <= 0){
 					IBlockState bs = worldObj.getBlockState(this.pos.up());
-					FMLLog.info("Looking for fluids, found "+bs.getBlock().getUnlocalizedName()+" ("+bs.getBlock().getClass().getName()+")"); // TODO: remove debug code
 					if(bs.getBlock() instanceof IFluidBlock){
 						// Forge fluid
 						IFluidBlock block = (IFluidBlock)bs.getBlock();
-						FMLLog.info("Drain right under a block of "+ block.getFluid()); // TODO: remove debug code
 						Fluid fluid = block.getFluid();
 						if(fluid != null){
 							if(block.canDrain(worldObj, this.pos.up())){
 								// is source block
-								FMLLog.info("Drain right under source block"); // TODO: remove debug code
 								tank.fill(new FluidStack(fluid,FluidContainerRegistry.BUCKET_VOLUME), true);
 								worldObj.setBlockToAir(this.pos.up());
 								this.sync();
@@ -113,7 +109,6 @@ public class FluidDrainTileEntity extends TileEntity implements IUpdatePlayerLis
 								}while(limit > 0);
 								if(limit > 0 && ((IFluidBlock)worldObj.getBlockState(coord).getBlock()).canDrain(worldObj, coord)){
 									// found source block
-									FMLLog.info("Drain found source block at"+coord); // TODO: remove debug code
 									tank.fill(new FluidStack(fluid,FluidContainerRegistry.BUCKET_VOLUME), true);
 									worldObj.setBlockToAir(coord);
 									this.sync();
@@ -123,8 +118,7 @@ public class FluidDrainTileEntity extends TileEntity implements IUpdatePlayerLis
 					} else if(bs.getBlock() instanceof BlockLiquid){
 						// Minecraft fluid
 						BlockLiquid block = (BlockLiquid)bs.getBlock();
-						FMLLog.info("Drain right under a vanilla block of "+ block.getUnlocalizedName() + " " + mapToString(bs.getProperties())); // TODO: remove debug code
-
+						
 						// flowing minecraft fluid block
 						Material m = block.getMaterial();
 						// is flowing block, follow upstream to find source block
@@ -133,11 +127,6 @@ public class FluidDrainTileEntity extends TileEntity implements IUpdatePlayerLis
 						do{
 							
 							int Q = (Integer)worldObj.getBlockState(coord).getValue(BlockDynamicLiquid.LEVEL); // 0 for source block, 1-7 for flowing blocks (lower number = closer to source)
-							FMLLog.info("Block at "+ coord + ": "+ worldObj.getBlockState(coord).getBlock().getUnlocalizedName() + " " + mapToString(worldObj.getBlockState(coord).getProperties())); // TODO: remove debug code
-							FMLLog.info("Neighbor at "+ coord.north() + ": "+ worldObj.getBlockState(coord.north()).getBlock().getUnlocalizedName() + " " + mapToString(worldObj.getBlockState(coord.north()).getProperties())); // TODO: remove debug code
-							FMLLog.info("Neighbor at "+ coord.east() + ": "+ worldObj.getBlockState(coord.east()).getBlock().getUnlocalizedName() + " " + mapToString(worldObj.getBlockState(coord.east()).getProperties())); // TODO: remove debug code
-							FMLLog.info("Neighbor at "+ coord.south() + ": "+ worldObj.getBlockState(coord.south()).getBlock().getUnlocalizedName() + " " + mapToString(worldObj.getBlockState(coord.south()).getProperties())); // TODO: remove debug code
-							FMLLog.info("Neighbor at "+ coord.west() + ": "+ worldObj.getBlockState(coord.west()).getBlock().getUnlocalizedName() + " " + mapToString(worldObj.getBlockState(coord.west()).getProperties())); // TODO: remove debug code
 							if(Q == 0){
 								// source block
 								break;
@@ -146,28 +135,23 @@ public class FluidDrainTileEntity extends TileEntity implements IUpdatePlayerLis
 								if(worldObj.getBlockState(coord.up()).getBlock() instanceof BlockLiquid
 										&& worldObj.getBlockState(coord.up()).getBlock().getMaterial() == m){
 									coord = coord.up();
-									FMLLog.info("Up");
 								} else {
 									if(worldObj.getBlockState(coord.north()).getBlock() instanceof BlockLiquid
 											&& worldObj.getBlockState(coord.north()).getBlock().getMaterial() == m
 											&& ((Integer)worldObj.getBlockState(coord.north()).getValue(BlockDynamicLiquid.LEVEL) < Q  || (Integer)worldObj.getBlockState(coord.north()).getValue(BlockDynamicLiquid.LEVEL) == 9)){
 										coord = coord.north();
-										FMLLog.info("North");
 									} else if(worldObj.getBlockState(coord.east()).getBlock() instanceof BlockLiquid
 											&& worldObj.getBlockState(coord.east()).getBlock().getMaterial() == m
 											&& ((Integer)worldObj.getBlockState(coord.east()).getValue(BlockDynamicLiquid.LEVEL) < Q  || (Integer)worldObj.getBlockState(coord.east()).getValue(BlockDynamicLiquid.LEVEL) == 9)){
 										coord = coord.east();
-										FMLLog.info("East");
 									} else if(worldObj.getBlockState(coord.south()).getBlock() instanceof BlockLiquid
 											&& worldObj.getBlockState(coord.south()).getBlock().getMaterial() == m
 											&& ((Integer)worldObj.getBlockState(coord.south()).getValue(BlockDynamicLiquid.LEVEL) < Q  || (Integer)worldObj.getBlockState(coord.south()).getValue(BlockDynamicLiquid.LEVEL) == 9)){
 										coord = coord.south();
-										FMLLog.info("South");
 									} else if(worldObj.getBlockState(coord.west()).getBlock() instanceof BlockLiquid
 											&& worldObj.getBlockState(coord.west()).getBlock().getMaterial() == m
 											&& ((Integer)worldObj.getBlockState(coord.west()).getValue(BlockDynamicLiquid.LEVEL) < Q  || (Integer)worldObj.getBlockState(coord.west()).getValue(BlockDynamicLiquid.LEVEL) == 9)){
 										coord = coord.west();
-										FMLLog.info("West");
 									} else {
 										// failed to find upstream block
 										limit = 0;
@@ -178,7 +162,6 @@ public class FluidDrainTileEntity extends TileEntity implements IUpdatePlayerLis
 						}while(limit > 0);
 						if(limit > 0 && worldObj.getBlockState(coord).getBlock() instanceof BlockStaticLiquid){
 							// found source block
-							FMLLog.info("Drain found source block at"+coord); // TODO: remove debug code
 							if(m == Material.water){
 								tank.fill(new FluidStack(FluidRegistry.WATER,FluidContainerRegistry.BUCKET_VOLUME), true);
 							} else if(m == Material.lava){
