@@ -59,6 +59,13 @@ public class FluidDrainTileEntity extends TileEntity implements IUpdatePlayerLis
 		if(!worldObj.isRemote){
 			// server-side
 			if((worldObj.getTotalWorldTime() + updateOffset) % updateInterval == 0){
+				// send fluid into pipes
+				if(tank.getFluidAmount() > 0) tryPushFluid(this.pos.down(), EnumFacing.UP);
+				if(tank.getFluidAmount() > 0) tryPushFluid(this.pos.north(), EnumFacing.SOUTH);
+				if(tank.getFluidAmount() > 0) tryPushFluid(this.pos.east(), EnumFacing.WEST);
+				if(tank.getFluidAmount() > 0) tryPushFluid(this.pos.south(), EnumFacing.NORTH);
+				if(tank.getFluidAmount() > 0) tryPushFluid(this.pos.west(), EnumFacing.EAST);
+				// pull fluid from above
 				if(tank.getFluidAmount() <= 0){
 					IBlockState bs = worldObj.getBlockState(this.pos.up());
 					if(bs.getBlock() instanceof IFluidBlock){
@@ -178,6 +185,18 @@ public class FluidDrainTileEntity extends TileEntity implements IUpdatePlayerLis
 			}
 		}
 	}
+	
+	private void tryPushFluid(BlockPos coord, EnumFacing otherFace){
+		TileEntity e = worldObj.getTileEntity(coord);
+		if(e instanceof IFluidHandler){
+			IFluidHandler fh = (IFluidHandler)e;
+			if(fh.canFill(otherFace, tank.getFluid().getFluid())){
+				tank.drain(fh.fill(otherFace, tank.getFluid(), true), true);
+				this.sync();
+			}
+		}
+	}
+	
 	
 	public void sync(){
 		// cause data update to be sent to client
