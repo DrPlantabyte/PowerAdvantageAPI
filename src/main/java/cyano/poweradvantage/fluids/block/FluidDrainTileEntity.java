@@ -1,14 +1,11 @@
 package cyano.poweradvantage.fluids.block;
 
-import com.google.common.collect.ImmutableMap;
-
 import net.minecraft.block.BlockDynamicLiquid;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.BlockStaticLiquid;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -32,6 +29,8 @@ import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fluids.IFluidHandler;
 import net.minecraftforge.fml.common.FMLLog;
+
+import com.google.common.collect.ImmutableMap;
 
 
 public class FluidDrainTileEntity extends TileEntity implements IUpdatePlayerListBox, IFluidHandler, ISidedInventory{
@@ -423,6 +422,7 @@ public class FluidDrainTileEntity extends TileEntity implements IUpdatePlayerLis
 	public int[] getSlotsForFace(EnumFacing arg0) {
 		return new int[0];
 	}
+	
 	
 
 	
