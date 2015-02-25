@@ -2,9 +2,8 @@ package cyano.poweradvantage.init;
 
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import cyano.poweradvantage.PowerAdvantage;
+import cyano.poweradvantage.fluids.block.CopperPipeTileEntity;
 import cyano.poweradvantage.fluids.block.FluidDrainTileEntity;
-import cyano.poweradvantage.gui.FluidDrainGUI;
-import cyano.poweradvantage.registry.MachineGUIRegistry;
 
 public abstract class Entities {
 
@@ -16,6 +15,7 @@ public abstract class Entities {
 		Blocks.init();
 		
 		GameRegistry.registerTileEntity(FluidDrainTileEntity.class,PowerAdvantage.MODID+".tileentity."+"fluid_drain");
+		GameRegistry.registerTileEntity(CopperPipeTileEntity.class,PowerAdvantage.MODID+".tileentity."+"copper_pipe");
 		
 		// TODO: block GUIs
 		

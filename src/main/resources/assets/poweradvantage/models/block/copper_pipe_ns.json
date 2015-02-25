@@ -1,0 +1,6 @@
+{
+    "parent": "poweradvantage:block/pipe3_ns",
+    "textures": {
+        "texture": "poweradvantage:blocks/copper_pipe"
+    }
+}

@@ -3,6 +3,7 @@ nei.poweradvantage.recipehandler.shapelessfurnace.name=Large Furnace (Shapeless)
 nei.poweradvantage.recipehandler.shapedfurnace.name=Large Furnace (Shaped)
 
 tile.poweradvantage.fluid_drain.name=Drain
+tile.poweradvantage.copper_pipe.name=Copper Pipe
 
 
 tile.poweradvantage.powercable.name=Power Cable

@@ -3,6 +3,7 @@ package cyano.poweradvantage.api;
 import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyBool;
@@ -19,9 +20,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 
 // TODO: update documentation
-public abstract class FluidPipeBlock extends Block implements IFluidHandlerBlock{
-	/** power type identifier */
-	private final ConductorType type;
+public abstract class FluidPipeBlock extends Block implements ITileEntityProvider,IFluidHandlerBlock{
 	/** radius of the pipe model, in meters (0.0625 per pixel) */
 	private final float pipeRadius; // in fraction of a block (aka meters)
 	/** Blockstate property */
@@ -54,9 +53,8 @@ public abstract class FluidPipeBlock extends Block implements IFluidHandlerBlock
 	 * @param energyType This is the energy type for this block. This block will 
 	 * automatically connect to neighboring blocks of the same energy type.
 	 */
-	public FluidPipeBlock(Material blockMaterial, float hardness, float pipeRadius, ConductorType energyType){
+	public FluidPipeBlock(Material blockMaterial, float hardness, float pipeRadius){
 		super(blockMaterial);
-		this.type = energyType;
     	super.setHardness(hardness);
     	this.pipeRadius = pipeRadius;
     	this.setDefaultState(this.blockState.getBaseState()
@@ -77,6 +75,7 @@ public abstract class FluidPipeBlock extends Block implements IFluidHandlerBlock
 	 * @return A new TileEntity instance, probably one that extends 
 	 * <b>TileEntitySimplePowerConduit</b>.
 	 */
+	@Override
     public abstract FluidPipeEntity createNewTileEntity(final World world, final int metaDataValue);
 
 	/**
@@ -234,6 +233,16 @@ public abstract class FluidPipeBlock extends Block implements IFluidHandlerBlock
     public boolean isPassable(final IBlockAccess world, final BlockPos coord) {
         return false;
     }
+ 
+    /**
+	 * Removes tile entity on destruction
+	 */
+	@Override
+    public void breakBlock(final World world, final BlockPos coord, final IBlockState blockState) {
+        super.breakBlock(world, coord, blockState);
+        world.removeTileEntity(coord);
+    }
+    
     
     
     /**

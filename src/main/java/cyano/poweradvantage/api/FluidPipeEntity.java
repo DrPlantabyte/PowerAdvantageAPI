@@ -10,6 +10,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+import net.minecraftforge.fml.common.FMLLog;
 
 // TODO: Update Documentation
 /**
@@ -17,14 +18,14 @@ import net.minecraftforge.fluids.IFluidHandler;
  * @author DrCyano
  *
  */
-public abstract class FluidPipeEntity extends TileEntity implements IUpdatePlayerListBox, IAdvancedFluidHandler{
+public abstract class FluidPipeEntity extends TileEntity implements IUpdatePlayerListBox, IPipeFluidHandler{
 	
 	private final int updateInterval = 8;
 	
-	private final FluidTank tank;
+	protected final FluidTank tank;
 	
 	
-	protected FluidPipeEntity(int capacity){
+	public FluidPipeEntity(int capacity){
 		tank = new FluidTank(capacity);
 	}
 	
@@ -50,6 +51,7 @@ public abstract class FluidPipeEntity extends TileEntity implements IUpdatePlaye
 
 	@Override
 	public boolean canFill(EnumFacing face, Fluid type) {
+		if(tank.getFluid() == null || tank.getFluidAmount() <= 0) return true;
 		return tank.getFluid().isFluidEqual(new FluidStack(type,1));
 	}
 
@@ -110,6 +112,8 @@ public abstract class FluidPipeEntity extends TileEntity implements IUpdatePlaye
 	
 	/** implementation detail for the fluidUpdate() method. Do not touch! */
 	private static final EnumFacing[] facesOther = {EnumFacing.UP,EnumFacing.SOUTH,EnumFacing.EAST,EnumFacing.NORTH,EnumFacing.WEST,EnumFacing.DOWN};
+	/** implementation detail for the fluidUpdate() method. Do not touch! */
+	private static final EnumFacing[] faces = {EnumFacing.DOWN,EnumFacing.NORTH,EnumFacing.WEST,EnumFacing.SOUTH,EnumFacing.EAST,EnumFacing.UP};
 	
 	/**
 	 * This method handles the transmission of fluid. If you override this 
@@ -117,7 +121,7 @@ public abstract class FluidPipeEntity extends TileEntity implements IUpdatePlaye
 	 * through this block.
 	 */
 	public void fluidUpdate() {
-		if(tank.getFluidAmount() == 0)return;
+		if(tank.getFluid() == null || tank.getFluidAmount() <= 0)return;
 		final BlockPos[] coords = new BlockPos[6];
 		coords[0] = this.pos.down();
 		coords[1] = this.pos.north();
@@ -125,26 +129,52 @@ public abstract class FluidPipeEntity extends TileEntity implements IUpdatePlaye
 		coords[3] = this.pos.south();
 		coords[4] = this.pos.east();
 		coords[5] = this.pos.up();
-		for(int n = 0; n < 6; n++){
+		int numNeighbors = 0;
+		for(int n = 1; n < 5; n++){
 			final TileEntity te = worldObj.getTileEntity(coords[n]);
-			if(te instanceof IAdvancedFluidHandler){
+			if(te instanceof IPipeFluidHandler){
+				numNeighbors++;
+			}
+		}
+		for(int n = 0; n < 6; n++){
+			if(tank.getFluid() == null || tank.getFluidAmount() <= 0)continue;
+			final TileEntity te = worldObj.getTileEntity(coords[n]);
+			if(te instanceof IPipeFluidHandler){
 				// another pipe
-				final IAdvancedFluidHandler e = (IAdvancedFluidHandler) te;
+				final IPipeFluidHandler e = (IPipeFluidHandler) te;
 				final Fluid fluid = tank.getFluid().getFluid();
 				int delta = this.getFluidAmount(fluid) - e.getFluidAmount(fluid);
 				int space = e.getFluidCapacity(fluid) - e.getFluidAmount(fluid);
 				if(delta > space){
 					delta = space;
 				}
+				if(delta > this.getFluidAmount(fluid) / numNeighbors){
+					delta = this.getFluidAmount(fluid) / numNeighbors;
+				}
+				// TODO: remove debug code
+				FMLLog.info(this.getFluidAmount(getFluid())+" units vs " 
+						+ e.getFluidAmount(getFluid())+" units. Delta = "+delta );
 				if(delta > 0 && e.canFill(facesOther[n], fluid)){
-					e.fill(facesOther[n],this.drain(null, delta, true),true);
+					FMLLog.info("Transferring liquid");
+					e.fill(facesOther[n],this.drain(faces[n], delta, true),true);
 				}
 			} else if (te instanceof IFluidHandler) {
 				// a non-pipe
 				final IFluidHandler e = (IFluidHandler) te;
 				final Fluid fluid = tank.getFluid().getFluid();
 				if(e.canFill(facesOther[n], fluid)){
-					this.drain(null, e.fill(facesOther[n], this.drain(null, this.tank.getFluidAmount(), false), true), true);
+					this.drain(faces[n], e.fill(facesOther[n], this.drain(faces[n], this.tank.getFluidAmount(), false), true), true);
+				}
+			}
+		}
+		for(int n = 0; n < 6; n++){
+			final TileEntity te = worldObj.getTileEntity(coords[n]);
+			if (te instanceof IFluidHandler) {
+				// a non-pipe
+				final IFluidHandler e = (IFluidHandler) te;
+				final FluidStack fs = e.drain(facesOther[n], this.tank.getCapacity() - this.tank.getFluidAmount(), false);
+				if(fs != null && this.canFill(faces[n], fs.getFluid())){
+					this.fill(faces[n], e.drain(facesOther[n], fs, true), true);
 				}
 			}
 		}
@@ -191,6 +221,12 @@ public abstract class FluidPipeEntity extends TileEntity implements IUpdatePlaye
 		NBTTagCompound tankTag = new NBTTagCompound();
 		tank.writeToNBT(tankTag);
 		tagRoot.setTag("Tank", tankTag);
+	}
+
+
+	public Fluid getFluid() {
+		if(tank.getFluid() == null || tank.getFluidAmount() <= 0) return null;
+		return tank.getFluid().getFluid();
 	}
 
 	

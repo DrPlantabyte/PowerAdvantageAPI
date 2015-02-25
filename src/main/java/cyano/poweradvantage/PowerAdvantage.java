@@ -21,6 +21,8 @@ import cyano.poweradvantage.registry.MachineGUIRegistry;
 /* TODO list
  * drain block
  * fluid pipes
+ * portable tank block
+ * large tank block (distributes load with neighbors)
  * spigot block
  * gauge block
  * item chute
