@@ -23,7 +23,7 @@ import cyano.poweradvantage.registry.MachineGUIRegistry;
  * fluid pipes
  * portable tank block
  * large tank block (distributes load with neighbors)
- * spigot block
+ * fluid discharge block
  * pump block (scans pipe network to push/pull fluids)
  * gauge block
  * item chute
