@@ -1,5 +1,8 @@
 package cyano.poweradvantage.api;
 
+import java.util.HashMap;
+
+import java.util.Arrays;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.gui.IUpdatePlayerListBox;
 import net.minecraft.tileentity.TileEntity;
@@ -123,62 +126,71 @@ public abstract class FluidPipeEntity extends TileEntity implements IUpdatePlaye
 	public void fluidUpdate() {
 		if(tank.getFluid() == null || tank.getFluidAmount() <= 0)return;
 		final BlockPos[] coords = new BlockPos[6];
+		final TileEntity[] entities = new TileEntity[6]; 
 		coords[0] = this.pos.down();
 		coords[1] = this.pos.north();
 		coords[2] = this.pos.west();
 		coords[3] = this.pos.south();
 		coords[4] = this.pos.east();
 		coords[5] = this.pos.up();
-		int numNeighbors = 0;
-		for(int n = 1; n < 5; n++){
-			final TileEntity te = worldObj.getTileEntity(coords[n]);
-			if(te instanceof IPipeFluidHandler){
-				numNeighbors++;
-			}
-		}
 		for(int n = 0; n < 6; n++){
-			if(tank.getFluid() == null || tank.getFluidAmount() <= 0)continue;
-			final TileEntity te = worldObj.getTileEntity(coords[n]);
-			if(te instanceof IPipeFluidHandler){
-				// another pipe
-				final IPipeFluidHandler e = (IPipeFluidHandler) te;
-				final Fluid fluid = tank.getFluid().getFluid();
-				int delta = this.getFluidAmount(fluid) - e.getFluidAmount(fluid);
-				int space = e.getFluidCapacity(fluid) - e.getFluidAmount(fluid);
-				if(delta > space){
-					delta = space;
-				}
-				if(delta > this.getFluidAmount(fluid) / numNeighbors){
-					delta = this.getFluidAmount(fluid) / numNeighbors;
-				}
-				// TODO: remove debug code
-				FMLLog.info(this.getFluidAmount(getFluid())+" units vs " 
-						+ e.getFluidAmount(getFluid())+" units. Delta = "+delta );
-				if(delta > 0 && e.canFill(facesOther[n], fluid)){
-					FMLLog.info("Transferring liquid");
-					e.fill(facesOther[n],this.drain(faces[n], delta, true),true);
-				}
-			} else if (te instanceof IFluidHandler) {
-				// a non-pipe
-				final IFluidHandler e = (IFluidHandler) te;
-				final Fluid fluid = tank.getFluid().getFluid();
-				if(e.canFill(facesOther[n], fluid)){
-					this.drain(faces[n], e.fill(facesOther[n], this.drain(faces[n], this.tank.getFluidAmount(), false), true), true);
+			entities[n] = worldObj.getTileEntity(coords[n]);
+		}
+		// send fluid into neighbors
+		pipeDist:{
+			Fluid fluid = tank.getFluid().getFluid();
+			// first, fill down
+			if(entities[0] instanceof IFluidHandler && ((IFluidHandler)entities[0]).canFill(facesOther[0], fluid)){
+				this.drain(faces[0], ((IFluidHandler)entities[0]).fill(facesOther[0], tank.getFluid(), true), true);
+			}
+			if(tank.getFluidAmount() <= 0) break pipeDist;
+			// then fill sideways
+			final HashMap<Integer, IPipeFluidHandler> neighbors = new HashMap<>();
+			final HashMap< IPipeFluidHandler, EnumFacing> neighborFaces = new HashMap<>();
+			for(int n = 1; n < 5; n++){
+				if(entities[n] instanceof IPipeFluidHandler){
+					IPipeFluidHandler pipe = (IPipeFluidHandler)entities[n];
+					if(pipe.canFill(facesOther[n], fluid)){
+						neighbors.put(pipe.getFluidAmount(fluid), pipe);
+						neighborFaces.put(pipe, facesOther[n]);
+					}
+				} else if(entities[n] instanceof IFluidHandler){
+					// dump fluid into non-pipes
+					IFluidHandler fh = (IFluidHandler)entities[n];
+					if(fh.canFill(facesOther[n], fluid)){
+						this.drain(faces[n], ((IFluidHandler)entities[0]).fill(facesOther[n], tank.getFluid(), true), true);
+						if(tank.getFluidAmount() <= 0) break pipeDist;
+					}
 				}
 			}
-		}
-		for(int n = 0; n < 6; n++){
-			final TileEntity te = worldObj.getTileEntity(coords[n]);
-			if (te instanceof IFluidHandler) {
-				// a non-pipe
-				final IFluidHandler e = (IFluidHandler) te;
-				final FluidStack fs = e.drain(facesOther[n], this.tank.getCapacity() - this.tank.getFluidAmount(), false);
-				if(fs != null && this.canFill(faces[n], fs.getFluid())){
-					this.fill(faces[n], e.drain(facesOther[n], fs, true), true);
+			Integer[] keys = neighbors.keySet().toArray(new Integer[neighbors.size()]);
+			Arrays.sort(keys);
+			for(int j = keys.length - 1; j >= 0; j--){
+				int levelDelta = tank.getFluidAmount() - ((tank.getFluidAmount() + neighbors.get(keys[j]).getFluidAmount(fluid)) / 2);
+				// todo: a little bit of code clean-up here
+				if(levelDelta > 0){
+					neighbors
+					.get(keys[j])
+					.fill(neighborFaces
+							.get(keys[j]), 
+							this.drain(neighborFaces
+									.get(neighbors.get(keys[j]))
+									.getOpposite(), 
+									levelDelta, true), true);
 				}
+			}
+				
+			// then fill up
+			int surplus = tank.getFluidAmount() - tank.getCapacity() / 2;
+			if(surplus > 0 && entities[5] instanceof IFluidHandler && ((IFluidHandler)entities[5]).canFill(facesOther[5], fluid)){
+				((IFluidHandler)entities[0]).fill(facesOther[5], this.drain(faces[5], surplus, true), true);
 			}
 		}
 	}
+	
+	
+
+
 	/**
 	 * Returns false if this code is executing on the client and true if this 
 	 * code is executing on the server

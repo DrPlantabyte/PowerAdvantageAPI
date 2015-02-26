@@ -2,7 +2,7 @@ package cyano.poweradvantage.registry.recipe;
 
 import java.util.Collection;
 
-import scala.actors.threadpool.Arrays;
+import java.util.Arrays;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.InventoryCrafting;

@@ -23,7 +23,10 @@ public class CopperPipeBlock extends FluidPipeBlock{
     public void onBlockClicked(World w, BlockPos p, EntityPlayer player){
     	if(w.isRemote)return;
     	FluidPipeEntity e = (FluidPipeEntity)w.getTileEntity(p);
-    	player.addChatMessage(new net.minecraft.util.ChatComponentText(e.getFluid().getUnlocalizedName()+": "+e.getFluidAmount(e.getFluid())));
+    	if(e != null && e.getFluid() != null)
+    		player.addChatMessage(
+    				new net.minecraft.util.ChatComponentText(e.getFluid().getUnlocalizedName()+": "
+    						+e.getFluidAmount(e.getFluid())));
     }
 	
 

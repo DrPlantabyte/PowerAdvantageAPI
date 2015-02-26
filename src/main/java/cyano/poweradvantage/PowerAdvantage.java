@@ -24,6 +24,7 @@ import cyano.poweradvantage.registry.MachineGUIRegistry;
  * portable tank block
  * large tank block (distributes load with neighbors)
  * spigot block
+ * pump block (scans pipe network to push/pull fluids)
  * gauge block
  * item chute
  * example crusher machine
