@@ -12,13 +12,13 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.FMLLog;
 import cyano.poweradvantage.PowerAdvantage;
 import cyano.poweradvantage.api.simple.SimpleMachineGUI;
-import cyano.poweradvantage.fluids.block.FluidDrainTileEntity;
+import cyano.poweradvantage.fluids.block.FluidDischargeTileEntity;
 import cyano.poweradvantage.math.Integer2D;
 
-public class FluidDrainGUI extends SimpleMachineGUI{
+public class FluidDischargeGUI extends SimpleMachineGUI{
 
 	
-	public FluidDrainGUI() {
+	public FluidDischargeGUI() {
 		super(new ResourceLocation(PowerAdvantage.MODID+":"+"textures/gui/container/fluid_discharge_gui.png"),
 				new Integer2D[0]);
 	}
@@ -28,10 +28,10 @@ public class FluidDrainGUI extends SimpleMachineGUI{
 
 		guiContainer.mc.renderEngine.bindTexture(guiDisplayImage);
 		// draw indicator
-		if(srcEntity instanceof FluidDrainTileEntity){
-			FluidStack fs = ((FluidDrainTileEntity)srcEntity).getFluid();
+		if(srcEntity instanceof FluidDischargeTileEntity){
+			FluidStack fs = ((FluidDischargeTileEntity)srcEntity).getFluid();
 			if(fs != null){
-				int h = 50 * fs.amount / ((FluidDrainTileEntity)srcEntity).getFluidCapacity();
+				int h = 50 * fs.amount / ((FluidDischargeTileEntity)srcEntity).getFluidCapacity();
 				guiContainer.drawRect(x+80, y+59-h,x+80+16, y+69,fs.getFluid().getBlock()
 						.getMaterial().getMaterialMapColor().colorValue | 0xFF000000); // TODO: see if this works for custom fluids
 			}

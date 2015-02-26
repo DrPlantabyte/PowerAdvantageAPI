@@ -1,10 +1,6 @@
 package cyano.poweradvantage.fluids.block;
 
-import net.minecraft.block.BlockDynamicLiquid;
-import net.minecraft.block.BlockLiquid;
-import net.minecraft.block.BlockStaticLiquid;
-import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
@@ -22,33 +18,30 @@ import net.minecraft.util.IChatComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fluids.IFluidHandler;
-import net.minecraftforge.fml.common.FMLLog;
 
 import com.google.common.collect.ImmutableMap;
 
 
-public class FluidDrainTileEntity extends TileEntity implements IUpdatePlayerListBox, IFluidHandler, ISidedInventory{
+public class FluidDischargeTileEntity extends TileEntity implements IUpdatePlayerListBox, IFluidHandler, ISidedInventory{
 
 	public final FluidTank tank = new FluidTank( FluidContainerRegistry.BUCKET_VOLUME );
 	
 	private final static int updateInterval = 20;
 	private final int updateOffset;
 	
-	public FluidDrainTileEntity(World w, int i){
+	public FluidDischargeTileEntity(World w, int i){
 		this(w.rand.nextInt( updateInterval));
 		
 	}
-	public FluidDrainTileEntity(int tickOffset){
+	public FluidDischargeTileEntity(int tickOffset){
 		updateOffset = tickOffset;
 	}
 	
-	public FluidDrainTileEntity(){
+	public FluidDischargeTileEntity(){
 		this(0);
 	}
 	
@@ -59,127 +52,19 @@ public class FluidDrainTileEntity extends TileEntity implements IUpdatePlayerLis
 		if(!worldObj.isRemote){
 			// server-side
 			if((worldObj.getTotalWorldTime() + updateOffset) % updateInterval == 0){
-				// send fluid into pipes
-				if(tank.getFluidAmount() > 0) tryPushFluid(this.pos.down(), EnumFacing.UP);
-				if(tank.getFluidAmount() > 0) tryPushFluid(this.pos.north(), EnumFacing.SOUTH);
-				if(tank.getFluidAmount() > 0) tryPushFluid(this.pos.east(), EnumFacing.WEST);
-				if(tank.getFluidAmount() > 0) tryPushFluid(this.pos.south(), EnumFacing.NORTH);
-				if(tank.getFluidAmount() > 0) tryPushFluid(this.pos.west(), EnumFacing.EAST);
-				// pull fluid from above
-				if(tank.getFluidAmount() <= 0){
-					IBlockState bs = worldObj.getBlockState(this.pos.up());
-					if(bs.getBlock() instanceof IFluidBlock){
-						// Forge fluid
-						IFluidBlock block = (IFluidBlock)bs.getBlock();
-						Fluid fluid = block.getFluid();
-						if(fluid != null){
-							if(block.canDrain(worldObj, this.pos.up())){
-								// is source block
-								tank.fill(new FluidStack(fluid,FluidContainerRegistry.BUCKET_VOLUME), true);
-								worldObj.setBlockToAir(this.pos.up());
-								this.sync();
-							} else {
-								// is flowing block, follow upstream to find source block
-								int limit = 16;
-								BlockPos coord = this.pos.up();
-								do{
-									if(worldObj.getBlockState(coord).getBlock() instanceof IFluidBlock
-											&& ((IFluidBlock)worldObj.getBlockState(coord).getBlock()).canDrain(worldObj, coord)){
-										break;
-									} else {
-										if(worldObj.getBlockState(coord.up()).getBlock() instanceof IFluidBlock
-												&& ((IFluidBlock)worldObj.getBlockState(coord.up()).getBlock()).getFluid() == fluid){
-											coord = coord.up();
-										} else {
-											float Q = ((IFluidBlock)worldObj.getBlockState(coord).getBlock()).getFilledPercentage(worldObj, coord);
-											if(worldObj.getBlockState(coord.north()).getBlock() instanceof IFluidBlock
-													&& ((IFluidBlock)worldObj.getBlockState(coord.north()).getBlock()).getFluid() == fluid
-													&& ((IFluidBlock)worldObj.getBlockState(coord.north()).getBlock()).getFilledPercentage(worldObj, coord) > Q){
-												coord = coord.north();
-											} else if(worldObj.getBlockState(coord.east()).getBlock() instanceof IFluidBlock
-													&& ((IFluidBlock)worldObj.getBlockState(coord.east()).getBlock()).getFluid() == fluid
-													&& ((IFluidBlock)worldObj.getBlockState(coord.east()).getBlock()).getFilledPercentage(worldObj, coord) > Q){
-												coord = coord.east();
-											} else if(worldObj.getBlockState(coord.south()).getBlock() instanceof IFluidBlock
-													&& ((IFluidBlock)worldObj.getBlockState(coord.south()).getBlock()).getFluid() == fluid
-													&& ((IFluidBlock)worldObj.getBlockState(coord.south()).getBlock()).getFilledPercentage(worldObj, coord) > Q){
-												coord = coord.south();
-											} else if(worldObj.getBlockState(coord.west()).getBlock() instanceof IFluidBlock
-													&& ((IFluidBlock)worldObj.getBlockState(coord.west()).getBlock()).getFluid() == fluid
-													&& ((IFluidBlock)worldObj.getBlockState(coord.west()).getBlock()).getFilledPercentage(worldObj, coord) > Q){
-												coord = coord.west();
-											}
-										}
-									}
-									limit--;
-								}while(limit > 0);
-								if(limit > 0 && ((IFluidBlock)worldObj.getBlockState(coord).getBlock()).canDrain(worldObj, coord)){
-									// found source block
-									tank.fill(new FluidStack(fluid,FluidContainerRegistry.BUCKET_VOLUME), true);
-									worldObj.setBlockToAir(coord);
-									this.sync();
-								}
-							}
-						}
-					} else if(bs.getBlock() instanceof BlockLiquid){
-						// Minecraft fluid
-						BlockLiquid block = (BlockLiquid)bs.getBlock();
-						
-						// flowing minecraft fluid block
-						Material m = block.getMaterial();
-						// is flowing block, follow upstream to find source block
-						int limit = 16;
-						BlockPos coord = this.pos.up();
-						do{
-							
-							int Q = (Integer)worldObj.getBlockState(coord).getValue(BlockDynamicLiquid.LEVEL); // 0 for source block, 1-7 for flowing blocks (lower number = closer to source)
-							if(Q == 0){
-								// source block
-								break;
-							} else {
-								
-								if(worldObj.getBlockState(coord.up()).getBlock() instanceof BlockLiquid
-										&& worldObj.getBlockState(coord.up()).getBlock().getMaterial() == m){
-									coord = coord.up();
-								} else {
-									if(worldObj.getBlockState(coord.north()).getBlock() instanceof BlockLiquid
-											&& worldObj.getBlockState(coord.north()).getBlock().getMaterial() == m
-											&& ((Integer)worldObj.getBlockState(coord.north()).getValue(BlockDynamicLiquid.LEVEL) < Q  || (Integer)worldObj.getBlockState(coord.north()).getValue(BlockDynamicLiquid.LEVEL) == 9)){
-										coord = coord.north();
-									} else if(worldObj.getBlockState(coord.east()).getBlock() instanceof BlockLiquid
-											&& worldObj.getBlockState(coord.east()).getBlock().getMaterial() == m
-											&& ((Integer)worldObj.getBlockState(coord.east()).getValue(BlockDynamicLiquid.LEVEL) < Q  || (Integer)worldObj.getBlockState(coord.east()).getValue(BlockDynamicLiquid.LEVEL) == 9)){
-										coord = coord.east();
-									} else if(worldObj.getBlockState(coord.south()).getBlock() instanceof BlockLiquid
-											&& worldObj.getBlockState(coord.south()).getBlock().getMaterial() == m
-											&& ((Integer)worldObj.getBlockState(coord.south()).getValue(BlockDynamicLiquid.LEVEL) < Q  || (Integer)worldObj.getBlockState(coord.south()).getValue(BlockDynamicLiquid.LEVEL) == 9)){
-										coord = coord.south();
-									} else if(worldObj.getBlockState(coord.west()).getBlock() instanceof BlockLiquid
-											&& worldObj.getBlockState(coord.west()).getBlock().getMaterial() == m
-											&& ((Integer)worldObj.getBlockState(coord.west()).getValue(BlockDynamicLiquid.LEVEL) < Q  || (Integer)worldObj.getBlockState(coord.west()).getValue(BlockDynamicLiquid.LEVEL) == 9)){
-										coord = coord.west();
-									} else {
-										// failed to find upstream block
-										limit = 0;
-									}
-								}
-							}
-							limit--;
-						}while(limit > 0);
-						if(limit > 0 && worldObj.getBlockState(coord).getBlock() instanceof BlockStaticLiquid){
-							// found source block
-							if(m == Material.water){
-								tank.fill(new FluidStack(FluidRegistry.WATER,FluidContainerRegistry.BUCKET_VOLUME), true);
-							} else if(m == Material.lava){
-								tank.fill(new FluidStack(FluidRegistry.LAVA,FluidContainerRegistry.BUCKET_VOLUME), true);
-							} else {
-								FMLLog.warning("Liquid source block at "+coord+" has unknown fluid material "+m); // TODO: remove debug code
-								return;
-							}
-							worldObj.setBlockToAir(coord);
-							this.sync();
-						}
-
+				
+				// place fluid block
+				if(tank.getFluidAmount() >= FluidContainerRegistry.BUCKET_VOLUME){
+					FluidStack fstack = tank.getFluid();
+					Fluid fluid = fstack.getFluid();
+					Block fluidBlock = fluid.getBlock();
+					BlockPos coord = this.pos.down();
+					if(worldObj.isAirBlock(coord)){
+						worldObj.setBlockState(coord, fluidBlock.getDefaultState());
+						worldObj.notifyBlockOfStateChange(coord, fluidBlock);
+						this.drain(EnumFacing.DOWN, FluidContainerRegistry.BUCKET_VOLUME, true);
+					} else {
+						// TODO: follow the flow
 					}
 				}
 			}
@@ -323,11 +208,11 @@ public class FluidDrainTileEntity extends TileEntity implements IUpdatePlayerLis
 	}
 	@Override
 	public boolean canFill(EnumFacing from, Fluid fluid) {
-		return false;
+		return true;
 	}
 	@Override
 	public boolean canDrain(EnumFacing from, Fluid fluid) {
-		return true;
+		return false;
 	}
 	public int getFillLevel(){
 		return tank.getFluidAmount();

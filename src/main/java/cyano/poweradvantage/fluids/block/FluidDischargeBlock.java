@@ -18,9 +18,11 @@ import cyano.poweradvantage.api.GUIBlock;
 import cyano.poweradvantage.api.IFluidHandlerBlock;
 import cyano.poweradvantage.api.simple.TileEntitySimplePowerSource;
 
-public class FluidDrainBlock extends GUIBlock implements IFluidHandlerBlock{
+public class FluidDischargeBlock extends GUIBlock implements IFluidHandlerBlock{
 // TODO: add new creative tab
-	public FluidDrainBlock() {
+	
+	// TODO: adjust item model so that the bottom is visible
+	public FluidDischargeBlock() {
 		super(Material.iron);
 		super.setHardness(3f);
 		super.setCreativeTab(CreativeTabs.tabDecorations);
@@ -28,7 +30,7 @@ public class FluidDrainBlock extends GUIBlock implements IFluidHandlerBlock{
 
 	@Override
 	public TileEntity createNewTileEntity(World w, int m) {
-		return new FluidDrainTileEntity(w,m);
+		return new FluidDischargeTileEntity(w,m);
 	}
 	
 
@@ -38,6 +40,19 @@ public class FluidDrainBlock extends GUIBlock implements IFluidHandlerBlock{
     @Override
     public Item getItemDropped(final IBlockState state, final Random prng, final int i3) {
         return Item.getItemFromBlock(this);
+    }
+    /**
+     * Destroys the TileEntity associated with this block when this block 
+     * breaks.
+     */
+    @Override
+    public void breakBlock(final World world, final BlockPos coord, final IBlockState bs) {
+        final TileEntity tileEntity = world.getTileEntity(coord);
+        if (tileEntity instanceof TileEntitySimplePowerSource) {
+            InventoryHelper.dropInventoryItems(world, coord, (IInventory)tileEntity);
+            world.updateComparatorOutputLevel(coord, this);
+        }
+        super.breakBlock(world, coord, bs);
     }
     
     // TODO: redstone output
@@ -53,6 +68,6 @@ public class FluidDrainBlock extends GUIBlock implements IFluidHandlerBlock{
 
 	@Override
 	public boolean canConnect(EnumFacing face) {
-		return face != EnumFacing.UP;
+		return face != EnumFacing.DOWN;
 	}
 }

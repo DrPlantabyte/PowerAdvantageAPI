@@ -2,6 +2,8 @@ package cyano.poweradvantage.api;
 
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
@@ -33,14 +35,21 @@ public abstract class PowerConductorBlock extends net.minecraft.block.Block impl
 	 */
 	public abstract boolean canConnectTo(ConductorType energyType);
 	
+
 	/**
-	 * Removes tile entity on destruction
-	 */
-	@Override
-    public void breakBlock(final World world, final BlockPos coord, final IBlockState blockState) {
-        super.breakBlock(world, coord, blockState);
-        world.removeTileEntity(coord);
+     * Destroys the TileEntity associated with this block when this block 
+     * breaks and drops its items.
+     */
+    @Override
+    public void breakBlock(final World world, final BlockPos coord, final IBlockState bs) {
+        final TileEntity tileEntity = world.getTileEntity(coord);
+        if (tileEntity instanceof IInventory) {
+            InventoryHelper.dropInventoryItems(world, coord, (IInventory)tileEntity);
+            world.updateComparatorOutputLevel(coord, this);
+        }
+        super.breakBlock(world, coord, bs);
     }
+	
     /**
      * Adds tile entity on placement
      */

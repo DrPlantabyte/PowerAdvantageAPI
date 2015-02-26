@@ -2,6 +2,7 @@ package cyano.poweradvantage.api;
 
 import java.util.List;
 
+import cyano.poweradvantage.api.simple.TileEntitySimplePowerSource;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
@@ -10,6 +11,9 @@ import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.InventoryHelper;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
@@ -211,6 +215,20 @@ public abstract class FluidPipeBlock extends Block implements ITileEntityProvide
 	}
 	
 	/**
+     * Destroys the TileEntity associated with this block when this block 
+     * breaks and drops its items.
+     */
+    @Override
+    public void breakBlock(final World world, final BlockPos coord, final IBlockState bs) {
+        final TileEntity tileEntity = world.getTileEntity(coord);
+        if (tileEntity instanceof IInventory) {
+            InventoryHelper.dropInventoryItems(world, coord, (IInventory)tileEntity);
+            world.updateComparatorOutputLevel(coord, this);
+        }
+        super.breakBlock(world, coord, bs);
+    }
+	
+	/**
 	 * Override of default block behavior
 	 */
     @Override
@@ -233,16 +251,6 @@ public abstract class FluidPipeBlock extends Block implements ITileEntityProvide
     public boolean isPassable(final IBlockAccess world, final BlockPos coord) {
         return false;
     }
- 
-    /**
-	 * Removes tile entity on destruction
-	 */
-	@Override
-    public void breakBlock(final World world, final BlockPos coord, final IBlockState blockState) {
-        super.breakBlock(world, coord, blockState);
-        world.removeTileEntity(coord);
-    }
-    
     
     
     /**

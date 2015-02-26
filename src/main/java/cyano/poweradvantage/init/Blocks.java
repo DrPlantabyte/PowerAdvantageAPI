@@ -13,13 +13,13 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import cyano.poweradvantage.PowerAdvantage;
 import cyano.poweradvantage.api.GUIBlock;
-import cyano.poweradvantage.fluids.block.CopperPipeBlock;
-import cyano.poweradvantage.fluids.block.FluidDrainBlock;
+import cyano.poweradvantage.fluids.block.*;
 
 public abstract class Blocks {
 	private static final Map<String,Block> allBlocks = new HashMap<>();
-	
+
 	public static GUIBlock fluid_drain; 
+	public static GUIBlock fluid_discharge; 
 	public static Block copper_pipe;
 	
 	private static boolean initDone = false;
@@ -27,6 +27,7 @@ public abstract class Blocks {
 		if(initDone) return;
 		
 		fluid_drain = (GUIBlock)addBlock(new FluidDrainBlock(),"fluid_drain");
+		fluid_discharge = (GUIBlock)addBlock(new FluidDischargeBlock(),"fluid_discharge");
 		copper_pipe = addBlock(new CopperPipeBlock(),"copper_pipe");
 		// TODO: add Power Gauge block that displays the power in a neighboring conductor
 		// TODO: add fluid pipes

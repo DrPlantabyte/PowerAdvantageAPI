@@ -1,7 +1,7 @@
 package cyano.poweradvantage.init;
 
 import cyano.poweradvantage.PowerAdvantage;
-import cyano.poweradvantage.gui.FluidDrainGUI;
+import cyano.poweradvantage.gui.*;
 import cyano.poweradvantage.registry.MachineGUIRegistry;
 
 public abstract class GUI {
@@ -12,10 +12,12 @@ public abstract class GUI {
 		if(initDone) return;
 		
 		Blocks.init();
-		
-		int id = MachineGUIRegistry.addGUI(new FluidDrainGUI());
+
+		Blocks.fluid_drain.setGuiID(MachineGUIRegistry.addGUI(new FluidDrainGUI()));
 		Blocks.fluid_drain.setGuiOwner(PowerAdvantage.getInstance());
-		Blocks.fluid_drain.setGuiID(id);
+		
+		Blocks.fluid_discharge.setGuiID(MachineGUIRegistry.addGUI(new FluidDischargeGUI()));
+		Blocks.fluid_discharge.setGuiOwner(PowerAdvantage.getInstance());
 		
 		// TODO: block GUIs
 		
