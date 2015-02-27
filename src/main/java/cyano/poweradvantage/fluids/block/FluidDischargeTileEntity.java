@@ -74,37 +74,22 @@ public class FluidDischargeTileEntity extends TileEntity implements IUpdatePlaye
 						Material m = fluidBlock.getMaterial();// flowing minecraft fluid block
 						if(fluidBlock instanceof BlockLiquid){
 							do{
-								int Q = getFluidLevel(coord,fluid);
-								if(Q == 0){
-									// non-liquid block (shouldn't happen)
-									limit = 0;
-									break;
-								} else {
-									
-									if(getFluidLevel(coord.down(),fluid) > 0){
-										// go down, regardless
-										coord = coord.down();
-										continue;
-									}
-									if(Q >= 8) Q = -1; // vertical block must be downstream
-									if(getFluidLevel(coord.north(),fluid) < Q){
-										coord = coord.north();
-									} else if(getFluidLevel(coord.east(),fluid) < Q){
-										coord = coord.east();
-									} else if(getFluidLevel(coord.south(),fluid) < Q){
-										coord = coord.south();
-									} else if(getFluidLevel(coord.west(),fluid) < Q){
-										coord = coord.west();
-									} else {
-										// failed to find downstream block
-										// TODO: pick random adjacent liquid block
-										limit = 0;
-									}
-									
+								while(coord.getY() > 0 && canPlace(coord.down(),fluid)){
+									coord = coord.down();
 								}
+								int num = 0;
+								BlockPos[] neighbors = new BlockPos[4];
+								if(canPlace(coord.north(),fluid)){neighbors[num] = coord.north(); num++;}
+								if(canPlace(coord.east(),fluid)){neighbors[num] = coord.east(); num++;}
+								if(canPlace(coord.south(),fluid)){neighbors[num] = coord.south(); num++;}
+								if(canPlace(coord.west(),fluid)){neighbors[num] = coord.west(); num++;}
+								if(num == 0){
+									break;
+								}
+								coord = neighbors[worldObj.rand.nextInt(num)];
 								limit--;
 							}while(limit > 0);
-							if((Integer)worldObj.getBlockState(coord).getValue(BlockDynamicLiquid.LEVEL) > 0){
+							if(canPlace(coord,fluid)){
 								// not a source block
 								worldObj.setBlockState(coord, fluidBlock.getDefaultState());
 								worldObj.notifyBlockOfStateChange(coord, fluidBlock);
@@ -134,6 +119,17 @@ public class FluidDischargeTileEntity extends TileEntity implements IUpdatePlaye
 		}
 		// non-liquid block (or wrong liquid)
 		return 0;
+	}
+	
+	private boolean canPlace(BlockPos coord, Fluid fluid){
+		if(worldObj.isAirBlock(coord)) return true;
+		Block b = worldObj.getBlockState(coord).getBlock();
+		if(b instanceof BlockLiquid && b.getMaterial() == fluid.getBlock().getMaterial()){
+			Integer L = (Integer)worldObj.getBlockState(coord).getValue(BlockDynamicLiquid.LEVEL);
+			return L != 0;
+		}
+		// TODO: custom liquid handling 
+		return false;
 	}
 	
 	private void tryPushFluid(BlockPos coord, EnumFacing otherFace){
