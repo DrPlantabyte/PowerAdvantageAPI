@@ -132,7 +132,8 @@ public class FluidDrainTileEntity extends TileEntity implements IUpdatePlayerLis
 						BlockPos coord = this.pos.up();
 						do{
 							
-							int Q = (Integer)worldObj.getBlockState(coord).getValue(BlockDynamicLiquid.LEVEL); // 0 for source block, 1-7 for flowing blocks (lower number = closer to source)
+							int Q = (Integer)worldObj.getBlockState(coord).getValue(BlockDynamicLiquid.LEVEL); // 0 for source block, 1-7 for flowing blocks (lower number = closer to source), 9 for vertical fall
+							FMLLog.info(coord.toString()+": "+Q);
 							if(Q == 0){
 								// source block
 								break;
@@ -141,28 +142,29 @@ public class FluidDrainTileEntity extends TileEntity implements IUpdatePlayerLis
 								if(worldObj.getBlockState(coord.up()).getBlock() instanceof BlockLiquid
 										&& worldObj.getBlockState(coord.up()).getBlock().getMaterial() == m){
 									coord = coord.up();
-								} else {
-									if(worldObj.getBlockState(coord.north()).getBlock() instanceof BlockLiquid
-											&& worldObj.getBlockState(coord.north()).getBlock().getMaterial() == m
-											&& ((Integer)worldObj.getBlockState(coord.north()).getValue(BlockDynamicLiquid.LEVEL) < Q  || (Integer)worldObj.getBlockState(coord.north()).getValue(BlockDynamicLiquid.LEVEL) == 9)){
-										coord = coord.north();
-									} else if(worldObj.getBlockState(coord.east()).getBlock() instanceof BlockLiquid
-											&& worldObj.getBlockState(coord.east()).getBlock().getMaterial() == m
-											&& ((Integer)worldObj.getBlockState(coord.east()).getValue(BlockDynamicLiquid.LEVEL) < Q  || (Integer)worldObj.getBlockState(coord.east()).getValue(BlockDynamicLiquid.LEVEL) == 9)){
-										coord = coord.east();
-									} else if(worldObj.getBlockState(coord.south()).getBlock() instanceof BlockLiquid
-											&& worldObj.getBlockState(coord.south()).getBlock().getMaterial() == m
-											&& ((Integer)worldObj.getBlockState(coord.south()).getValue(BlockDynamicLiquid.LEVEL) < Q  || (Integer)worldObj.getBlockState(coord.south()).getValue(BlockDynamicLiquid.LEVEL) == 9)){
-										coord = coord.south();
-									} else if(worldObj.getBlockState(coord.west()).getBlock() instanceof BlockLiquid
-											&& worldObj.getBlockState(coord.west()).getBlock().getMaterial() == m
-											&& ((Integer)worldObj.getBlockState(coord.west()).getValue(BlockDynamicLiquid.LEVEL) < Q  || (Integer)worldObj.getBlockState(coord.west()).getValue(BlockDynamicLiquid.LEVEL) == 9)){
-										coord = coord.west();
-									} else {
-										// failed to find upstream block
-										limit = 0;
-									}
+									continue;
 								}
+								if(worldObj.getBlockState(coord.north()).getBlock() instanceof BlockLiquid
+										&& worldObj.getBlockState(coord.north()).getBlock().getMaterial() == m
+										&& ((Integer)worldObj.getBlockState(coord.north()).getValue(BlockDynamicLiquid.LEVEL) < Q  || (Integer)worldObj.getBlockState(coord.north()).getValue(BlockDynamicLiquid.LEVEL) == 9)){
+									coord = coord.north();
+								} else if(worldObj.getBlockState(coord.east()).getBlock() instanceof BlockLiquid
+										&& worldObj.getBlockState(coord.east()).getBlock().getMaterial() == m
+										&& ((Integer)worldObj.getBlockState(coord.east()).getValue(BlockDynamicLiquid.LEVEL) < Q  || (Integer)worldObj.getBlockState(coord.east()).getValue(BlockDynamicLiquid.LEVEL) == 9)){
+									coord = coord.east();
+								} else if(worldObj.getBlockState(coord.south()).getBlock() instanceof BlockLiquid
+										&& worldObj.getBlockState(coord.south()).getBlock().getMaterial() == m
+										&& ((Integer)worldObj.getBlockState(coord.south()).getValue(BlockDynamicLiquid.LEVEL) < Q  || (Integer)worldObj.getBlockState(coord.south()).getValue(BlockDynamicLiquid.LEVEL) == 9)){
+									coord = coord.south();
+								} else if(worldObj.getBlockState(coord.west()).getBlock() instanceof BlockLiquid
+										&& worldObj.getBlockState(coord.west()).getBlock().getMaterial() == m
+										&& ((Integer)worldObj.getBlockState(coord.west()).getValue(BlockDynamicLiquid.LEVEL) < Q  || (Integer)worldObj.getBlockState(coord.west()).getValue(BlockDynamicLiquid.LEVEL) == 9)){
+									coord = coord.west();
+								} else {
+									// failed to find upstream block
+									limit = 0;
+								}
+								
 							}
 							limit--;
 						}while(limit > 0);

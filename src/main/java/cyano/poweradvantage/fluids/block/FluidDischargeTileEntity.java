@@ -1,6 +1,9 @@
 package cyano.poweradvantage.fluids.block;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockDynamicLiquid;
+import net.minecraft.block.BlockLiquid;
+import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
@@ -21,6 +24,7 @@ import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidTankInfo;
+import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fluids.IFluidHandler;
 
 import com.google.common.collect.ImmutableMap;
@@ -63,8 +67,56 @@ public class FluidDischargeTileEntity extends TileEntity implements IUpdatePlaye
 						worldObj.setBlockState(coord, fluidBlock.getDefaultState());
 						worldObj.notifyBlockOfStateChange(coord, fluidBlock);
 						this.drain(EnumFacing.DOWN, FluidContainerRegistry.BUCKET_VOLUME, true);
-					} else {
+					} else if(worldObj.getBlockState(coord).getBlock() == fluidBlock){
 						// TODO: follow the flow
+
+						int limit = 16;
+						Material m = fluidBlock.getMaterial();// flowing minecraft fluid block
+						if(fluidBlock instanceof BlockLiquid){
+							do{
+
+								// vanilla fluid
+								int Q = (Integer)worldObj.getBlockState(coord).getValue(BlockDynamicLiquid.LEVEL); // 0 for source block, 1-7 for flowing blocks (lower number = closer to source), 9 for vertical fall
+								if(worldObj.getBlockState(coord.down()).getBlock() instanceof BlockLiquid
+										&& worldObj.getBlockState(coord.down()).getBlock().getMaterial() == m){
+									coord = coord.down();
+									continue;
+								}
+								if(Q == 9) Q = -1;
+								if(worldObj.getBlockState(coord.north()).getBlock() instanceof BlockLiquid
+										&& worldObj.getBlockState(coord.north()).getBlock().getMaterial() == m
+										&& (Integer)worldObj.getBlockState(coord.north()).getValue(BlockDynamicLiquid.LEVEL) > Q){
+									coord = coord.north();
+								} else if(worldObj.getBlockState(coord.east()).getBlock() instanceof BlockLiquid
+										&& worldObj.getBlockState(coord.east()).getBlock().getMaterial() == m
+										&& (Integer)worldObj.getBlockState(coord.east()).getValue(BlockDynamicLiquid.LEVEL) > Q){
+									coord = coord.east();
+								} else if(worldObj.getBlockState(coord.south()).getBlock() instanceof BlockLiquid
+										&& worldObj.getBlockState(coord.south()).getBlock().getMaterial() == m
+										&& (Integer)worldObj.getBlockState(coord.south()).getValue(BlockDynamicLiquid.LEVEL) > Q){
+									coord = coord.south();
+								} else if(worldObj.getBlockState(coord.west()).getBlock() instanceof BlockLiquid
+										&& worldObj.getBlockState(coord.west()).getBlock().getMaterial() == m
+										&& (Integer)worldObj.getBlockState(coord.west()).getValue(BlockDynamicLiquid.LEVEL) > Q){
+									coord = coord.west();
+								} else {
+									// end of the line
+									limit = 0;
+								}
+
+								limit--;
+							}while(limit > 0);
+							if((Integer)worldObj.getBlockState(coord).getValue(BlockDynamicLiquid.LEVEL) > 0){
+								// not a source block
+								worldObj.setBlockState(coord, fluidBlock.getDefaultState());
+								worldObj.notifyBlockOfStateChange(coord, fluidBlock);
+								this.drain(EnumFacing.DOWN, FluidContainerRegistry.BUCKET_VOLUME, true);
+							}
+						} else if(fluidBlock instanceof IFluidBlock){
+							// custom fluid
+							// TODO: custom fluid handling
+						}
+
 					}
 				}
 			}
