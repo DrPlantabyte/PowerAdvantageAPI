@@ -72,7 +72,7 @@ public class FluidDischargeTileEntity extends TileEntity implements IUpdatePlaye
 
 						int limit = 16;
 						Material m = fluidBlock.getMaterial();// flowing minecraft fluid block
-						if(fluidBlock instanceof BlockLiquid){
+						if(fluidBlock instanceof BlockLiquid || fluidBlock instanceof IFluidBlock){
 							do{
 								while(coord.getY() > 0 && canPlace(coord.down(),fluid)){
 									coord = coord.down();
@@ -95,10 +95,7 @@ public class FluidDischargeTileEntity extends TileEntity implements IUpdatePlaye
 								worldObj.notifyBlockOfStateChange(coord, fluidBlock);
 								this.drain(EnumFacing.DOWN, FluidContainerRegistry.BUCKET_VOLUME, true);
 							}
-						} else if(fluidBlock instanceof IFluidBlock){
-							// custom fluid
-							// TODO: custom fluid handling
-						}
+						} 
 
 					}
 				}
@@ -106,20 +103,6 @@ public class FluidDischargeTileEntity extends TileEntity implements IUpdatePlaye
 		}
 	}
 	
-
-	private int getFluidLevel(BlockPos coord, Fluid fluid){
-		Block fblock = fluid.getBlock();
-		Block b = worldObj.getBlockState(coord).getBlock();
-		if(b instanceof BlockLiquid && b.getMaterial() == fblock.getMaterial()){
-			Integer L = (Integer)worldObj.getBlockState(coord).getValue(BlockDynamicLiquid.LEVEL);
-			if(L == null) return 0;
-			if(L == 0) return 16; // source block
-			if(L < 8) return 8 - L; // 1-7 are horizontal flow blocks with increasing value per decreasing level
-			return 8; // 8 or greator means vertical falling liquid blocks
-		}
-		// non-liquid block (or wrong liquid)
-		return 0;
-	}
 	
 	private boolean canPlace(BlockPos coord, Fluid fluid){
 		if(worldObj.isAirBlock(coord)) return true;
@@ -127,21 +110,12 @@ public class FluidDischargeTileEntity extends TileEntity implements IUpdatePlaye
 		if(b instanceof BlockLiquid && b.getMaterial() == fluid.getBlock().getMaterial()){
 			Integer L = (Integer)worldObj.getBlockState(coord).getValue(BlockDynamicLiquid.LEVEL);
 			return L != 0;
+		} if(b instanceof IFluidBlock){
+			return ((IFluidBlock)b).getFilledPercentage(worldObj, coord) < 1.0f;
 		}
-		// TODO: custom liquid handling 
 		return false;
 	}
 	
-	private void tryPushFluid(BlockPos coord, EnumFacing otherFace){
-		TileEntity e = worldObj.getTileEntity(coord);
-		if(e instanceof IFluidHandler){
-			IFluidHandler fh = (IFluidHandler)e;
-			if(fh.canFill(otherFace, tank.getFluid().getFluid())){
-				tank.drain(fh.fill(otherFace, tank.getFluid(), true), true);
-				this.sync();
-			}
-		}
-	}
 	
 	
 	public void sync(){

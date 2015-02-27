@@ -70,68 +70,19 @@ public class FluidDrainTileEntity extends TileEntity implements IUpdatePlayerLis
 				// pull fluid from above
 				if(tank.getFluidAmount() <= 0){
 					IBlockState bs = worldObj.getBlockState(this.pos.up());
-					if(bs.getBlock() instanceof IFluidBlock){
-						// Forge fluid
-						IFluidBlock block = (IFluidBlock)bs.getBlock();
-						Fluid fluid = block.getFluid();
-						if(fluid != null){
-							if(block.canDrain(worldObj, this.pos.up())){
-								// is source block
-								tank.fill(new FluidStack(fluid,FluidContainerRegistry.BUCKET_VOLUME), true);
-								worldObj.setBlockToAir(this.pos.up());
-								this.sync();
-							} else {
-								// is flowing block, follow upstream to find source block
-								int limit = 16;
-								BlockPos coord = this.pos.up();
-								do{
-									if(worldObj.getBlockState(coord).getBlock() instanceof IFluidBlock
-											&& ((IFluidBlock)worldObj.getBlockState(coord).getBlock()).canDrain(worldObj, coord)){
-										break;
-									} else {
-										if(worldObj.getBlockState(coord.up()).getBlock() instanceof IFluidBlock
-												&& ((IFluidBlock)worldObj.getBlockState(coord.up()).getBlock()).getFluid() == fluid){
-											coord = coord.up();
-										} else {
-											float Q = ((IFluidBlock)worldObj.getBlockState(coord).getBlock()).getFilledPercentage(worldObj, coord);
-											if(worldObj.getBlockState(coord.north()).getBlock() instanceof IFluidBlock
-													&& ((IFluidBlock)worldObj.getBlockState(coord.north()).getBlock()).getFluid() == fluid
-													&& ((IFluidBlock)worldObj.getBlockState(coord.north()).getBlock()).getFilledPercentage(worldObj, coord) > Q){
-												coord = coord.north();
-											} else if(worldObj.getBlockState(coord.east()).getBlock() instanceof IFluidBlock
-													&& ((IFluidBlock)worldObj.getBlockState(coord.east()).getBlock()).getFluid() == fluid
-													&& ((IFluidBlock)worldObj.getBlockState(coord.east()).getBlock()).getFilledPercentage(worldObj, coord) > Q){
-												coord = coord.east();
-											} else if(worldObj.getBlockState(coord.south()).getBlock() instanceof IFluidBlock
-													&& ((IFluidBlock)worldObj.getBlockState(coord.south()).getBlock()).getFluid() == fluid
-													&& ((IFluidBlock)worldObj.getBlockState(coord.south()).getBlock()).getFilledPercentage(worldObj, coord) > Q){
-												coord = coord.south();
-											} else if(worldObj.getBlockState(coord.west()).getBlock() instanceof IFluidBlock
-													&& ((IFluidBlock)worldObj.getBlockState(coord.west()).getBlock()).getFluid() == fluid
-													&& ((IFluidBlock)worldObj.getBlockState(coord.west()).getBlock()).getFilledPercentage(worldObj, coord) > Q){
-												coord = coord.west();
-											}
-										}
-									}
-									limit--;
-								}while(limit > 0);
-								if(limit > 0 && ((IFluidBlock)worldObj.getBlockState(coord).getBlock()).canDrain(worldObj, coord)){
-									// found source block
-									tank.fill(new FluidStack(fluid,FluidContainerRegistry.BUCKET_VOLUME), true);
-									worldObj.setBlockToAir(coord);
-									this.sync();
-								}
-							}
-						}
-					} else if(bs.getBlock() instanceof BlockLiquid){
-						// Minecraft fluid
-						BlockLiquid block = (BlockLiquid)bs.getBlock();
+					if(bs.getBlock() instanceof BlockLiquid || bs.getBlock() instanceof IFluidBlock){
+						Block block = (BlockLiquid)bs.getBlock();
 						Fluid fluid;
 						if(block == Blocks.water || block == Blocks.flowing_water){
+							// Minecraft fluid
 							fluid = FluidRegistry.WATER;
 						} else if(block == Blocks.lava || block == Blocks.flowing_lava){
+							// Minecraft fluid
 							fluid = FluidRegistry.LAVA;
-						} else {
+						} else if(block instanceof IFluidBlock){
+							fluid = ((IFluidBlock)block).getFluid();
+						}else {
+							// Minecraft fluid?
 							fluid = FluidRegistry.lookupFluidForBlock(block);
 						}
 						
@@ -195,6 +146,8 @@ public class FluidDrainTileEntity extends TileEntity implements IUpdatePlayerLis
 			if(L == 0) return 16; // source block
 			if(L < 8) return 8 - L; // 1-7 are horizontal flow blocks with increasing value per decreasing level
 			return 8; // 8 or greator means vertical falling liquid blocks
+		} else if(b instanceof IFluidBlock && ((IFluidBlock)b).getFluid() == fluid){
+			return (int)(16 * ((IFluidBlock)b).getFilledPercentage(worldObj, coord));
 		}
 		// non-liquid block (or wrong liquid)
 		return 0;
