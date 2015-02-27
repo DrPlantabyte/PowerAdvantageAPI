@@ -74,36 +74,34 @@ public class FluidDischargeTileEntity extends TileEntity implements IUpdatePlaye
 						Material m = fluidBlock.getMaterial();// flowing minecraft fluid block
 						if(fluidBlock instanceof BlockLiquid){
 							do{
-
-								// vanilla fluid
-								int Q = (Integer)worldObj.getBlockState(coord).getValue(BlockDynamicLiquid.LEVEL); // 0 for source block, 1-7 for flowing blocks (lower number = closer to source), 9 for vertical fall
-								if(worldObj.getBlockState(coord.down()).getBlock() instanceof BlockLiquid
-										&& worldObj.getBlockState(coord.down()).getBlock().getMaterial() == m){
-									coord = coord.down();
-									continue;
-								}
-								if(Q == 9) Q = -1;
-								if(worldObj.getBlockState(coord.north()).getBlock() instanceof BlockLiquid
-										&& worldObj.getBlockState(coord.north()).getBlock().getMaterial() == m
-										&& (Integer)worldObj.getBlockState(coord.north()).getValue(BlockDynamicLiquid.LEVEL) > Q){
-									coord = coord.north();
-								} else if(worldObj.getBlockState(coord.east()).getBlock() instanceof BlockLiquid
-										&& worldObj.getBlockState(coord.east()).getBlock().getMaterial() == m
-										&& (Integer)worldObj.getBlockState(coord.east()).getValue(BlockDynamicLiquid.LEVEL) > Q){
-									coord = coord.east();
-								} else if(worldObj.getBlockState(coord.south()).getBlock() instanceof BlockLiquid
-										&& worldObj.getBlockState(coord.south()).getBlock().getMaterial() == m
-										&& (Integer)worldObj.getBlockState(coord.south()).getValue(BlockDynamicLiquid.LEVEL) > Q){
-									coord = coord.south();
-								} else if(worldObj.getBlockState(coord.west()).getBlock() instanceof BlockLiquid
-										&& worldObj.getBlockState(coord.west()).getBlock().getMaterial() == m
-										&& (Integer)worldObj.getBlockState(coord.west()).getValue(BlockDynamicLiquid.LEVEL) > Q){
-									coord = coord.west();
-								} else {
-									// end of the line
+								int Q = getFluidLevel(coord,fluid);
+								if(Q == 0){
+									// non-liquid block (shouldn't happen)
 									limit = 0;
+									break;
+								} else {
+									
+									if(getFluidLevel(coord.down(),fluid) > 0){
+										// go down, regardless
+										coord = coord.down();
+										continue;
+									}
+									if(Q >= 8) Q = -1; // vertical block must be downstream
+									if(getFluidLevel(coord.north(),fluid) < Q){
+										coord = coord.north();
+									} else if(getFluidLevel(coord.east(),fluid) < Q){
+										coord = coord.east();
+									} else if(getFluidLevel(coord.south(),fluid) < Q){
+										coord = coord.south();
+									} else if(getFluidLevel(coord.west(),fluid) < Q){
+										coord = coord.west();
+									} else {
+										// failed to find downstream block
+										// TODO: pick random adjacent liquid block
+										limit = 0;
+									}
+									
 								}
-
 								limit--;
 							}while(limit > 0);
 							if((Integer)worldObj.getBlockState(coord).getValue(BlockDynamicLiquid.LEVEL) > 0){
@@ -121,6 +119,21 @@ public class FluidDischargeTileEntity extends TileEntity implements IUpdatePlaye
 				}
 			}
 		}
+	}
+	
+
+	private int getFluidLevel(BlockPos coord, Fluid fluid){
+		Block fblock = fluid.getBlock();
+		Block b = worldObj.getBlockState(coord).getBlock();
+		if(b instanceof BlockLiquid && b.getMaterial() == fblock.getMaterial()){
+			Integer L = (Integer)worldObj.getBlockState(coord).getValue(BlockDynamicLiquid.LEVEL);
+			if(L == null) return 0;
+			if(L == 0) return 16; // source block
+			if(L < 8) return 8 - L; // 1-7 are horizontal flow blocks with increasing value per decreasing level
+			return 8; // 8 or greator means vertical falling liquid blocks
+		}
+		// non-liquid block (or wrong liquid)
+		return 0;
 	}
 	
 	private void tryPushFluid(BlockPos coord, EnumFacing otherFace){
