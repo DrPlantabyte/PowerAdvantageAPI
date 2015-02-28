@@ -158,6 +158,9 @@ public abstract class BlockSimplePowerConsumer  extends GUIBlock implements ITyp
     
     /**
      * Sets the default blockstate
+     * @param w World instance
+     * @param coord Block coordinate
+     * @param state Block state
      */
     protected void setDefaultFacing(final World w, final BlockPos coord, final IBlockState state) {
         if (w.isRemote) {

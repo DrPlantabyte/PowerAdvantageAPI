@@ -54,7 +54,6 @@ public abstract class FluidPipeBlock extends Block implements ITileEntityProvide
 	 * of the model will be 3 pixels (6 pixels wide) and you will want to use 
 	 * 0.1875 (3/16) as the pipeRadius. A pixel in Minecraft is defines as 1/16 
 	 * of a block, regardless of the texture resolution. 
-	 * @param energyType This is the energy type for this block. This block will 
 	 * automatically connect to neighboring blocks of the same energy type.
 	 */
 	public FluidPipeBlock(Material blockMaterial, float hardness, float pipeRadius){
@@ -199,6 +198,7 @@ public abstract class FluidPipeBlock extends Block implements ITileEntityProvide
 	 * This method determines whether to connect to a neighboring block. 
 	 * Override this method to change block connection behavior. 
 	 * @param w World instance
+	 * @param otherSide Face on the other block that this block would connect to 
 	 * @param coord Coordinate of neighboring block
 	 * @return Default implementation: true if the neighboring block implements 
 	 * ITypedConductor and has the same energy type as this block. Overriding 

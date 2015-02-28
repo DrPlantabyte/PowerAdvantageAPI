@@ -19,7 +19,7 @@ import net.minecraft.world.World;
 public abstract class PowerConductorBlock extends net.minecraft.block.Block implements net.minecraft.block.ITileEntityProvider, ITypedConductor{
 	/**
 	 * Block constructor
-	 * @param mat
+	 * @param mat Block material
 	 */
 	protected PowerConductorBlock(Material mat) {
 		super(mat);

@@ -139,15 +139,11 @@ public abstract class FluidPipeEntity extends TileEntity implements IUpdatePlaye
 		// send fluid into neighbors
 		pipeDist:{
 			Fluid fluid = tank.getFluid().getFluid();
-			// first, fill down
-			if(entities[0] instanceof IFluidHandler && ((IFluidHandler)entities[0]).canFill(facesOther[0], fluid)){
-				this.drain(faces[0], ((IFluidHandler)entities[0]).fill(facesOther[0], tank.getFluid(), true), true);
-			}
-			if(tank.getFluidAmount() <= 0) break pipeDist;
+
 			// then fill sideways
 			final HashMap<Integer, IPipeFluidHandler> neighbors = new HashMap<>();
 			final HashMap< IPipeFluidHandler, EnumFacing> neighborFaces = new HashMap<>();
-			for(int n = 1; n < 5; n++){
+			for(int n = 0; n < 6; n++){
 				if(entities[n] instanceof IPipeFluidHandler){
 					IPipeFluidHandler pipe = (IPipeFluidHandler)entities[n];
 					if(pipe.canFill(facesOther[n], fluid)){
@@ -180,11 +176,7 @@ public abstract class FluidPipeEntity extends TileEntity implements IUpdatePlaye
 				}
 			}
 				
-			// then fill up
-			int surplus = tank.getFluidAmount() - tank.getCapacity() / 2;
-			if(surplus > 0 && entities[5] instanceof IFluidHandler && ((IFluidHandler)entities[5]).canFill(facesOther[5], fluid)){
-				((IFluidHandler)entities[0]).fill(facesOther[5], this.drain(faces[5], surplus, true), true);
-			}
+			
 		}
 	}
 	
