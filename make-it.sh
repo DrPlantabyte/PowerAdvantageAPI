@@ -15,7 +15,7 @@ zip -r --quiet ../../../build/dev/src *
 cd "../../.."
 cd "build/dev"
 ORIG_NAME="`ls PowerAdvantage-*.jar`"
-API_INSERT="-dev-"
+API_INSERT="-API-"
 zip -d "${ORIG_NAME}" assets/\*
 mv -v "${ORIG_NAME}" "${ORIG_NAME/-/$API_INSERT}"
 mv -v src.zip PowerAdvantage-src.zip
