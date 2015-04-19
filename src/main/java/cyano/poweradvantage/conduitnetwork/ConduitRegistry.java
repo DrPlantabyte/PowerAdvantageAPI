@@ -30,7 +30,6 @@ public class ConduitRegistry {
 	private final Map<ConduitType,ConduitNetworkManager> networkManagers = new HashMap<>();
 	
 	
-	// TODO: save and load networks
 	
 	// thread-safe singleton instantiation
 	private static ConduitRegistry instance = null;
@@ -50,26 +49,16 @@ public class ConduitRegistry {
 		return instance;
 	}
 	
-	public Collection<PoweredEntity> getConnectedNetwork(World w, BlockPos coord, ConduitType type){
-		Set<PoweredEntity> entities = new HashSet<>();
-		ConduitNetworkManager manager = getConduitNetworkManager(type);
-		Set<BlockPos4D> net = manager.getConnectedNetwork(new BlockPos4D(w.provider.getDimensionId(),coord));
-		for(BlockPos4D pos : net){
-			Block b = w.getBlockState(pos.pos).getBlock();
-			if(b  instanceof ITileEntityProvider ){
-				TileEntity e = w.getTileEntity(pos.pos);
-				if(e != null && e instanceof PoweredEntity){
-					entities.add((PoweredEntity)e);
-				}
-			}
-		}
-		return entities;
-	}
+	
 	
 	public List<PowerRequest> getRequestsForPower(World w, BlockPos coord, ConduitType type){
 		List<PowerRequest> requests = new ArrayList<>();
 		ConduitNetworkManager manager = getConduitNetworkManager(type);
-		Set<BlockPos4D> net = manager.getConnectedNetwork(new BlockPos4D(w.provider.getDimensionId(),coord));
+		BlockPos4D bp = new BlockPos4D(w.provider.getDimensionId(), coord);
+		if(!manager.isValidatedNetwork(bp)){
+			manager.revalidate(bp, w, type);
+		}
+		List<BlockPos4D> net = manager.getNetwork(bp);
 		for(BlockPos4D pos : net){
 			Block b = w.getBlockState(pos.pos).getBlock();
 			if(b  instanceof ITileEntityProvider ){
@@ -85,58 +74,30 @@ public class ConduitRegistry {
 	}
 	
 	public void conduitBlockPlacedEvent(World w, int dimension, BlockPos location, ConduitType type){
+		if(w.isRemote)return; // ignore client-side
 		BlockPos4D coord = new BlockPos4D(dimension, location);
+		FMLLog.info("conduitBlockPlacedEvent at "+coord); // TODO: remove debug code
 		ConduitNetworkManager manager = getConduitNetworkManager(type);
-		boolean noNetworks = true;
 		for(int i = 0; i < EnumFacing.values().length; i++){
 			EnumFacing face = EnumFacing.values()[i];
 			BlockPos4D n = coord.offset(face);
-			if(manager.areInSameNetwork(coord,n)) {continue;}
-			Block block = w.getBlockState(n.pos).getBlock();
-			if(block instanceof ITypedConduit && ConduitType.areConnectable(w,coord.pos,face)){
-				manager.addBlockToNetwork(n, coord);
-				noNetworks = false;
-			}
-		}
-		if(noNetworks){
-			manager.createNewNetwork(coord);
+			manager.invalidate(n);
 		}
 	}
 	
 	public void conduitBlockRemovedEvent(World w, int dimension, BlockPos location, ConduitType type){
+		if(w.isRemote)return; // ignore client-side
 		BlockPos4D coord = new BlockPos4D(dimension, location);
+		FMLLog.info("conduitBlockRemovedEvent at "+coord); // TODO: remove debug code
 		ConduitNetworkManager manager = getConduitNetworkManager(type);
-		// remove current network
-		manager.deleteNetwork(coord);
-		// rescan neighbors
 		for(int i = 0; i < EnumFacing.values().length; i++){
 			EnumFacing face = EnumFacing.values()[i];
 			BlockPos4D n = coord.offset(face);
-			recusiveScan(w,n,type,manager);
+			manager.invalidate(n);
 		}
 	}
 	
-	private void scanForNetwork(World w, BlockPos4D coord, ConduitType type){
-		ConduitNetworkManager manager = getConduitNetworkManager(type);
-		if(!manager.isPartOfNetwork(coord)){
-			manager.createNewNetwork(coord);
-		}
-		recusiveScan(w,coord,type,manager);
-		
-	}
 	
-	private void recusiveScan(World w, BlockPos4D coord, ConduitType type,ConduitNetworkManager manager){
-		for(int i = 0; i < EnumFacing.values().length; i++){
-			EnumFacing face = EnumFacing.values()[i];
-			BlockPos4D n = coord.offset(face);
-			if(manager.areInSameNetwork(coord,n)) {continue;}
-			Block block = w.getBlockState(n.pos).getBlock();
-			if(block instanceof ITypedConduit && ConduitType.areConnectable(w,coord.pos,face)){
-				manager.addBlockToNetwork(coord, n);
-				recusiveScan(w,n,type,manager);
-			}
-		}
-	}
 
 
 	private ConduitNetworkManager getConduitNetworkManager(ConduitType type) {
@@ -149,27 +110,6 @@ public class ConduitRegistry {
 		}
 	}
 	
-	public void saveToNBT(NBTTagCompound packet){
-		NBTTagCompound root = new NBTTagCompound();
-		for(Map.Entry<ConduitType,ConduitNetworkManager> type : networkManagers.entrySet()){
-			NBTTagCompound network = new NBTTagCompound();
-			type.getValue().saveToNBT(network);
-			root.setTag(type.getKey().toString(),network);
-		}
-		packet.setTag("ConduitRegistry",root);
-	}
-	
-
-	public void loadFromNBT(NBTTagCompound packet){
-		NBTTagCompound root = packet.getCompoundTag("ConduitRegistry");
-		for(Object typeName : root.getKeySet()){
-			FMLLog.info("Reading registry data for "+typeName); // TODO: remove debug code
-			String type = (String)typeName;
-			NBTTagCompound network = root.getCompoundTag(type);
-			ConduitNetworkManager manager = this.getConduitNetworkManager(new ConduitType(type));
-			manager.readFromNBT(network);
-		}
-	}
 	
 	
 }
