@@ -6,7 +6,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.oredict.OreDictionary;
 import cyano.poweradvantage.PowerAdvantage;
-import cyano.poweradvantage.api.ConductorType;
+import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.api.simple.TileEntitySimplePowerSource;
 
 public class RedstoneGeneratorTileEntity extends TileEntitySimplePowerSource {
@@ -21,7 +21,7 @@ public class RedstoneGeneratorTileEntity extends TileEntitySimplePowerSource {
     private final int ticksPerFuel = 1600; 
 	
 	public RedstoneGeneratorTileEntity() {
-		super(new ConductorType("redstone"), 10000, PowerAdvantage.MODID+".redstoneGenerator");
+		super(new ConduitType("redstone"), 10000, PowerAdvantage.MODID+".redstoneGenerator");
 	}
 
 	@Override
@@ -43,9 +43,9 @@ public class RedstoneGeneratorTileEntity extends TileEntitySimplePowerSource {
 		if (isServerWorld) {
 			if(worldObj.getWorldTime() % 8 == 0){
 				// GUI synchronization
-				if(this.getEnergyBuffer() != oldEnergy){
+				if(this.getEnergy() != oldEnergy){
 					flag2 = true;
-					oldEnergy = this.getEnergyBuffer();
+					oldEnergy = this.getEnergy();
 				}
 				if(this.burnTime != oldBurnTime){
 					flag2 = true;
@@ -54,7 +54,7 @@ public class RedstoneGeneratorTileEntity extends TileEntitySimplePowerSource {
 			}
 
 			if (!this.isBurning() 
-					&& this.getEnergyBuffer() < this.getEnergyBufferCapacity() 
+					&& this.getEnergy() < this.getEnergyCapacity() 
 					&& isItemValidForSlot(0,this.inventory[0]) 
 					&& !worldObj.isBlockPowered(getPos()) // disable on redstone signal
 					) {
@@ -68,7 +68,7 @@ public class RedstoneGeneratorTileEntity extends TileEntitySimplePowerSource {
 						this.inventory[0] = null;
 					}
 				}
-			} else if(this.isBurning() && this.getEnergyBuffer() < this.getEnergyBufferCapacity()) {
+			} else if(this.isBurning() && this.getEnergy() < this.getEnergyCapacity()) {
 				// is burning, add energy to buffer
 				this.addEnergy(energyPerFuelTick);
 			}
@@ -127,7 +127,7 @@ public class RedstoneGeneratorTileEntity extends TileEntitySimplePowerSource {
 	@Override
 	public void prepareDataFieldsForSync(){
 		dataFields[DATAFIELD_BURNTIME] = burnTime;
-		dataFields[DATAFIELD_ENERGY] = Float.floatToIntBits(this.getEnergyBuffer());
+		dataFields[DATAFIELD_ENERGY] = Float.floatToIntBits(this.getEnergy());
 	}
 	
 	@Override

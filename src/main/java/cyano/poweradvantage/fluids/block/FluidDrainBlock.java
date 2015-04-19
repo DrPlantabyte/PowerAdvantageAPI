@@ -5,8 +5,6 @@ import java.util.Random;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
@@ -14,21 +12,21 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import cyano.poweradvantage.api.GUIBlock;
-import cyano.poweradvantage.api.IFluidHandlerBlock;
-import cyano.poweradvantage.api.simple.TileEntitySimplePowerSource;
+import cyano.poweradvantage.api.ConduitType;
+import cyano.poweradvantage.api.PoweredEntity;
+import cyano.poweradvantage.api.simple.BlockSimplePowerSource;
 
-public class FluidDrainBlock extends GUIBlock implements IFluidHandlerBlock{
+public class FluidDrainBlock extends BlockSimplePowerSource{
 // TODO: add new creative tab
-	public FluidDrainBlock() {
-		super(Material.iron);
-		super.setHardness(3f);
+	public FluidDrainBlock(int guiId, Object guiOwner) {
+		super(Material.iron, 3f, new ConduitType("fluid"), guiId, guiOwner);
 		super.setCreativeTab(CreativeTabs.tabDecorations);
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(World w, int m) {
-		return new FluidDrainTileEntity(w,m);
+	public PoweredEntity createNewTileEntity(World w, int m) {
+		// TODO: fix unlocalized name business
+		return new FluidDrainTileEntity("fix-me2");
 	}
 	
 
@@ -51,8 +49,14 @@ public class FluidDrainBlock extends GUIBlock implements IFluidHandlerBlock{
         return Item.getItemFromBlock(this);
     }
 
+
 	@Override
-	public boolean canConnect(EnumFacing face) {
-		return face != EnumFacing.UP;
+	public boolean hasComparatorInputOverride() {
+		return false;
+	}
+
+	@Override
+	public int getComparatorInputOverride(World world, BlockPos coord) {
+		return 0;
 	}
 }

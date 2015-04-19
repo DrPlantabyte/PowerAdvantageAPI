@@ -5,20 +5,16 @@ import net.minecraft.block.BlockDynamicLiquid;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
-import net.minecraft.server.gui.IUpdatePlayerListBox;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IChatComponent;
-import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -29,78 +25,75 @@ import net.minecraftforge.fluids.IFluidHandler;
 
 import com.google.common.collect.ImmutableMap;
 
+import cyano.poweradvantage.api.ConduitType;
+import cyano.poweradvantage.api.simple.TileEntitySimplePowerConsumer;
 
-public class FluidDischargeTileEntity extends TileEntity implements IUpdatePlayerListBox, IFluidHandler, ISidedInventory{
+
+public class FluidDischargeTileEntity extends TileEntitySimplePowerConsumer implements IFluidHandler{
+
+	// TODO: make fluid pipe/machine templates that use FluidTank as their "energy buffer"
+	
+	public FluidDischargeTileEntity(String unlocalizedName) {
+		super(new ConduitType("fluid"), FluidContainerRegistry.BUCKET_VOLUME, unlocalizedName);
+	}
 
 	public final FluidTank tank = new FluidTank( FluidContainerRegistry.BUCKET_VOLUME );
 	
-	private final static int updateInterval = 20;
-	private final int updateOffset;
 	
-	public FluidDischargeTileEntity(World w, int i){
-		this(w.rand.nextInt( updateInterval));
-		
-	}
-	public FluidDischargeTileEntity(int tickOffset){
-		updateOffset = tickOffset;
-	}
-	
-	public FluidDischargeTileEntity(){
-		this(0);
-	}
 	
 	///// Logic and implementation /////
-	
 	@Override
-	public void update(){
-		if(!worldObj.isRemote){
-			// server-side
-			if((worldObj.getTotalWorldTime() + updateOffset) % updateInterval == 0){
-				
-				// place fluid block
-				if(tank.getFluidAmount() >= FluidContainerRegistry.BUCKET_VOLUME){
-					FluidStack fstack = tank.getFluid();
-					Fluid fluid = fstack.getFluid();
-					Block fluidBlock = fluid.getBlock();
-					BlockPos coord = this.pos.down();
-					if(worldObj.isAirBlock(coord)){
+	public void powerUpdate(){
+		// server-side
+
+		// place fluid block
+		if(tank.getFluidAmount() >= FluidContainerRegistry.BUCKET_VOLUME){
+			FluidStack fstack = tank.getFluid();
+			Fluid fluid = fstack.getFluid();
+			Block fluidBlock = fluid.getBlock();
+			BlockPos coord = this.pos.down();
+			if(worldObj.isAirBlock(coord)){
+				worldObj.setBlockState(coord, fluidBlock.getDefaultState());
+				worldObj.notifyBlockOfStateChange(coord, fluidBlock);
+				this.drain(EnumFacing.DOWN, FluidContainerRegistry.BUCKET_VOLUME, true);
+			} else if(worldObj.getBlockState(coord).getBlock() == fluidBlock){
+				// TODO: follow the flow
+
+				int limit = 16;
+				Material m = fluidBlock.getMaterial();// flowing minecraft fluid block
+				if(fluidBlock instanceof BlockLiquid || fluidBlock instanceof IFluidBlock){
+					do{
+						while(coord.getY() > 0 && canPlace(coord.down(),fluid)){
+							coord = coord.down();
+						}
+						int num = 0;
+						BlockPos[] neighbors = new BlockPos[4];
+						if(canPlace(coord.north(),fluid)){neighbors[num] = coord.north(); num++;}
+						if(canPlace(coord.east(),fluid)){neighbors[num] = coord.east(); num++;}
+						if(canPlace(coord.south(),fluid)){neighbors[num] = coord.south(); num++;}
+						if(canPlace(coord.west(),fluid)){neighbors[num] = coord.west(); num++;}
+						if(num == 0){
+							break;
+						}
+						coord = neighbors[worldObj.rand.nextInt(num)];
+						limit--;
+					}while(limit > 0);
+					if(canPlace(coord,fluid)){
+						// not a source block
 						worldObj.setBlockState(coord, fluidBlock.getDefaultState());
 						worldObj.notifyBlockOfStateChange(coord, fluidBlock);
 						this.drain(EnumFacing.DOWN, FluidContainerRegistry.BUCKET_VOLUME, true);
-					} else if(worldObj.getBlockState(coord).getBlock() == fluidBlock){
-						// TODO: follow the flow
-
-						int limit = 16;
-						Material m = fluidBlock.getMaterial();// flowing minecraft fluid block
-						if(fluidBlock instanceof BlockLiquid || fluidBlock instanceof IFluidBlock){
-							do{
-								while(coord.getY() > 0 && canPlace(coord.down(),fluid)){
-									coord = coord.down();
-								}
-								int num = 0;
-								BlockPos[] neighbors = new BlockPos[4];
-								if(canPlace(coord.north(),fluid)){neighbors[num] = coord.north(); num++;}
-								if(canPlace(coord.east(),fluid)){neighbors[num] = coord.east(); num++;}
-								if(canPlace(coord.south(),fluid)){neighbors[num] = coord.south(); num++;}
-								if(canPlace(coord.west(),fluid)){neighbors[num] = coord.west(); num++;}
-								if(num == 0){
-									break;
-								}
-								coord = neighbors[worldObj.rand.nextInt(num)];
-								limit--;
-							}while(limit > 0);
-							if(canPlace(coord,fluid)){
-								// not a source block
-								worldObj.setBlockState(coord, fluidBlock.getDefaultState());
-								worldObj.notifyBlockOfStateChange(coord, fluidBlock);
-								this.drain(EnumFacing.DOWN, FluidContainerRegistry.BUCKET_VOLUME, true);
-							}
-						} 
-
 					}
-				}
+				} 
+
 			}
+
 		}
+	}
+	
+	@Override
+	public void tickUpdate(boolean isServer){
+		// do nothing
 	}
 	
 	
@@ -360,6 +353,28 @@ public class FluidDischargeTileEntity extends TileEntity implements IUpdatePlaye
 	@Override
 	public int[] getSlotsForFace(EnumFacing arg0) {
 		return new int[0];
+	}
+
+	@Override
+	protected ItemStack[] getInventory() {
+		return new ItemStack[0];
+	}
+	// TODO: clean-up data field stuff
+
+	@Override
+	public int[] getDataFieldArray() {
+		return new int[0];
+	}
+
+	@Override
+	public void prepareDataFieldsForSync() {
+		// do nothing
+		
+	}
+
+	@Override
+	public void onDataFieldUpdate() {
+		// do nothing
 	}
 	
 	

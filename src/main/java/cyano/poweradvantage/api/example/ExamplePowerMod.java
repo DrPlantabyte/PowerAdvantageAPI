@@ -39,7 +39,6 @@ public class ExamplePowerMod {
 		Block rsCon_block = new RedstonePowerConductorBlock();
 		rsCon_block.setUnlocalizedName(PowerAdvantage.MODID+"."+"example_redstone_conductor");
 		GameRegistry.registerBlock(rsCon_block,"example_redstone_conductor");
-		GameRegistry.registerTileEntity(RedstonePowerConductorTileEntity.class,PowerAdvantage.MODID+"."+"example_redstone_conductor");
 		
 		
 		if(event.getSide() == Side.CLIENT){

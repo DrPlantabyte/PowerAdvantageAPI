@@ -5,7 +5,7 @@ import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import cyano.poweradvantage.PowerAdvantage;
-import cyano.poweradvantage.api.ConductorType;
+import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.api.simple.TileEntitySimplePowerConsumer;
 
 
@@ -26,7 +26,7 @@ public class RedstoneFurnaceTileEntity extends TileEntitySimplePowerConsumer {
     private final int COOKING_PER_TICK = 2;
     
 	public RedstoneFurnaceTileEntity() {
-		super(new ConductorType("redstone"), 200, PowerAdvantage.MODID+".redstoneFurnace");
+		super(new ConduitType("redstone"), 200, PowerAdvantage.MODID+".redstoneFurnace");
 	}
 
 	@Override
@@ -72,7 +72,7 @@ public class RedstoneFurnaceTileEntity extends TileEntitySimplePowerConsumer {
 	@Override
 	public void prepareDataFieldsForSync(){
 		dataFields[DATAFIELD_COOKTIME] = cookTime;
-		dataFields[DATAFIELD_ENERGY] = Float.floatToIntBits(this.getEnergyBuffer());
+		dataFields[DATAFIELD_ENERGY] = Float.floatToIntBits(this.getEnergy());
 	}
 
 	private float oldEnergy = 0f;
@@ -84,9 +84,9 @@ public class RedstoneFurnaceTileEntity extends TileEntitySimplePowerConsumer {
 			boolean flag2 = false;
 			if(worldObj.getWorldTime() % 8 == 0){
 				// GUI synchronization
-				if(this.getEnergyBuffer() != oldEnergy){
+				if(this.getEnergy() != oldEnergy){
 					flag2 = true;
-					oldEnergy = this.getEnergyBuffer();
+					oldEnergy = this.getEnergy();
 				}
 				if(this.cookTime != oldCookTime){
 					flag2 = true;
@@ -99,7 +99,7 @@ public class RedstoneFurnaceTileEntity extends TileEntitySimplePowerConsumer {
 				cookTime = 0;
 				flag2 = true;
 			}
-			if(this.getEnergyBuffer() >= ENERGY_PER_TICK 
+			if(this.getEnergy() >= ENERGY_PER_TICK 
 					&& this.canSmelt(this.inventory[0], this.inventory[1]) 
 					&& !worldObj.isBlockPowered(getPos()) // disable on redstone signal
 					){
@@ -187,5 +187,6 @@ public class RedstoneFurnaceTileEntity extends TileEntitySimplePowerConsumer {
 		}
 		return (float) cookTime / (float)getSmeltTime(inventory[0]);
 	}
+
 
 }

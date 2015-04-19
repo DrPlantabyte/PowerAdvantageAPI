@@ -1,5 +1,6 @@
 package cyano.poweradvantage;
 
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -11,6 +12,8 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import cyano.poweradvantage.api.example.ExamplePowerMod;
+import cyano.poweradvantage.events.BlockEventHandler;
+import cyano.poweradvantage.events.LoadingEventHandler;
 import cyano.poweradvantage.registry.FuelRegistry;
 import cyano.poweradvantage.registry.MachineGUIRegistry;
 
@@ -167,7 +170,7 @@ public class PowerAdvantage
     /** The display name for this mod */
     public static final String NAME = "Power Advantage";
     /** The version of this mod, in the format major.minor.update */
-    public static final String VERSION = "0.0.5";
+    public static final String VERSION = "0.0.6";
 
     /** if true, example machines will be added to the game */
     public static boolean DEMO_MODE = false;
@@ -246,6 +249,9 @@ public class PowerAdvantage
 		cyano.poweradvantage.init.GUI.init();
 		
     	if(DEMO_MODE)exampleMod.init(event);
+    	
+    	MinecraftForge.EVENT_BUS.register(new BlockEventHandler());
+    	MinecraftForge.EVENT_BUS.register(new LoadingEventHandler());
     	
     	if(event.getSide() == Side.CLIENT){
 			clientInit(event);

@@ -1,36 +1,37 @@
 package cyano.poweradvantage.api;
+
+import cyano.poweradvantage.util.HashCodeHelper;
+
 /**
- * This class is used to identify different types of power. It is optimized for 
+ * This class is used to identify different types of power (or other transport). It is optimized for 
  * high-performance type-comparisons, especially if you use the 
- * <b>areSameType(ConductorType a, ConductorType b)</b> static function.
+ * <b>areSameType(ConduitType a, ConduitType b)</b> static function.
  * @author DrCyano
  *
  */
-public class ConductorType {
+public class ConduitType {
 
 	/** type identifier */
 	private final String type;
 	/** cached hash-code for high-performance type checking */
-	private final int hashCache;
+	private final long hashCache;
 	/**
-	 * Constructor for ConductorType. The type of a conductor is described by 
-	 * a simple string, such as "mechanical" or "electrical". Convention is to 
-	 * use the adjective that ends with -al if used in the sentence "This 
-	 * machine requires __________ power." Note that names with identical 
-	 * hashCodes will be behave as being the same type (this is a side-effect of 
-	 * performance optimizations).
+	 * Constructor for ConduitType. The type of a conductor is described by a simple string, such as 
+	 * "steam" or "electricity" or "fluid". Convention is to use the noun that describes what is 
+	 * moving from the source to the destination. Note that names with identical hashCodes will be 
+	 * behave as being the same type (this is a side-effect of performance optimizations).
 	 * @param name The name of this power type.
 	 */
-	public ConductorType(String name){
+	public ConduitType(String name){
 		type = name;
-		hashCache = type.hashCode();
+		hashCache = HashCodeHelper.stringHashCode(type);
 	}
 	/**
 	 * Faster hash-code implementation that relies on cached value
 	 */
 	@Override
 	public int hashCode(){
-		return hashCache;
+		return (int)hashCache;
 	}
 	/**
 	 * High-performance equals (fast response for un-equal values) that 
@@ -39,9 +40,10 @@ public class ConductorType {
 	@Override
 	public boolean equals(Object o){
 		if(o == null) return false;
+		if(this == o) return true;
 		if(this.hashCode() == o.hashCode()){ // optimization with cached hashCodes
-			if(o instanceof ConductorType){
-				return type.equals(((ConductorType)o).type);
+			if(o instanceof ConduitType){
+				return type.equals(((ConduitType)o).type);
 			}
 		}
 		return false;
@@ -53,8 +55,8 @@ public class ConductorType {
 	 * @return true if both are the same type of power conductor, false 
 	 * otherwise
 	 */
-	public static boolean areSameType(ConductorType a, ConductorType b){
-		return a.hashCode() == b.hashCode();
+	public static boolean areSameType(ConduitType a, ConduitType b){
+		return a.hashCache == b.hashCache;
 	}
 	/**
 	 * Returns the energy type name

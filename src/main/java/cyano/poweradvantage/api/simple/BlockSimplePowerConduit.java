@@ -18,10 +18,11 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import cyano.poweradvantage.api.ConductorType;
-import cyano.poweradvantage.api.ITypedConductor;
-import cyano.poweradvantage.api.PowerConductorBlock;
-import cyano.poweradvantage.api.PowerConductorEntity;
+import cyano.poweradvantage.api.ConduitType;
+import cyano.poweradvantage.api.ITypedConduit;
+import cyano.poweradvantage.api.ConduitBlock;
+import cyano.poweradvantage.api.PoweredEntity;
+import cyano.poweradvantage.conduitnetwork.ConduitRegistry;
 /**
  * This block class implements the cyano.poweradvantage.api.PowerConductorBlock 
  * class and renders as a pipe. You will need to have the appropriate blockstate 
@@ -29,10 +30,10 @@ import cyano.poweradvantage.api.PowerConductorEntity;
  * @author DrCyano
  *
  */
-public abstract class BlockSimplePowerConduit extends PowerConductorBlock implements ITileEntityProvider{
+public abstract class BlockSimplePowerConduit extends ConduitBlock{
 
 	/** power type identifier */
-	private final ConductorType type;
+	private final ConduitType type;
 	/** radius of the pipe model, in meters (0.0625 per pixel) */
 	private final float pipeRadius; // in fraction of a block (aka meters)
 	/** Blockstate property */
@@ -65,7 +66,7 @@ public abstract class BlockSimplePowerConduit extends PowerConductorBlock implem
 	 * @param energyType This is the energy type for this block. This block will 
 	 * automatically connect to neighboring blocks of the same energy type.
 	 */
-	public BlockSimplePowerConduit(Material blockMaterial, float hardness, float pipeRadius, ConductorType energyType){
+	public BlockSimplePowerConduit(Material blockMaterial, float hardness, float pipeRadius, ConduitType energyType){
 		super(blockMaterial);
 		this.type = energyType;
     	super.setHardness(hardness);
@@ -83,29 +84,45 @@ public abstract class BlockSimplePowerConduit extends PowerConductorBlock implem
 	 * @return The type of energy/power for this block
 	 */
 	@Override
-	public ConductorType getEnergyType() {
+	public ConduitType getType() {
 		return type;
 	}
 	
+	
 	/**
-	 * Decides whether or not this conduit should connect to a neighboring block 
-	 * based on its energy type.
-	 * @return true if this block should visually connect to a block of the 
-	 * given energy type, false otherwise.
+	 * Determines whether this conduit is compatible with an adjacent one
+	 * @param type The type of energy in the conduit
+	 * @param blockFace The side through-which the energy is flowing
+	 * @return true if this conduit can flow the given energy type through the given face, false 
+	 * otherwise
 	 */
-	@Override
-	public boolean canConnectTo(ConductorType energyType) {
-		return ConductorType.areSameType(type, energyType);
+	public boolean canAcceptType(ConduitType type, EnumFacing blockFace){
+		return ConduitType.areSameType(getType(), type);
 	}
 	/**
-	 * Creates a TileEntity for this block when the block is placed into the 
-	 * world.
-	 * @return A new TileEntity instance, probably one that extends 
-	 * <b>TileEntitySimplePowerConduit</b>.
+	 * Determines whether this conduit is compatible with a type of energy through any side
+	 * @param type The type of energy in the conduit
+	 * @return true if this conduit can flow the given energy type through one or more of its block 
+	 * faces, false otherwise
 	 */
-	@Override
-    public abstract PowerConductorEntity createNewTileEntity(final World world, final int metaDataValue);
-
+	public boolean canAcceptType(ConduitType type){
+		return ConduitType.areSameType(getType(), type);
+	}
+	
+	/**
+	 * Determines whether this block/entity should receive energy 
+	 * @return true if this block/entity should receive energy
+	 */
+	public boolean isPowerSink(){
+		return false;
+	}
+	/**
+	 * Determines whether this block/entity can provide energy 
+	 * @return true if this block/entity can provide energy
+	 */
+	public boolean isPowerSource(){
+		return false;
+	}
 	/**
 	 * Creates a blockstate instance.
 	 */
@@ -120,12 +137,12 @@ public abstract class BlockSimplePowerConduit extends PowerConductorBlock implem
     @Override
     public IBlockState getActualState(final IBlockState bs, final IBlockAccess world, final BlockPos coord) {
         return bs
-        		.withProperty(WEST, this.canConnectTo(world, coord.west()))
-        		.withProperty(DOWN, this.canConnectTo(world, coord.down()))
-        		.withProperty(SOUTH, this.canConnectTo(world, coord.south()))
-        		.withProperty(EAST, this.canConnectTo(world, coord.east()))
-        		.withProperty(UP, this.canConnectTo(world, coord.up()))
-        		.withProperty(NORTH, this.canConnectTo(world, coord.north()));
+        		.withProperty(WEST, this.canConnectTo(world,coord,EnumFacing.WEST, coord.west()))
+        		.withProperty(DOWN, this.canConnectTo(world,coord,EnumFacing.DOWN, coord.down()))
+        		.withProperty(SOUTH, this.canConnectTo(world,coord,EnumFacing.SOUTH, coord.south()))
+        		.withProperty(EAST, this.canConnectTo(world,coord,EnumFacing.EAST, coord.east()))
+        		.withProperty(UP, this.canConnectTo(world,coord,EnumFacing.UP, coord.up()))
+        		.withProperty(NORTH, this.canConnectTo(world,coord,EnumFacing.NORTH, coord.north()));
     }
     
 	
@@ -134,12 +151,12 @@ public abstract class BlockSimplePowerConduit extends PowerConductorBlock implem
      */
 	@Override
     public void setBlockBoundsBasedOnState(final IBlockAccess world, final BlockPos coord) {
-        final boolean connectNorth = this.canConnectTo(world, coord.north());
-        final boolean connectSouth = this.canConnectTo(world, coord.south());
-        final boolean connectWest = this.canConnectTo(world, coord.west());
-        final boolean connectEast = this.canConnectTo(world, coord.east());
-        final boolean connectUp = this.canConnectTo(world, coord.up());
-        final boolean connectDown = this.canConnectTo(world, coord.down());
+        final boolean connectNorth = this.canConnectTo(world,coord,EnumFacing.NORTH, coord.north());
+        final boolean connectSouth = this.canConnectTo(world,coord,EnumFacing.SOUTH, coord.south());
+        final boolean connectWest = this.canConnectTo(world,coord,EnumFacing.WEST, coord.west());
+        final boolean connectEast = this.canConnectTo(world,coord,EnumFacing.EAST, coord.east());
+        final boolean connectUp = this.canConnectTo(world,coord,EnumFacing.UP, coord.up());
+        final boolean connectDown = this.canConnectTo(world,coord,EnumFacing.DOWN, coord.down());
         
         float radius = pipeRadius;
         float rminus = 0.5f - radius;
@@ -179,12 +196,12 @@ public abstract class BlockSimplePowerConduit extends PowerConductorBlock implem
     public void addCollisionBoxesToList(final World world, final BlockPos coord, 
     		final IBlockState bs, final AxisAlignedBB box, final List collisionBoxList, 
     		final Entity entity) {
-        final boolean connectNorth = this.canConnectTo(world, coord.north());
-        final boolean connectSouth = this.canConnectTo(world, coord.south());
-        final boolean connectWest = this.canConnectTo(world, coord.west());
-        final boolean connectEast = this.canConnectTo(world, coord.east());
-        final boolean connectUp = this.canConnectTo(world, coord.up());
-        final boolean connectDown = this.canConnectTo(world, coord.down());
+        final boolean connectNorth = this.canConnectTo(world,coord,EnumFacing.NORTH, coord.north());
+        final boolean connectSouth = this.canConnectTo(world,coord,EnumFacing.SOUTH, coord.south());
+        final boolean connectWest = this.canConnectTo(world,coord,EnumFacing.WEST, coord.west());
+        final boolean connectEast = this.canConnectTo(world,coord,EnumFacing.EAST, coord.east());
+        final boolean connectUp = this.canConnectTo(world,coord,EnumFacing.UP, coord.up());
+        final boolean connectDown = this.canConnectTo(world,coord,EnumFacing.DOWN, coord.down());
         
         float radius = pipeRadius;
         float rminus = 0.5f - radius;
@@ -223,16 +240,16 @@ public abstract class BlockSimplePowerConduit extends PowerConductorBlock implem
 	 * This method determines whether to connect to a neighboring block. 
 	 * Override this method to change block connection behavior. 
 	 * @param w World instance
-	 * @param coord Coordinate of neighboring block
+	 * @param otherBlock Coordinate of neighboring block
 	 * @return Default implementation: true if the neighboring block implements 
 	 * ITypedConductor and has the same energy type as this block. Overriding 
 	 * the canConnectTo(ConductorType) method will change the results of this 
 	 * method.
 	 */
-	protected boolean canConnectTo(IBlockAccess w, BlockPos coord){
-		Block other = w.getBlockState(coord).getBlock();
-		if(other instanceof ITypedConductor){
-			return canConnectTo(((ITypedConductor)other).getEnergyType());
+	protected boolean canConnectTo(IBlockAccess w, BlockPos thisBlock, EnumFacing face, BlockPos otherBlock){
+		Block other = w.getBlockState(otherBlock).getBlock();
+		if(other instanceof ITypedConduit){
+			return ConduitRegistry.areConnectable(this, face, other);
 		} else {
 			return false;
 		}

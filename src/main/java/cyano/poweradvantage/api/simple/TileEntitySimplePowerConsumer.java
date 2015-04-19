@@ -1,6 +1,5 @@
 package cyano.poweradvantage.api.simple;
 
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
@@ -9,15 +8,13 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IChatComponent;
-import cyano.poweradvantage.api.ConductorType;
-import cyano.poweradvantage.api.PowerConductorEntity;
-import cyano.poweradvantage.api.PowerSinkEntity;
+import cyano.poweradvantage.api.ConduitType;
+import cyano.poweradvantage.api.PowerRequest;
+import cyano.poweradvantage.api.PoweredEntity;
 
 
 /**
@@ -29,9 +26,9 @@ import cyano.poweradvantage.api.PowerSinkEntity;
  * @author DrCyano
  *
  */
-public abstract class TileEntitySimplePowerConsumer extends PowerSinkEntity implements ISidedInventory {
+public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implements ISidedInventory {
 
-	private final ConductorType type;
+	private final ConduitType type;
 	private final float energyBufferSize;
 	private float energyBuffer = 0;
 	
@@ -47,7 +44,7 @@ public abstract class TileEntitySimplePowerConsumer extends PowerSinkEntity impl
      * @param unlocalizedName The string used for language look-up and 
      * entity registration. 
      */
-    public TileEntitySimplePowerConsumer(ConductorType type,float energyBufferSize, String unlocalizedName){
+    public TileEntitySimplePowerConsumer(ConduitType type,float energyBufferSize, String unlocalizedName){
     	this.type = type;
     	this.energyBufferSize = energyBufferSize;
     	this.unlocalizedName = unlocalizedName;
@@ -149,6 +146,21 @@ public abstract class TileEntitySimplePowerConsumer extends PowerSinkEntity impl
     	// do nothing
 	}
 	
+
+	/**
+	 * Specify how much energy this power sink wants from a power generator. If this tile entity is 
+	 * not a sink, then simply return PowerRequest.REQUEST_NOTHING
+	 * @param type The type of energy available upon request
+	 * @return A PowerRequest instance indicated how much power you'd like to get
+	 */
+	public PowerRequest getPowerRequest(ConduitType type){
+		float space = this.getEnergyCapacity() - this.getEnergy(); 
+		if(this.canAcceptType(type) && space > 0){
+			return new PowerRequest(PowerRequest.MEDIUM_PRIORITY,space,this);
+		} else {
+			return PowerRequest.REQUEST_NOTHING;
+		}
+	}
     
     /**
      * You must override this method and call super.readFromNBT(...).<br><br>
@@ -208,7 +220,7 @@ public abstract class TileEntitySimplePowerConsumer extends PowerSinkEntity impl
 	 * @return The type of energy/power for this block
 	 */
 	@Override
-	public ConductorType getEnergyType() {
+	public ConduitType getType() {
 		return type;
 	}
 
@@ -217,7 +229,7 @@ public abstract class TileEntitySimplePowerConsumer extends PowerSinkEntity impl
 	 * @return Maximum energy storage
 	 */
 	@Override
-	public float getEnergyBufferCapacity() {
+	public float getEnergyCapacity() {
 		return energyBufferSize;
 	}
 
@@ -226,7 +238,7 @@ public abstract class TileEntitySimplePowerConsumer extends PowerSinkEntity impl
 	 * @return Current energy level
 	 */
 	@Override
-	public float getEnergyBuffer() {
+	public float getEnergy() {
 		return energyBuffer;
 	}
 
@@ -251,10 +263,37 @@ public abstract class TileEntitySimplePowerConsumer extends PowerSinkEntity impl
 	 */
 	@Override
 	public boolean canPushEnergyTo(EnumFacing blockFace,
-			ConductorType requestType) {
-		return ConductorType.areSameType(type, requestType);
+			ConduitType requestType) {
+		return ConduitType.areSameType(type, requestType);
 	}
 	
+	
+
+	@Override
+	public boolean canAcceptType(ConduitType type, EnumFacing blockFace) {
+		return canAcceptType(type);
+	}
+
+	@Override
+	public boolean canAcceptType(ConduitType type) {
+		return ConduitType.areSameType(getType(), type);
+	}
+
+	@Override
+	public boolean isPowerSink() {
+		return true;
+	}
+
+	@Override
+	public boolean isPowerSource() {
+		return false;
+	}
+
+	@Override
+	public boolean canPullEnergyFrom(EnumFacing blockFace,
+			ConduitType requestType) {
+		return ConduitType.areSameType(getType(), requestType);
+	}
 
 	/**
 	 * This method is called when a block is renamed (e.g. with an anvil) and 

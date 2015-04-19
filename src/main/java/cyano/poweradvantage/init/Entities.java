@@ -13,7 +13,6 @@ public abstract class Entities {
 		
 		Blocks.init();
 
-		GameRegistry.registerTileEntity(CopperPipeTileEntity.class,PowerAdvantage.MODID+".tileentity."+"copper_pipe");
 		GameRegistry.registerTileEntity(FluidDrainTileEntity.class,PowerAdvantage.MODID+".tileentity."+"fluid_drain");
 		GameRegistry.registerTileEntity(FluidDischargeTileEntity.class,PowerAdvantage.MODID+".tileentity."+"fluid_discharge");
 		

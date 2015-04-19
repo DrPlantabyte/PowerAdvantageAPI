@@ -6,28 +6,27 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
-import cyano.poweradvantage.api.ConductorType;
-import cyano.poweradvantage.api.PowerConductorEntity;
-import cyano.poweradvantage.api.PowerSinkEntity;
+import cyano.poweradvantage.api.ConduitType;
+import cyano.poweradvantage.api.PoweredEntity;
 import cyano.poweradvantage.api.simple.BlockSimplePowerConsumer;
 
 public class RedstoneFurnaceBlock extends BlockSimplePowerConsumer{
 
 	public RedstoneFurnaceBlock(int guiHandlerID, Object ownerOfGUIHandler) {
-		super(Material.piston, 0.5f, new ConductorType("redstone"), guiHandlerID, ownerOfGUIHandler);
+		super(Material.piston, 0.5f, new ConduitType("redstone"), guiHandlerID, ownerOfGUIHandler);
 		super.setCreativeTab(CreativeTabs.tabMisc);
 	}
 
 	@Override
     public void onBlockClicked(World w, BlockPos p, EntityPlayer player){
     	if(w.isRemote)return;
-    	PowerConductorEntity e = (PowerConductorEntity)w.getTileEntity(p);
-    	player.addChatMessage(new net.minecraft.util.ChatComponentText(e.getEnergyType()+": "+e.getEnergyBuffer()));
+    	PoweredEntity e = (PoweredEntity)w.getTileEntity(p);
+    	player.addChatMessage(new net.minecraft.util.ChatComponentText(e.getType()+": "+e.getEnergy()));
     	
     }
 	
 	@Override
-	public PowerSinkEntity createNewTileEntity(World world, int metaDataValue) {
+	public PoweredEntity createNewTileEntity(World world, int metaDataValue) {
 		return new RedstoneFurnaceTileEntity();
 	}
 

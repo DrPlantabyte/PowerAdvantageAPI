@@ -1,25 +1,22 @@
 package cyano.poweradvantage.api.simple;
 
-import net.minecraft.block.state.IBlockState;
+import java.util.List;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
-import net.minecraft.inventory.SlotFurnaceFuel;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityFurnace;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IChatComponent;
-import cyano.poweradvantage.api.ConductorType;
-import cyano.poweradvantage.api.PowerConductorEntity;
-import cyano.poweradvantage.api.PowerSourceEntity;
+import cyano.poweradvantage.api.ConduitType;
+import cyano.poweradvantage.api.PowerRequest;
+import cyano.poweradvantage.api.PoweredEntity;
 
 /**
  * This block implements the cyano.poweradvantage.api.PowerSourceEntity 
@@ -32,9 +29,9 @@ import cyano.poweradvantage.api.PowerSourceEntity;
  * @author DrCyano
  *
  */
-public abstract class TileEntitySimplePowerSource extends PowerSourceEntity implements ISidedInventory{
+public abstract class TileEntitySimplePowerSource extends PoweredEntity implements ISidedInventory{
 
-	private final ConductorType type;
+	private final ConduitType type;
 	private final float energyBufferSize;
 	private float energyBuffer = 0;
 	
@@ -56,7 +53,7 @@ public abstract class TileEntitySimplePowerSource extends PowerSourceEntity impl
      * @param unlocalizedName The string used for language look-up and 
      * entity registration. 
      */
-    public TileEntitySimplePowerSource(ConductorType type,float energyBufferSize, String unlocalizedName){
+    public TileEntitySimplePowerSource(ConduitType type,float energyBufferSize, String unlocalizedName){
     	this.type = type;
     	this.energyBufferSize = energyBufferSize;
     	this.unlocalizedName = unlocalizedName;
@@ -166,35 +163,41 @@ public abstract class TileEntitySimplePowerSource extends PowerSourceEntity impl
     @Override
 	public void powerUpdate() {
 		if(isEmpty)return;
-		float availableEnergy = energyBuffer;
-		final BlockPos[] coords = new BlockPos[6];
-		coords[0] = this.pos.down();
-		coords[1] = this.pos.north();
-		coords[2] = this.pos.west();
-		coords[3] = this.pos.south();
-		coords[4] = this.pos.east();
-		coords[5] = this.pos.up();
-		final PowerConductorEntity[] neighbors = new PowerConductorEntity[6];
-		final float[] deficits = new float[6];
-		int count = 0;
-		float sum = 0;
-		for(int n = 0; n < 6; n++){
-			TileEntity e = worldObj.getTileEntity(coords[n]);
-			if(e instanceof PowerConductorEntity && ((PowerConductorEntity)e).canPushEnergyTo(faces[n], type)){
-				deficits[count] = (((PowerConductorEntity)e).getEnergyBufferCapacity() - ((PowerConductorEntity)e).getEnergyBuffer()); // positive number
-				if(deficits[count] > 0){
-					neighbors[count] = (PowerConductorEntity)e;
-					sum += deficits[count];
-					count++;
-				}
-			}
-		}
-		float c = availableEnergy / sum;
-		for(int n = 0; n < count; n++){
-			this.subtractEnergy(neighbors[n].addEnergy(deficits[n] * c));
-		}
+		float availableEnergy = this.getEnergy();
+		ConduitType type = this.getType();
+		this.subtractEnergy(this.transmitPowerToConsumers(availableEnergy, type));
 	}
+    /**
+     * Sends the provided energy out to all connected machines requesting energy.
+     * @param availableEnergy Amount of energy to send out (max)
+     * @param powerType Type of energy being sent
+     * @return The amount of energy that was consumed by the requests
+     */
+    protected float transmitPowerToConsumers(final float availableEnergy, ConduitType powerType){
+    	List<PowerRequest> requests = this.getRequestsForPower(type);
+    	float e = availableEnergy;
+    	for(PowerRequest req : requests){
+    		if(req.amount < e){
+    			e -= req.entity.addEnergy(req.amount);
+    		} else {
+    			req.entity.addEnergy(e);
+    			e = 0;
+    			break;
+    		}
+    	}
+    	return availableEnergy - e;
+    }
     
+
+	/**
+	 * Specify how much energy this power sink wants from a power generator. If this tile entity is 
+	 * not a sink, then simply return PowerRequest.REQUEST_NOTHING
+	 * @param type The type of energy available upon request
+	 * @return A PowerRequest instance indicated how much power you'd like to get
+	 */
+	public PowerRequest getPowerRequest(ConduitType type){
+		return PowerRequest.REQUEST_NOTHING;
+	}
     
     /**
      * You must override this method and call super.readFromNBT(...).<br><br>
@@ -254,8 +257,33 @@ public abstract class TileEntitySimplePowerSource extends PowerSourceEntity impl
 	 * @return The type of energy/power for this block
 	 */
 	@Override
-	public ConductorType getEnergyType() {
+	public ConduitType getType() {
 		return type;
+	}
+	
+	@Override
+	public boolean canAcceptType(ConduitType type, EnumFacing blockFace) {
+		return ConduitType.areSameType(getType(), type);
+	}
+
+	@Override
+	public boolean canAcceptType(ConduitType type) {
+		return ConduitType.areSameType(getType(), type);
+	}
+
+	@Override
+	public boolean isPowerSink() {
+		return false;
+	}
+
+	@Override
+	public boolean isPowerSource() {
+		return true;
+	}
+
+	@Override
+	public boolean canPushEnergyTo(EnumFacing blockFace, ConduitType requestType) {
+		return ConduitType.areSameType(getType(), requestType);
 	}
 
 	/**
@@ -263,7 +291,7 @@ public abstract class TileEntitySimplePowerSource extends PowerSourceEntity impl
 	 * @return Maximum energy storage
 	 */
 	@Override
-	public float getEnergyBufferCapacity() {
+	public float getEnergyCapacity() {
 		return energyBufferSize;
 	}
 
@@ -272,7 +300,7 @@ public abstract class TileEntitySimplePowerSource extends PowerSourceEntity impl
 	 * @return Current energy level
 	 */
 	@Override
-	public float getEnergyBuffer() {
+	public float getEnergy() {
 		return energyBuffer;
 	}
 
@@ -299,8 +327,8 @@ public abstract class TileEntitySimplePowerSource extends PowerSourceEntity impl
 	 */
 	@Override
 	public boolean canPullEnergyFrom(EnumFacing blockFace,
-			ConductorType requestType) {
-		return ConductorType.areSameType(getEnergyType(), requestType);
+			ConduitType requestType) {
+		return ConduitType.areSameType(getType(), requestType);
 	}
 	
 

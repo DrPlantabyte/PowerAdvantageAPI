@@ -14,23 +14,24 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import cyano.poweradvantage.api.GUIBlock;
-import cyano.poweradvantage.api.IFluidHandlerBlock;
+import cyano.poweradvantage.api.ConduitType;
+import cyano.poweradvantage.api.PoweredEntity;
+import cyano.poweradvantage.api.simple.BlockSimplePowerConsumer;
 import cyano.poweradvantage.api.simple.TileEntitySimplePowerSource;
 
-public class FluidDischargeBlock extends GUIBlock implements IFluidHandlerBlock{
+public class FluidDischargeBlock extends BlockSimplePowerConsumer{
 // TODO: add new creative tab
 	
 	// TODO: adjust item model so that the bottom is visible
-	public FluidDischargeBlock() {
-		super(Material.iron);
-		super.setHardness(3f);
+	public FluidDischargeBlock(int guiId, Object guiOwner) {
+		super(Material.iron, 3f, new ConduitType("fluid"), guiId, guiOwner);
 		super.setCreativeTab(CreativeTabs.tabDecorations);
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(World w, int m) {
-		return new FluidDischargeTileEntity(w,m);
+	public PoweredEntity createNewTileEntity(World w, int m) {
+		// TODO: fix unlocalized name
+		return new FluidDischargeTileEntity("fix-me1");
 	}
 	
 
@@ -67,7 +68,12 @@ public class FluidDischargeBlock extends GUIBlock implements IFluidHandlerBlock{
     }
 
 	@Override
-	public boolean canConnect(EnumFacing face) {
-		return face != EnumFacing.DOWN;
+	public boolean hasComparatorInputOverride() {
+		return false;
+	}
+
+	@Override
+	public int getComparatorInputOverride(World world, BlockPos coord) {
+		return 0;
 	}
 }

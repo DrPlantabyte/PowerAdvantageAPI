@@ -24,12 +24,12 @@ allprojects {
     targetCompatibility = 1.7
 }
 
-version = "0.0.5"
+version = "0.0.6"
 group= "cyano.poweradvantage" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "PowerAdvantage"
 
 minecraft {
-    version = "1.8-11.14.0.1299"
+    version = "1.8-11.14.1.1334"
     runDir = "eclipse"
     
     // the mappings can be changed at any time, and must be in the following format.

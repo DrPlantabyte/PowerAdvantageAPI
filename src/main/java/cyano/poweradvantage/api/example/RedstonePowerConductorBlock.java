@@ -12,37 +12,32 @@ import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import cyano.poweradvantage.api.ConductorType;
-import cyano.poweradvantage.api.PowerConductorEntity;
+import cyano.poweradvantage.api.ConduitType;
+import cyano.poweradvantage.api.PoweredEntity;
 import cyano.poweradvantage.api.simple.BlockSimplePowerConduit;
-import cyano.poweradvantage.api.simple.TileEntitySimplePowerConduit;
 
 public class RedstonePowerConductorBlock extends BlockSimplePowerConduit{
 
 	
 	 public RedstonePowerConductorBlock() {
-		super(Material.piston, 0.5f, 0.20f, new ConductorType("redstone"));
+		super(Material.piston, 0.5f, 0.20f, new ConduitType("redstone"));
 		super.setCreativeTab(CreativeTabs.tabMisc);
 	}
 
 	@Override
 	    public void onBlockClicked(World w, BlockPos p, EntityPlayer player){
 	    	if(w.isRemote)return;
-	    	PowerConductorEntity e = (PowerConductorEntity)w.getTileEntity(p);
-	    	player.addChatMessage(new net.minecraft.util.ChatComponentText(e.getEnergyType()+": "+e.getEnergyBuffer()));
+	    	PoweredEntity e = (PoweredEntity)w.getTileEntity(p);
+	    	player.addChatMessage(new net.minecraft.util.ChatComponentText(e.getType()+": "+e.getEnergy()));
 	    }
 
-	@Override
-	public PowerConductorEntity createNewTileEntity(World world, int metaDataValue) {
-		return new RedstonePowerConductorTileEntity();
-	}
 	
 	@SideOnly(Side.CLIENT)
     @Override
     public void randomDisplayTick(final World world, final BlockPos coord, final IBlockState bs, final Random prng) {
         TileEntity e = world.getTileEntity(coord);
-        if(e != null && e instanceof PowerConductorEntity){
-        	if(((PowerConductorEntity)e).getEnergyBuffer() > 0){
+        if(e != null && e instanceof PoweredEntity){
+        	if(((PoweredEntity)e).getEnergy() > 0){
         		final double x = coord.getX() + 0.5 + (prng.nextFloat() - 0.5) * 0.2;
                 final double y = coord.getY() + 0.5 + (prng.nextFloat() - 0.5) * 0.2;
                 final double z = coord.getZ() + 0.5 + (prng.nextFloat() - 0.5) * 0.2;

@@ -25,9 +25,9 @@ public abstract class Blocks {
 	private static boolean initDone = false;
 	public static void init(){
 		if(initDone) return;
-		
-		fluid_drain = (GUIBlock)addBlock(new FluidDrainBlock(),"fluid_drain");
-		fluid_discharge = (GUIBlock)addBlock(new FluidDischargeBlock(),"fluid_discharge");
+		// TODO: add GUIs
+		fluid_drain = (GUIBlock)addBlock(new FluidDrainBlock(0,PowerAdvantage.getInstance()),"fluid_drain");
+		fluid_discharge = (GUIBlock)addBlock(new FluidDischargeBlock(0,PowerAdvantage.getInstance()),"fluid_discharge");
 		copper_pipe = addBlock(new CopperPipeBlock(),"copper_pipe");
 		// TODO: add Power Gauge block that displays the power in a neighboring conductor
 		// TODO: add fluid pipes

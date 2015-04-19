@@ -14,6 +14,7 @@ public abstract class GUIBlock extends net.minecraft.block.BlockContainer{
 
 	public GUIBlock(Material m) {
 		super(m);
+        this.setLightOpacity(0);
 	}
 	
 	private int guiId = 0;
@@ -35,8 +36,18 @@ public abstract class GUIBlock extends net.minecraft.block.BlockContainer{
 		return this.guiOwner;
 	}
 	
+	@Override
+    public boolean isFullCube() {
+        return false;
+    }
+    
+    @Override
+    public boolean isOpaqueCube() {
+        return false;
+    }
+	
 	/**
-	 * 3 = normal cube?
+	 * 3 = normal block?
 	 * -1 = special renderer?
 	 */
 	@Override

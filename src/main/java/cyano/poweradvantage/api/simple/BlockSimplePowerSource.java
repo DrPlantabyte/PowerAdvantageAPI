@@ -2,18 +2,13 @@ package cyano.poweradvantage.api.simple;
 
 import java.util.Random;
 
-import com.google.common.base.Predicate;
-
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.Item;
@@ -24,11 +19,13 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import cyano.poweradvantage.PowerAdvantage;
-import cyano.poweradvantage.api.ConductorType;
+
+import com.google.common.base.Predicate;
+
+import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.api.GUIBlock;
-import cyano.poweradvantage.api.ITypedConductor;
-import cyano.poweradvantage.api.PowerSourceEntity;
+import cyano.poweradvantage.api.ITypedConduit;
+import cyano.poweradvantage.api.PoweredEntity;
 
 /**
  * This block class provides all of the standard code for creating a machine 
@@ -43,8 +40,8 @@ GameRegistry.registerBlock(myMachineBlock,"my_machine");
  * @author DrCyano
  *
  */
-public abstract class BlockSimplePowerSource  extends GUIBlock implements ITypedConductor {
-	private final ConductorType type;
+public abstract class BlockSimplePowerSource  extends GUIBlock implements ITypedConduit {
+	private final ConduitType type;
 
 	/**
 	 * Blockstate property
@@ -73,7 +70,7 @@ public abstract class BlockSimplePowerSource  extends GUIBlock implements ITyped
      * PowerAdvantageAPI, then this parameter should have the value 
      * <code>cyano.poweradvantage.PowerAdvantage.getInstance()</code>
      */
-	public BlockSimplePowerSource(Material blockMaterial, float hardness, ConductorType energyType, int guiHandlerID, Object ownerOfGUIHandler){
+	public BlockSimplePowerSource(Material blockMaterial, float hardness, ConduitType energyType, int guiHandlerID, Object ownerOfGUIHandler){
 		super(blockMaterial);
 		this.setGuiID(guiHandlerID);
 		this.type = energyType;
@@ -88,7 +85,7 @@ public abstract class BlockSimplePowerSource  extends GUIBlock implements ITyped
 	 * <b>TileEntitySimplePowerSource</b>.
 	 */
 	@Override
-    public abstract PowerSourceEntity createNewTileEntity(final World world, final int metaDataValue);
+    public abstract PoweredEntity createNewTileEntity(final World world, final int metaDataValue);
 	
 	/**
 	 * Used to decides whether or not a conduit should connect to this block 
@@ -96,10 +93,47 @@ public abstract class BlockSimplePowerSource  extends GUIBlock implements ITyped
 	 * @return The type of energy for this block 
 	 */
 	@Override
-	public ConductorType getEnergyType() {
+	public ConduitType getType() {
 		return type;
 	}
 
+	/**
+	 * Determines whether this conduit is compatible with an adjacent one
+	 * @param type The type of energy in the conduit
+	 * @param blockFace The side through-which the energy is flowing
+	 * @return true if this conduit can flow the given energy type through the given face, false 
+	 * otherwise
+	 */
+	public boolean canAcceptType(ConduitType type, EnumFacing blockFace){
+		return ConduitType.areSameType(getType(), type);
+	}
+	/**
+	 * Determines whether this conduit is compatible with a type of energy through any side
+	 * @param type The type of energy in the conduit
+	 * @return true if this conduit can flow the given energy type through one or more of its block 
+	 * faces, false otherwise
+	 */
+	public boolean canAcceptType(ConduitType type){
+		return ConduitType.areSameType(getType(), type);
+	}
+	
+	/**
+	 * Determines whether this block/entity should receive energy 
+	 * @return true if this block/entity should receive energy
+	 */
+	public boolean isPowerSink(){
+		return false;
+	}
+	/**
+	 * Determines whether this block/entity can provide energy 
+	 * @return true if this block/entity can provide energy
+	 */
+	public boolean isPowerSource(){
+		return true;
+	}
+
+	
+	
 	/**
 	 * Override of default block behavior
 	 */
@@ -134,8 +168,8 @@ public abstract class BlockSimplePowerSource  extends GUIBlock implements ITyped
         world.setBlockState(coord, bs.withProperty((IProperty) FACING, (Comparable)placer.getHorizontalFacing().getOpposite()), 2);
         if (srcItemStack.hasDisplayName()) {
         	final TileEntity tileEntity = world.getTileEntity(coord);
-        	if (tileEntity instanceof PowerSourceEntity){
-        		((PowerSourceEntity)tileEntity).setCustomInventoryName(srcItemStack.getDisplayName());
+        	if (tileEntity instanceof PoweredEntity){
+        		((PoweredEntity)tileEntity).setCustomInventoryName(srcItemStack.getDisplayName());
         	}
         }
     }
