@@ -249,7 +249,7 @@ public abstract class BlockSimplePowerConduit extends ConduitBlock{
 	protected boolean canConnectTo(IBlockAccess w, BlockPos thisBlock, EnumFacing face, BlockPos otherBlock){
 		Block other = w.getBlockState(otherBlock).getBlock();
 		if(other instanceof ITypedConduit){
-			return ConduitRegistry.areConnectable(this, face, other);
+			return ConduitType.areConnectable(this, face, other);
 		} else {
 			return false;
 		}

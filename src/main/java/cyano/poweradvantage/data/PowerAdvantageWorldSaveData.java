@@ -14,16 +14,16 @@ public class PowerAdvantageWorldSaveData extends net.minecraft.world.WorldSavedD
 		 MapStorage storage = w.getPerWorldStorage();
 		 PowerAdvantageWorldSaveData result = (PowerAdvantageWorldSaveData)storage.loadData(PowerAdvantageWorldSaveData.class, KEY);
 	      if (result == null) {
-	         result = new PowerAdvantageWorldSaveData();
+	         result = new PowerAdvantageWorldSaveData(KEY);
 	         storage.setData(KEY, result);
 	      }
 	      return result;
 	}
 	
-	public PowerAdvantageWorldSaveData() {
-		super(KEY);
+	public PowerAdvantageWorldSaveData(String key) {
+		super(key);
 	}
-
+	
 	@Override
 	public void readFromNBT(NBTTagCompound root) {
 		ConduitRegistry.getInstance().loadFromNBT(root);

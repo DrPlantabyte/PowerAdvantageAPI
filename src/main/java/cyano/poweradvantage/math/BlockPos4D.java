@@ -244,4 +244,9 @@ public class BlockPos4D {
 		int[] data = ((NBTTagIntArray)tag).getIntArray();
 		return new BlockPos4D(data[0],data[1],data[2],data[3]);
 	}
+	
+	@Override
+	public String toString(){
+		return "["+dimension+","+pos.getX()+","+pos.getY()+","+pos.getZ()+"]";
+	}
 }

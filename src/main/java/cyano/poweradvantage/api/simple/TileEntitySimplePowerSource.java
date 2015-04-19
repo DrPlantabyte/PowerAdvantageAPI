@@ -14,6 +14,7 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IChatComponent;
+import net.minecraftforge.fml.common.FMLLog;
 import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.api.PowerRequest;
 import cyano.poweradvantage.api.PoweredEntity;
@@ -177,6 +178,7 @@ public abstract class TileEntitySimplePowerSource extends PoweredEntity implemen
     	List<PowerRequest> requests = this.getRequestsForPower(type);
     	float e = availableEnergy;
     	for(PowerRequest req : requests){
+    		FMLLog.info("Sending energy to "+req.entity.getPos()); // TODO: remove debug code
     		if(req.amount < e){
     			e -= req.entity.addEnergy(req.amount);
     		} else {

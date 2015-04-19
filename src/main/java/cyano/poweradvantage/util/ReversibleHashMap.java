@@ -6,8 +6,13 @@ import java.util.Set;
 
 public class ReversibleHashMap<K,V> implements ReversibleMap<K,V>{
 	
-	private java.util.HashMap<K,V> forward;
-	private java.util.HashMap<V,K> reverse;
+	private final java.util.HashMap<K,V> forward;
+	private final java.util.HashMap<V,K> reverse;
+	
+	public ReversibleHashMap(){
+		forward = new java.util.HashMap<K,V>();
+		reverse = new java.util.HashMap<V,K>();
+	}
 
 	@Override
 	public int size() {
