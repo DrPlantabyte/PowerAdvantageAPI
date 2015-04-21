@@ -70,7 +70,7 @@ public class RedstoneGeneratorTileEntity extends TileEntitySimplePowerSource {
 				}
 			} else if(this.isBurning() && this.getEnergy() < this.getEnergyCapacity()) {
 				// is burning, add energy to buffer
-				this.addEnergy(energyPerFuelTick);
+				this.addEnergy(energyPerFuelTick,this.getType());
 			}
 
 
@@ -121,7 +121,7 @@ public class RedstoneGeneratorTileEntity extends TileEntitySimplePowerSource {
 	public void onDataFieldUpdate() {
 		// used for server-to-client sync
 		this.burnTime = (short)dataFields[DATAFIELD_BURNTIME];
-		this.setEnergy(Float.intBitsToFloat(dataFields[DATAFIELD_ENERGY]));
+		this.setEnergy(Float.intBitsToFloat(dataFields[DATAFIELD_ENERGY]),this.getType());
 	}
 	
 	@Override

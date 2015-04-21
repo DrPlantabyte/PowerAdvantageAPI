@@ -22,22 +22,21 @@ import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fluids.IFluidHandler;
+import net.minecraftforge.fml.common.FMLLog;
 
 import com.google.common.collect.ImmutableMap;
 
-import cyano.poweradvantage.api.ConduitType;
-import cyano.poweradvantage.api.simple.TileEntitySimplePowerConsumer;
+import cyano.poweradvantage.api.simple.TileEntitySimpleFluidConsumer;
 
 
-public class FluidDischargeTileEntity extends TileEntitySimplePowerConsumer implements IFluidHandler{
+public class FluidDischargeTileEntity extends TileEntitySimpleFluidConsumer{
 
 	// TODO: make fluid pipe/machine templates that use FluidTank as their "energy buffer"
 	
-	public FluidDischargeTileEntity(String unlocalizedName) {
-		super(new ConduitType("fluid"), FluidContainerRegistry.BUCKET_VOLUME, unlocalizedName);
+	public FluidDischargeTileEntity() {
+		super( FluidContainerRegistry.BUCKET_VOLUME, FluidDischargeTileEntity.class.getName());
 	}
 
-	public final FluidTank tank = new FluidTank( FluidContainerRegistry.BUCKET_VOLUME );
 	
 	
 	
@@ -45,7 +44,13 @@ public class FluidDischargeTileEntity extends TileEntitySimplePowerConsumer impl
 	@Override
 	public void powerUpdate(){
 		// server-side
-
+		FMLLog.info("Discharge: tank currently holds " 
+		+ (getTank().getFluid() == null ? 0 
+				: getTank().getFluidAmount()) 
+		+ " units of " 
+		+ (getTank().getFluid() == null 
+		?"nothing": String.valueOf(getTank().getFluid().getFluid().getName())));// TODO: remove debug code
+		FluidTank tank = getTank();
 		// place fluid block
 		if(tank.getFluidAmount() >= FluidContainerRegistry.BUCKET_VOLUME){
 			FluidStack fstack = tank.getFluid();
@@ -57,8 +62,7 @@ public class FluidDischargeTileEntity extends TileEntitySimplePowerConsumer impl
 				worldObj.notifyBlockOfStateChange(coord, fluidBlock);
 				this.drain(EnumFacing.DOWN, FluidContainerRegistry.BUCKET_VOLUME, true);
 			} else if(worldObj.getBlockState(coord).getBlock() == fluidBlock){
-				// TODO: follow the flow
-
+				// follow the flow
 				int limit = 16;
 				Material m = fluidBlock.getMaterial();// flowing minecraft fluid block
 				if(fluidBlock instanceof BlockLiquid || fluidBlock instanceof IFluidBlock){
@@ -89,6 +93,7 @@ public class FluidDischargeTileEntity extends TileEntitySimplePowerConsumer impl
 			}
 
 		}
+		super.powerUpdate();
 	}
 	
 	@Override
@@ -143,20 +148,11 @@ public class FluidDischargeTileEntity extends TileEntitySimplePowerConsumer impl
 	@Override public void readFromNBT(NBTTagCompound root)
 	{
 		super.readFromNBT(root);
-		NBTTagCompound tankTag = root.getCompoundTag("Tank");
-		tank.readFromNBT(tankTag);
-		if(tankTag.hasKey("Empty")){
-			// empty the tank if NBT says its empty (not default behavior of Tank.readFromNBT(...) )
-			tank.setFluid(null);
-		}
 	}
 	
 	@Override public void writeToNBT(NBTTagCompound root)
 	{
 		super.writeToNBT(root);
-		NBTTagCompound tankTag = new NBTTagCompound();
-		tank.writeToNBT(tankTag);
-		root.setTag("Tank", tankTag);
 	}
 	
 	/**
@@ -168,7 +164,7 @@ public class FluidDischargeTileEntity extends TileEntitySimplePowerConsumer impl
      */
     public NBTTagCompound createUpdateTag(){
     	NBTTagCompound nbtTag = new NBTTagCompound();
-    	tank.writeToNBT(nbtTag);
+    	getTank().writeToNBT(nbtTag);
     	return nbtTag;
     }
     /**
@@ -179,7 +175,7 @@ public class FluidDischargeTileEntity extends TileEntitySimplePowerConsumer impl
      * <code>getDataFieldArray()</code> array
      */
     public void readUpdateTag(NBTTagCompound nbtTag){
-    	tank.readFromNBT(nbtTag);
+    	getTank().readFromNBT(nbtTag);
     }
 
     /**
@@ -198,162 +194,8 @@ public class FluidDischargeTileEntity extends TileEntitySimplePowerConsumer impl
     	readUpdateTag(packet.getNbtCompound());
     }
 	
-	///// Boiler Plate /////
 	
-	private String customName = null;
-	///// IFluidHandler /////
-
-	@Override
-	public int fill(EnumFacing from, FluidStack resource, boolean doFill) {
-		if (resource == null) {
-			return 0;
-		}
-		FluidStack resourceCopy = resource.copy();
-		int totalUsed = 0;
-		totalUsed += tank.fill(resourceCopy, doFill);
-		if(doFill)this.sync();
-		return totalUsed;
-	}
-	@Override
-	public FluidStack drain(EnumFacing from, int maxEmpty, boolean doDrain) {
-		if(doDrain) this.sync();
-		return tank.drain(maxEmpty, doDrain);
-	}
-	@Override
-	public FluidStack drain(EnumFacing from, FluidStack resource, boolean doDrain) {
-		if (resource == null)
-			return null;
-		if (!resource.isFluidEqual(tank.getFluid()))
-			return null;
-		if(doDrain) this.sync();
-		return drain(from, resource.amount, doDrain);
-	}
-	private FluidTankInfo[] tankInfo = new FluidTankInfo[1];
-	@Override
-	public FluidTankInfo[] getTankInfo(EnumFacing direction) {
-		tankInfo[0] = tank.getInfo();
-		return tankInfo;
-	}
-	@Override
-	public boolean canFill(EnumFacing from, Fluid fluid) {
-		return true;
-	}
-	@Override
-	public boolean canDrain(EnumFacing from, Fluid fluid) {
-		return false;
-	}
-	public int getFillLevel(){
-		return tank.getFluidAmount();
-	}
-	public int getMaxFill(){
-		return tank.getCapacity();
-	}
-	public Fluid getCurrentFluid(){
-		if(tank.getFluid() == null)return null;
-		return tank.getFluid().getFluid();
-	}
 	
-
-	///// ISidedInventroy /////
-	
-	@Override
-	public void clear() {
-		// do nothing
-		
-	}
-	@Override
-	public void closeInventory(EntityPlayer arg0) {
-		// do nothing
-		
-	}
-	@Override
-	public ItemStack decrStackSize(int arg0, int arg1) {
-		// do nothing
-		return null;
-	}
-	@Override
-	public int getField(int arg0) {
-		// do nothing
-		return 0;
-	}
-	@Override
-	public int getFieldCount() {
-		// do nothing
-		return 0;
-	}
-	@Override
-	public int getInventoryStackLimit() {
-		// do nothing
-		return 0;
-	}
-	@Override
-	public int getSizeInventory() {
-		// do nothing
-		return 0;
-	}
-	@Override
-	public ItemStack getStackInSlot(int arg0) {
-		// do nothing
-		return null;
-	}
-	@Override
-	public ItemStack getStackInSlotOnClosing(int arg0) {
-		// do nothing
-		return null;
-	}
-	@Override
-	public boolean isItemValidForSlot(int arg0, ItemStack arg1) {
-	// do nothing
-		return false;
-	}
-	@Override
-	public boolean isUseableByPlayer(final EntityPlayer p_isUseableByPlayer_1_) {
-	    return this.worldObj.getTileEntity(this.pos) == this && p_isUseableByPlayer_1_.getDistanceSq((double)this.pos.getX() + 0.5, (double)this.pos.getY() + 0.5, (double)this.pos.getZ() + 0.5) <= 64.0;
-	}
-	@Override
-	public void openInventory(EntityPlayer arg0) {
-		// do nothing
-		
-	}
-	@Override
-	public void setField(int arg0, int arg1) {
-		// do nothing
-		
-	}
-	@Override
-	public void setInventorySlotContents(int arg0, ItemStack arg1) {
-		// do nothing
-		
-	}
-	@Override
-    public IChatComponent getDisplayName() {
-        if (this.hasCustomName()) {
-            return new ChatComponentText(this.getName());
-        }
-        return new ChatComponentTranslation(this.getName(), new Object[0]);
-    }
-	@Override
-	public String getName() {
-        return this.hasCustomName() ? this.customName : cyano.poweradvantage.init.Blocks.fluid_drain.getUnlocalizedName();
-	}
-	@Override
-	public boolean hasCustomName() {
-		return this.customName != null;
-	}
-	@Override
-	public boolean canExtractItem(int arg0, ItemStack arg1, EnumFacing arg2) {
-		// do nothing
-		return false;
-	}
-	@Override
-	public boolean canInsertItem(int arg0, ItemStack arg1, EnumFacing arg2) {
-		// do nothing
-		return false;
-	}
-	@Override
-	public int[] getSlotsForFace(EnumFacing arg0) {
-		return new int[0];
-	}
 
 	@Override
 	protected ItemStack[] getInventory() {
@@ -375,6 +217,14 @@ public class FluidDischargeTileEntity extends TileEntitySimplePowerConsumer impl
 	@Override
 	public void onDataFieldUpdate() {
 		// do nothing
+	}
+
+
+
+
+	@Override
+	public boolean canAccept(Fluid f) {
+		return true;
 	}
 	
 	

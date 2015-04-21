@@ -1,5 +1,8 @@
 {
     "variants": {
-        "normal": { "model": "poweradvantage:fluid_discharge" }
+        "facing=east": { "model": "poweradvantage:fluid_discharge", "y": 90 },
+        "facing=north": { "model": "poweradvantage:fluid_discharge" },
+        "facing=south": { "model": "poweradvantage:fluid_discharge", "y": 180 },
+        "facing=west": { "model": "poweradvantage:fluid_discharge", "y": 270 }
     }
 }

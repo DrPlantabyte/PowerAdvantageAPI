@@ -17,6 +17,8 @@ import cyano.poweradvantage.registry.MachineGUIRegistry;
 // NOTE: other mods dependant on this one need to add the following to their @Mod annotation:
 // dependencies = "required-after:poweradvantage" 
 
+// TODO: massive rewrite of documentation
+
 // TODO: list
 /* TODO list
  * drain block

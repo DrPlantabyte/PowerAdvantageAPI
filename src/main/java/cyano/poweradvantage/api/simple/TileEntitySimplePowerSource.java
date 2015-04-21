@@ -166,7 +166,7 @@ public abstract class TileEntitySimplePowerSource extends PoweredEntity implemen
 		if(isEmpty)return;
 		float availableEnergy = this.getEnergy();
 		ConduitType type = this.getType();
-		this.subtractEnergy(this.transmitPowerToConsumers(availableEnergy, type));
+		this.subtractEnergy(this.transmitPowerToConsumers(availableEnergy, type),type);
 	}
     /**
      * Sends the provided energy out to all connected machines requesting energy.
@@ -180,9 +180,9 @@ public abstract class TileEntitySimplePowerSource extends PoweredEntity implemen
     	for(PowerRequest req : requests){
     		FMLLog.info("Sending energy to "+req.entity.getPos()); // TODO: remove debug code
     		if(req.amount < e){
-    			e -= req.entity.addEnergy(req.amount);
+    			e -= req.entity.addEnergy(req.amount,powerType);
     		} else {
-    			req.entity.addEnergy(e);
+    			req.entity.addEnergy(e,powerType);
     			e = 0;
     			break;
     		}
@@ -311,7 +311,7 @@ public abstract class TileEntitySimplePowerSource extends PoweredEntity implemen
 	 * @param energy New value of the energy buffer
 	 */
 	@Override
-	public void setEnergy(float energy) {
+	public void setEnergy(float energy,ConduitType type) {
 		energyBuffer = energy;
 		isEmpty = energy <= 0;
 	}

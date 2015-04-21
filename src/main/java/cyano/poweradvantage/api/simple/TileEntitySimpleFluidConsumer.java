@@ -1,5 +1,7 @@
 package cyano.poweradvantage.api.simple;
 
+import java.util.Set;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
@@ -12,9 +14,16 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IChatComponent;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTank;
+import net.minecraftforge.fluids.FluidTankInfo;
+import net.minecraftforge.fml.common.FMLLog;
 import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.api.PowerRequest;
-import cyano.poweradvantage.api.PoweredEntity;
+import cyano.poweradvantage.api.fluid.FluidPoweredEntity;
+import cyano.poweradvantage.api.fluid.FluidRequest;
+import cyano.poweradvantage.init.Fluids;
 
 
 /**
@@ -26,27 +35,17 @@ import cyano.poweradvantage.api.PoweredEntity;
  * @author DrCyano
  *
  */
-public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implements ISidedInventory {
+public abstract class TileEntitySimpleFluidConsumer extends FluidPoweredEntity implements ISidedInventory {
 
-	private final ConduitType type;
-	private final float energyBufferSize;
-	private float energyBuffer = 0;
+	protected final FluidTank tank;
 	
 	private String customName = null;
     
     private final String unlocalizedName;
 
-    /**
-     * Constructor for TileEntitySimplePowerConsumer. 
-     * @param type The type of power used by this machine
-     * @param energyBufferSize The amount of energy that this machine can store 
-     * internally
-     * @param unlocalizedName The string used for language look-up and 
-     * entity registration. 
-     */
-    public TileEntitySimplePowerConsumer(ConduitType type,float energyBufferSize, String unlocalizedName){
-    	this.type = type;
-    	this.energyBufferSize = energyBufferSize;
+   
+    public TileEntitySimpleFluidConsumer(int fluidTankCapacity, String unlocalizedName){
+    	this.tank = new FluidTank(fluidTankCapacity);
     	this.unlocalizedName = unlocalizedName;
     }
     /**
@@ -154,8 +153,10 @@ public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implem
 	 * @return A PowerRequest instance indicated how much power you'd like to get
 	 */
 	public PowerRequest getPowerRequest(ConduitType type){
+		FMLLog.info(type+" is availble upon request");// TODO: remove debug code
 		float space = this.getEnergyCapacity() - this.getEnergy(); 
 		if(this.canAcceptType(type) && space > 0){
+			FMLLog.info("Requesting "+ (new PowerRequest(PowerRequest.MEDIUM_PRIORITY,space,this)));// TODO: remove debug code
 			return new PowerRequest(PowerRequest.MEDIUM_PRIORITY,space,this);
 		} else {
 			return PowerRequest.REQUEST_NOTHING;
@@ -221,7 +222,7 @@ public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implem
 	 */
 	@Override
 	public ConduitType getType() {
-		return type;
+		return Fluids.fluidConduit_general;
 	}
 
 	/**
@@ -230,7 +231,7 @@ public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implem
 	 */
 	@Override
 	public float getEnergyCapacity() {
-		return energyBufferSize;
+		return tank.getCapacity();
 	}
 
 	/**
@@ -239,7 +240,7 @@ public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implem
 	 */
 	@Override
 	public float getEnergy() {
-		return energyBuffer;
+		return tank.getFluidAmount();
 	}
 
 	/**
@@ -248,7 +249,6 @@ public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implem
 	 */
 	@Override
 	public void setEnergy(float energy,ConduitType type) {
-		energyBuffer = energy;
 		
 	}
 	/**
@@ -264,7 +264,7 @@ public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implem
 	@Override
 	public boolean canPushEnergyTo(EnumFacing blockFace,
 			ConduitType requestType) {
-		return ConduitType.areSameType(type, requestType);
+		return canAcceptType(requestType, blockFace);
 	}
 	
 	
@@ -276,7 +276,7 @@ public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implem
 
 	@Override
 	public boolean canAcceptType(ConduitType type) {
-		return ConduitType.areSameType(getType(), type);
+		return ConduitType.areSameType(type,Fluids.fluidConduit_general) || (Fluids.conduitTypeToFluid(type) != null);
 	}
 
 	@Override
@@ -292,7 +292,7 @@ public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implem
 	@Override
 	public boolean canPullEnergyFrom(EnumFacing blockFace,
 			ConduitType requestType) {
-		return ConduitType.areSameType(getType(), requestType);
+		return canAcceptType( requestType,blockFace);
 	}
 
 	/**
@@ -611,6 +611,29 @@ public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implem
 			}
 		}
 		return slotAccessCache;
+	}
+	
+	@Override
+	protected FluidTank getTank() {
+		return tank;
+	}
+	
+	public abstract boolean canAccept(Fluid f);
+	
+	@Override
+	public FluidRequest getFluidRequest(ConduitType type) {
+		Fluid f = Fluids.conduitTypeToFluid(type);
+		if(getTank().getFluidAmount() > 0 && f.equals(getTank().getFluid().getFluid())){
+			return new FluidRequest(FluidRequest.MEDIUM_PRIORITY,
+					(getTank().getCapacity() - getTank().getFluidAmount()),
+					this);
+		} else if(getTank().getFluidAmount() <= 0 && canAccept(f)){
+			return new FluidRequest(FluidRequest.MEDIUM_PRIORITY,
+					getTank().getCapacity(),
+					this);
+		} else {
+			return FluidRequest.REQUEST_NOTHING;
+		}
 	}
 
 	

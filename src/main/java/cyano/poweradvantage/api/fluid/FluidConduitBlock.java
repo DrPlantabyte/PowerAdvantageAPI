@@ -19,10 +19,8 @@ public abstract class FluidConduitBlock extends ConduitBlock{
 	
 	protected FluidConduitBlock(Material mat) {
 		super(mat);
-		// TODO Auto-generated constructor stub
 	}
 
-	public abstract Set<ConduitType> getSupportedFluidTypes();
 	
 	@Override
 	public boolean canAcceptType(ConduitType type, EnumFacing blockFace) {
@@ -31,7 +29,7 @@ public abstract class FluidConduitBlock extends ConduitBlock{
 
 	@Override
 	public boolean canAcceptType(ConduitType type) {
-		return ConduitType.areSameType(type, Fluids.fluidConduit_general) || getSupportedFluidTypes().contains(type);
+		return ConduitType.areSameType(type, Fluids.fluidConduit_general) ;
 	}
 
 	@Override

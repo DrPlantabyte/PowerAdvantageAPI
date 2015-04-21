@@ -34,4 +34,9 @@ public class PowerRequest implements Comparable<PowerRequest>{
 			return Byte.compare(o.priority, this.priority);
 		}
 	}
+	
+	@Override
+	public String toString(){
+		return "PowerRequest: "+amount+" (priority="+priority+")";
+	}
 }

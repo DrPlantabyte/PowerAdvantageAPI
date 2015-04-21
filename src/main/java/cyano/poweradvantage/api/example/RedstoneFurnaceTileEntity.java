@@ -66,7 +66,7 @@ public class RedstoneFurnaceTileEntity extends TileEntitySimplePowerConsumer {
 	public void onDataFieldUpdate() {
 		// used for server-to-client sync
 		this.cookTime = (short)dataFields[DATAFIELD_COOKTIME];
-		this.setEnergy(Float.intBitsToFloat(dataFields[DATAFIELD_ENERGY]));
+		this.setEnergy(Float.intBitsToFloat(dataFields[DATAFIELD_ENERGY]),this.getType());
 	}
 	
 	@Override
@@ -103,7 +103,7 @@ public class RedstoneFurnaceTileEntity extends TileEntitySimplePowerConsumer {
 					&& this.canSmelt(this.inventory[0], this.inventory[1]) 
 					&& !worldObj.isBlockPowered(getPos()) // disable on redstone signal
 					){
-				this.subtractEnergy(ENERGY_PER_TICK);
+				this.subtractEnergy(ENERGY_PER_TICK,this.getType());
 				this.cookTime += COOKING_PER_TICK;
 			} else if(cookTime > 0){
 				this.cookTime--;

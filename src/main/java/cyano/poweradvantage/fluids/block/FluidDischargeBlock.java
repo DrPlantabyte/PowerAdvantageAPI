@@ -10,28 +10,26 @@ import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.api.PoweredEntity;
-import cyano.poweradvantage.api.simple.BlockSimplePowerConsumer;
+import cyano.poweradvantage.api.simple.BlockSimpleFluidConsumer;
 import cyano.poweradvantage.api.simple.TileEntitySimplePowerSource;
 
-public class FluidDischargeBlock extends BlockSimplePowerConsumer{
+public class FluidDischargeBlock extends BlockSimpleFluidConsumer{
 // TODO: add new creative tab
 	
 	// TODO: adjust item model so that the bottom is visible
-	public FluidDischargeBlock(int guiId, Object guiOwner) {
-		super(Material.iron, 3f, new ConduitType("fluid"), guiId, guiOwner);
+	public FluidDischargeBlock() {
+		super(Material.iron, 3f, 0, null);
 		super.setCreativeTab(CreativeTabs.tabDecorations);
 	}
 
 	@Override
 	public PoweredEntity createNewTileEntity(World w, int m) {
 		// TODO: fix unlocalized name
-		return new FluidDischargeTileEntity("fix-me1");
+		return new FluidDischargeTileEntity();
 	}
 	
 

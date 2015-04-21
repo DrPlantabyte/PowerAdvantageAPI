@@ -1,5 +1,7 @@
 package cyano.poweradvantage.api.simple;
 
+import java.util.List;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
@@ -12,43 +14,44 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IChatComponent;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTank;
+import net.minecraftforge.fml.common.FMLLog;
 import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.api.PowerRequest;
-import cyano.poweradvantage.api.PoweredEntity;
-
+import cyano.poweradvantage.api.fluid.FluidPoweredEntity;
+import cyano.poweradvantage.api.fluid.FluidRequest;
+import cyano.poweradvantage.init.Fluids;
 
 /**
- * This block implements the cyano.poweradvantage.api.PowerSinkEntity 
+ * This block implements the cyano.poweradvantage.api.PowerSourceEntity 
  * class and handles most of the mundane details for you. You just need to 
  * implement your machine logic in the <b>tickUpdate()</b> method and provide a 
- * few methods for inventory handling. <br>
+ * few methods for inventory handling. So long as you use 
+ * <code>this.addEnergy(...)</code> to generate your energy, the power 
+ * transmission will be handled for you automatically.<br>
  * <b>Remember to override the readFromNBT(...) and writeToNBT(...) methods</b>     
  * @author DrCyano
  *
  */
-public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implements ISidedInventory {
+public abstract class TileEntitySimpleFluidSource extends FluidPoweredEntity implements ISidedInventory{
 
-	private final ConduitType type;
-	private final float energyBufferSize;
-	private float energyBuffer = 0;
+	protected final FluidTank tank;
 	
 	private String customName = null;
     
     private final String unlocalizedName;
-
-    /**
-     * Constructor for TileEntitySimplePowerConsumer. 
-     * @param type The type of power used by this machine
-     * @param energyBufferSize The amount of energy that this machine can store 
-     * internally
-     * @param unlocalizedName The string used for language look-up and 
-     * entity registration. 
-     */
-    public TileEntitySimplePowerConsumer(ConduitType type,float energyBufferSize, String unlocalizedName){
-    	this.type = type;
-    	this.energyBufferSize = energyBufferSize;
+	/**
+	 * Precomputed value for improved performance
+	 */
+	private boolean isEmpty = true;
+    
+	
+    public TileEntitySimpleFluidSource(int fluidTankCapacity, String unlocalizedName){
+    	this.tank = new FluidTank(fluidTankCapacity);
     	this.unlocalizedName = unlocalizedName;
     }
+    
     /**
      * Gets the unlocalized String passed to the constructor
      * @return A String used in name localization by client GUI 
@@ -56,6 +59,7 @@ public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implem
     public String getUnlocalizedName(){
     	return unlocalizedName;
     }
+    
     /**
      * Gets the inventory for this machine. If this machine does not have an 
      * inventory, return null; 
@@ -84,7 +88,9 @@ public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implem
      * <code>prepareDataFieldsForSync()</code> is called and read from to update 
      * local variables when <code>onDataFieldUpdate()</code> is called.
      */
-	public abstract  int[] getDataFieldArray();
+	public abstract int[] getDataFieldArray();
+	
+	
 
 	/**
      * This method is invoked before sending an update packet to the server. 
@@ -126,7 +132,9 @@ public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implem
      * </p>
      */
 	public abstract void onDataFieldUpdate();
-    /**
+    
+    
+	/**
      * This method is called once every world tick. Implement your machine logic 
      * here, but make sure that you don't do any processing that will consume 
      * large amounts of computer CPU time. If you do have a comuptationally 
@@ -136,6 +144,10 @@ public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implem
     @Override
     public abstract void tickUpdate(boolean isServerWorld);
     
+    
+    /** implementation detail for the powerUpdate() method. Do not touch! */
+    private static final EnumFacing[] faces = {EnumFacing.UP,EnumFacing.SOUTH,EnumFacing.EAST,EnumFacing.NORTH,EnumFacing.WEST,EnumFacing.DOWN};
+	
     /**
      * This method is called when the power transmission is computed (not every 
      * tick). You do not need to override this method, but if you do, be sure to 
@@ -143,9 +155,30 @@ public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implem
      */
     @Override
 	public void powerUpdate() {
-    	// do nothing
+		if(getTank().getFluidAmount() <= 0)return;
+		this.getTank().drain(this.transmitFluidToConsumers(getTank().getFluid()),true);
 	}
-	
+    
+    protected int transmitFluidToConsumers(FluidStack available){
+    	FMLLog.info("Sending "+available.getFluid().getName() + " to consumers");// TODO: remove debug code
+		
+    	ConduitType type = Fluids.fluidToConduitType(available.getFluid());
+    	List<PowerRequest> requests = this.getRequestsForPower(type);
+    	int bucket = available.amount;
+    	for(PowerRequest req : requests){
+    		FMLLog.info("Processing request "+req);// TODO: remove debug code
+    		if(req.amount < bucket){
+    			bucket -= req.entity.addEnergy(req.amount,type);
+    		} else {
+    			req.entity.addEnergy(bucket,type);
+    			bucket = 0;
+    			break;
+    		}
+    		
+    	}
+    	return available.amount - bucket;
+    }
+    
 
 	/**
 	 * Specify how much energy this power sink wants from a power generator. If this tile entity is 
@@ -154,12 +187,7 @@ public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implem
 	 * @return A PowerRequest instance indicated how much power you'd like to get
 	 */
 	public PowerRequest getPowerRequest(ConduitType type){
-		float space = this.getEnergyCapacity() - this.getEnergy(); 
-		if(this.canAcceptType(type) && space > 0){
-			return new PowerRequest(PowerRequest.MEDIUM_PRIORITY,space,this);
-		} else {
-			return PowerRequest.REQUEST_NOTHING;
-		}
+		return PowerRequest.REQUEST_NOTHING;
 	}
     
     /**
@@ -221,7 +249,7 @@ public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implem
 	 */
 	@Override
 	public ConduitType getType() {
-		return type;
+		return Fluids.fluidConduit_general;
 	}
 
 	/**
@@ -230,7 +258,7 @@ public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implem
 	 */
 	@Override
 	public float getEnergyCapacity() {
-		return energyBufferSize;
+		return tank.getCapacity();
 	}
 
 	/**
@@ -239,7 +267,7 @@ public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implem
 	 */
 	@Override
 	public float getEnergy() {
-		return energyBuffer;
+		return tank.getFluidAmount();
 	}
 
 	/**
@@ -248,7 +276,6 @@ public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implem
 	 */
 	@Override
 	public void setEnergy(float energy,ConduitType type) {
-		energyBuffer = energy;
 		
 	}
 	/**
@@ -264,7 +291,7 @@ public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implem
 	@Override
 	public boolean canPushEnergyTo(EnumFacing blockFace,
 			ConduitType requestType) {
-		return ConduitType.areSameType(type, requestType);
+		return canAcceptType(requestType, blockFace);
 	}
 	
 	
@@ -276,23 +303,23 @@ public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implem
 
 	@Override
 	public boolean canAcceptType(ConduitType type) {
-		return ConduitType.areSameType(getType(), type);
+		return ConduitType.areSameType(type,Fluids.fluidConduit_general) || (Fluids.conduitTypeToFluid(type) != null);
 	}
 
 	@Override
 	public boolean isPowerSink() {
-		return true;
+		return false;
 	}
 
 	@Override
 	public boolean isPowerSource() {
-		return false;
+		return true;
 	}
 
 	@Override
 	public boolean canPullEnergyFrom(EnumFacing blockFace,
 			ConduitType requestType) {
-		return ConduitType.areSameType(getType(), requestType);
+		return canAcceptType( requestType,blockFace);
 	}
 
 	/**
@@ -305,8 +332,7 @@ public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implem
     }
 
 
-    
-    // SYNCHRONIZATION OF DATA FIELDS
+ /// SYNCHRONIZATION OF DATA FIELDS
     /**
      * Creates a NBT to send a synchronization update using this block's data 
      * field array (see <code>getDataFieldArray()</code>). Before this method 
@@ -321,6 +347,7 @@ public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implem
     	nbtTag.setIntArray("[]", dataFields);
     	return nbtTag;
     }
+
     /**
      * Reads a synchronization update NBT and stores it in this blocks data 
      * field array (see <code>getDataFieldArray()</code>). After this method 
@@ -333,7 +360,8 @@ public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implem
     	System.arraycopy(newData, 0, this.getDataFieldArray(), 0, Math.min(newData.length, this.getDataFieldArray().length));
     	this.onDataFieldUpdate();
     }
-
+    
+    
     /**
      * Turns the data field NBT into a network packet
      */
@@ -342,6 +370,7 @@ public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implem
     	NBTTagCompound nbtTag = createDataFieldUpdateTag();
     	return new S35PacketUpdateTileEntity(this.pos, 0, nbtTag);
     }
+
     /**
      * Receives the network packet made by <code>getDescriptionPacket()</code>
      */
@@ -349,7 +378,6 @@ public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implem
     public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity packet) {
     	readDataFieldUpdateTag(packet.getNbtCompound());
     }
-
     
 ///// ISidedInventory methods /////
     /**
@@ -364,6 +392,7 @@ public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implem
 		
 	}
 
+	
 	/**
 	 * executes when a player right-clicks and opens the inventory GUI
 	 */
@@ -372,6 +401,7 @@ public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implem
 		// do nothing
 		
 	}
+	
 	/**
 	 * executes when a player stops interacting with this machine 
 	 */
@@ -401,6 +431,7 @@ public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implem
         return itemstack;
 	}
 
+	
 	/**
 	 * gets a field from the data array
 	 */
@@ -412,6 +443,7 @@ public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implem
         	return 0;
         }
     }
+	
 	/**
 	 * sets a field in the data array
 	 */
@@ -423,6 +455,7 @@ public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implem
         	// do nothing
         }
     }
+	
 	/**
 	 * Gets the number of data fields
 	 * @return The size of the data array
@@ -500,7 +533,7 @@ public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implem
 		if(this.getInventory() == null) return false;
 		return slot < this.getInventory().length; 
 	}
-	
+
 	/**
 	 * boilerplate inventory code
 	 */
@@ -545,7 +578,7 @@ public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implem
 	 */
 	@Override
 	public String getName() {
-        return this.hasCustomName() ? this.customName : this.getUnlocalizedName();
+        return this.hasCustomName() ? this.customName : unlocalizedName;
 	}
 
 	/**
@@ -570,6 +603,7 @@ public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implem
 		if(this.getInventory() == null) return false;
 		return slot < this.getInventory().length;
     }
+
 	/**
 	 * Determines whether another block (such as a Hopper) is allowed to put an 
 	 * item into this block through a given face
@@ -586,6 +620,7 @@ public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implem
 
 	/** cache for default implementation of getSlotsForFace(...)*/
 	private int[] slotAccessCache = null;
+
 	/**
 	 * This method is used to tell other blocks (such as a hopper) which 
 	 * inventory slots they are allowed to interact with, based on which face of 
@@ -613,5 +648,15 @@ public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implem
 		return slotAccessCache;
 	}
 
+	
+	@Override
+	public FluidRequest getFluidRequest(ConduitType type) {
+		return FluidRequest.REQUEST_NOTHING;
+	}
+	
+	@Override
+	public FluidTank getTank(){
+		return tank;
+	}
 	
 }

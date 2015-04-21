@@ -6,27 +6,27 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.api.PoweredEntity;
-import cyano.poweradvantage.api.simple.BlockSimplePowerSource;
+import cyano.poweradvantage.api.simple.BlockSimpleFluidSource;
 
-public class FluidDrainBlock extends BlockSimplePowerSource{
+public class FluidDrainBlock extends BlockSimpleFluidSource{
 // TODO: add new creative tab
-	public FluidDrainBlock(int guiId, Object guiOwner) {
-		super(Material.iron, 3f, new ConduitType("fluid"), guiId, guiOwner);
+	
+	
+	public FluidDrainBlock() {
+		super(Material.iron, 3f, 0, null);
 		super.setCreativeTab(CreativeTabs.tabDecorations);
 	}
 
 	@Override
 	public PoweredEntity createNewTileEntity(World w, int m) {
 		// TODO: fix unlocalized name business
-		return new FluidDrainTileEntity("fix-me2");
+		return new FluidDrainTileEntity();
 	}
 	
 

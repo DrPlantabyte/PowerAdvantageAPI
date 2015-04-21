@@ -38,9 +38,10 @@ public abstract class PoweredEntity extends TileEntity implements IUpdatePlayerL
 	public abstract float getEnergy();
 	/**
 	 * Sets the amount of energy in the buffer
-	 * @param energy The energy to be added to the buffer
+	 * @param energy The amount of energy to be added to the buffer
+	 * @param type The type of energy to be added to the buffer
 	 */
-	public abstract void setEnergy(float energy); 
+	public abstract void setEnergy(float energy, ConduitType type); 
 	/**
 	 * Adds energy to this conductor, up to the maximum allowed energy. The 
 	 * amount of energy that was actually added (or subtracted) to the energy 
@@ -49,18 +50,18 @@ public abstract class PoweredEntity extends TileEntity implements IUpdatePlayerL
 	 * energy).
 	 * @return The actual change to the internal energy buffer.
 	 */
-	public float addEnergy(float energy){
+	public float addEnergy(float energy, ConduitType type){
 		float newValue = this.getEnergy() + energy;
 		if(newValue < 0){
 			float delta = -1 * this.getEnergy();
-			this.setEnergy(0); 
+			this.setEnergy(0,type); 
 			return delta;
 		} else if(newValue > this.getEnergyCapacity()){
 			float delta = this.getEnergyCapacity() - this.getEnergy();
-			this.setEnergy(this.getEnergyCapacity());
+			this.setEnergy(this.getEnergyCapacity(),type);
 			return delta;
 		}
-		this.setEnergy(newValue);
+		this.setEnergy(newValue,type);
 		return energy;
 	}
 	/**
@@ -71,8 +72,8 @@ public abstract class PoweredEntity extends TileEntity implements IUpdatePlayerL
 	 * @param energy The amount of energy to subtract.
 	 * @return The actual change to the internal energy buffer
 	 */
-	public float subtractEnergy(float energy){
-		return addEnergy(-1 * energy);
+	public float subtractEnergy(float energy, ConduitType type){
+		return addEnergy(-1 * energy,type);
 	}
 	/**
 	 * Determine whether or not another conductor is allowed to withdraw energy 
@@ -155,7 +156,7 @@ public abstract class PoweredEntity extends TileEntity implements IUpdatePlayerL
 		super.readFromNBT(tagRoot);
 		if(tagRoot.hasKey("Energy")){
 			float energy = tagRoot.getFloat("Energy");
-			this.setEnergy(energy);
+			this.setEnergy(energy,this.getType());
 		}
 	}
 	/**

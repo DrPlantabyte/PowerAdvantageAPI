@@ -30,6 +30,7 @@ public class ConduitType {
 		type = name;
 		hashCache = HashCodeHelper.stringHashCode(type);
 	}
+	
 	/**
 	 * Faster hash-code implementation that relies on cached value
 	 */
