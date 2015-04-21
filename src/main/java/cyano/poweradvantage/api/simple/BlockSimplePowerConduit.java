@@ -24,9 +24,13 @@ import cyano.poweradvantage.api.ConduitBlock;
 import cyano.poweradvantage.api.PoweredEntity;
 import cyano.poweradvantage.conduitnetwork.ConduitRegistry;
 /**
- * This block class implements the cyano.poweradvantage.api.PowerConductorBlock 
+ * <p>
+ * This block class implements the cyano.poweradvantage.api.ConduitBlock 
  * class and renders as a pipe. You will need to have the appropriate blockstate 
  * and block model json files for it to render as pipes.
+ * </p><p>
+ * Extend this class to create your own power conduits with minimal effort.
+ * </p>
  * @author DrCyano
  *
  */

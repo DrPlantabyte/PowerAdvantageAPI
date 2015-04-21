@@ -178,7 +178,7 @@ public abstract class TileEntitySimplePowerSource extends PoweredEntity implemen
     	List<PowerRequest> requests = this.getRequestsForPower(type);
     	float e = availableEnergy;
     	for(PowerRequest req : requests){
-    		FMLLog.info("Sending energy to "+req.entity.getPos()); // TODO: remove debug code
+    		if(req.amount <= 0) continue;
     		if(req.amount < e){
     			e -= req.entity.addEnergy(req.amount,powerType);
     		} else {
@@ -262,30 +262,42 @@ public abstract class TileEntitySimplePowerSource extends PoweredEntity implemen
 	public ConduitType getType() {
 		return type;
 	}
-	
+	/**
+	 * Determines whether this conduit is compatible with an adjacent one
+	 * @param type The type of energy in the conduit
+	 * @param blockFace The side through-which the energy is flowing
+	 * @return true if this conduit can flow the given energy type through the given face, false 
+	 * otherwise
+	 */
 	@Override
 	public boolean canAcceptType(ConduitType type, EnumFacing blockFace) {
 		return ConduitType.areSameType(getType(), type);
 	}
-
+	/**
+	 * Determines whether this conduit is compatible with a type of energy through any side
+	 * @param type The type of energy in the conduit
+	 * @return true if this conduit can flow the given energy type through one or more of its block 
+	 * faces, false otherwise
+	 */
 	@Override
 	public boolean canAcceptType(ConduitType type) {
 		return ConduitType.areSameType(getType(), type);
 	}
-
+	/**
+	 * Returns false because this is a machine that does not make power requests
+	 * @return true
+	 */
 	@Override
 	public boolean isPowerSink() {
 		return false;
 	}
-
+	/**
+	 * Returns true because this is a machine that produces power
+	 * @return true
+	 */
 	@Override
 	public boolean isPowerSource() {
 		return true;
-	}
-
-	@Override
-	public boolean canPushEnergyTo(EnumFacing blockFace, ConduitType requestType) {
-		return ConduitType.areSameType(getType(), requestType);
 	}
 
 	/**
@@ -317,21 +329,7 @@ public abstract class TileEntitySimplePowerSource extends PoweredEntity implemen
 	}
 	
 
-	/**
-	 * Determines whether energy can be taken from this block by a conductor of 
-	 * the indicated energy type
-	 * @param blockFace The side of the block from which someone wants to take 
-	 * the energy 
-	 * @param requestType The type of energy of the other conductor that wants 
-	 * to take energy from this block 
-	 * @return True if energy is allowed to be taken from the given side of 
-	 * this block
-	 */
-	@Override
-	public boolean canPullEnergyFrom(EnumFacing blockFace,
-			ConduitType requestType) {
-		return ConduitType.areSameType(getType(), requestType);
-	}
+	
 	
 
 	/**

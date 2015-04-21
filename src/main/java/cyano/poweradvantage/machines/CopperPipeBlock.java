@@ -10,7 +10,7 @@ import cyano.poweradvantage.api.simple.BlockSimpleFluidConduit;
 public class CopperPipeBlock extends BlockSimpleFluidConduit{
 
 	public CopperPipeBlock() {
-		super(Material.iron, cyano.basemetals.init.Materials.copper.getMetalBlockHardness(), 3f/16f);
+		super(Material.piston, cyano.basemetals.init.Materials.copper.getMetalBlockHardness(), 3f/16f);
 		super.setCreativeTab(CreativeTabs.tabDecorations);
 	}
 

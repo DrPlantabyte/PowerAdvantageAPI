@@ -20,9 +20,13 @@ import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.api.ITypedConduit;
 import cyano.poweradvantage.api.fluid.FluidConduitBlock;
 /**
- * This block class implements the cyano.poweradvantage.api.PowerConductorBlock 
+ * <p>
+ * This block class implements the cyano.poweradvantage.api.ConduitBlock 
  * class and renders as a pipe. You will need to have the appropriate blockstate 
  * and block model json files for it to render as pipes.
+ * </p><p>
+ * Extend this class to create your own fluid conduits with minimal effort.
+ * </p>
  * @author DrCyano
  *
  */
@@ -50,18 +54,19 @@ public abstract class BlockSimpleFluidConduit extends FluidConduitBlock{
 	 * be used.
 	 * @param hardness This affects how long it takes to break the block. 0.5 is 
 	 * a good value if you want it to be easy to break.
-	 * @param pipeRadius This is used to determine the size of the hit-boxes 
-	 * around the conduit pipes. For each pixel of radius, add 0.0625 (1/16). 
+	 * @param pipeRadius_m This is used to determine the size of the hit-boxes
+	 * around the conduit pipes (measured in meters). For each pixel of radius, 
+	 * add 0.0625 (1/16). 
 	 * For example, if your block model files use 
 	 * <i>poweradvantage:block/pipe3_*</i> as the parent model, then the radius 
 	 * of the model will be 3 pixels (6 pixels wide) and you will want to use 
 	 * 0.1875 (3/16) as the pipeRadius. A pixel in Minecraft is defines as 1/16 
 	 * of a block, regardless of the texture resolution. 
 	 */
-	public BlockSimpleFluidConduit(Material blockMaterial, float hardness, float pipeRadius){
+	public BlockSimpleFluidConduit(Material blockMaterial, float hardness, float pipeRadius_m){
 		super(blockMaterial);
     	super.setHardness(hardness);
-    	this.pipeRadius = pipeRadius;
+    	this.pipeRadius = pipeRadius_m;
     	this.setDefaultState(this.blockState.getBaseState()
 	    		.withProperty(WEST, false)
 	    		.withProperty(DOWN, false)

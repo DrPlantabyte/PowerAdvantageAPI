@@ -22,7 +22,7 @@ public class FluidDischargeBlock extends BlockSimpleFluidConsumer{
 	
 	// TODO: adjust item model so that the bottom is visible
 	public FluidDischargeBlock() {
-		super(Material.iron, 3f, 0, null);
+		super(Material.piston, 3f, 0, null);
 		super.setCreativeTab(CreativeTabs.tabDecorations);
 	}
 

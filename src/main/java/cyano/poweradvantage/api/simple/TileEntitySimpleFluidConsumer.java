@@ -25,7 +25,7 @@ import cyano.poweradvantage.init.Fluids;
 
 
 /**
- * This block implements the cyano.poweradvantage.api.PowerSinkEntity 
+ * This block implements the cyano.poweradvantage.api.fluid.FluidPoweredEntity 
  * class and handles most of the mundane details for you. You just need to 
  * implement your machine logic in the <b>tickUpdate()</b> method and provide a 
  * few methods for inventory handling. <br>
@@ -34,7 +34,9 @@ import cyano.poweradvantage.init.Fluids;
  *
  */
 public abstract class TileEntitySimpleFluidConsumer extends FluidPoweredEntity implements ISidedInventory {
-
+	/**
+	 * This FluidTank holds the fluids for this machine
+	 */
 	protected final FluidTank tank;
 	
 	private String customName = null;
@@ -45,7 +47,14 @@ public abstract class TileEntitySimpleFluidConsumer extends FluidPoweredEntity i
 	private int[] dataFields = new int[2];
 	private static final int DATAFIELD_FLUID_ID = 0; // index in the dataFields array
 	private static final int DATAFIELD_FLUID_VOLUME = 1; // index in the dataFields array
-   
+   /**
+    * Main constructor for this abstract class. Your implementing class <b>must have a no-argument 
+    * constructor</b> or else Minecraft will crash when it tries to load your entity from a saved 
+    * game file.
+    * @param fluidTankCapacity How much fluid can be stored in this entity
+    * @param unlocalizedName The default name for this TileEntity, should the player interact with 
+    * the TileEnmtity in a way that gets the TileEntity's name (if in doubt, use the class name).
+    */
     public TileEntitySimpleFluidConsumer(int fluidTankCapacity, String unlocalizedName){
     	this.tank = new FluidTank(fluidTankCapacity);
     	this.unlocalizedName = unlocalizedName;
@@ -70,9 +79,11 @@ public abstract class TileEntitySimpleFluidConsumer extends FluidPoweredEntity i
     /**
      * This method is called once every world tick. Implement your machine logic 
      * here, but make sure that you don't do any processing that will consume 
-     * large amounts of computer CPU time. If you do have a comuptationally 
+     * large amounts of computer CPU time. If you do have a computationally 
      * intensive calculation, break it into smaller computations that you can 
      * spread over multiple tick updates.
+     * @param isServerWorld Will be true on the server-side and false on the client-side. Becareful 
+     * to avoid using any graphics-related code on the server (which has no graphics drivers).
      */
     @Override
     public abstract void tickUpdate(boolean isServerWorld);
@@ -198,49 +209,47 @@ public abstract class TileEntitySimpleFluidConsumer extends FluidPoweredEntity i
 	public void setEnergy(float energy,ConduitType type) {
 		
 	}
+	
+	
+	
 	/**
-	 * Determines whether energy can be added to this block by a conductor of 
-	 * the indicated energy type
-	 * @param blockFace The side of the block into which someone wants to push 
-	 * the energy 
-	 * @param requestType The type of energy of the other conductor that wants 
-	 * to add energy to this block 
-	 * @return True if energy is allowed to be pushed into the given side of 
-	 * this block
+	 * Determines whether this conduit is compatible with an adjacent one
+	 * @param type The type of energy in the conduit
+	 * @param blockFace The side through-which the energy is flowing
+	 * @return true if this conduit can flow the given energy type through the given face, false 
+	 * otherwise
 	 */
-	@Override
-	public boolean canPushEnergyTo(EnumFacing blockFace,
-			ConduitType requestType) {
-		return canAcceptType(requestType, blockFace);
-	}
-	
-	
-
 	@Override
 	public boolean canAcceptType(ConduitType type, EnumFacing blockFace) {
 		return canAcceptType(type);
 	}
-
+	/**
+	 * Determines whether this conduit is compatible with a type of energy through any side
+	 * @param type The type of energy in the conduit
+	 * @return true if this conduit can flow the given energy type through one or more of its block 
+	 * faces, false otherwise
+	 */
 	@Override
 	public boolean canAcceptType(ConduitType type) {
 		return ConduitType.areSameType(type,Fluids.fluidConduit_general) || (Fluids.conduitTypeToFluid(type) != null);
 	}
-
+	/**
+	 * Returns true because this is a machine that wants to make power requests
+	 * @return true
+	 */
 	@Override
 	public boolean isPowerSink() {
 		return true;
 	}
-
+	/**
+	 * Returns false because this is a machine that does not produce power
+	 * @return false
+	 */
 	@Override
 	public boolean isPowerSource() {
 		return false;
 	}
 
-	@Override
-	public boolean canPullEnergyFrom(EnumFacing blockFace,
-			ConduitType requestType) {
-		return canAcceptType( requestType,blockFace);
-	}
 
 	/**
 	 * This method is called when a block is renamed (e.g. with an anvil) and 
@@ -559,22 +568,38 @@ public abstract class TileEntitySimpleFluidConsumer extends FluidPoweredEntity i
 		}
 		return slotAccessCache;
 	}
-	
+	/**
+	 * Gets the tank used to store fluids in this machine
+	 * @return an instance of FluidTank
+	 */
 	@Override
 	protected FluidTank getTank() {
 		return tank;
 	}
 	
-	public abstract boolean canAccept(Fluid f);
+	/**
+	 * This method is used to restric what types of fluids are allowed in the tank. If you want to 
+	 * store any kind of fluid, just return true, but if you only want to store, for example, lava 
+	 * then return false unless the provided fluid is lava
+	 * @param fluid A fluid that can or cannot go into your tank
+	 * @return true if the fluid can go into the tank, false otherwise
+	 */
+	public abstract boolean canAccept(Fluid fluid);
 	
+	
+	/**
+	 * Generates a request for fluid based on what is being offered. 
+	 * @param offer The type of fluid being offered by a fluid producer
+	 * @return A FluidRequest object representing how much of the offered fluid you want to take. 
+	 * If you don't want any, return <code>FluidRequest.REQUEST_NOTHING</code>
+	 */
 	@Override
-	public FluidRequest getFluidRequest(ConduitType type) {
-		Fluid f = Fluids.conduitTypeToFluid(type);
-		if(getTank().getFluidAmount() > 0 && f.equals(getTank().getFluid().getFluid())){
+	public FluidRequest getFluidRequest(Fluid offer) {
+		if(getTank().getFluidAmount() > 0 && offer.equals(getTank().getFluid().getFluid())){
 			return new FluidRequest(FluidRequest.MEDIUM_PRIORITY,
 					(getTank().getCapacity() - getTank().getFluidAmount()),
 					this);
-		} else if(getTank().getFluidAmount() <= 0 && canAccept(f)){
+		} else if(getTank().getFluidAmount() <= 0 && canAccept(offer)){
 			return new FluidRequest(FluidRequest.MEDIUM_PRIORITY,
 					getTank().getCapacity(),
 					this);
@@ -668,7 +693,9 @@ public abstract class TileEntitySimpleFluidConsumer extends FluidPoweredEntity i
 	}
 
 
-
+	/**
+	 * Causes Minecraft to send an update packet for this TileEntity
+	 */
 	public void sync(){
 		// cause data update to be sent to client
 		worldObj.markBlockForUpdate(getPos());

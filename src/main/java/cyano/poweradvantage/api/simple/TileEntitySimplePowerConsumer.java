@@ -149,7 +149,7 @@ public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implem
 
 	/**
 	 * Specify how much energy this power sink wants from a power generator. If this tile entity is 
-	 * not a sink, then simply return PowerRequest.REQUEST_NOTHING
+	 * not a sink, then simply return <code>PowerRequest.REQUEST_NOTHING</code>
 	 * @param type The type of energy available upon request
 	 * @return A PowerRequest instance indicated how much power you'd like to get
 	 */
@@ -251,49 +251,49 @@ public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implem
 		energyBuffer = energy;
 		
 	}
+	
+	
+	
 	/**
-	 * Determines whether energy can be added to this block by a conductor of 
-	 * the indicated energy type
-	 * @param blockFace The side of the block into which someone wants to push 
-	 * the energy 
-	 * @param requestType The type of energy of the other conductor that wants 
-	 * to add energy to this block 
-	 * @return True if energy is allowed to be pushed into the given side of 
-	 * this block
+	 * Determines whether this conduit is compatible with an adjacent one
+	 * @param type The type of energy in the conduit
+	 * @param blockFace The side through-which the energy is flowing
+	 * @return true if this conduit can flow the given energy type through the given face, false 
+	 * otherwise
 	 */
-	@Override
-	public boolean canPushEnergyTo(EnumFacing blockFace,
-			ConduitType requestType) {
-		return ConduitType.areSameType(type, requestType);
-	}
-	
-	
-
 	@Override
 	public boolean canAcceptType(ConduitType type, EnumFacing blockFace) {
 		return canAcceptType(type);
 	}
-
+	/**
+	 * Determines whether this conduit is compatible with a type of energy through any side
+	 * @param type The type of energy in the conduit
+	 * @return true if this conduit can flow the given energy type through one or more of its block 
+	 * faces, false otherwise
+	 */
 	@Override
 	public boolean canAcceptType(ConduitType type) {
 		return ConduitType.areSameType(getType(), type);
 	}
 
+	/**
+	 * Returns true because this is a machine that wants to make power requests
+	 * @return true
+	 */
 	@Override
 	public boolean isPowerSink() {
 		return true;
 	}
-
+	/**
+	 * Returns false because this is a machine that does not produce power
+	 * @return false
+	 */
 	@Override
 	public boolean isPowerSource() {
 		return false;
 	}
 
-	@Override
-	public boolean canPullEnergyFrom(EnumFacing blockFace,
-			ConduitType requestType) {
-		return ConduitType.areSameType(getType(), requestType);
-	}
+	
 
 	/**
 	 * This method is called when a block is renamed (e.g. with an anvil) and 

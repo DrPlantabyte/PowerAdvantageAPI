@@ -29,8 +29,8 @@ import cyano.poweradvantage.api.PoweredEntity;
 
 /**
  * This block class provides all of the standard code for creating a machine 
- * block with an inventory and user interface that gives power to adjacent 
- * power conductors.<br>
+ * block with an inventory and user interface that gives power to connected 
+ * machines.<br>
  * Example usage:<br><pre>
 int guiID = cyano.poweradvantage.registry.MachineGUIRegistry.addGUI(new MySimpleMachineGUI());
 Block myMachineBlock = new MyBlockSimplePowerSource(guiID,PowerAdvantage.getInstance());
@@ -44,7 +44,7 @@ public abstract class BlockSimplePowerSource  extends GUIBlock implements ITyped
 	private final ConduitType type;
 
 	/**
-	 * Blockstate property
+	 * Blockstate property indicating which direction the block is facing
 	 */
     public static final PropertyDirection FACING = PropertyDirection.create("facing", (Predicate)EnumFacing.Plane.HORIZONTAL);
     /**

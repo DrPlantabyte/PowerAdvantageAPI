@@ -14,10 +14,10 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IChatComponent;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
-import net.minecraftforge.fml.common.FMLLog;
 import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.api.PowerRequest;
 import cyano.poweradvantage.api.fluid.FluidPoweredEntity;
@@ -36,7 +36,9 @@ import cyano.poweradvantage.init.Fluids;
  *
  */
 public abstract class TileEntitySimpleFluidSource extends FluidPoweredEntity implements ISidedInventory{
-
+	/**
+	 * This FluidTank holds the fluids for this machine
+	 */
 	protected final FluidTank tank;
 	
 	private String customName = null;
@@ -53,10 +55,18 @@ public abstract class TileEntitySimpleFluidSource extends FluidPoweredEntity imp
 	private static final int DATAFIELD_FLUID_VOLUME = 1; // index in the dataFields array
     
 	
-    public TileEntitySimpleFluidSource(int fluidTankCapacity, String unlocalizedName){
-    	this.tank = new FluidTank(fluidTankCapacity);
-    	this.unlocalizedName = unlocalizedName;
-    }
+	/**
+	 * Main constructor for this abstract class. Your implementing class <b>must have a no-argument 
+	 * constructor</b> or else Minecraft will crash when it tries to load your entity from a saved 
+	 * game file.
+	 * @param fluidTankCapacity How much fluid can be stored in this entity
+	 * @param unlocalizedName The default name for this TileEntity, should the player interact with 
+	 * the TileEntity in a way that gets the TileEntity's name (if in doubt, use the class name).
+	 */
+	public TileEntitySimpleFluidSource(int fluidTankCapacity, String unlocalizedName){
+		this.tank = new FluidTank(fluidTankCapacity);
+		this.unlocalizedName = unlocalizedName;
+	}
     
     /**
      * Gets the unlocalized String passed to the constructor
@@ -189,13 +199,18 @@ public abstract class TileEntitySimpleFluidSource extends FluidPoweredEntity imp
 			this.sync();
 		}
 	}
-    
+    /**
+     * This class distributes fluids to connected fluid consumers using the standard power network 
+     * registry.
+     * @param available The available fluid to distribute
+     * @return How much fluid was sent out
+     */
     protected int transmitFluidToConsumers(FluidStack available){
-		
     	ConduitType type = Fluids.fluidToConduitType(available.getFluid());
     	List<PowerRequest> requests = this.getRequestsForPower(type);
     	int bucket = available.amount;
     	for(PowerRequest req : requests){
+    		if(req.amount <= 0)continue;
     		if(req.amount < bucket){
     			bucket -= req.entity.addEnergy(req.amount,type);
     		} else {
@@ -216,7 +231,7 @@ public abstract class TileEntitySimpleFluidSource extends FluidPoweredEntity imp
 	 * @return A PowerRequest instance indicated how much power you'd like to get
 	 */
 	public PowerRequest getPowerRequest(ConduitType type){
-		return PowerRequest.REQUEST_NOTHING;
+		return FluidRequest.REQUEST_NOTHING;
 	}
     
     /**
@@ -307,49 +322,45 @@ public abstract class TileEntitySimpleFluidSource extends FluidPoweredEntity imp
 	public void setEnergy(float energy,ConduitType type) {
 		
 	}
+	
 	/**
-	 * Determines whether energy can be added to this block by a conductor of 
-	 * the indicated energy type
-	 * @param blockFace The side of the block into which someone wants to push 
-	 * the energy 
-	 * @param requestType The type of energy of the other conductor that wants 
-	 * to add energy to this block 
-	 * @return True if energy is allowed to be pushed into the given side of 
-	 * this block
+	 * Determines whether this conduit is compatible with an adjacent one
+	 * @param type The type of energy in the conduit
+	 * @param blockFace The side through-which the energy is flowing
+	 * @return true if this conduit can flow the given energy type through the given face, false 
+	 * otherwise
 	 */
-	@Override
-	public boolean canPushEnergyTo(EnumFacing blockFace,
-			ConduitType requestType) {
-		return canAcceptType(requestType, blockFace);
-	}
-	
-	
-
 	@Override
 	public boolean canAcceptType(ConduitType type, EnumFacing blockFace) {
 		return canAcceptType(type);
 	}
-
+	/**
+	 * Determines whether this conduit is compatible with a type of energy through any side
+	 * @param type The type of energy in the conduit
+	 * @return true if this conduit can flow the given energy type through one or more of its block 
+	 * faces, false otherwise
+	 */
 	@Override
 	public boolean canAcceptType(ConduitType type) {
 		return ConduitType.areSameType(type,Fluids.fluidConduit_general) || (Fluids.conduitTypeToFluid(type) != null);
 	}
-
+	/**
+	 * Returns false because this is a machine that does not make power requests
+	 * @return true
+	 */
 	@Override
 	public boolean isPowerSink() {
 		return false;
 	}
-
+	/**
+	 * Returns true because this is a machine that produces power
+	 * @return true
+	 */
 	@Override
 	public boolean isPowerSource() {
 		return true;
 	}
 
-	@Override
-	public boolean canPullEnergyFrom(EnumFacing blockFace,
-			ConduitType requestType) {
-		return canAcceptType( requestType,blockFace);
-	}
 
 	/**
 	 * This method is called when a block is renamed (e.g. with an anvil) and 
@@ -677,18 +688,28 @@ public abstract class TileEntitySimpleFluidSource extends FluidPoweredEntity imp
 		return slotAccessCache;
 	}
 
-	
+	/**
+	 * Generates a request for fluid based on what is being offered. 
+	 * @param offer The type of fluid being offered by a fluid producer
+	 * @return returns <code>FluidRequest.REQUEST_NOTHING</code> because we don't want any
+	 */
 	@Override
-	public FluidRequest getFluidRequest(ConduitType type) {
+	public FluidRequest getFluidRequest(Fluid type) {
 		return FluidRequest.REQUEST_NOTHING;
 	}
-	
+	/**
+	 * Gets the tank used to store fluids in this machine
+	 * @return an instance of FluidTank
+	 */
 	@Override
 	public FluidTank getTank(){
 		return tank;
 	}
 	
 
+	/**
+	 * Causes Minecraft to send an update packet for this TileEntity
+	 */
 	public void sync(){
 		// cause data update to be sent to client
 		worldObj.markBlockForUpdate(getPos());

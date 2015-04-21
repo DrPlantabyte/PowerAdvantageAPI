@@ -28,8 +28,8 @@ import cyano.poweradvantage.api.ITypedConduit;
 import cyano.poweradvantage.api.PoweredEntity;
 /**
  * This block class provides all of the standard code for creating a machine 
- * block with an inventory and user interface that receives power from adjacent 
- * power conductors.<br>
+ * block with an inventory and user interface that receives power from connected 
+ * power sources.<br>
  * Example usage:<br><pre>
 int guiID = cyano.poweradvantage.registry.MachineGUIRegistry.addGUI(new MySimpleMachineGUI());
 Block myMachineBlock = new MyBlockSimplePowerConsumer(guiID,PowerAdvantage.getInstance());
