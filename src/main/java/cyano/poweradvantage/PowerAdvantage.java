@@ -19,18 +19,17 @@ import cyano.poweradvantage.registry.MachineGUIRegistry;
 
 // TODO: massive rewrite of documentation
 
-// TODO: list
+// TODO: remove expanded furnace recipes (they are not needed and too complicated)
+
+// TODO: follow the to-do list:
 /* TODO list
  * drain block
  * fluid pipes
  * portable tank block
+ * item chute
  * large tank block (distributes load with neighbors)
  * fluid discharge block
- * pump block (scans pipe network to push/pull fluids)
- * gauge block
- * item chute
  * example crusher machine
- * example expanded furnace machine
  * -- SteamAdvantage mod --
  * Coal-Fired Steam Boiler
  * Boiler Tank
