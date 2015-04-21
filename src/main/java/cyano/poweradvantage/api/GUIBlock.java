@@ -1,5 +1,7 @@
 package cyano.poweradvantage.api;
 
+import cyano.poweradvantage.PowerAdvantage;
+import cyano.poweradvantage.registry.MachineGUIRegistry;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -7,11 +9,28 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
 
-
-// TODO: documentation
+/**
+ * <p>
+ * The GUIBlock is a convenient abstract class for all blocks that should show a GUI when the player 
+ * right-clicks on the block. After creating an instance of the GUIBlock class, get a GUI index 
+ * by calling <code>int gui_index = MachineGUIRegistry.addGUI(...)</code> and set the GUI indes and 
+ * GUI owner with 
+ * <code>myGUIBlock.setGuiID(gui_index); myGUIBlock.setGuiOwner(PowerAdvantage.getInstance())</code>. 
+ * Of course, if you are managing the GUIs yourself, then you will provide your own GUI index and 
+ * use your mod's class instance as the owner instead of PowerAdvantage.
+ * </p> 
+ * @author DrCyano
+ *
+ */
 public abstract class GUIBlock extends net.minecraft.block.BlockContainer{
 
+	/**
+	 * Constructor for GUI block
+	 * @param m Material for the block (determines what tools can break it and how it interacts with 
+	 * other Minecraft rules).
+	 */
 	public GUIBlock(Material m) {
 		super(m);
         this.setLightOpacity(0);
@@ -19,36 +38,69 @@ public abstract class GUIBlock extends net.minecraft.block.BlockContainer{
 	
 	private int guiId = 0;
 	private Object guiOwner = null;
-	
+	/**
+	 * Sets the GUI index number for the GUI to show when this block is right-clicked by the player. 
+	 * In short, when the player right-clicks this block, the following code is called<br>
+	 * <code>player.openGui(this.getGuiOwner(), this.getGuiID(),world,pos);</code>
+	 * @param idNumber The number of the GUI to show according to the Forge GUI system.
+	 */
 	public void setGuiID(int idNumber){
 		this.guiId = idNumber;
 	}
-	
+	/**
+	 * Gets the GUI index number for the GUI to show when this block is right-clicked by the player. 
+	 * In short, when the player right-clicks this block, the following code is called<br>
+	 * <code>player.openGui(this.getGuiOwner(), this.getGuiID(),world,pos);</code>
+	 * @return The number of the GUI to show according to the Forge GUI system.
+	 */
 	public int getGuiID(){
 		return guiId;
 	}
-	
+	/**
+	 * Sets the object that was used to register the GUI handler (e.g. <i>PowerAdvantage.getInstance()</i> in 
+	 * <code>NetworkRegistry.INSTANCE.registerGuiHandler(PowerAdvantage.getInstance(), MachineGUIRegistry.getInstance());</code>
+	 * ). This is usually the mod's main class, or if you are using the <b>MachineGUIRegistry</b>, 
+	 * then you would set the GUI owner to PowerAdvantage.getInstance(). 
+	 * In short, when the player right-clicks this block, the following code is called<br>
+	 * <code>player.openGui(this.getGuiOwner(), this.getGuiID(),world,pos);</code>
+	 * @param modInstance The owner of the GUI when you registered the GUI handler (not the GUI 
+	 * handler itself).
+	 */
 	public void setGuiOwner(Object modInstance){
 		this.guiOwner = modInstance;
 	}
-	
+	/**
+	 * Gets the object that was used to register the GUI handler (e.g. <i>PowerAdvantage.getInstance()</i> in 
+	 * <code>NetworkRegistry.INSTANCE.registerGuiHandler(PowerAdvantage.getInstance(), MachineGUIRegistry.getInstance());</code>
+	 * ). This is usually the mod's main class, or if you are using the <b>MachineGUIRegistry</b>, 
+	 * then you would set the GUI owner to PowerAdvantage.getInstance(). 
+	 * In short, when the player right-clicks this block, the following code is called<br>
+	 * <code>player.openGui(this.getGuiOwner(), this.getGuiID(),world,pos);</code>
+	 * @return The owner of the GUI when you registered the GUI handler (not the GUI handler 
+	 * itself).
+	 */
 	public Object getGuiOwner(){
 		return this.guiOwner;
 	}
-	
+	/**
+	 * Boilerplate code
+	 */
 	@Override
     public boolean isFullCube() {
         return false;
     }
     
-    @Override
+	/**
+	 * Boilerplate code
+	 */
+	@Override
     public boolean isOpaqueCube() {
         return false;
     }
 	
 	/**
-	 * 3 = normal block?
-	 * -1 = special renderer?
+	 * 3 = normal block (model specified in assets folder as .json model)<br>
+	 * -1 = special renderer
 	 */
 	@Override
     public int getRenderType() {
@@ -57,7 +109,8 @@ public abstract class GUIBlock extends net.minecraft.block.BlockContainer{
 	
 	/**
      * Override of default block behavior to show the player the GUI for this 
-     * block
+     * block. Calls <code>player.openGui(this.getGuiOwner(), this.getGuiID(),world,pos);</code> on 
+     * right-click.
      * @return true if the interaction resulted in opening the GUI, false 
      * otherwise
      */

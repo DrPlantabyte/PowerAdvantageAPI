@@ -48,7 +48,7 @@ public class ConduitType {
 		if(this == o) return true;
 		if(this.hashCode() == o.hashCode()){ // optimization with cached hashCodes
 			if(o instanceof ConduitType){
-				return type.equals(((ConduitType)o).type);
+				return areSameType(this,(ConduitType)o);
 			}
 		}
 		return false;

@@ -191,13 +191,11 @@ public abstract class TileEntitySimpleFluidSource extends FluidPoweredEntity imp
 	}
     
     protected int transmitFluidToConsumers(FluidStack available){
-    	FMLLog.info("Sending "+available.getFluid().getName() + " to consumers");// TODO: remove debug code
 		
     	ConduitType type = Fluids.fluidToConduitType(available.getFluid());
     	List<PowerRequest> requests = this.getRequestsForPower(type);
     	int bucket = available.amount;
     	for(PowerRequest req : requests){
-    		FMLLog.info("Processing request "+req);// TODO: remove debug code
     		if(req.amount < bucket){
     			bucket -= req.entity.addEnergy(req.amount,type);
     		} else {

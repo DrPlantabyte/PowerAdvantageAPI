@@ -3,7 +3,7 @@ package cyano.poweradvantage.api;
 import net.minecraft.util.EnumFacing;
 
 /**
- * Implement this method in every entity and block that interacts with energy. 
+ * Implement this method in every TileEntity and Block that interacts with energy. 
  * This ensures that all relevant Blocks and TileEntities can check the energy 
  * type of a Blocks or TileEntity. 
  * @author DrCyano
@@ -33,12 +33,13 @@ public interface ITypedConduit {
 	 */
 	public abstract ConduitType getType();
 	/**
-	 * Determines whether this block/entity should receive energy 
+	 * Determines whether this block/entity should receive energy. If this is not a sink, then it 
+	 * will never be given power by a power source. 
 	 * @return true if this block/entity should receive energy
 	 */
 	public abstract boolean isPowerSink();
 	/**
-	 * Determines whether this block/entity can provide energy 
+	 * Determines whether this block/entity can provide energy. 
 	 * @return true if this block/entity can provide energy
 	 */
 	public abstract boolean isPowerSource();

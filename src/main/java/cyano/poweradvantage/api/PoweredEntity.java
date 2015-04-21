@@ -9,15 +9,13 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 /**
- * This class is the superclass for all powered blocks. Wires are plain 
- * conductors, but generators and machines are also conductors (they should 
- * extend the PowerSourceEntity and PowerSinkEntity classes respectively). If 
- * you are making an add-on mod, you probably want to extend the 
+ * This class is the superclass for all machines. 
+ * If you are making an add-on mod, you probably want to extend the 
  * <b>cyano.poweradvantage.api.simple.TileEntitySimplePowerConduit</b> class 
  * instead of this class.
  * <p>
- * Conceptually, a conductor is any block that has an internal energy buffer, 
- * which can be added-to or subtracted-from by adjacent (conductor) blocks.
+ * Conceptually, a PoweredEntity is any block that has an internal energy buffer, 
+ * which can be added-to or subtracted-from by other machines connected by conduits.
  * </p>
  * @author DrCyano
  *
@@ -27,13 +25,13 @@ public abstract class PoweredEntity extends TileEntity implements IUpdatePlayerL
 	private final int powerUpdateInterval = 8;
 	
 	/**
-	 * Gets the amount of energy that can be stored in this conductor.
+	 * Gets the amount of energy that can be stored in this machine.
 	 * @return Size of the energy buffer
 	 */
 	public abstract float getEnergyCapacity();
 	/**
-	 * Gets the amount of energy stored in this conductor
-	 * @return The amount of energy in the buffer
+	 * Gets the amount of energy stored in this machine
+	 * @return The amount of energy in the energy buffer
 	 */
 	public abstract float getEnergy();
 	/**
@@ -48,6 +46,7 @@ public abstract class PoweredEntity extends TileEntity implements IUpdatePlayerL
 	 * buffer is returned. 
 	 * @param energy The amount of energy to add (can be negative to subtract 
 	 * energy).
+	 * @param type The type of energy to be added to the buffer
 	 * @return The actual change to the internal energy buffer.
 	 */
 	public float addEnergy(float energy, ConduitType type){
@@ -70,29 +69,13 @@ public abstract class PoweredEntity extends TileEntity implements IUpdatePlayerL
 	 * simply multiplies the input energy value by -1 and then calls the method 
 	 * addEnergy(...).  
 	 * @param energy The amount of energy to subtract.
+	 * @param type The type of energy to be subtracted to the buffer
 	 * @return The actual change to the internal energy buffer
 	 */
 	public float subtractEnergy(float energy, ConduitType type){
 		return addEnergy(-1 * energy,type);
 	}
-	/**
-	 * Determine whether or not another conductor is allowed to withdraw energy 
-	 * from this conductor on the indicated face of this block. 
-	 * @param blockFace The face of this block from which we are asking to pull 
-	 * energy. 
-	 * @param requestType The energy type requested
-	 * @return True if energy can be pulled from this face, false otherwise
-	 */
-	public abstract boolean canPullEnergyFrom(EnumFacing blockFace, ConduitType requestType);
-	/**
-	 * Determine whether or not another conductor is allowed to add energy to  
-	 * this conductor on the indicated face of this block. 
-	 * @param blockFace The face of this block from which we are asking to push 
-	 * energy. 
-	 * @param requestType The energy type requested
-	 * @return True if energy can be pulled from this face, false otherwise
-	 */
-	public abstract boolean canPushEnergyTo(EnumFacing blockFace, ConduitType requestType);
+	
 	
 	/**
 	 * Method net.minecraft.server.gui.IUpdatePlayerListBox.update() is invoked 

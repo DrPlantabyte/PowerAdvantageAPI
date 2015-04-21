@@ -8,42 +8,52 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLLog;
 import cyano.poweradvantage.conduitnetwork.ConduitRegistry;
 /**
+ * <p>
  * This is the superclass for blocks that conduct power from power generators to 
  * the machines that need power. If you are making an add-on mod, you probably 
  * want to extend the 
  * <b>cyano.poweradvantage.api.simple.BlockSimplePowerConduit</b> class 
  * instead of this class.
+ * </p><p>
+ * Note that the conduit blocks do not have tile entities. They do not store data for energy 
+ * transmission. Simply implementing the ITypedConduit interface adds them to the energy 
+ * transmission algorithm that finds the connections between generators and machines. 
+ * </p>
+ * 
  * @author DrCyano
  *
  */
 public abstract class ConduitBlock extends net.minecraft.block.Block implements  ITypedConduit{
 	/**
 	 * Block constructor
-	 * @param mat Block material
+	 * @param mat Block material, typically Material.iron
 	 */
 	protected ConduitBlock(Material mat) {
 		super(mat);
 	}
-	
+	/**
+	 * This method is called whenever the block is placed into the world
+	 */
 	@Override
 	public void onBlockAdded(World w, BlockPos coord, IBlockState state){
 		super.onBlockAdded(w, coord, state);
-		FMLLog.info("conduit block added at "+coord); // TODO: remove debug code
 		ConduitRegistry.getInstance().conduitBlockPlacedEvent(w, w.provider.getDimensionId(), coord, getType());
 	}
 	
-
+	/**
+	 * This method is called when the block is removed from the world by an entity.
+	 */
 	@Override
 	public void onBlockDestroyedByPlayer(World w, BlockPos coord, IBlockState state){
 		super.onBlockDestroyedByPlayer(w, coord, state);
-		FMLLog.info("conduit block destroyed by player at "+coord); // TODO: remove debug code
 		ConduitRegistry.getInstance().conduitBlockRemovedEvent(w, w.provider.getDimensionId(), coord, getType());
 	}
-
+	/**
+	 * This method is called when the block is destroyed by an explosion.
+	 */
 	@Override
 	public void onBlockDestroyedByExplosion(World w, BlockPos coord, Explosion boom){
 		super.onBlockDestroyedByExplosion(w, coord, boom);
-		FMLLog.info("conduit block blown-up at "+coord); // TODO: remove debug code
 		ConduitRegistry.getInstance().conduitBlockRemovedEvent(w, w.provider.getDimensionId(), coord, getType());
 	}
 	

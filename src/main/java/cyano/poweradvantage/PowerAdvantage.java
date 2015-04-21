@@ -154,9 +154,47 @@ import cyano.poweradvantage.registry.MachineGUIRegistry;
  */
 
 /**
- * This is the main mod class for Power Advantage. Forge/FML will create an 
+ * <p>This is the main mod class for Power Advantage. Forge/FML will create an 
  * instance of this class and call its initializer functions. There are some 
- * utility functions in this class that makers of add-on mods may wish to use. 
+ * utility functions in this class that makers of add-on mods may wish to use, 
+ * such as PowerAdvantage.getInstance(). </p>
+ * <p>
+ * Note that to make a mod that uses the PowerAdvantage API, you will need to make a few 
+ * adjustments to add the appropriate dependancies.
+ * </p><p>
+ * First, you need to add the required libraries to your project. Create a folder in your project 
+ * called <b>lib</b>. Then grab the PowerAdvantage and BaseMetals API .jar files and put them in 
+ * the <b>lib</b> folder. It will also be helpful to put the javadoc .zip files in this folder as 
+ * well.
+ * </p><p>
+ * Next, you need to specify the dependencies in the &#64;mod annotation. For example:<br>
+ * <code>@Mod(modid = MyMod.MODID, version = MyMod.VERSION, name=MyMod.NAME, dependencies = "required-after:poweradvantage;required-after:basemetals")</code> 
+ * </p><p>
+ * After that, you need to update your gradle build script to include the dependencies. Add the 
+ * following to <b>build.gradle</b> (adjusting the version numbers on the .jar filenames as 
+ * neessary):<br><code>
+
+allprojects {
+    apply plugin: 'java'
+    sourceCompatibility = 1.7
+    targetCompatibility = 1.7
+}
+
+dependencies {
+    compile files(
+        'lib/basemetals-1.2.3-dev.jar'
+        'lib/PowerAdvantage-API-1.0.0.jar'
+    )
+
+}
+</code><br>This is necessary to include the API in your compile build path and also specify that you 
+ * are compiling with Java 7 (Java 6 will not work). 
+ * </p><p>
+ * Finally, you need to add the API .jar files to your IDE project configuration. In Eclipse, 
+ * right-click on your project and go to <i>Properties</i>, then click on <i>Java Build Path</i> and 
+ * click on the <i>Libraries</i> tab. Then click <i>Add Jars...</i> and select the BaseMetals and 
+ * PowerAdvantage API jars in your <b>lib</b> folder and close the window by clicking OK.
+ * </p>
  * @author DrCyano
  *
  */
@@ -171,10 +209,12 @@ public class PowerAdvantage
     public static final String VERSION = "0.0.6";
 
     /** if true, example machines will be added to the game */
+    @Deprecated // TODO: remove example machines
     public static boolean DEMO_MODE = false;
     /** singleton instance */
     private static PowerAdvantage instance;
     /** Demo mod content */
+    @Deprecated // TODO: remove example machines
     private ExamplePowerMod exampleMod = null;
     
     
@@ -245,6 +285,7 @@ public class PowerAdvantage
 		cyano.poweradvantage.init.Recipes.init();
 		cyano.poweradvantage.init.Villages.init(); 
 		cyano.poweradvantage.init.GUI.init();
+		cyano.poweradvantage.init.TreasureChests.init();
 		
     	if(DEMO_MODE)exampleMod.init(event);
     	
