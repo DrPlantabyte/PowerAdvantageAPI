@@ -17,6 +17,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidTankInfo;
@@ -31,16 +32,18 @@ import cyano.poweradvantage.api.simple.TileEntitySimpleFluidConsumer;
 
 public class FluidDischargeTileEntity extends TileEntitySimpleFluidConsumer{
 
-	// TODO: make fluid pipe/machine templates that use FluidTank as their "energy buffer"
+
 	
 	public FluidDischargeTileEntity() {
 		super( FluidContainerRegistry.BUCKET_VOLUME, FluidDischargeTileEntity.class.getName());
 	}
 
 	
-	
+
 	
 	///// Logic and implementation /////
+	private int oldLevel = -1;
+	
 	@Override
 	public void powerUpdate(){
 		// server-side
@@ -93,6 +96,10 @@ public class FluidDischargeTileEntity extends TileEntitySimpleFluidConsumer{
 			}
 
 		}
+		if(this.getTank().getFluidAmount() != oldLevel){
+			oldLevel = this.getTank().getFluidAmount();
+			this.sync();
+		}
 		super.powerUpdate();
 	}
 	
@@ -115,12 +122,6 @@ public class FluidDischargeTileEntity extends TileEntitySimpleFluidConsumer{
 	}
 	
 	
-	
-	public void sync(){
-		// cause data update to be sent to client
-		worldObj.markBlockForUpdate(getPos());
-		this.markDirty();
-	}
 	
 	private String mapToString(ImmutableMap properties) {
 		// TODO delete this method
@@ -203,23 +204,7 @@ public class FluidDischargeTileEntity extends TileEntitySimpleFluidConsumer{
 	}
 	// TODO: clean-up data field stuff
 
-	@Override
-	public int[] getDataFieldArray() {
-		return new int[0];
-	}
-
-	@Override
-	public void prepareDataFieldsForSync() {
-		// do nothing
-		
-	}
-
-	@Override
-	public void onDataFieldUpdate() {
-		// do nothing
-	}
-
-
+	
 
 
 	@Override

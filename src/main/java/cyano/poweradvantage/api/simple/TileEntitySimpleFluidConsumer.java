@@ -1,7 +1,5 @@
 package cyano.poweradvantage.api.simple;
 
-import java.util.Set;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
@@ -15,9 +13,9 @@ import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
-import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fml.common.FMLLog;
 import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.api.PowerRequest;
@@ -43,6 +41,10 @@ public abstract class TileEntitySimpleFluidConsumer extends FluidPoweredEntity i
     
     private final String unlocalizedName;
 
+
+	private int[] dataFields = new int[2];
+	private static final int DATAFIELD_FLUID_ID = 0; // index in the dataFields array
+	private static final int DATAFIELD_FLUID_VOLUME = 1; // index in the dataFields array
    
     public TileEntitySimpleFluidConsumer(int fluidTankCapacity, String unlocalizedName){
     	this.tank = new FluidTank(fluidTankCapacity);
@@ -62,69 +64,9 @@ public abstract class TileEntitySimpleFluidConsumer extends FluidPoweredEntity i
      */
     protected abstract ItemStack[] getInventory();
     
-    /**
-     * Gets the integer array used to pass synchronization data from the server 
-     * to the clients.
-     * <p>
-     * Data fields are used for server-client synchronization of specific 
-     * variables. When this TileEntity is marked for synchronization, the 
-     * server executes the <code>prepareDataFieldsForSync()</code> method and 
-     * then transmits the contents of the array returned by 
-     * <code>getDataFieldArray()</code> to the clients in an update packet. When 
-     * the client receives this packet, it sets the values in the array from 
-     * <code>getDataFieldArray()</code> (not executed on the client-side) and 
-     * then executes the <code>onDataFieldUpdate()</code> method.
-     * </p><p>
-     * For this to work, you should store values that you want sync'd in an int 
-     * array in the <code>prepareDataFieldsForSync()</code> method and read them 
-     * back in the <code> onDataFieldUpdate()</code> method.
-     * </p>
-     * @return An int[] that you update to match local variables when 
-     * <code>prepareDataFieldsForSync()</code> is called and read from to update 
-     * local variables when <code>onDataFieldUpdate()</code> is called.
-     */
-	public abstract  int[] getDataFieldArray();
+    
 
-	/**
-     * This method is invoked before sending an update packet to the server. 
-     * After this method returns, the array returned by 
-     * <code>getDataFieldArray()</code> should hold the updated variable values.
-     * <p>
-     * Data fields are used for server-client synchronization of specific 
-     * variables. When this TileEntity is marked for synchronization, the 
-     * server executes the <code>prepareDataFieldsForSync()</code> method and 
-     * then transmits the contents of the array returned by 
-     * <code>getDataFieldArray()</code> to the clients in an update packet. When 
-     * the client receives this packet, it sets the values in the array from 
-     * <code>getDataFieldArray()</code> (not executed on the client-side) and 
-     * then executes the <code>onDataFieldUpdate()</code> method.
-     * </p><p>
-     * For this to work, you should store values that you want sync'd in an int 
-     * array in the <code>prepareDataFieldsForSync()</code> method and read them 
-     * back in the <code> onDataFieldUpdate()</code> method.
-     * </p>
-     */
-	public abstract void prepareDataFieldsForSync();
-	/**
-     * This method is invoked after receiving an update packet from the server. 
-     * At the time that this method is invoked, the array returned by 
-     * <code>getDataFieldArray()</code> now holds the updated variable values.
-     * <p>
-     * Data fields are used for server-client synchronization of specific 
-     * variables. When this TileEntity is marked for synchronization, the 
-     * server executes the <code>prepareDataFieldsForSync()</code> method and 
-     * then transmits the contents of the array returned by 
-     * <code>getDataFieldArray()</code> to the clients in an update packet. When 
-     * the client receives this packet, it sets the values in the array from 
-     * <code>getDataFieldArray()</code> (not executed on the client-side) and 
-     * then executes the <code> onDataFieldUpdate()</code> method.
-     * </p><p>
-     * For this to work, you should store values that you want sync'd in an int 
-     * array in the <code>prepareDataFieldsForSync()</code> method and read them 
-     * back in the <code> onDataFieldUpdate()</code> method.
-     * </p>
-     */
-	public abstract void onDataFieldUpdate();
+	
     /**
      * This method is called once every world tick. Implement your machine logic 
      * here, but make sure that you don't do any processing that will consume 
@@ -135,6 +77,8 @@ public abstract class TileEntitySimpleFluidConsumer extends FluidPoweredEntity i
     @Override
     public abstract void tickUpdate(boolean isServerWorld);
     
+    
+    private int oldLevel = -1;
     /**
      * This method is called when the power transmission is computed (not every 
      * tick). You do not need to override this method, but if you do, be sure to 
@@ -142,7 +86,10 @@ public abstract class TileEntitySimpleFluidConsumer extends FluidPoweredEntity i
      */
     @Override
 	public void powerUpdate() {
-    	// do nothing
+		if(this.getTank().getFluidAmount() != oldLevel){
+			oldLevel = this.getTank().getFluidAmount();
+			this.sync();
+		}
 	}
 	
 
@@ -636,5 +583,97 @@ public abstract class TileEntitySimpleFluidConsumer extends FluidPoweredEntity i
 		}
 	}
 
+	/**
+     * Gets the integer array used to pass synchronization data from the server 
+     * to the clients.
+     * <p>
+     * Data fields are used for server-client synchronization of specific 
+     * variables. When this TileEntity is marked for synchronization, the 
+     * server executes the <code>prepareDataFieldsForSync()</code> method and 
+     * then transmits the contents of the array returned by 
+     * <code>getDataFieldArray()</code> to the clients in an update packet. When 
+     * the client receives this packet, it sets the values in the array from 
+     * <code>getDataFieldArray()</code> (not executed on the client-side) and 
+     * then executes the <code>onDataFieldUpdate()</code> method.
+     * </p><p>
+     * For this to work, you should store values that you want sync'd in an int 
+     * array in the <code>prepareDataFieldsForSync()</code> method and read them 
+     * back in the <code> onDataFieldUpdate()</code> method.
+     * </p>
+     * @return An int[] that you update to match local variables when 
+     * <code>prepareDataFieldsForSync()</code> is called and read from to update 
+     * local variables when <code>onDataFieldUpdate()</code> is called.
+     */
+	public int[] getDataFieldArray() {
+		return dataFields;
+	}
+	/**
+     * This method is invoked after receiving an update packet from the server. 
+     * At the time that this method is invoked, the array returned by 
+     * <code>getDataFieldArray()</code> now holds the updated variable values.
+     * <p>
+     * Data fields are used for server-client synchronization of specific 
+     * variables. When this TileEntity is marked for synchronization, the 
+     * server executes the <code>prepareDataFieldsForSync()</code> method and 
+     * then transmits the contents of the array returned by 
+     * <code>getDataFieldArray()</code> to the clients in an update packet. When 
+     * the client receives this packet, it sets the values in the array from 
+     * <code>getDataFieldArray()</code> (not executed on the client-side) and 
+     * then executes the <code> onDataFieldUpdate()</code> method.
+     * </p><p>
+     * For this to work, you should store values that you want sync'd in an int 
+     * array in the <code>prepareDataFieldsForSync()</code> method and read them 
+     * back in the <code> onDataFieldUpdate()</code> method.
+     * </p>
+     */
+	public void onDataFieldUpdate() {
+		// used for server-to-client sync
+		int fluidID = dataFields[DATAFIELD_FLUID_ID];
+		int fluidVolume = dataFields[DATAFIELD_FLUID_VOLUME];
+		if(fluidVolume <= 0){
+			getTank().setFluid(new FluidStack(FluidRegistry.WATER,0));
+		} else {
+			FluidStack fs = new FluidStack(FluidRegistry.getFluid(fluidID),fluidVolume);
+			getTank().setFluid(fs);
+		}
+	}
+	
+	/**
+     * This method is invoked before sending an update packet to the server. 
+     * After this method returns, the array returned by 
+     * <code>getDataFieldArray()</code> should hold the updated variable values.
+     * <p>
+     * Data fields are used for server-client synchronization of specific 
+     * variables. When this TileEntity is marked for synchronization, the 
+     * server executes the <code>prepareDataFieldsForSync()</code> method and 
+     * then transmits the contents of the array returned by 
+     * <code>getDataFieldArray()</code> to the clients in an update packet. When 
+     * the client receives this packet, it sets the values in the array from 
+     * <code>getDataFieldArray()</code> (not executed on the client-side) and 
+     * then executes the <code>onDataFieldUpdate()</code> method.
+     * </p><p>
+     * For this to work, you should store values that you want sync'd in an int 
+     * array in the <code>prepareDataFieldsForSync()</code> method and read them 
+     * back in the <code> onDataFieldUpdate()</code> method.
+     * </p>
+     */
+	public void prepareDataFieldsForSync(){
+		if(getTank().getFluid() == null || getTank().getFluidAmount() <= 0){
+			dataFields[DATAFIELD_FLUID_ID] = FluidRegistry.WATER.getID();
+			dataFields[DATAFIELD_FLUID_VOLUME] = 0;
+		} else {
+			dataFields[DATAFIELD_FLUID_ID] = getTank().getFluid().getFluid().getID();
+			dataFields[DATAFIELD_FLUID_VOLUME] = getTank().getFluidAmount();
+		}
+	}
+
+
+
+	public void sync(){
+		// cause data update to be sent to client
+		worldObj.markBlockForUpdate(getPos());
+		this.markDirty();
+	}
+	
 	
 }

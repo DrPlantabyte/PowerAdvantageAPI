@@ -50,6 +50,7 @@ public class FluidDrainTileEntity extends TileEntitySimpleFluidSource{
 	
 	///// Logic and implementation /////
 	
+	
 	@Override
 	public void powerUpdate(){
 		// send fluid into pipes
@@ -130,7 +131,6 @@ public class FluidDrainTileEntity extends TileEntitySimpleFluidSource{
 					// found source block
 					tank.fill(new FluidStack(fluid,FluidContainerRegistry.BUCKET_VOLUME), true);
 					worldObj.setBlockToAir(coord);
-					this.sync();
 				}
 
 			}
@@ -166,11 +166,6 @@ public class FluidDrainTileEntity extends TileEntitySimpleFluidSource{
 	}
 	
 	
-	public void sync(){
-		// cause data update to be sent to client
-		worldObj.markBlockForUpdate(getPos());
-		this.markDirty();
-	}
 	
 	private String mapToString(ImmutableMap properties) {
 		// TODO delete this method
@@ -217,24 +212,7 @@ public class FluidDrainTileEntity extends TileEntitySimpleFluidSource{
 		return new ItemStack[0];
 	}
 	
-	// TODO: data field sync stuff
-	@Override
-	public int[] getDataFieldArray() {
-		return new int[0];
-	}
-
-	@Override
-	public void prepareDataFieldsForSync() {
-		// do nothing
-		
-	}
-
-	@Override
-	public void onDataFieldUpdate() {
-		// do nothing
-		
-	}
-
+	
 	@Override
 	public void tickUpdate(boolean isServerWorld) {
 		// do nothing
