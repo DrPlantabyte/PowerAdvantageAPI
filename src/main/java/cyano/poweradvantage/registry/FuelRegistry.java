@@ -85,21 +85,21 @@ public class FuelRegistry implements IFuelHandler{
 	 * Removes an added burnable fuel from PowerAdvantage
 	 * @param fuelItem The burnable item to be removed
 	 */
-	public void removeFuel(ItemStack fuelItem, Number burnTicks){
+	public void removeFuel(ItemStack fuelItem){
 		removeFuel(new ItemLookupReference(fuelItem));
 	}
 	/**
 	 * Removes an added burnable fuel from PowerAdvantage
 	 * @param fuelItem The burnable item to be removed
 	 */
-	public void removeFuel(Item fuelItem, Number burnTicks){
+	public void removeFuel(Item fuelItem){
 		removeFuel(new ItemLookupReference(fuelItem));
 	}
 	/**
 	 * Removes an added burnable fuel from PowerAdvantage
 	 * @param fuelItem The burnable item to be removed
 	 */
-	public void removeFuel(Block fuelItem, Number burnTicks){
+	public void removeFuel(Block fuelItem){
 		removeFuel(new ItemLookupReference(fuelItem));
 	}
 	

@@ -690,7 +690,7 @@ public abstract class TileEntitySimpleFluidSource extends FluidPoweredEntity imp
 
 	/**
 	 * Generates a request for fluid based on what is being offered. 
-	 * @param offer The type of fluid being offered by a fluid producer
+	 * @param type The type of fluid being offered by a fluid producer
 	 * @return returns <code>FluidRequest.REQUEST_NOTHING</code> because we don't want any
 	 */
 	@Override

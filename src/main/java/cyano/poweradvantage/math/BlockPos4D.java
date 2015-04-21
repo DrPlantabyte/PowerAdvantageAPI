@@ -62,8 +62,8 @@ public class BlockPos4D {
 	}
 	/**
 	 * Makes a 4D coordinate from a dimension index and block position
-	 * @param dimension
-	 * @param bp
+	 * @param dimension Dimension of the block
+	 * @param bp location of the block
 	 */
 	public BlockPos4D(int dimension, BlockPos bp){
 		this.dimension = dimension;

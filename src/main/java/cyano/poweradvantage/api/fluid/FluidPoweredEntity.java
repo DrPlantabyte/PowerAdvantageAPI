@@ -117,10 +117,10 @@ public abstract class FluidPoweredEntity extends PoweredEntity implements IFluid
 	 * @return The amount that was actually added
 	 */
     @Override
-	public float subtractEnergy(float energy, ConduitType type){
+	public float subtractEnergy(float amount, ConduitType type){
 		if(Fluids.isFluidType(type)){
 			if(this.canDrain(null, Fluids.conduitTypeToFluid(type))){
-				return this.drain(null, new FluidStack(Fluids.conduitTypeToFluid(type),(int)energy), true).amount;
+				return this.drain(null, new FluidStack(Fluids.conduitTypeToFluid(type),(int)amount), true).amount;
 			} else {
 				return 0;
 			}
