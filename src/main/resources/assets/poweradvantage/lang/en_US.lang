@@ -6,6 +6,9 @@ tile.poweradvantage.fluid_drain.name=Drain
 tile.poweradvantage.fluid_discharge.name=Discharge Grate
 tile.poweradvantage.copper_pipe.name=Copper Pipe
 
+item.poweradvantage.starch.name=Starch
+item.poweradvantage.bioplastic_ingot.name=Bioplastic Ingot
+
 
 tile.poweradvantage.powercable.name=Power Cable
 tile.poweradvantage.powerfurnace.name=Powered Furnace

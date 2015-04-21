@@ -12,7 +12,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.FMLLog;
 import cyano.poweradvantage.PowerAdvantage;
 import cyano.poweradvantage.api.simple.SimpleMachineGUI;
-import cyano.poweradvantage.fluids.block.FluidDrainTileEntity;
+import cyano.poweradvantage.machines.FluidDrainTileEntity;
 import cyano.poweradvantage.math.Integer2D;
 
 public class FluidDrainGUI extends SimpleMachineGUI{

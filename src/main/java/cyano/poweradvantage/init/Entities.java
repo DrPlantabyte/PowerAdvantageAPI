@@ -2,7 +2,7 @@ package cyano.poweradvantage.init;
 
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import cyano.poweradvantage.PowerAdvantage;
-import cyano.poweradvantage.fluids.block.*;
+import cyano.poweradvantage.machines.*;
 
 public abstract class Entities {
 

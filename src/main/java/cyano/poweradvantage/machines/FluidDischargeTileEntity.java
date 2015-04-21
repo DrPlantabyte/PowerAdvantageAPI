@@ -1,4 +1,4 @@
-package cyano.poweradvantage.fluids.block;
+package cyano.poweradvantage.machines;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDynamicLiquid;
