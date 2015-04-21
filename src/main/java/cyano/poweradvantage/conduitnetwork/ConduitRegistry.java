@@ -25,6 +25,11 @@ import cyano.poweradvantage.api.PowerRequest;
 import cyano.poweradvantage.api.PoweredEntity;
 import cyano.poweradvantage.math.BlockPos4D;
 
+/**
+ * This is the master keeper of power networks.
+ * @author DrCyano
+ *
+ */
 public class ConduitRegistry {
 
 	private final Map<ConduitType,ConduitNetworkManager> networkManagers = new HashMap<>();
@@ -35,6 +40,10 @@ public class ConduitRegistry {
 	private static ConduitRegistry instance = null;
 	private static final Lock initLock = new ReentrantLock();
 	
+	/**
+	 * Thread-safe singleton instantiation
+	 * @return A singleton instance of this class 
+	 */
 	public static ConduitRegistry getInstance(){
 		if(instance == null){
 			initLock.lock();
@@ -50,7 +59,15 @@ public class ConduitRegistry {
 	}
 	
 	
-	
+	/**
+	 * Scans the power network for a given coordinate and returns a list of power requests from 
+	 * all power sinks on that network.
+	 * @param w The world instance for this dimension
+	 * @param coord The block asking for power requests
+	 * @param type the type of energy being offered
+	 * @return A list of PowerRequest instances, sorted in order of highest priority to lowest 
+	 * priority. 
+	 */
 	public List<PowerRequest> getRequestsForPower(World w, BlockPos coord, ConduitType type){
 		List<PowerRequest> requests = new ArrayList<>();
 		ConduitNetworkManager manager = getConduitNetworkManager(type);
@@ -72,11 +89,16 @@ public class ConduitRegistry {
 		Collections.sort(requests);
 		return requests;
 	}
-	
+	/**
+	 * Invoke this method anytime a conduit block enters the world
+	 * @param w The world instance for this dimension
+	 * @param dimension The ID number for this dimension
+	 * @param location The position of the block being added
+	 * @param type The native energy type of the added conduit block
+	 */
 	public void conduitBlockPlacedEvent(World w, int dimension, BlockPos location, ConduitType type){
 		if(w.isRemote)return; // ignore client-side
 		BlockPos4D coord = new BlockPos4D(dimension, location);
-		FMLLog.info("conduitBlockPlacedEvent at "+coord); // TODO: remove debug code
 		ConduitNetworkManager manager = getConduitNetworkManager(type);
 		for(int i = 0; i < EnumFacing.values().length; i++){
 			EnumFacing face = EnumFacing.values()[i];
@@ -84,11 +106,17 @@ public class ConduitRegistry {
 			manager.invalidate(n);
 		}
 	}
-	
+
+	/**
+	 * Invoke this method anytime a conduit block is removed from the world
+	 * @param w The world instance for this dimension
+	 * @param dimension The ID number for this dimension
+	 * @param location The position of the block being removed
+	 * @param type The native energy type of the removed conduit block
+	 */
 	public void conduitBlockRemovedEvent(World w, int dimension, BlockPos location, ConduitType type){
 		if(w.isRemote)return; // ignore client-side
 		BlockPos4D coord = new BlockPos4D(dimension, location);
-		FMLLog.info("conduitBlockRemovedEvent at "+coord); // TODO: remove debug code
 		ConduitNetworkManager manager = getConduitNetworkManager(type);
 		for(int i = 0; i < EnumFacing.values().length; i++){
 			EnumFacing face = EnumFacing.values()[i];

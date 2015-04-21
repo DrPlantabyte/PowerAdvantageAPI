@@ -47,12 +47,6 @@ public class FluidDischargeTileEntity extends TileEntitySimpleFluidConsumer{
 	@Override
 	public void powerUpdate(){
 		// server-side
-		FMLLog.info("Discharge: tank currently holds " 
-		+ (getTank().getFluid() == null ? 0 
-				: getTank().getFluidAmount()) 
-		+ " units of " 
-		+ (getTank().getFluid() == null 
-		?"nothing": String.valueOf(getTank().getFluid().getFluid().getName())));// TODO: remove debug code
 		FluidTank tank = getTank();
 		// place fluid block
 		if(tank.getFluidAmount() >= FluidContainerRegistry.BUCKET_VOLUME){

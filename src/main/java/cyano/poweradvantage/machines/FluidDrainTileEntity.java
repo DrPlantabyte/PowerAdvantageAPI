@@ -54,15 +54,6 @@ public class FluidDrainTileEntity extends TileEntitySimpleFluidSource{
 	@Override
 	public void powerUpdate(){
 		// send fluid into pipes
-		FMLLog.info("Drain: tank currently holds " 
-		+ (getTank().getFluid() == null ? 0 
-				: getTank().getFluidAmount()) 
-				+ " units of " + (getTank().getFluid() == null 
-				?"nothing": String.valueOf(
-						getTank()
-						.getFluid()
-						.getFluid().getName()))
-						);// TODO: remove debug code
 		
 		FluidTank tank = getTank();
 		if(tank.getFluidAmount() > 0) tryPushFluid(this.pos.down(), EnumFacing.UP);

@@ -111,10 +111,8 @@ public abstract class TileEntitySimpleFluidConsumer extends FluidPoweredEntity i
 	 * @return A PowerRequest instance indicated how much power you'd like to get
 	 */
 	public PowerRequest getPowerRequest(ConduitType type){
-		FMLLog.info(type+" is availble upon request");// TODO: remove debug code
 		float space = this.getEnergyCapacity() - this.getEnergy(); 
 		if(this.canAcceptType(type) && space > 0){
-			FMLLog.info("Requesting "+ (new PowerRequest(PowerRequest.MEDIUM_PRIORITY,space,this)));// TODO: remove debug code
 			return new PowerRequest(PowerRequest.MEDIUM_PRIORITY,space,this);
 		} else {
 			return PowerRequest.REQUEST_NOTHING;

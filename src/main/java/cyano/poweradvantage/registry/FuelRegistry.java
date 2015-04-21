@@ -10,6 +10,12 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.IFuelHandler;
 
+/**
+ * The fuel registry keeps track of the cooking time for new burnables added by PowerAdvantage. The 
+ * actual registration of these burnables occurs in <code>cyano.poweradvantage.init.Fluels</code>
+ * @author DrCyano
+ *
+ */
 public class FuelRegistry implements IFuelHandler{
 
 	
@@ -45,30 +51,65 @@ public class FuelRegistry implements IFuelHandler{
 	private void registerFuel(ItemLookupReference fuelItem, Number burnTicks){
 		burnMap.put(fuelItem, burnTicks.shortValue());
 	}
-	private void removeFuel(ItemLookupReference fuelItem, Number burnTicks){
+	private void removeFuel(ItemLookupReference fuelItem){
 		burnMap.remove(fuelItem);
 	}
+	/**
+	 * Adds a new burnable fuel to Minecraft
+	 * @param fuelItem The burnable item
+	 * @param burnTicks How many ticks the item burns for (a piece of coal burns for 1600 ticks and 
+	 * a single smelting event in a standard furnace uses 200 ticks).
+	 */
 	public void registerFuel(ItemStack fuelItem, Number burnTicks){
 		registerFuel(new ItemLookupReference(fuelItem),burnTicks);
 	}
+	/**
+	 * Adds a new burnable fuel to Minecraft
+	 * @param fuelItem The burnable item
+	 * @param burnTicks How many ticks the item burns for (a piece of coal burns for 1600 ticks and 
+	 * a single smelting event in a standard furnace uses 200 ticks).
+	 */
 	public void registerFuel(Item fuelItem, Number burnTicks){
 		registerFuel(new ItemLookupReference(fuelItem),burnTicks);
 	}
+	/**
+	 * Adds a new burnable fuel to Minecraft
+	 * @param fuelItem The burnable item
+	 * @param burnTicks How many ticks the item burns for (a piece of coal burns for 1600 ticks and 
+	 * a single smelting event in a standard furnace uses 200 ticks).
+	 */
 	public void registerFuel(Block fuelItem, Number burnTicks){
 		registerFuel(new ItemLookupReference(fuelItem),burnTicks);
 	}
+	/**
+	 * Removes an added burnable fuel from PowerAdvantage
+	 * @param fuelItem The burnable item to be removed
+	 */
 	public void removeFuel(ItemStack fuelItem, Number burnTicks){
-		removeFuel(new ItemLookupReference(fuelItem),burnTicks);
+		removeFuel(new ItemLookupReference(fuelItem));
 	}
+	/**
+	 * Removes an added burnable fuel from PowerAdvantage
+	 * @param fuelItem The burnable item to be removed
+	 */
 	public void removeFuel(Item fuelItem, Number burnTicks){
-		removeFuel(new ItemLookupReference(fuelItem),burnTicks);
+		removeFuel(new ItemLookupReference(fuelItem));
 	}
+	/**
+	 * Removes an added burnable fuel from PowerAdvantage
+	 * @param fuelItem The burnable item to be removed
+	 */
 	public void removeFuel(Block fuelItem, Number burnTicks){
-		removeFuel(new ItemLookupReference(fuelItem),burnTicks);
+		removeFuel(new ItemLookupReference(fuelItem));
 	}
 	
 	
-	
+	/**
+	 * Gets the burn time for an item
+	 * @param item Item to look-up in PowerAdvantage's fuel table
+	 * @return The number of ticks that the item will burn for, or 0 if that item is not registered 
+	 * as burnable in PowerAdvantage (it still could be burnable according to another mod).
+	 */
 	@Override
 	public int getBurnTime(ItemStack item) {
 		// see TileEntityFurnace.getItemBurnTime(...) for reference
