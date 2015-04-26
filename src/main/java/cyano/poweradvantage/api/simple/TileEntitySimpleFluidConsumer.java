@@ -576,7 +576,7 @@ public abstract class TileEntitySimpleFluidConsumer extends FluidPoweredEntity i
 	}
 	
 	/**
-	 * This method is used to restric what types of fluids are allowed in the tank. If you want to 
+	 * This method is used to restrict what types of fluids are allowed in the tank. If you want to 
 	 * store any kind of fluid, just return true, but if you only want to store, for example, lava 
 	 * then return false unless the provided fluid is lava
 	 * @param fluid A fluid that can or cannot go into your tank

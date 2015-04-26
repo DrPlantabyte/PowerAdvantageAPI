@@ -87,4 +87,26 @@ public class BlockConveyorFilter extends GUIBlock{
     protected BlockState createBlockState() {
         return new BlockState(this, new IProperty[] { FACING });
     }
+    
+    
+    @Override
+	public boolean hasComparatorInputOverride() {
+		return true;
+	}
+
+	@Override
+	public int getComparatorInputOverride(World world, BlockPos coord) {
+		TileEntity te = world.getTileEntity(coord);
+		if(te != null && te instanceof TileEntityConveyorFilter){
+			if(((TileEntityConveyorFilter)te).getStackInSlot(0) == null){
+				return 0;
+			} else {
+				if(((TileEntityConveyorFilter)te).matchesFilter(((TileEntityConveyorFilter)te).getStackInSlot(0))){
+					return 15;
+				}
+				return 7;
+			}
+		}
+		return 0;
+	}
 }

@@ -16,6 +16,7 @@ import com.google.common.base.Predicate;
 
 import cyano.poweradvantage.api.GUIBlock;
 import cyano.poweradvantage.init.ItemGroups;
+import cyano.poweradvantage.machines.FluidDrainTileEntity;
 
 public class BlockConveyor extends GUIBlock{
 
@@ -82,5 +83,23 @@ public class BlockConveyor extends GUIBlock{
     protected BlockState createBlockState() {
         return new BlockState(this, new IProperty[] { FACING });
     }
+    
+    @Override
+	public boolean hasComparatorInputOverride() {
+		return true;
+	}
+
+	@Override
+	public int getComparatorInputOverride(World world, BlockPos coord) {
+		TileEntity te = world.getTileEntity(coord);
+		if(te != null && te instanceof TileEntityConveyor){
+			if(((TileEntityConveyor)te).getStackInSlot(0) == null){
+				return 0;
+			} else {
+				return 7;
+			}
+		}
+		return 0;
+	}
     
 }
