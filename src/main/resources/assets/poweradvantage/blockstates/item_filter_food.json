@@ -1,0 +1,8 @@
+{
+    "variants": {
+        "facing=north": { "model": "poweradvantage:item_filter_food"           },
+        "facing=south": { "model": "poweradvantage:item_filter_food", "y": 180 },
+        "facing=west":  { "model": "poweradvantage:item_filter_food", "y": 270 },
+        "facing=east":  { "model": "poweradvantage:item_filter_food", "y": 90  }
+    }
+}

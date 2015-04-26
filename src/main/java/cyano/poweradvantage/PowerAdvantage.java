@@ -206,7 +206,7 @@ public class PowerAdvantage
     /** The display name for this mod */
     public static final String NAME = "Power Advantage";
     /** The version of this mod, in the format major.minor.update */
-    public static final String VERSION = "0.0.6";
+    public static final String VERSION = "0.0.7";
 
     /** if true, example machines will be added to the game */
     @Deprecated // TODO: remove example machines

@@ -11,6 +11,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import cyano.poweradvantage.PowerAdvantage;
+import cyano.poweradvantage.api.GUIBlock;
 import cyano.poweradvantage.registry.MachineGUIRegistry;
 
 public class ExamplePowerMod {
@@ -24,14 +25,16 @@ public class ExamplePowerMod {
 		
 		
 		int rsGen_guiID = MachineGUIRegistry.addGUI(new RedstoneGeneratorGUI());
-		Block rsGen_block = new RedstoneGeneratorBlock(rsGen_guiID,PowerAdvantage.getInstance());
+		GUIBlock rsGen_block = new RedstoneGeneratorBlock();
+		rsGen_block.setGuiID(rsGen_guiID,PowerAdvantage.getInstance());
 		rsGen_block.setUnlocalizedName(PowerAdvantage.MODID+"."+"example_redstone_generator");
 		GameRegistry.registerBlock(rsGen_block,"example_redstone_generator");
 		GameRegistry.registerTileEntity(RedstoneGeneratorTileEntity.class,PowerAdvantage.MODID+"."+"example_redstone_generator");
 		
 
 		int rsFurn_guiID = MachineGUIRegistry.addGUI(new RedstoneFurnaceGUI());
-		Block rsFurn_block = new RedstoneFurnaceBlock(rsFurn_guiID,PowerAdvantage.getInstance());
+		GUIBlock rsFurn_block = new RedstoneFurnaceBlock();
+		rsFurn_block.setGuiID(rsFurn_guiID,PowerAdvantage.getInstance());
 		rsFurn_block.setUnlocalizedName(PowerAdvantage.MODID+"."+"example_redstone_furnace");
 		GameRegistry.registerBlock(rsFurn_block,"example_redstone_furnace");
 		GameRegistry.registerTileEntity(RedstoneFurnaceTileEntity.class,PowerAdvantage.MODID+"."+"example_redstone_furnace");

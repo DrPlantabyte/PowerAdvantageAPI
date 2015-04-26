@@ -19,7 +19,7 @@ public class FluidDrainBlock extends BlockSimpleFluidSource{
 	
 	
 	public FluidDrainBlock() {
-		super(Material.piston, 3f, 0, null);
+		super(Material.piston, 3f);
 		super.setCreativeTab(CreativeTabs.tabDecorations);
 	}
 

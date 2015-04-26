@@ -1,0 +1,10 @@
+{
+    "parent": "poweradvantage:block/conveyor_base",
+    "textures": {
+        "top": "poweradvantage:blocks/item_conveyor_top",
+        "bottom": "poweradvantage:blocks/filter_bottom",
+        "side": "poweradvantage:blocks/filter_side_ore",
+        "end": "poweradvantage:blocks/item_conveyor_end",
+        "rim": "poweradvantage:materials/steel"
+    }
+}

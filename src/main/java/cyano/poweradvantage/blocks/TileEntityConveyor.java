@@ -3,23 +3,30 @@ package cyano.poweradvantage.blocks;
 import java.util.Arrays;
 import java.util.Random;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockChest;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.server.gui.IUpdatePlayerListBox;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityHopper;
+import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IChatComponent;
+import net.minecraft.world.ILockableContainer;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLLog;
+import cyano.poweradvantage.util.InventoryWrapper;
 
 public class TileEntityConveyor extends TileEntity implements IUpdatePlayerListBox, ISidedInventory {
 
-
+	
 	
 	public static String unlocalizedName = TileEntityConveyorFilter.class.getName();
 	
@@ -43,7 +50,6 @@ public class TileEntityConveyor extends TileEntity implements IUpdatePlayerListB
 	
 	@Override
 	public void update() {
-		// TODO testing
 		World w = getWorld();
 		if(w.isRemote) return;
 		if(transferCooldown > 0) transferCooldown--;
@@ -55,43 +61,79 @@ public class TileEntityConveyor extends TileEntity implements IUpdatePlayerListB
 				EnumFacing myDir = dir.getOpposite();
 				EnumFacing theirDir = dir;
 				TileEntity target = w.getTileEntity(getPos().offset(myDir));
-				if(target != null && target instanceof ISidedInventory){
-					ISidedInventory them = (ISidedInventory)target;
-					if(transferItem(them,theirDir,this,myDir)){
-						transferCooldown = transferInvterval;
-						this.markDirty();
+				if(target != null){
+					if( target instanceof IInventory){
+						ISidedInventory them;
+						if(target instanceof  TileEntityChest){
+							// special handling for chests in case of double-chest
+							them = InventoryWrapper.wrap(handleChest((TileEntityChest)target));
+						} else {
+							them = InventoryWrapper.wrap((IInventory)target);
+						}
+						if(transferItem(them,theirDir,this,myDir)){
+							transferCooldown = transferInvterval;
+							this.markDirty();
+						}
 					}
 				}
 			} else {
 				EnumFacing myDir = dir;
 				EnumFacing theirDir = dir.getOpposite();
 				TileEntity target = w.getTileEntity(getPos().offset(myDir));
-				if(target != null && target instanceof ISidedInventory){
-					ISidedInventory them = (ISidedInventory)target;
-					if(transferItem(this,myDir,them,theirDir)){
-						transferCooldown = transferInvterval;
-						this.markDirty();
+				if(target != null) {
+					if( target instanceof IInventory){
+						ISidedInventory them;
+						if(target instanceof  TileEntityChest){
+							// special handling for chests in case of double-chest
+							them = InventoryWrapper.wrap(handleChest((TileEntityChest)target));
+						} else {
+							them = InventoryWrapper.wrap((IInventory)target);
+						}
+						if(transferItem(this,myDir,them,theirDir)){
+							transferCooldown = transferInvterval;
+							this.markDirty();
+						}
 					}
 				}
 			}
 		}
 	}
 	
+	protected boolean isLocked(Object o){
+		return o instanceof ILockableContainer && ((ILockableContainer)o).isLocked();
+	}
+	
+	protected IInventory handleChest(TileEntityChest chest){
+		final Block block = getWorld().getBlockState(chest.getPos()).getBlock();
+        if (block instanceof BlockChest) {
+            return ((BlockChest)block).getLockableContainer(getWorld(), chest.getPos());
+        }
+        return chest;
+	}
+	
 	protected boolean transferItem(ISidedInventory src, EnumFacing srcFace, ISidedInventory dest, EnumFacing destFace){
+		if(isLocked(src) || isLocked(dest)){
+			return false;
+		}
 		int[] srcValidSlots = src.getSlotsForFace(srcFace);
 		for(int i = 0; i < srcValidSlots.length; i++){
 			ItemStack item = src.getStackInSlot(srcValidSlots[i]);
-			if(item != null){
-				int[] destValidSlots = dest.getSlotsForFace(destFace);
-				for(int j = 0; j < destValidSlots.length; j++){
-					if(dest.canInsertItem(destValidSlots[j], item, destFace)){
-						if(dest.getStackInSlot(destValidSlots[j]) == null){
-							dest.setInventorySlotContents(destValidSlots[j], src.decrStackSize(srcValidSlots[i], 1));
-							return true;
-						}else if( dest.getStackInSlot(destValidSlots[j]).stackSize < (dest.getInventoryStackLimit() - 1)){
-							src.decrStackSize(srcValidSlots[i], 1);
-							dest.getStackInSlot(destValidSlots[j]).stackSize++;
-							return true;
+			if(src.canExtractItem(i, item, srcFace)){
+				if(item != null){
+					int[] destValidSlots = dest.getSlotsForFace(destFace);
+					for(int j = 0; j < destValidSlots.length; j++){
+						if(dest.canInsertItem(destValidSlots[j], item, destFace)){
+							ItemStack otherItem = dest.getStackInSlot(destValidSlots[j]);
+							if(otherItem == null){
+								dest.setInventorySlotContents(destValidSlots[j], src.decrStackSize(srcValidSlots[i], 1));
+								return true;
+							}else if( ItemStack.areItemsEqual(item, otherItem)
+									&& otherItem.stackSize < dest.getInventoryStackLimit()
+									&& otherItem.stackSize < otherItem.getItem().getItemStackLimit(otherItem)){
+								src.decrStackSize(srcValidSlots[i], 1);
+								otherItem.stackSize++;
+								return true;
+							}
 						}
 					}
 				}
@@ -100,16 +142,18 @@ public class TileEntityConveyor extends TileEntity implements IUpdatePlayerListB
 		return false;
 	}
 	
+	
+	
 	/**
 	 * Gets the direction that the blockstate is facing
-	 * @return
+	 * @return an EnumfFacing
 	 */
 	public EnumFacing getFacing(){
 		IBlockState state = getWorld().getBlockState(getPos());
-		if(state.getProperties().containsKey("facing")){
-			return (EnumFacing) state.getProperties().get("facing");
+		if(state.getProperties().containsKey(BlockConveyor.FACING)){
+			return (EnumFacing) state.getProperties().get(BlockConveyor.FACING);
 		}else{
-			FMLLog.warning(this.getClass().getName()+".getFacing(): blockstate for block at this position ("+getPos()+") does not have property \"facing\"!");
+			FMLLog.warning(this.getClass().getName()+".getFacing(): blockstate for block at this position ("+getPos()+") does not have property \"BlockConveyor.FACING\"!");
 			return EnumFacing.NORTH;
 		}
 	}
@@ -118,6 +162,59 @@ public class TileEntityConveyor extends TileEntity implements IUpdatePlayerListB
 		return inventory;
 	}
 
+	
+	/**
+     * You must override this method and call super.readFromNBT(...).<br><br>
+     * This method reads data from an NBT data tag (either from a data packet 
+     * or loaded from the Chunk).
+     * @param tagRoot The root of the NBT
+     */
+    @Override
+    public void readFromNBT(final NBTTagCompound tagRoot) {
+        super.readFromNBT(tagRoot);
+        ItemStack[] inventory = this.getInventory();
+        if(inventory != null ){
+	        final NBTTagList nbttaglist = tagRoot.getTagList("Items", 10);
+	        for (int i = 0; i < nbttaglist.tagCount() && i < inventory.length; ++i) {
+	            final NBTTagCompound nbttagcompound1 = nbttaglist.getCompoundTagAt(i);
+	            final byte n = nbttagcompound1.getByte("Slot");
+	            if (n >= 0 && n < inventory.length) {
+	                inventory[n] = ItemStack.loadItemStackFromNBT(nbttagcompound1);
+	            }
+	        }
+        }
+        if (tagRoot.hasKey("CustomName", 8)) {
+            this.customName = tagRoot.getString("CustomName");
+        }
+    }
+    
+    /**
+     * You must override this method and call super.writeToNBT(...).<br><br>
+     * This method writes data to an NBT data tag (either to a data packet 
+     * or saved to the Chunk).
+     * @param tagRoot The root of the NBT
+     */
+    @Override
+    public void writeToNBT(final NBTTagCompound tagRoot) {
+        super.writeToNBT(tagRoot);
+        ItemStack[] inventory = this.getInventory();
+        if(inventory != null ){
+	        final NBTTagList nbttaglist = new NBTTagList();
+	        for (int i = 0; i < inventory.length; ++i) {
+	            if (inventory[i] != null) {
+	                final NBTTagCompound nbttagcompound1 = new NBTTagCompound();
+	                nbttagcompound1.setByte("Slot", (byte)i);
+	                inventory[i].writeToNBT(nbttagcompound1);
+	                nbttaglist.appendTag(nbttagcompound1);
+	            }
+	        }
+	        tagRoot.setTag("Items", nbttaglist);
+        }
+        if (this.hasCustomName()) {
+            tagRoot.setString("CustomName", this.customName);
+        }
+    }
+	
 	///// ISidedInventory METHODS /////
 	@Override
 	public void clear() {

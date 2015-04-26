@@ -64,6 +64,22 @@ public class SimpleMachineGUI implements ITileEntityGUI {
 		}
 	}
 	
+	/**
+	 * Standard constructor for SimpleMachineGUI. You must provide a texture 
+	 * resource location for the GUI background image. The inventory slots are 
+	 * positioned besed on the array of coordinates (as Integer2D objects) 
+	 * passed in to this constructor.
+	 * @param guiImage The location of the texture resource for the GUI
+	 * @param inventorySlotCoordinates List of pixel coordinates (relative to 
+	 * the top-left corner of the GUI image) to draw the inventory slots. If you 
+	 * don't want to show GUI slots, you can provide a null or empty array. It 
+	 * is assumed that the index in this list of coordinates corresponds to the 
+	 * inventory index of the TileEntity's inventory.  
+	 */
+	public SimpleMachineGUI(String guiImage, Integer2D... inventorySlotCoordinates){
+		this(new ResourceLocation(guiImage),inventorySlotCoordinates);
+	}
+	
 	
 
 	/**

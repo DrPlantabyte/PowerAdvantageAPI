@@ -16,7 +16,7 @@ public class TileEntityInventoryFilter extends TileEntityConveyorFilter{
 	public boolean matchesFilter(ItemStack item) {
 		if(item == null) return false;
 		for(int i = 1; i < this.getInventory().length; i++){
-			if(ItemStack.areItemsEqual(this.getInventory()[i], item)){
+			if(this.getInventory()[i] != null && ItemStack.areItemsEqual(this.getInventory()[i], item)){
 				return true;
 			}
 		}

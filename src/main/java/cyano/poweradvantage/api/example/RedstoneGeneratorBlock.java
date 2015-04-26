@@ -12,8 +12,8 @@ import cyano.poweradvantage.api.simple.BlockSimplePowerSource;
 
 public class RedstoneGeneratorBlock extends BlockSimplePowerSource{
 
-	public RedstoneGeneratorBlock(int guiHandlerID, Object ownerOfGUIHandler) {
-		super(Material.piston, 0.5f, new ConduitType("redstone"), guiHandlerID, ownerOfGUIHandler);
+	public RedstoneGeneratorBlock() {
+		super(Material.piston, 0.5f, new ConduitType("redstone"));
 		super.setCreativeTab(CreativeTabs.tabMisc);
 	}
 
