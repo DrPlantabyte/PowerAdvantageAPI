@@ -23,12 +23,12 @@ import cyano.poweradvantage.registry.MachineGUIRegistry;
 
 // TODO: follow the to-do list:
 /* TODO list
- * drain block
- * fluid pipes
+ * drain block ✓
+ * fluid pipes ✓
  * portable tank block
- * item chute
+ * item chute ✓
  * large tank block (distributes load with neighbors)
- * fluid discharge block
+ * fluid discharge block ✓
  * example crusher machine
  * -- SteamAdvantage mod --
  * Coal-Fired Steam Boiler
@@ -206,7 +206,7 @@ public class PowerAdvantage
     /** The display name for this mod */
     public static final String NAME = "Power Advantage";
     /** The version of this mod, in the format major.minor.update */
-    public static final String VERSION = "0.0.7";
+    public static final String VERSION = "0.0.8";
 
     /** if true, example machines will be added to the game */
     @Deprecated // TODO: remove example machines
