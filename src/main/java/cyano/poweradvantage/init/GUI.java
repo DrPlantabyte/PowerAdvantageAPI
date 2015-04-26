@@ -45,7 +45,6 @@ public abstract class GUI {
 		Blocks.item_filter_smelt.setGuiID(MachineGUIRegistry.addGUI(new SimpleMachineGUI(
 				PowerAdvantage.MODID+":textures/gui/container/item_conveyor_smelt.png",
 				Integer2D.fromCoordinates(80,12))),PowerAdvantage.getInstance());
-		// TODO: block GUIs
 		
 		initDone = true;
 	}

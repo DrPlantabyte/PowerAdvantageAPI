@@ -1,5 +1,8 @@
 package cyano.poweradvantage;
 
+import java.util.Locale;
+
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -11,15 +14,14 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import cyano.poweradvantage.api.example.ExamplePowerMod;
+import cyano.poweradvantage.events.BucketHandler;
 import cyano.poweradvantage.registry.FuelRegistry;
 import cyano.poweradvantage.registry.MachineGUIRegistry;
 
 // NOTE: other mods dependant on this one need to add the following to their @Mod annotation:
 // dependencies = "required-after:poweradvantage" 
 
-// TODO: massive rewrite of documentation
 
-// TODO: remove expanded furnace recipes (they are not needed and too complicated)
 
 // TODO: follow the to-do list:
 /* TODO list
@@ -27,7 +29,6 @@ import cyano.poweradvantage.registry.MachineGUIRegistry;
  * fluid pipes ✓
  * portable tank block
  * item chute ✓
- * large tank block (distributes load with neighbors)
  * fluid discharge block ✓
  * example crusher machine
  * -- SteamAdvantage mod --
@@ -38,7 +39,7 @@ import cyano.poweradvantage.registry.MachineGUIRegistry;
  * Steam Powered Blast Furnace (expanded furnace 2x2)
  * Steam Powered Drill
  * Steam Powered Lift (pushes up special lift blocks, like an extendable piston)
- * Steam Powered Assembler (auto-crafter)
+ * Steam Powered Machine Shop (automatable crafter)
  * Musket (slow-loading ranged weapon)
  * Steam Powered Defense Cannon (manual aiming and requires redstone trigger)
  * Oil-Burning Steam Boiler
@@ -146,7 +147,7 @@ import cyano.poweradvantage.registry.MachineGUIRegistry;
  * Quantum Goggles (worn as helmet, lets user see ores and entity through walls and see in the dark)
  * Quantum Leg Enhancements (worn as leggings, bestows fast speed and player can walk up 1-block height change without jumping)
  * Quantum Shoes (slow fall and air jumping, allows for primitive flight)
- * Instant XXX (place on ground to make building instantly appear)
+ * Instant *** (place on ground to make building instantly appear)
  * Instant Camp
  * Instant Farm
  * Instant House
@@ -216,7 +217,11 @@ public class PowerAdvantage
     /** Demo mod content */
     @Deprecated // TODO: remove example machines
     private ExamplePowerMod exampleMod = null;
-    
+    /**
+     * This is the recipe mode set for this mod. Add-on mods may want to adjust their recipes 
+     * accordingly.
+     */
+    public static Enum recipeMode = RecipeMode.NORMAL;
     
     /**
      * Pre-initialization step. Used for initializing objects and reading the 
@@ -229,7 +234,31 @@ public class PowerAdvantage
     	instance = this;
     	Configuration config = new Configuration(event.getSuggestedConfigurationFile());
     	config.load();
-    	
+    	String mode = config.getString("recipe_mode", "options", "NORMAL", "NORMAL, APOCALYPTIC, or TECH_PROGRESSION. \n"
+    			+ "Sets the style of recipes used in your game. \n"
+    			+ "In NORMAL mode, everything needed is craftable from vanilla items and the machines are \n"
+    			+ "available pretty much as soon as the player returns from their first mining expedition. \n"
+    			+ "In APOCALYPTIC mode, some important items are not craftable, but can be found in \n"
+    			+ "treasure chests, requiring the players to pillage for their machines. \n"
+    			+ "In TECH_PROGRESSION mode, important items are very complicated to craft using vanilla \n"
+    			+ "items, but are easy to duplicate once they are made. This gives the players a sense of \n"
+    			+ "invention and rising throught the ages from stone-age to space-age.").toUpperCase(Locale.US);
+    	switch (mode){
+    	case "NORMAL":
+    		recipeMode = RecipeMode.NORMAL;
+    		break;
+
+    	case "APOCALYPTIC":
+    		recipeMode = RecipeMode.APOCALYPTIC;
+    		break;
+
+    	case "TECH_PROGRESSION":
+    		recipeMode = RecipeMode.TECH_PROGRESSION;
+    		break;
+
+    	default:
+    		throw new IllegalArgumentException("'"+mode+"' is not valid for config option 'recipe_mode'. Valid options are: NORMAL, APOCALYPTIC, or TECH_PROGRESSION");
+    	}
     	// demonstration code and examples
     	// TODO: default to false
     	//DEMO_MODE = config.getBoolean("demo", "options", false,
@@ -279,13 +308,16 @@ public class PowerAdvantage
 
 		NetworkRegistry.INSTANCE.registerGuiHandler(PowerAdvantage.getInstance(), MachineGUIRegistry.getInstance());
 		GameRegistry.registerFuelHandler(FuelRegistry.getInstance());
-	
+		
 		cyano.poweradvantage.init.Fuels.init();
 		cyano.poweradvantage.init.Entities.init();
 		cyano.poweradvantage.init.Recipes.init();
 		cyano.poweradvantage.init.Villages.init(); 
 		cyano.poweradvantage.init.GUI.init();
 		cyano.poweradvantage.init.TreasureChests.init();
+		
+		MinecraftForge.EVENT_BUS.register(BucketHandler.getInstance());
+		
 		
     	if(DEMO_MODE)exampleMod.init(event);
     	

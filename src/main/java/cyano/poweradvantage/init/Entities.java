@@ -25,7 +25,6 @@ public abstract class Entities {
 		GameRegistry.registerTileEntity(TileEntityPlantFilter.class, PowerAdvantage.MODID+"."+"item_filter_plant");
 		GameRegistry.registerTileEntity(TileEntitySmeltableFilter.class, PowerAdvantage.MODID+"."+"item_filter_smelt");
 		
-		// TODO: block GUIs
 		
 		initDone = true;
 	}

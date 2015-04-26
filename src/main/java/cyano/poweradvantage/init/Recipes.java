@@ -9,6 +9,12 @@ import cyano.basemetals.registry.CrusherRecipeRegistry;
 
 public abstract class Recipes {
 
+	// TODO: recipes modes:
+	/*
+	 * Normal - can craft all necessary machine parts
+	 * Apocalyptic - must find key parts as treasure in chests
+	 * Tech-progression - making the first key part is very complicated, but once made, key parts can be duplicated fairly easily
+	 */
 	
 	private static boolean initDone = false;
 	public static void init(){

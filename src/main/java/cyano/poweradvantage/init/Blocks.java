@@ -7,14 +7,26 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraftforge.fluids.BlockFluidBase;
+import net.minecraftforge.fluids.BlockFluidClassic;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import cyano.poweradvantage.PowerAdvantage;
 import cyano.poweradvantage.api.GUIBlock;
-import cyano.poweradvantage.blocks.*;
-import cyano.poweradvantage.machines.*;
+import cyano.poweradvantage.blocks.BlockConveyor;
+import cyano.poweradvantage.blocks.BlockConveyorFilter;
+import cyano.poweradvantage.blocks.TileEntityBlockFilter;
+import cyano.poweradvantage.blocks.TileEntityFoodFilter;
+import cyano.poweradvantage.blocks.TileEntityFuelFilter;
+import cyano.poweradvantage.blocks.TileEntityInventoryFilter;
+import cyano.poweradvantage.blocks.TileEntityOreFilter;
+import cyano.poweradvantage.blocks.TileEntityPlantFilter;
+import cyano.poweradvantage.blocks.TileEntitySmeltableFilter;
+import cyano.poweradvantage.machines.CopperPipeBlock;
+import cyano.poweradvantage.machines.FluidDischargeBlock;
+import cyano.poweradvantage.machines.FluidDrainBlock;
 
 public abstract class Blocks {
 	private static final Map<String,Block> allBlocks = new HashMap<>();
@@ -31,11 +43,17 @@ public abstract class Blocks {
 	public static GUIBlock item_filter_plant;
 	public static GUIBlock item_filter_smelt;
 	
+
+	//public static BlockDynamicLiquid crude_oil_flowing;
+	//public static BlockStaticLiquid crude_oil_still;
+	public static BlockFluidBase crude_oil_block;
+	
 	private static boolean initDone = false;
 	public static void init(){
 		if(initDone) return;
 		ItemGroups.init();
 		Fluids.init();
+		cyano.poweradvantage.init.Materials.init();
 		
 		
 		fluid_drain = (GUIBlock)addBlock(new FluidDrainBlock(),"fluid_drain");
@@ -53,6 +71,12 @@ public abstract class Blocks {
 		item_filter_plant = (GUIBlock)addBlock(new BlockConveyorFilter(defaultMachineMaterial,defaultMachineHardness,TileEntityPlantFilter.class),"item_filter_plant");
 		item_filter_smelt = (GUIBlock)addBlock(new BlockConveyorFilter(defaultMachineMaterial,defaultMachineHardness,TileEntitySmeltableFilter.class),"item_filter_smelt");
 
+//		crude_oil_still = (BlockStaticLiquid)addBlock(new CustomBlockStaticLiquid(cyano.poweradvantage.init.Materials.crude_oil).setHardness(100.0f),"crude_oil_still");
+//		crude_oil_flowing = (BlockDynamicLiquid)addBlock(new CustomBlockDynamicLiquid(cyano.poweradvantage.init.Materials.crude_oil).setHardness(100.0f),"crude_oil_flowing");
+		crude_oil_block = new BlockFluidClassic(Fluids.crude_oil,cyano.poweradvantage.init.Materials.crude_oil);
+		crude_oil_block.setUnlocalizedName(PowerAdvantage.MODID+"."+"crude_oil");
+		GameRegistry.registerBlock(crude_oil_block, "crude_oil");
+		
 		initDone = true;
 	}
 	

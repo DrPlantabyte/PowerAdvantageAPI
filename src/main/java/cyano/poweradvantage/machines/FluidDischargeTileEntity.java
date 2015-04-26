@@ -117,19 +117,7 @@ public class FluidDischargeTileEntity extends TileEntitySimpleFluidConsumer{
 	
 	
 	
-	private String mapToString(ImmutableMap properties) {
-		// TODO delete this method
-		StringBuilder sb = new StringBuilder();
-		sb.append("{");
-		boolean first = true;
-		for(Object key : properties.keySet()){
-			if(!first)sb.append(",");
-			sb.append(String.valueOf(key)).append("=").append(String.valueOf(properties.get(key)));
-			first = false;
-		}
-		sb.append("}");
-		return sb.toString();
-	}
+	
 	public FluidStack getFluid(){
 		if(tank.getFluidAmount() <= 0) return null;
 		return tank.getFluid();
@@ -196,7 +184,6 @@ public class FluidDischargeTileEntity extends TileEntitySimpleFluidConsumer{
 	protected ItemStack[] getInventory() {
 		return new ItemStack[0];
 	}
-	// TODO: clean-up data field stuff
 
 	
 
@@ -204,6 +191,10 @@ public class FluidDischargeTileEntity extends TileEntitySimpleFluidConsumer{
 	@Override
 	public boolean canAccept(Fluid f) {
 		return true;
+	}
+
+	public int getRedstoneOutput() {
+		return this.getTank().getFluidAmount() * 15 / this.getTank().getCapacity();
 	}
 	
 	

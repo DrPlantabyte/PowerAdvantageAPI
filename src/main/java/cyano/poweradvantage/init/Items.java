@@ -4,22 +4,26 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import cyano.basemetals.BaseMetals;
-import cyano.poweradvantage.PowerAdvantage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBucket;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
+import cyano.poweradvantage.PowerAdvantage;
+import cyano.poweradvantage.events.BucketHandler;
 
 public abstract class Items {
 
 	public static Item starch;
 	public static Item bioplastic_ingot;
+	public static ItemBucket bucket_crude_oil;
 	public static final Map<String,Item> allItems = new HashMap<>();
 	
 	private static boolean initDone = false;
@@ -30,6 +34,9 @@ public abstract class Items {
 
 		starch = addItem("starch", new Item().setCreativeTab(CreativeTabs.tabMaterials),"starch");
 		bioplastic_ingot = addItem("bioplastic_ingot", new Item().setCreativeTab(CreativeTabs.tabMaterials),"plastic","ingotPlastic");
+		bucket_crude_oil = (ItemBucket)addItem("bucket_crude_oil",new ItemBucket(Blocks.crude_oil_block),"bucketOil","bucketCrudeOil");
+		FluidContainerRegistry.registerFluidContainer(Fluids.crude_oil, new ItemStack(bucket_crude_oil), new ItemStack(net.minecraft.init.Items.bucket));
+		BucketHandler.getInstance().buckets.put(Blocks.crude_oil_block, bucket_crude_oil);
 		
 		//OreDictionary.initVanillaEntries();
 		initDone = true;

@@ -1,5 +1,7 @@
 package cyano.poweradvantage.init;
 
+import net.minecraft.block.BlockDynamicLiquid;
+import net.minecraft.block.BlockStaticLiquid;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import cyano.poweradvantage.api.ConduitType;
@@ -15,17 +17,22 @@ public abstract class Fluids {
 	private static ReversibleMap<Fluid,ConduitType> fluidConduitLUT= new ReversibleHashMap<>(); 
 	public static ConduitType fluidConduit_water;
 	public static ConduitType fluidConduit_lava;
+
+	public static Fluid crude_oil;
 	
 	public static void init(){
 		if(initDone) return;
+		
+		cyano.poweradvantage.init.Materials.init();
 
 		fluidConduit_water = new ConduitType("water");
 		fluidConduit_lava = new ConduitType("lava");
 		fluidConduitLUT.put(FluidRegistry.WATER, fluidConduit_water);
 		fluidConduitLUT.put(FluidRegistry.LAVA, fluidConduit_lava);
 		
-		// TODO: add crude oil (and make crude oil cause slowness upon exposure)
-		// TODO: add refined oil (made by distillation of crude oil)
+		crude_oil = new Fluid("crude_oil").setDensity(850).setViscosity(6000);
+		FluidRegistry.registerFluid(crude_oil);
+		// TODO: (when Forge fluids render properly) add crude oil spawning and refined oil fluid
 		
 		initDone = true;
 	}

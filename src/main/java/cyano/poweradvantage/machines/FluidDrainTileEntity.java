@@ -41,7 +41,6 @@ public class FluidDrainTileEntity extends TileEntitySimpleFluidSource{
 
 	public FluidDrainTileEntity() {
 		super( FluidContainerRegistry.BUCKET_VOLUME, FluidDrainTileEntity.class.getName());
-		// TODO fix fluid handling blocks/entities
 	}
 
 	
@@ -158,19 +157,7 @@ public class FluidDrainTileEntity extends TileEntitySimpleFluidSource{
 	
 	
 	
-	private String mapToString(ImmutableMap properties) {
-		// TODO delete this method
-		StringBuilder sb = new StringBuilder();
-		sb.append("{");
-		boolean first = true;
-		for(Object key : properties.keySet()){
-			if(!first)sb.append(",");
-			sb.append(String.valueOf(key)).append("=").append(String.valueOf(properties.get(key)));
-			first = false;
-		}
-		sb.append("}");
-		return sb.toString();
-	}
+	
 	public FluidStack getFluid(){
 		if(getTank().getFluidAmount() <= 0) return null;
 		return getTank().getFluid();
@@ -207,6 +194,13 @@ public class FluidDrainTileEntity extends TileEntitySimpleFluidSource{
 	@Override
 	public void tickUpdate(boolean isServerWorld) {
 		// do nothing
+	}
+
+
+
+
+	public int getRedstoneOutput() {
+		return this.getTank().getFluidAmount() * 15 / this.getTank().getCapacity();
 	}
 
 

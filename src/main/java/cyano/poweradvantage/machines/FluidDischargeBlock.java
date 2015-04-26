@@ -16,19 +16,17 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import cyano.poweradvantage.api.PoweredEntity;
 import cyano.poweradvantage.api.simple.BlockSimpleFluidConsumer;
 import cyano.poweradvantage.api.simple.TileEntitySimplePowerSource;
+import cyano.poweradvantage.init.ItemGroups;
 
 public class FluidDischargeBlock extends BlockSimpleFluidConsumer{
-// TODO: add new creative tab
 	
-	// TODO: adjust item model so that the bottom is visible
 	public FluidDischargeBlock() {
 		super(Material.piston, 3f);
-		super.setCreativeTab(CreativeTabs.tabDecorations);
+		super.setCreativeTab(ItemGroups.tab_powerAdvantage);
 	}
 
 	@Override
 	public PoweredEntity createNewTileEntity(World w, int m) {
-		// TODO: fix unlocalized name
 		return new FluidDischargeTileEntity();
 	}
 	
@@ -54,8 +52,6 @@ public class FluidDischargeBlock extends BlockSimpleFluidConsumer{
         super.breakBlock(world, coord, bs);
     }
     
-    // TODO: redstone output
-    
     /**
      * (Client-only) Override of default block behavior
      */
@@ -67,11 +63,15 @@ public class FluidDischargeBlock extends BlockSimpleFluidConsumer{
 
 	@Override
 	public boolean hasComparatorInputOverride() {
-		return false;
+		return true;
 	}
 
 	@Override
 	public int getComparatorInputOverride(World world, BlockPos coord) {
+		TileEntity te = world.getTileEntity(coord);
+		if(te != null && te instanceof FluidDischargeTileEntity){
+			return ((FluidDischargeTileEntity)te).getRedstoneOutput();
+		}
 		return 0;
 	}
 }

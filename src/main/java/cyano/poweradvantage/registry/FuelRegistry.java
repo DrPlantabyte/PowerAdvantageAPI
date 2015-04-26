@@ -45,8 +45,6 @@ public class FuelRegistry implements IFuelHandler{
 		return instance;
 	}
 	
-	// TODO: documentation
-	
 	
 	private void registerFuel(ItemLookupReference fuelItem, Number burnTicks){
 		burnMap.put(fuelItem, burnTicks.shortValue());
