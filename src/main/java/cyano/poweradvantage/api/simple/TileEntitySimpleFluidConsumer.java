@@ -571,7 +571,7 @@ public abstract class TileEntitySimpleFluidConsumer extends FluidPoweredEntity i
 	 * @return an instance of FluidTank
 	 */
 	@Override
-	protected FluidTank getTank() {
+	public FluidTank getTank() {
 		return tank;
 	}
 	

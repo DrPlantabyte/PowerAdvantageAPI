@@ -47,7 +47,7 @@ public abstract class FluidPoweredEntity extends PoweredEntity implements IFluid
 	 * Gets the FluidTank instance used to handle fluids
 	 * @return An instance of FluidTank
 	 */
-	protected abstract FluidTank getTank();
+	public abstract FluidTank getTank();
 	
 	/**
 	 * Handles data saving and loading

@@ -23,11 +23,11 @@ public class StorageTankTileEntity  extends TileEntitySimpleFluidSource{
 	@Override
 	public FluidRequest getFluidRequest(Fluid offer) {
 		if(getTank().getFluidAmount() > 0 && offer.equals(getTank().getFluid().getFluid())){
-			return new FluidRequest(FluidRequest.LAST_PRIORITY,
+			return new FluidRequest(FluidRequest.BACKUP_PRIORITY,
 					(getTank().getCapacity() - getTank().getFluidAmount()),
 					this);
 		} else if(getTank().getFluidAmount() <= 0 && canAccept(offer)){
-			return new FluidRequest(FluidRequest.MEDIUM_PRIORITY,
+			return new FluidRequest(FluidRequest.BACKUP_PRIORITY,
 					getTank().getCapacity(),
 					this);
 		} else {

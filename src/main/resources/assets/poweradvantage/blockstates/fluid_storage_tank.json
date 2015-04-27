@@ -1,0 +1,8 @@
+{
+    "variants": {
+        "facing=east": { "model": "poweradvantage:fluid_storage_tank", "y": 90 },
+        "facing=north": { "model": "poweradvantage:fluid_storage_tank" },
+        "facing=south": { "model": "poweradvantage:fluid_storage_tank", "y": 180 },
+        "facing=west": { "model": "poweradvantage:fluid_storage_tank", "y": 270 }
+    }
+}

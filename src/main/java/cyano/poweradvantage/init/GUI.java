@@ -3,8 +3,7 @@ package cyano.poweradvantage.init;
 import net.minecraft.util.ResourceLocation;
 import cyano.poweradvantage.PowerAdvantage;
 import cyano.poweradvantage.api.simple.SimpleMachineGUI;
-import cyano.poweradvantage.gui.FluidDischargeGUI;
-import cyano.poweradvantage.gui.FluidDrainGUI;
+import cyano.poweradvantage.gui.FluidTankGUI;
 import cyano.poweradvantage.math.Integer2D;
 import cyano.poweradvantage.registry.MachineGUIRegistry;
 
@@ -17,9 +16,11 @@ public abstract class GUI {
 		
 		Blocks.init();
 
-		Blocks.fluid_drain.setGuiID(MachineGUIRegistry.addGUI(new FluidDrainGUI()),PowerAdvantage.getInstance());
+		Blocks.fluid_drain.setGuiID(MachineGUIRegistry.addGUI(new FluidTankGUI(new ResourceLocation(PowerAdvantage.MODID+":"+"textures/gui/container/fluid_drain_gui.png"))),PowerAdvantage.getInstance());
 		
-		Blocks.fluid_discharge.setGuiID(MachineGUIRegistry.addGUI(new FluidDischargeGUI()),PowerAdvantage.getInstance());
+		Blocks.fluid_discharge.setGuiID(MachineGUIRegistry.addGUI(new FluidTankGUI(new ResourceLocation(PowerAdvantage.MODID+":"+"textures/gui/container/fluid_discharge_gui.png"))),PowerAdvantage.getInstance());
+
+		Blocks.storage_tank.setGuiID(MachineGUIRegistry.addGUI(new FluidTankGUI(new ResourceLocation(PowerAdvantage.MODID+":"+"textures/gui/container/fluid_storage_tank_gui.png"))),PowerAdvantage.getInstance());
 
 		Blocks.item_conveyor.setGuiID(MachineGUIRegistry.addGUI(new SimpleMachineGUI(
 				PowerAdvantage.MODID+":textures/gui/container/item_conveyor.png",

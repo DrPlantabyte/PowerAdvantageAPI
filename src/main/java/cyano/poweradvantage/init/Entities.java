@@ -16,6 +16,7 @@ public abstract class Entities {
 
 		GameRegistry.registerTileEntity(FluidDrainTileEntity.class,PowerAdvantage.MODID+".tileentity."+"fluid_drain");
 		GameRegistry.registerTileEntity(FluidDischargeTileEntity.class,PowerAdvantage.MODID+".tileentity."+"fluid_discharge");
+		GameRegistry.registerTileEntity(StorageTankTileEntity.class,PowerAdvantage.MODID+".tileentity."+"fluid_storage_tank");
 		GameRegistry.registerTileEntity(TileEntityConveyor.class, PowerAdvantage.MODID+"."+"item_conveyor");
 		GameRegistry.registerTileEntity(TileEntityBlockFilter.class, PowerAdvantage.MODID+"."+"item_filter_block");
 		GameRegistry.registerTileEntity(TileEntityFoodFilter.class, PowerAdvantage.MODID+"."+"item_filter_food");

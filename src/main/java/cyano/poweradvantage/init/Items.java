@@ -6,7 +6,6 @@ import java.util.Set;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBucket;
 import net.minecraft.item.ItemStack;
@@ -18,11 +17,14 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
 import cyano.poweradvantage.PowerAdvantage;
 import cyano.poweradvantage.events.BucketHandler;
+import cyano.poweradvantage.items.StorageTankItem;
 
 public abstract class Items {
 
 	public static Item starch;
 	public static Item bioplastic_ingot;
+//	public static StorageTankItem fluid_storage_tank_item; // TODO: get rid of unused json, code,  and classes
+	
 	public static ItemBucket bucket_crude_oil;
 	public static final Map<String,Item> allItems = new HashMap<>();
 	
@@ -31,9 +33,12 @@ public abstract class Items {
 		if(initDone) return;
 		Blocks.init();
 		Fluids.init();
-
-		starch = addItem("starch", new Item().setCreativeTab(CreativeTabs.tabMaterials),"starch");
-		bioplastic_ingot = addItem("bioplastic_ingot", new Item().setCreativeTab(CreativeTabs.tabMaterials),"plastic","ingotPlastic");
+// TODO: change copper pipes to iron pipes
+		starch = addItem("starch", new Item(),"starch");
+		bioplastic_ingot = addItem("bioplastic_ingot", new Item(),"plastic","ingotPlastic");
+	//	fluid_storage_tank_item = (StorageTankItem)addItem("fluid_storage_tank_item", new StorageTankItem());
+		
+		
 		bucket_crude_oil = (ItemBucket)addItem("bucket_crude_oil",new ItemBucket(Blocks.crude_oil_block),"bucketOil","bucketCrudeOil");
 		FluidContainerRegistry.registerFluidContainer(Fluids.crude_oil, new ItemStack(bucket_crude_oil), new ItemStack(net.minecraft.init.Items.bucket));
 		BucketHandler.getInstance().buckets.put(Blocks.crude_oil_block, bucket_crude_oil);
@@ -52,6 +57,7 @@ public abstract class Items {
 	private static Item addItem(String unlocalizedName, Item i){
 		i.setUnlocalizedName(PowerAdvantage.MODID+"."+unlocalizedName);
 		GameRegistry.registerItem(i, unlocalizedName);
+		i.setCreativeTab(ItemGroups.tab_powerAdvantage);
 		allItems.put(unlocalizedName, i);
 		return i;
 	}

@@ -27,12 +27,14 @@ import cyano.poweradvantage.blocks.TileEntitySmeltableFilter;
 import cyano.poweradvantage.machines.CopperPipeBlock;
 import cyano.poweradvantage.machines.FluidDischargeBlock;
 import cyano.poweradvantage.machines.FluidDrainBlock;
+import cyano.poweradvantage.machines.StorageTankBlock;
 
 public abstract class Blocks {
 	private static final Map<String,Block> allBlocks = new HashMap<>();
 
 	public static GUIBlock fluid_drain; 
 	public static GUIBlock fluid_discharge; 
+	public static GUIBlock storage_tank;
 	public static Block copper_pipe;
 	public static GUIBlock item_conveyor;
 	public static GUIBlock item_filter_block;
@@ -58,6 +60,7 @@ public abstract class Blocks {
 		
 		fluid_drain = (GUIBlock)addBlock(new FluidDrainBlock(),"fluid_drain");
 		fluid_discharge = (GUIBlock)addBlock(new FluidDischargeBlock(),"fluid_discharge");
+		storage_tank = (GUIBlock)addBlock(new StorageTankBlock(),"fluid_storage_tank");
 		copper_pipe = addBlock(new CopperPipeBlock(),"copper_pipe");
 		
 		final float defaultMachineHardness = 0.75f;
