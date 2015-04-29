@@ -9,4 +9,4 @@ Because these classes are not part of the API, they are not well documented. The
 for the eyes of the mod author(s).
 </p>
 */
-package cyano.poweradvantage.blocks;
+package cyano.poweradvantage.machines.conveyors;

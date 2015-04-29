@@ -1,11 +1,17 @@
-package cyano.poweradvantage.machines;
+package cyano.poweradvantage.machines.fluidmachines;
+
+import java.util.List;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.common.FMLLog;
+import cyano.poweradvantage.api.ConduitType;
+import cyano.poweradvantage.api.PowerRequest;
 import cyano.poweradvantage.api.fluid.FluidRequest;
 import cyano.poweradvantage.api.simple.TileEntitySimpleFluidSource;
+import cyano.poweradvantage.init.Fluids;
 
 public class StorageTankTileEntity  extends TileEntitySimpleFluidSource{
 
@@ -23,17 +29,30 @@ public class StorageTankTileEntity  extends TileEntitySimpleFluidSource{
 	@Override
 	public FluidRequest getFluidRequest(Fluid offer) {
 		if(getTank().getFluidAmount() > 0 && offer.equals(getTank().getFluid().getFluid())){
-			return new FluidRequest(FluidRequest.BACKUP_PRIORITY,
+			FluidRequest req = new FluidRequest(FluidRequest.BACKUP_PRIORITY,
 					(getTank().getCapacity() - getTank().getFluidAmount()),
 					this);
+			return req;
 		} else if(getTank().getFluidAmount() <= 0 && canAccept(offer)){
-			return new FluidRequest(FluidRequest.BACKUP_PRIORITY,
+			FluidRequest req = new FluidRequest(FluidRequest.BACKUP_PRIORITY,
 					getTank().getCapacity(),
 					this);
+			return req;
 		} else {
 			return FluidRequest.REQUEST_NOTHING;
 		}
 	}
+	
+	 /**
+     * Specifies the minimum priority of power sinks whose requests for power will be filled. Power 
+     * storage tile entities should override this method and return 
+     * <code>PowerRequest.BACKUP_PRIORITY+1</code> to avoid needlessly transferring power between 
+     * storage devices.
+     * @return The lowest priority of power request that will be filled.
+     */
+    protected byte getMinimumSinkPriority(){
+    	return PowerRequest.BACKUP_PRIORITY+1;
+    }
 	
 	/**
 	 * This method is used to restrict what types of fluids are allowed in the tank. If you want to 
@@ -68,4 +87,22 @@ public class StorageTankTileEntity  extends TileEntitySimpleFluidSource{
 	public int getRedstoneOutput() {
 		return this.getTank().getFluidAmount() * 15 / this.getTank().getCapacity();
 	}
+	
+	/**
+	 * Determines whether this block/entity should receive energy 
+	 * @return true if this block/entity should receive energy
+	 */
+	@Override
+	public boolean isPowerSink(){
+		return true;
+	}
+	/**
+	 * Determines whether this block/entity can provide energy 
+	 * @return true if this block/entity can provide energy
+	 */
+	@Override
+	public boolean isPowerSource(){
+		return true;
+	}
+
 }

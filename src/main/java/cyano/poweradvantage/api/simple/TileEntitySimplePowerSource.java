@@ -166,18 +166,32 @@ public abstract class TileEntitySimplePowerSource extends PoweredEntity implemen
 		if(isEmpty)return;
 		float availableEnergy = this.getEnergy();
 		ConduitType type = this.getType();
-		this.subtractEnergy(this.transmitPowerToConsumers(availableEnergy, type),type);
+		this.subtractEnergy(this.transmitPowerToConsumers(availableEnergy, type, getMinimumSinkPriority()),type);
 	}
+    
+    /**
+     * Specifies the minimum priority of power sinks whose requests for power will be filled. Power 
+     * storage tile entities should override this method and return 
+     * <code>PowerRequest.BACKUP_PRIORITY+1</code> to avoid needlessly transferring power between 
+     * storage devices.
+     * @return The lowest priority of power request that will be filled.
+     */
+    protected byte getMinimumSinkPriority(){
+    	return PowerRequest.LAST_PRIORITY;
+    }
     /**
      * Sends the provided energy out to all connected machines requesting energy.
      * @param availableEnergy Amount of energy to send out (max)
      * @param powerType Type of energy being sent
+     * @param minimumPriority The lowest priority of power request that will be filled.
      * @return The amount of energy that was consumed by the requests
      */
-    protected float transmitPowerToConsumers(final float availableEnergy, ConduitType powerType){
+    protected float transmitPowerToConsumers(final float availableEnergy, ConduitType powerType, byte minimumPriority){
     	List<PowerRequest> requests = this.getRequestsForPower(type);
     	float e = availableEnergy;
     	for(PowerRequest req : requests){
+    		if(req.entity == this) continue;
+    		if(req.priority < minimumPriority) break;
     		if(req.amount <= 0) continue;
     		if(req.amount < e){
     			e -= req.entity.addEnergy(req.amount,powerType);

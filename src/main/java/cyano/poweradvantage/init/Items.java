@@ -17,7 +17,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
 import cyano.poweradvantage.PowerAdvantage;
 import cyano.poweradvantage.events.BucketHandler;
-import cyano.poweradvantage.items.StorageTankItem;
 
 public abstract class Items {
 

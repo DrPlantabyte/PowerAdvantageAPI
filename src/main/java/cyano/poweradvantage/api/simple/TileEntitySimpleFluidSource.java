@@ -18,6 +18,7 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
+import net.minecraftforge.fml.common.FMLLog;
 import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.api.PowerRequest;
 import cyano.poweradvantage.api.fluid.FluidPoweredEntity;
@@ -192,7 +193,7 @@ public abstract class TileEntitySimpleFluidSource extends FluidPoweredEntity imp
     @Override
 	public void powerUpdate() {
 		if(getTank().getFluidAmount() > 0){
-			this.getTank().drain(this.transmitFluidToConsumers(getTank().getFluid()),true);
+			this.getTank().drain(this.transmitFluidToConsumers(getTank().getFluid(),getMinimumSinkPriority()),true);
 		}
 		if(this.getTank().getFluidAmount() != oldLevel){
 			oldLevel = this.getTank().getFluidAmount();
@@ -200,16 +201,29 @@ public abstract class TileEntitySimpleFluidSource extends FluidPoweredEntity imp
 		}
 	}
     /**
+     * Specifies the minimum priority of power sinks whose requests for power will be filled. Power 
+     * storage tile entities should override this method and return 
+     * <code>PowerRequest.BACKUP_PRIORITY+1</code> to avoid needlessly transferring power between 
+     * storage devices.
+     * @return The lowest priority of power request that will be filled.
+     */
+    protected byte getMinimumSinkPriority(){
+    	return PowerRequest.LAST_PRIORITY;
+    }
+    /**
      * This class distributes fluids to connected fluid consumers using the standard power network 
      * registry.
      * @param available The available fluid to distribute
+     * @param minumimPriority The lowest priority of power request that will be filled.
      * @return How much fluid was sent out
      */
-    protected int transmitFluidToConsumers(FluidStack available){
-    	ConduitType type = Fluids.fluidToConduitType(available.getFluid());
+    protected int transmitFluidToConsumers(FluidStack available, byte minumimPriority){
+		ConduitType type = Fluids.fluidToConduitType(available.getFluid());
     	List<PowerRequest> requests = this.getRequestsForPower(type);
     	int bucket = available.amount;
     	for(PowerRequest req : requests){
+    		if(req.entity == this) continue;
+    		if(req.priority < minumimPriority)break; // relies on list being sorted properly
     		if(req.amount <= 0)continue;
     		if(req.amount < bucket){
     			bucket -= req.entity.addEnergy(req.amount,type);
@@ -231,8 +245,14 @@ public abstract class TileEntitySimpleFluidSource extends FluidPoweredEntity imp
 	 * @return A PowerRequest instance indicated how much power you'd like to get
 	 */
 	public PowerRequest getPowerRequest(ConduitType type){
-		return FluidRequest.REQUEST_NOTHING;
+		float space = this.getEnergyCapacity() - this.getEnergy(); 
+		if(this.canAcceptType(type) && space > 0){
+			return new PowerRequest(PowerRequest.MEDIUM_PRIORITY,space,this);
+		} else {
+			return PowerRequest.REQUEST_NOTHING;
+		}
 	}
+    
     
     /**
      * You must override this method and call super.readFromNBT(...).<br><br>

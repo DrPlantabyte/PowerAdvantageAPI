@@ -1,4 +1,4 @@
-package cyano.poweradvantage.blocks;
+package cyano.poweradvantage.machines.conveyors;
 
 import cyano.poweradvantage.util.InventoryWrapper;
 import net.minecraft.block.state.IBlockState;

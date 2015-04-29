@@ -16,6 +16,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -26,6 +27,7 @@ import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.api.GUIBlock;
 import cyano.poweradvantage.api.ITypedConduit;
 import cyano.poweradvantage.api.PoweredEntity;
+import cyano.poweradvantage.conduitnetwork.ConduitRegistry;
 /**
  * This block class provides all of the standard code for creating a machine 
  * block with an inventory and user interface that receives power from connected 
@@ -61,7 +63,30 @@ public abstract class BlockSimplePowerConsumer  extends GUIBlock implements ITyp
 		this.type = energyType;
     	super.setHardness(hardness);
 	}
-	
+	 
+	/**
+	 * Override of default block behavior
+	 */
+	@Override
+	public void onBlockAdded(final World world, final BlockPos coord, final IBlockState state) {
+		this.setDefaultFacing(world, coord, state);
+		ConduitRegistry.getInstance().conduitBlockPlacedEvent(world, world.provider.getDimensionId(), coord, getType());
+	}
+	/**
+	 * This method is called when the block is removed from the world by an entity.
+	 */
+	@Override
+	public void onBlockDestroyedByPlayer(World w, BlockPos coord, IBlockState state){
+		super.onBlockDestroyedByPlayer(w, coord, state);
+		ConduitRegistry.getInstance().conduitBlockRemovedEvent(w, w.provider.getDimensionId(), coord, getType());
+	}
+	/**
+	 * This method is called when the block is destroyed by an explosion.
+	 */
+	@Override
+	public void onBlockDestroyedByExplosion(World w, BlockPos coord, Explosion boom){
+		super.onBlockDestroyedByExplosion(w, coord, boom);
+	}
 	/**
 	 * Creates a TileEntity for this block when the block is placed into the 
 	 * world.
@@ -123,15 +148,8 @@ public abstract class BlockSimplePowerConsumer  extends GUIBlock implements ITyp
     public Item getItemDropped(final IBlockState state, final Random prng, final int i3) {
         return Item.getItemFromBlock(this);
     }
-    
-   /**
-    * Override of default block behavior
-    */
-   @Override
-   public void onBlockAdded(final World world, final BlockPos coord, final IBlockState state) {
-	   this.setDefaultFacing(world, coord, state);
-   }
-    
+   
+
 	/**
 	 * Creates the blockstate of this block when it is placed in the world
 	 */

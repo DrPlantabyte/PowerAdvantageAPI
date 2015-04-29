@@ -1,4 +1,4 @@
-package cyano.poweradvantage.blocks;
+package cyano.poweradvantage.machines.conveyors;
 
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
@@ -16,7 +16,7 @@ import com.google.common.base.Predicate;
 
 import cyano.poweradvantage.api.GUIBlock;
 import cyano.poweradvantage.init.ItemGroups;
-import cyano.poweradvantage.machines.FluidDrainTileEntity;
+import cyano.poweradvantage.machines.fluidmachines.FluidDrainTileEntity;
 
 public class BlockConveyor extends GUIBlock{
 

@@ -15,19 +15,19 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import cyano.poweradvantage.PowerAdvantage;
 import cyano.poweradvantage.api.GUIBlock;
-import cyano.poweradvantage.blocks.BlockConveyor;
-import cyano.poweradvantage.blocks.BlockConveyorFilter;
-import cyano.poweradvantage.blocks.TileEntityBlockFilter;
-import cyano.poweradvantage.blocks.TileEntityFoodFilter;
-import cyano.poweradvantage.blocks.TileEntityFuelFilter;
-import cyano.poweradvantage.blocks.TileEntityInventoryFilter;
-import cyano.poweradvantage.blocks.TileEntityOreFilter;
-import cyano.poweradvantage.blocks.TileEntityPlantFilter;
-import cyano.poweradvantage.blocks.TileEntitySmeltableFilter;
-import cyano.poweradvantage.machines.CopperPipeBlock;
-import cyano.poweradvantage.machines.FluidDischargeBlock;
-import cyano.poweradvantage.machines.FluidDrainBlock;
-import cyano.poweradvantage.machines.StorageTankBlock;
+import cyano.poweradvantage.machines.conveyors.BlockConveyor;
+import cyano.poweradvantage.machines.conveyors.BlockConveyorFilter;
+import cyano.poweradvantage.machines.conveyors.TileEntityBlockFilter;
+import cyano.poweradvantage.machines.conveyors.TileEntityFoodFilter;
+import cyano.poweradvantage.machines.conveyors.TileEntityFuelFilter;
+import cyano.poweradvantage.machines.conveyors.TileEntityInventoryFilter;
+import cyano.poweradvantage.machines.conveyors.TileEntityOreFilter;
+import cyano.poweradvantage.machines.conveyors.TileEntityPlantFilter;
+import cyano.poweradvantage.machines.conveyors.TileEntitySmeltableFilter;
+import cyano.poweradvantage.machines.fluidmachines.FluidPipeBlock;
+import cyano.poweradvantage.machines.fluidmachines.FluidDischargeBlock;
+import cyano.poweradvantage.machines.fluidmachines.FluidDrainBlock;
+import cyano.poweradvantage.machines.fluidmachines.StorageTankBlock;
 
 public abstract class Blocks {
 	private static final Map<String,Block> allBlocks = new HashMap<>();
@@ -61,7 +61,7 @@ public abstract class Blocks {
 		fluid_drain = (GUIBlock)addBlock(new FluidDrainBlock(),"fluid_drain");
 		fluid_discharge = (GUIBlock)addBlock(new FluidDischargeBlock(),"fluid_discharge");
 		storage_tank = (GUIBlock)addBlock(new StorageTankBlock(),"fluid_storage_tank");
-		copper_pipe = addBlock(new CopperPipeBlock(),"copper_pipe");
+		copper_pipe = addBlock(new FluidPipeBlock(),"copper_pipe");
 		
 		final float defaultMachineHardness = 0.75f;
 		final Material defaultMachineMaterial = Material.piston;

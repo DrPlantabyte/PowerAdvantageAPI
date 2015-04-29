@@ -1,4 +1,4 @@
-package cyano.poweradvantage.blocks;
+package cyano.poweradvantage.machines.conveyors;
 
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;

@@ -1,4 +1,4 @@
-package cyano.poweradvantage.machines;
+package cyano.poweradvantage.machines.fluidmachines;
 
 import java.util.Set;
 
@@ -7,10 +7,10 @@ import net.minecraft.creativetab.CreativeTabs;
 import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.api.simple.BlockSimpleFluidConduit;
 
-public class CopperPipeBlock extends BlockSimpleFluidConduit{
+public class FluidPipeBlock extends BlockSimpleFluidConduit{
 
-	public CopperPipeBlock() {
-		super(Material.piston, cyano.basemetals.init.Materials.copper.getMetalBlockHardness(), 3f/16f);
+	public FluidPipeBlock() {
+		super(Material.piston, 0.75f, 3f/16f);
 		super.setCreativeTab(CreativeTabs.tabDecorations);
 	}
 
