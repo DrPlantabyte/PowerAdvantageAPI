@@ -1,5 +1,5 @@
 {
-    "parent": "poweradvantage:block/copper_pipe_ns",
+    "parent": "poweradvantage:block/fluid_pipe_ns",
     "ambientocclusion": false,
     "display": {
         "thirdperson": {

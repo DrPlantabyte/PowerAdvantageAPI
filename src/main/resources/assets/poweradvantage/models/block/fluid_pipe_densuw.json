@@ -1,6 +1,6 @@
 {
     "parent": "poweradvantage:block/pipe3_densuw",
     "textures": {
-        "texture": "poweradvantage:blocks/copper_pipe"
+        "texture": "poweradvantage:blocks/fluid_pipe"
     }
 }

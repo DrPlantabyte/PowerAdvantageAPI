@@ -22,17 +22,19 @@ public abstract class Items {
 
 	public static Item starch;
 	public static Item bioplastic_ingot;
-//	public static StorageTankItem fluid_storage_tank_item; // TODO: get rid of unused json, code,  and classes
+	// TODO: get rid of unused json, code,  and classes
 	
 	public static ItemBucket bucket_crude_oil;
 	public static final Map<String,Item> allItems = new HashMap<>();
+	
+	// TODO: add sprocket item
 	
 	private static boolean initDone = false;
 	public static void init(){
 		if(initDone) return;
 		Blocks.init();
 		Fluids.init();
-// TODO: change copper pipes to iron pipes
+		
 		starch = addItem("starch", new Item(),"starch");
 		bioplastic_ingot = addItem("bioplastic_ingot", new Item(),"plastic","ingotPlastic");
 	//	fluid_storage_tank_item = (StorageTankItem)addItem("fluid_storage_tank_item", new StorageTankItem());

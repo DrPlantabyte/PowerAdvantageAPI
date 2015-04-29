@@ -16,6 +16,8 @@ public abstract class Recipes {
 	 * Tech-progression - making the first key part is very complicated, but once made, key parts can be duplicated fairly easily
 	 */
 	
+	// TODO: add recipes
+	
 	private static boolean initDone = false;
 	public static void init(){
 		if(initDone) return;

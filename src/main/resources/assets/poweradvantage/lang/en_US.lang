@@ -11,7 +11,7 @@ tile.poweradvantage.fluid_drain.name=Drain
 tile.poweradvantage.fluid_discharge.name=Discharge Grate
 tile.poweradvantage.fluid_storage_tank.name=Storage Tank
 item.poweradvantage.fluid_storage_tank_item.name=Storage Tank
-tile.poweradvantage.copper_pipe.name=Copper Pipe
+tile.poweradvantage.fluid_pipe.name=Pipe
 
 tile.poweradvantage.item_conveyor.name=Conveyor
 tile.poweradvantage.item_filter_block.name=Block Filter Conveyor

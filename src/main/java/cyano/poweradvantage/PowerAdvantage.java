@@ -261,7 +261,7 @@ public class PowerAdvantage
     		throw new IllegalArgumentException("'"+mode+"' is not valid for config option 'recipe_mode'. Valid options are: NORMAL, APOCALYPTIC, or TECH_PROGRESSION");
     	}
     	// demonstration code and examples
-    	// TODO: default to false
+    	// TODO: remove demo code
     	//DEMO_MODE = config.getBoolean("demo", "options", false,
     	DEMO_MODE = config.getBoolean("demo", "options", true,
  "If true, then example machines will be loaded. For testing/example use only!");

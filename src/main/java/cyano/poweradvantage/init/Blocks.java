@@ -35,7 +35,7 @@ public abstract class Blocks {
 	public static GUIBlock fluid_drain; 
 	public static GUIBlock fluid_discharge; 
 	public static GUIBlock storage_tank;
-	public static Block copper_pipe;
+	public static Block fluid_pipe;
 	public static GUIBlock item_conveyor;
 	public static GUIBlock item_filter_block;
 	public static GUIBlock item_filter_food;
@@ -45,6 +45,7 @@ public abstract class Blocks {
 	public static GUIBlock item_filter_plant;
 	public static GUIBlock item_filter_smelt;
 	
+	// TODO: add steel frame block
 
 	//public static BlockDynamicLiquid crude_oil_flowing;
 	//public static BlockStaticLiquid crude_oil_still;
@@ -61,7 +62,7 @@ public abstract class Blocks {
 		fluid_drain = (GUIBlock)addBlock(new FluidDrainBlock(),"fluid_drain");
 		fluid_discharge = (GUIBlock)addBlock(new FluidDischargeBlock(),"fluid_discharge");
 		storage_tank = (GUIBlock)addBlock(new StorageTankBlock(),"fluid_storage_tank");
-		copper_pipe = addBlock(new FluidPipeBlock(),"copper_pipe");
+		fluid_pipe = addBlock(new FluidPipeBlock(),"fluid_pipe");
 		
 		final float defaultMachineHardness = 0.75f;
 		final Material defaultMachineMaterial = Material.piston;
