@@ -4,7 +4,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
+import cyano.basemetals.BaseMetals;
 import cyano.basemetals.registry.CrusherRecipeRegistry;
+import cyano.poweradvantage.PowerAdvantage;
+import cyano.poweradvantage.RecipeMode;
 
 
 public abstract class Recipes {
@@ -23,12 +26,25 @@ public abstract class Recipes {
 		if(initDone) return;
 		Blocks.init();
 		Items.init();
+		
+		if(PowerAdvantage.recipeMode == RecipeMode.TECH_PROGRESSION){
+			// make things a little more complicated with tech-progression mode
+			BaseMetals.strongHammers = false;
+		}
 
 		OreDictionary.registerOre("potato", net.minecraft.init.Items.poisonous_potato);
 		OreDictionary.registerOre("potato", net.minecraft.init.Items.potato);
 		CrusherRecipeRegistry.addNewCrusherRecipe("potato", new ItemStack(Items.starch,1));
 		GameRegistry.addSmelting(Items.starch, new ItemStack(Items.bioplastic_ingot,1), 0.1f);
 		
+		
+		if(PowerAdvantage.recipeMode != RecipeMode.APOCALYPTIC){
+			// recipes that are not available in post-apocalypse mode
+			// TODO: recipe for sprocket
+		} else {
+			// salvage recipes unique to post-apocalypse mode
+			// TODO: smash machines with hammer to get sprockets and other rare resources back
+		}
 		initDone = true;
 	}
 	

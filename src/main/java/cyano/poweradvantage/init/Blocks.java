@@ -15,6 +15,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import cyano.poweradvantage.PowerAdvantage;
 import cyano.poweradvantage.api.GUIBlock;
+import cyano.poweradvantage.blocks.BlockFrame;
 import cyano.poweradvantage.machines.conveyors.BlockConveyor;
 import cyano.poweradvantage.machines.conveyors.BlockConveyorFilter;
 import cyano.poweradvantage.machines.conveyors.TileEntityBlockFilter;
@@ -24,9 +25,9 @@ import cyano.poweradvantage.machines.conveyors.TileEntityInventoryFilter;
 import cyano.poweradvantage.machines.conveyors.TileEntityOreFilter;
 import cyano.poweradvantage.machines.conveyors.TileEntityPlantFilter;
 import cyano.poweradvantage.machines.conveyors.TileEntitySmeltableFilter;
-import cyano.poweradvantage.machines.fluidmachines.FluidPipeBlock;
 import cyano.poweradvantage.machines.fluidmachines.FluidDischargeBlock;
 import cyano.poweradvantage.machines.fluidmachines.FluidDrainBlock;
+import cyano.poweradvantage.machines.fluidmachines.FluidPipeBlock;
 import cyano.poweradvantage.machines.fluidmachines.StorageTankBlock;
 
 public abstract class Blocks {
@@ -44,12 +45,31 @@ public abstract class Blocks {
 	public static GUIBlock item_filter_ore;
 	public static GUIBlock item_filter_plant;
 	public static GUIBlock item_filter_smelt;
+	public static Block steel_frame;
 	
-	// TODO: add steel frame block
 
 	//public static BlockDynamicLiquid crude_oil_flowing;
 	//public static BlockStaticLiquid crude_oil_still;
 	public static BlockFluidBase crude_oil_block;
+	/* Hope is not lost yet for fluids:
+[20:18:57] [Client thread/ERROR] [FML/]: Model definition for location poweradvantage:crude_oil#level=14 not found
+[20:18:57] [Client thread/ERROR] [FML/]: Model definition for location poweradvantage:crude_oil#level=15 not found
+[20:18:57] [Client thread/ERROR] [FML/]: Model definition for location poweradvantage:crude_oil#level=10 not found
+[20:18:57] [Client thread/ERROR] [FML/]: Model definition for location poweradvantage:crude_oil#level=11 not found
+[20:18:57] [Client thread/ERROR] [FML/]: Model definition for location poweradvantage:crude_oil#level=12 not found
+[20:18:57] [Client thread/ERROR] [FML/]: Model definition for location poweradvantage:crude_oil#level=13 not found
+[20:18:57] [Client thread/ERROR] [FML/]: Model definition for location poweradvantage:crude_oil#inventory not found
+[20:18:57] [Client thread/ERROR] [FML/]: Model definition for location poweradvantage:crude_oil#level=9 not found
+[20:18:57] [Client thread/ERROR] [FML/]: Model definition for location poweradvantage:crude_oil#level=8 not found
+[20:18:57] [Client thread/ERROR] [FML/]: Model definition for location poweradvantage:crude_oil#level=7 not found
+[20:18:57] [Client thread/ERROR] [FML/]: Model definition for location poweradvantage:crude_oil#level=6 not found
+[20:18:57] [Client thread/ERROR] [FML/]: Model definition for location poweradvantage:crude_oil#level=5 not found
+[20:18:57] [Client thread/ERROR] [FML/]: Model definition for location poweradvantage:crude_oil#level=4 not found
+[20:18:57] [Client thread/ERROR] [FML/]: Model definition for location poweradvantage:crude_oil#level=3 not found
+[20:18:57] [Client thread/ERROR] [FML/]: Model definition for location poweradvantage:crude_oil#level=2 not found
+[20:18:57] [Client thread/ERROR] [FML/]: Model definition for location poweradvantage:crude_oil#level=1 not found
+[20:18:57] [Client thread/ERROR] [FML/]: Model definition for location poweradvantage:crude_oil#level=0 not found 
+	 */
 	
 	private static boolean initDone = false;
 	public static void init(){
@@ -63,6 +83,10 @@ public abstract class Blocks {
 		fluid_discharge = (GUIBlock)addBlock(new FluidDischargeBlock(),"fluid_discharge");
 		storage_tank = (GUIBlock)addBlock(new StorageTankBlock(),"fluid_storage_tank");
 		fluid_pipe = addBlock(new FluidPipeBlock(),"fluid_pipe");
+		steel_frame = addBlock(new BlockFrame(net.minecraft.block.material.Material.piston)
+				.setResistance(cyano.basemetals.init.Materials.steel.getBlastResistance()*0.5f)
+				.setHardness(cyano.basemetals.init.Materials.steel.getMetalBlockHardness() * 0.5f)
+				.setStepSound(Block.soundTypeMetal),"steel_frame");
 		
 		final float defaultMachineHardness = 0.75f;
 		final Material defaultMachineMaterial = Material.piston;
