@@ -27,10 +27,10 @@ import cyano.poweradvantage.registry.MachineGUIRegistry;
 /* TODO list
  * drain block ✓
  * fluid pipes ✓
- * portable tank block
+ * portable tank block ✓
  * item chute ✓
  * fluid discharge block ✓
- * example crusher machine
+ * example crusher machine (SteamAfvantage will be the example mod)
  * -- SteamAdvantage mod --
  * Coal-Fired Steam Boiler
  * Boiler Tank
@@ -216,6 +216,8 @@ public class PowerAdvantage
      * accordingly.
      */
     public static Enum recipeMode = RecipeMode.NORMAL;
+    /** adjustment for frequency of loot spawns in treasure chests */
+    public static float chestLootFactor = 0.5f;
     
     /**
      * Pre-initialization step. Used for initializing objects and reading the 
@@ -255,10 +257,13 @@ public class PowerAdvantage
     	}
     	
     	
+    	chestLootFactor  = config.getFloat("treasure_chest_loot_factor", "options", 0.5f, 0.0f, 1000.0f, 
+				"Controls the rarity of items from this mod being found in treasure chests relative to \n"
+			 +  "the frequency of other chest loot items. Set to 0 to disable metal ingots from \n"
+			 +  "appearing in treasure chests.");
+    	
     	config.save();
-		// TODO: have a "post-apocalypse" mode where certain key technologies are not craftable but can be found in treasure chests
-		// TODO: have a "invention" mode where certain key technologies are dependant on other technologies to be crafted, forcing players to advance up a tech tree
-
+		
 		cyano.poweradvantage.init.Fluids.init(); 
     	cyano.poweradvantage.init.Blocks.init();
     	cyano.poweradvantage.init.Items.init();

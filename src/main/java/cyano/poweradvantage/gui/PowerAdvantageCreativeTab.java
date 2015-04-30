@@ -25,8 +25,7 @@ public class PowerAdvantageCreativeTab extends CreativeTabs {
 	@SideOnly(Side.CLIENT)
 	@Override
 	public Item getTabIconItem() {
-		// TODO: choose better item for icon
-		return cyano.poweradvantage.init.Items.bioplastic_ingot;
+		return cyano.poweradvantage.init.Items.sprocket;
 	}
 }
 

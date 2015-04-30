@@ -13,6 +13,7 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.oredict.OreDictionary;
 import cyano.poweradvantage.PowerAdvantage;
 import cyano.poweradvantage.api.GUIBlock;
 import cyano.poweradvantage.blocks.BlockFrame;
@@ -83,10 +84,12 @@ public abstract class Blocks {
 		fluid_discharge = (GUIBlock)addBlock(new FluidDischargeBlock(),"fluid_discharge");
 		storage_tank = (GUIBlock)addBlock(new StorageTankBlock(),"fluid_storage_tank");
 		fluid_pipe = addBlock(new FluidPipeBlock(),"fluid_pipe");
+		OreDictionary.registerOre("pipe", fluid_pipe);
 		steel_frame = addBlock(new BlockFrame(net.minecraft.block.material.Material.piston)
 				.setResistance(cyano.basemetals.init.Materials.steel.getBlastResistance()*0.5f)
 				.setHardness(cyano.basemetals.init.Materials.steel.getMetalBlockHardness() * 0.5f)
 				.setStepSound(Block.soundTypeMetal),"steel_frame");
+		OreDictionary.registerOre("frameSteel", steel_frame);
 		
 		final float defaultMachineHardness = 0.75f;
 		final Material defaultMachineMaterial = Material.piston;

@@ -21,17 +21,9 @@ tile.poweradvantage.item_filter_inventory.name=Filter Conveyor
 tile.poweradvantage.item_filter_ore.name=Ore Filter Conveyor
 tile.poweradvantage.item_filter_plant.name=Plantable Filter Conveyor
 tile.poweradvantage.item_filter_smelt.name=Furnace Filter Conveyor
+tile.poweradvantage.steel_frame.name=Steel Frame
+
 
 item.poweradvantage.starch.name=Starch
 item.poweradvantage.bioplastic_ingot.name=Bioplastic Ingot
-
-
-tile.poweradvantage.powercable.name=Power Cable
-tile.poweradvantage.powerfurnace.name=Powered Furnace
-tile.poweradvantage.powerfurnace_lit.name=Powered Furnace (lit)
-tile.poweradvantage.powergenerator.name=Power Generator
-tile.poweradvantage.powergenerator_lit.name=Power Generator (lit)
-
-tile.poweradvantage.example_redstone_generator.name=Redstone Power Generator
-tile.poweradvantage.example_redstone_furnace.name=Redstone Furnace
-tile.poweradvantage.example_redstone_conductor.name=Redstone Power Conduit
+item.poweradvantage.sprocket.name=Sprocket

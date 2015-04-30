@@ -23,7 +23,6 @@ public abstract class Items {
 	public static Item starch;
 	public static Item bioplastic_ingot;
 	public static Item sprocket;
-	// TODO: get rid of unused json, code,  and classes
 	
 	public static ItemBucket bucket_crude_oil;
 	public static final Map<String,Item> allItems = new HashMap<>();

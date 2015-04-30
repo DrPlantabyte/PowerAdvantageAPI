@@ -1,8 +1,0 @@
-{
-    "variants": {
-        "facing=north": { "model": "poweradvantage:example_redstone_generator" },
-        "facing=south": { "model": "poweradvantage:example_redstone_generator", "y": 180 },
-        "facing=west":  { "model": "poweradvantage:example_redstone_generator", "y": 270 },
-        "facing=east":  { "model": "poweradvantage:example_redstone_generator", "y": 90 }
-    }
-}
