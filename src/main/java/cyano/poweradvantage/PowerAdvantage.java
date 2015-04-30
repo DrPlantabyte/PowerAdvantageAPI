@@ -13,7 +13,6 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import cyano.poweradvantage.api.example.ExamplePowerMod;
 import cyano.poweradvantage.events.BucketHandler;
 import cyano.poweradvantage.registry.FuelRegistry;
 import cyano.poweradvantage.registry.MachineGUIRegistry;
@@ -208,16 +207,10 @@ public class PowerAdvantage
     /** The display name for this mod */
     public static final String NAME = "Power Advantage";
     /** The version of this mod, in the format major.minor.update */
-    public static final String VERSION = "0.0.8";
+    public static final String VERSION = "0.0.9";
 
-    /** if true, example machines will be added to the game */
-    @Deprecated // TODO: remove example machines
-    public static boolean DEMO_MODE = false;
     /** singleton instance */
     private static PowerAdvantage instance;
-    /** Demo mod content */
-    @Deprecated // TODO: remove example machines
-    private ExamplePowerMod exampleMod = null;
     /**
      * This is the recipe mode set for this mod. Add-on mods may want to adjust their recipes 
      * accordingly.
@@ -260,16 +253,7 @@ public class PowerAdvantage
     	default:
     		throw new IllegalArgumentException("'"+mode+"' is not valid for config option 'recipe_mode'. Valid options are: NORMAL, APOCALYPTIC, or TECH_PROGRESSION");
     	}
-    	// demonstration code and examples
-    	// TODO: remove demo code
-    	//DEMO_MODE = config.getBoolean("demo", "options", false,
-    	DEMO_MODE = config.getBoolean("demo", "options", true,
- "If true, then example machines will be loaded. For testing/example use only!");
     	
-    	if(DEMO_MODE){
-    		exampleMod = new ExamplePowerMod();
-        	exampleMod.preInit(event, config);
-    	}
     	
     	config.save();
 		// TODO: have a "post-apocalypse" mode where certain key technologies are not craftable but can be found in treasure chests
@@ -320,8 +304,6 @@ public class PowerAdvantage
 		MinecraftForge.EVENT_BUS.register(BucketHandler.getInstance());
 		
 		
-    	if(DEMO_MODE)exampleMod.init(event);
-    	
     	
     	if(event.getSide() == Side.CLIENT){
 			clientInit(event);
@@ -350,7 +332,6 @@ public class PowerAdvantage
     @EventHandler
     public void postInit(FMLPostInitializationEvent event)
     {
-    	if(DEMO_MODE)exampleMod.postInit(event);
     	
     }
 	
