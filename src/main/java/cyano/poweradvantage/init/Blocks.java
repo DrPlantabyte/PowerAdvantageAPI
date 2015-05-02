@@ -49,9 +49,7 @@ public abstract class Blocks {
 	public static Block steel_frame;
 	
 
-	//public static BlockDynamicLiquid crude_oil_flowing;
-	//public static BlockStaticLiquid crude_oil_still;
-	public static BlockFluidBase crude_oil_block;
+//	public static BlockFluidBase crude_oil_block;
 	/* Hope is not lost yet for fluids:
 [20:18:57] [Client thread/ERROR] [FML/]: Model definition for location poweradvantage:crude_oil#level=14 not found
 [20:18:57] [Client thread/ERROR] [FML/]: Model definition for location poweradvantage:crude_oil#level=15 not found
@@ -104,9 +102,9 @@ public abstract class Blocks {
 
 //		crude_oil_still = (BlockStaticLiquid)addBlock(new CustomBlockStaticLiquid(cyano.poweradvantage.init.Materials.crude_oil).setHardness(100.0f),"crude_oil_still");
 //		crude_oil_flowing = (BlockDynamicLiquid)addBlock(new CustomBlockDynamicLiquid(cyano.poweradvantage.init.Materials.crude_oil).setHardness(100.0f),"crude_oil_flowing");
-		crude_oil_block = new BlockFluidClassic(Fluids.crude_oil,cyano.poweradvantage.init.Materials.crude_oil);
-		crude_oil_block.setUnlocalizedName(PowerAdvantage.MODID+"."+"crude_oil");
-		GameRegistry.registerBlock(crude_oil_block, "crude_oil");
+//		crude_oil_block = new BlockFluidClassic(Fluids.crude_oil,cyano.poweradvantage.init.Materials.crude_oil);
+//		crude_oil_block.setUnlocalizedName(PowerAdvantage.MODID+"."+"crude_oil");
+//		GameRegistry.registerBlock(crude_oil_block, "crude_oil");
 		
 		initDone = true;
 	}
