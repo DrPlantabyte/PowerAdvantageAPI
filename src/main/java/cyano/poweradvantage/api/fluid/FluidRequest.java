@@ -31,4 +31,16 @@ public class FluidRequest extends PowerRequest{
 		super(priority, requestSize, requestSource);
 	}
 
+	
+	/**
+	 * Standard constructor for making a fluid power request
+	 * @param priority Priority level (determines order of reception). If demand exceeds 
+	 * supply, lower priority machines receive no fluid.
+	 * @param requestSize How much to ask for of the given type.
+	 * @param requestSource The TileEntity that created this FluidRequest
+	 */
+	public FluidRequest(int priority, int requestSize,
+			PoweredEntity requestSource) {
+		this((byte)priority, requestSize, requestSource);
+	}
 }
