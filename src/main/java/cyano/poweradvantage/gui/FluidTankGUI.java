@@ -21,7 +21,7 @@ public class FluidTankGUI extends SimpleMachineGUI{
 	}
 	
 	@Override 
-	public void drawGUIDecorations(Object srcEntity, GUIContainer guiContainer, int x, int y){
+	public void drawGUIDecorations(Object srcEntity, GUIContainer guiContainer, int x, int y, float z){
 
 		guiContainer.mc.renderEngine.bindTexture(guiDisplayImage);
 		// draw indicator

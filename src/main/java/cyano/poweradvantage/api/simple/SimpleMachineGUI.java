@@ -99,8 +99,9 @@ guiContainer.drawTexturedModalRect(x+79, y+35, 0, 0, arrowLength, 17); // x, y, 
 	 * the GUI
 	 * @param y This is the y coordinate (in pixels) from the top-left corner of 
 	 * the GUI
+	 * @param z This is the z coordinate (no units) into the depth of the screen
 	 */
-	public void drawGUIDecorations(Object srcEntity, GUIContainer guiContainer, int x, int y){}
+	public void drawGUIDecorations(Object srcEntity, GUIContainer guiContainer, int x, int y, float z){}
 
 	/**
 	 * Gets an instance of net.minecraft.inventory.Container for the 
@@ -126,8 +127,6 @@ guiContainer.drawTexturedModalRect(x+79, y+35, 0, 0, arrowLength, 17); // x, y, 
 	public GuiContainer getContainerGUI(TileEntity e, EntityPlayer player) {
 		return new GUIContainer(player.inventory,(IInventory)e);
 	}
-	
-	
 	
 	
 	/**
@@ -228,7 +227,44 @@ guiContainer.drawTexturedModalRect(x+79, y+35, 0, 0, arrowLength, 17); // x, y, 
 			this.drawTexturedModalRect(x, y, 0, 0, playerInventoryWidth, playerInventoryHeight); // x, y, textureOffsetX, textureOffsetY, width, height)
 			this.mc.renderEngine.bindTexture(guiDisplayImage);
 			this.drawTexturedModalRect(x, y, 0, 0, guiWidth, guiHeight); // x, y, textureOffsetX, textureOffsetY, width, height)
-			drawGUIDecorations(entity, this, x, y);
+			drawGUIDecorations(entity, this, x, y, this.zLevel);
+		}
+		/**
+		 * Gets the z-coordinate of this GUI element
+		 * @return screen depth coordinate
+		 */
+		public float getZLevel(){
+			return this.zLevel;
+		}
+		/**
+		 * Gets the width of the GUI
+		 * @return size of GUI
+		 */
+		public int getXSize(){
+			return this.xSize;
+		}
+
+		/**
+		 * Gets the height of the GUI
+		 * @return size of GUI
+		 */
+		public int getYSize(){
+			return this.ySize;
+		}
+		/**
+		 * Gets the GUI offset from left side of screen, in pixels
+		 * @return pixels to left of GUI
+		 */
+		public int getLeft(){
+			return this.guiLeft;
+		}
+
+		/**
+		 * Gets the GUI offset from top of screen, in pixels
+		 * @return pixels to above the GUI
+		 */
+		public int getTop(){
+			return this.guiTop;
 		}
 		
 	}
