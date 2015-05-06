@@ -190,9 +190,9 @@ public abstract class TileEntitySimplePowerSource extends PoweredEntity implemen
     	List<PowerRequest> requests = this.getRequestsForPower(type);
     	float e = availableEnergy;
     	for(PowerRequest req : requests){
-    		if(req.entity == this) continue;
-    		if(req.priority < minimumPriority) break;
     		if(req.amount <= 0) continue;
+    		if(req.entity == this) continue;
+    		if(req.priority < minimumPriority) continue;
     		if(req.amount < e){
     			e -= req.entity.addEnergy(req.amount,powerType);
     		} else {
