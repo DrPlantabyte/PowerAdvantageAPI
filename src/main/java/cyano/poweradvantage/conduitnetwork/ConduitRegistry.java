@@ -57,23 +57,44 @@ public class ConduitRegistry {
 		}
 		return instance;
 	}
-	
+
 	
 	/**
 	 * Scans the power network for a given coordinate and returns a list of power requests from 
-	 * all power sinks on that network.
+	 * all power sinks on that network. If transmitting a subtype of enrgy (such as a type of 
+	 * fluid), then conduitType is the super type (used for connecting conduits) and energyType is 
+	 * the specific subtype being transmitted. 
 	 * @param w The world instance for this dimension
 	 * @param coord The block asking for power requests
-	 * @param type the type of energy being offered
+	 * @param conduitType the type of energy transmission network (and type of energy) to poll. If 
+	 * the conduit type and the type of energy energy being transmitted are different (e.g. sending 
+	 * a subtype of energy), then use the 
+	 * <code>getRequestsForPower(World, BlockPos, ConduitType, ConduitType)</code> method.
 	 * @return A list of PowerRequest instances, sorted in order of highest priority to lowest 
 	 * priority. 
 	 */
-	public List<PowerRequest> getRequestsForPower(World w, BlockPos coord, ConduitType type){
+	public List<PowerRequest> getRequestsForPower(World w, BlockPos coord, ConduitType conduitType){
+		return getRequestsForPower( w,  coord,  conduitType, conduitType);
+	}
+	
+	/**
+	 * Scans the power network for a given coordinate and returns a list of power requests from 
+	 * all power sinks on that network. If transmitting a subtype of enrgy (such as a type of 
+	 * fluid), then conduitType is the super type (used for connecting conduits) and energyType is 
+	 * the specific subtype being transmitted. 
+	 * @param w The world instance for this dimension
+	 * @param coord The block asking for power requests
+	 * @param conduitType the type of energy transmission network to poll
+	 * @param energyType the type of energy being offered (usually is the same as conduitType)
+	 * @return A list of PowerRequest instances, sorted in order of highest priority to lowest 
+	 * priority. 
+	 */
+	public List<PowerRequest> getRequestsForPower(World w, BlockPos coord, ConduitType conduitType, ConduitType energyType){
 		List<PowerRequest> requests = new ArrayList<>();
-		ConduitNetworkManager manager = getConduitNetworkManager(type);
+		ConduitNetworkManager manager = getConduitNetworkManager(conduitType);
 		BlockPos4D bp = new BlockPos4D(w.provider.getDimensionId(), coord);
 		if(!manager.isValidatedNetwork(bp)){
-			manager.revalidate(bp, w, type);
+			manager.revalidate(bp, w, conduitType);
 		}
 		List<BlockPos4D> net = manager.getNetwork(bp);
 		for(BlockPos4D pos : net){
@@ -81,7 +102,7 @@ public class ConduitRegistry {
 			if(b  instanceof ITileEntityProvider ){
 				TileEntity e = w.getTileEntity(pos.pos);
 				if(e != null && e instanceof PoweredEntity && ((ITypedConduit)e).isPowerSink()){
-					PowerRequest req = ((PoweredEntity)e).getPowerRequest(type);
+					PowerRequest req = ((PoweredEntity)e).getPowerRequest(energyType);
 					if(req != PowerRequest.REQUEST_NOTHING)requests.add(req);
 				}
 			}

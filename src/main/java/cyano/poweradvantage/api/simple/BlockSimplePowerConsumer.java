@@ -86,6 +86,7 @@ public abstract class BlockSimplePowerConsumer  extends GUIBlock implements ITyp
 	@Override
 	public void onBlockDestroyedByExplosion(World w, BlockPos coord, Explosion boom){
 		super.onBlockDestroyedByExplosion(w, coord, boom);
+		ConduitRegistry.getInstance().conduitBlockRemovedEvent(w, w.provider.getDimensionId(), coord, getType());
 	}
 	/**
 	 * Creates a TileEntity for this block when the block is placed into the 

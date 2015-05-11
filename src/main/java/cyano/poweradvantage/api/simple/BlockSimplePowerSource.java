@@ -97,6 +97,7 @@ public abstract class BlockSimplePowerSource  extends GUIBlock implements ITyped
 	@Override
 	public void onBlockDestroyedByExplosion(World w, BlockPos coord, Explosion boom){
 		super.onBlockDestroyedByExplosion(w, coord, boom);
+		ConduitRegistry.getInstance().conduitBlockRemovedEvent(w, w.provider.getDimensionId(), coord, getType());
 	}
 	
 	/**

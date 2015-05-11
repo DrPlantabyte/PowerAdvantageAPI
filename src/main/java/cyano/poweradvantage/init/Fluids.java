@@ -45,7 +45,7 @@ public abstract class Fluids {
 	public static boolean isFluidType(ConduitType type){
 		return type.equals(fluidConduit_general) || fluidConduitLUT.containsValue(type);
 	}
-	
+	// TODO: documentation
 	public static ConduitType fluidToConduitType(Fluid f){
 		if(fluidConduitLUT.containsKey(f)){
 			return fluidConduitLUT.get(f);

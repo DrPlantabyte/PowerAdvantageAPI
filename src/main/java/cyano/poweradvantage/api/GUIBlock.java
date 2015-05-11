@@ -4,11 +4,16 @@ import cyano.poweradvantage.PowerAdvantage;
 import cyano.poweradvantage.registry.MachineGUIRegistry;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.IFluidHandler;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 /**
@@ -117,11 +122,73 @@ public abstract class GUIBlock extends net.minecraft.block.BlockContainer{
         if (tileEntity == null || player.isSneaking()) {
         	return false;
         }
+        // handle buckets and fluid containers
+        ItemStack item = player.getCurrentEquippedItem();
+        if(item != null && FluidContainerRegistry.isContainer(item) && tileEntity instanceof IFluidHandler){
+        	boolean bucketed = handleBucketInteraction(item,player,facing,(IFluidHandler)tileEntity,w);
+        	if(bucketed){
+        		return true;
+        	}
+        }
+        
         // open GUI
         if(this.getGuiOwner() == null) return false;
         player.openGui(this.getGuiOwner(), this.getGuiID(), w, coord.getX(), coord.getY(), coord.getZ());
         return true;
     }
 
+    
+   
+	/**
+	 * This method is used for filling IFluidContainer instances with liquids from a player's 
+	 * bucket.
+	 * @param bucket A bucket (or other registered container item) held by the player
+	 * @param player The player interacting with the block
+	 * @param blockFace The face on the block that the player clicked on
+	 * @param target The IFluidHandler that the player interacted with
+	 * @param world World instance
+	 * @return true if fluids were transferred, false otherwise
+	 */
+    public static boolean handleBucketInteraction(ItemStack bucket,final EntityPlayer player, 
+			final EnumFacing blockFace, IFluidHandler target, final World world) {
+		if(FluidContainerRegistry.isEmptyContainer(bucket)){
+			// pull from tank
+			FluidStack practice = target.drain(blockFace, FluidContainerRegistry.BUCKET_VOLUME, false);
+			if(practice.amount ==  FluidContainerRegistry.BUCKET_VOLUME
+					&& FluidContainerRegistry.fillFluidContainer(practice, bucket) != null){
+				FluidStack drain = target.drain(blockFace, FluidContainerRegistry.BUCKET_VOLUME, true);
+				ItemStack newBucket = FluidContainerRegistry.fillFluidContainer(drain, bucket);
+				if(bucket.stackSize == 1){
+					player.setCurrentItemOrArmor(0, newBucket);
+				} else {
+					bucket.stackSize--;
+					if(newBucket != null)
+						world.spawnEntityInWorld(new EntityItem(world,player.posX,player.posY,player.posZ, newBucket));
+				}
+				return true;
+			} else {
+				return false;
+			}
+		} else if(FluidContainerRegistry.isFilledContainer(bucket)){
+			FluidStack fluid = FluidContainerRegistry.getFluidForFilledItem(bucket);
+			int practice = target.fill(blockFace, fluid, false);
+			if(practice == FluidContainerRegistry.getContainerCapacity(bucket)){
+				// pour into empty tank
+				target.fill(blockFace, fluid, true);
+				ItemStack newBucket = FluidContainerRegistry.drainFluidContainer(bucket);
+				if(bucket.stackSize == 1){
+					player.setCurrentItemOrArmor(0, newBucket);
+				} else {
+					bucket.stackSize--;
+					world.spawnEntityInWorld(new EntityItem(world,player.posX,player.posY,player.posZ, newBucket));
+				}
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return false;
+		}
+	}
 	
 }

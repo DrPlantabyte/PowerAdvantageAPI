@@ -76,6 +76,13 @@ public abstract class PoweredEntity extends TileEntity implements IUpdatePlayerL
 		return addEnergy(-1 * energy,type);
 	}
 	
+	/**
+	 * Tells Minecraft to synchronize this tile entity
+	 */
+	protected final void sync(){
+		this.getWorld().markBlockForUpdate(getPos());
+		this.markDirty();
+	}
 	
 	/**
 	 * Method net.minecraft.server.gui.IUpdatePlayerListBox.update() is invoked 
@@ -161,7 +168,7 @@ public abstract class PoweredEntity extends TileEntity implements IUpdatePlayerL
 	 * priority to lowest (energy storage will have lower priority than machines).
 	 */
 	protected List<PowerRequest> getRequestsForPower(ConduitType powerType){
-		return ConduitRegistry.getInstance().getRequestsForPower(getWorld(), getPos(), getType());
+		return ConduitRegistry.getInstance().getRequestsForPower(getWorld(), getPos(), powerType,powerType);
 	}
 	
 	/**

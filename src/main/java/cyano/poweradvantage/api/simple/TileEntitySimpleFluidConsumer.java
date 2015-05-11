@@ -104,20 +104,6 @@ public abstract class TileEntitySimpleFluidConsumer extends FluidPoweredEntity i
 	}
 	
 
-	/**
-	 * Specify how much energy this power sink wants from a power generator. If this tile entity is 
-	 * not a sink, then simply return PowerRequest.REQUEST_NOTHING
-	 * @param type The type of energy available upon request
-	 * @return A PowerRequest instance indicated how much power you'd like to get
-	 */
-	public PowerRequest getPowerRequest(ConduitType type){
-		float space = this.getEnergyCapacity() - this.getEnergy(); 
-		if(this.canAcceptType(type) && space > 0){
-			return new PowerRequest(PowerRequest.MEDIUM_PRIORITY,space,this);
-		} else {
-			return PowerRequest.REQUEST_NOTHING;
-		}
-	}
     
     /**
      * You must override this method and call super.readFromNBT(...).<br><br>
@@ -691,14 +677,7 @@ public abstract class TileEntitySimpleFluidConsumer extends FluidPoweredEntity i
 	}
 
 
-	/**
-	 * Causes Minecraft to send an update packet for this TileEntity
-	 */
-	public void sync(){
-		// cause data update to be sent to client
-		worldObj.markBlockForUpdate(getPos());
-		this.markDirty();
-	}
+	
 	
 	
 }

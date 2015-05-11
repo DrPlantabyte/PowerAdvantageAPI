@@ -219,7 +219,7 @@ public abstract class TileEntitySimpleFluidSource extends FluidPoweredEntity imp
      */
     protected int transmitFluidToConsumers(FluidStack available, byte minumimPriority){
 		ConduitType type = Fluids.fluidToConduitType(available.getFluid());
-    	List<PowerRequest> requests = this.getRequestsForPower(type);
+    	List<PowerRequest> requests = this.getRequestsForFluid(type);
     	int bucket = available.amount;
     	for(PowerRequest req : requests){
     		if(req.entity == this) continue;
@@ -726,14 +726,5 @@ public abstract class TileEntitySimpleFluidSource extends FluidPoweredEntity imp
 		return tank;
 	}
 	
-
-	/**
-	 * Causes Minecraft to send an update packet for this TileEntity
-	 */
-	public void sync(){
-		// cause data update to be sent to client
-		worldObj.markBlockForUpdate(getPos());
-		this.markDirty();
-	}
 	
 }

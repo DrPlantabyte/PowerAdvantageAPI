@@ -1,5 +1,7 @@
 package cyano.poweradvantage.api.fluid;
 
+import java.util.List;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.Fluid;
@@ -10,6 +12,7 @@ import net.minecraftforge.fluids.IFluidHandler;
 import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.api.PowerRequest;
 import cyano.poweradvantage.api.PoweredEntity;
+import cyano.poweradvantage.conduitnetwork.ConduitRegistry;
 import cyano.poweradvantage.init.Fluids;
 
 /**
@@ -40,7 +43,11 @@ public abstract class FluidPoweredEntity extends PoweredEntity implements IFluid
 	public PowerRequest getPowerRequest(ConduitType type) {
 		// Type will be lava or water or other specific fluid
 		// implementation of getFluidRequest() decides whether this machine wants it
-		return getFluidRequest(Fluids.conduitTypeToFluid(type));
+		if(Fluids.isFluidType(type)){
+			return getFluidRequest(Fluids.conduitTypeToFluid(type));
+		}else{
+			return PowerRequest.REQUEST_NOTHING;
+		}
 	}
 	
 	/**
@@ -48,6 +55,17 @@ public abstract class FluidPoweredEntity extends PoweredEntity implements IFluid
 	 * @return An instance of FluidTank
 	 */
 	public abstract FluidTank getTank();
+	
+	
+	/**
+	 * Collects all requests for energy from power sinks connected to this tile entity
+	 * @param powerType The type of fluid (e.g. water) available to donate to the sinks
+	 * @return Returns a list of all connected entities that want energy, in order from highest 
+	 * priority to lowest (energy storage will have lower priority than machines).
+	 */
+	protected List<PowerRequest> getRequestsForFluid(ConduitType powerType){
+		return ConduitRegistry.getInstance().getRequestsForPower(getWorld(), getPos(), Fluids.fluidConduit_general,powerType);
+	}
 	
 	/**
 	 * Handles data saving and loading
