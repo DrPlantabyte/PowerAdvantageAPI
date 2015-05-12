@@ -50,6 +50,7 @@ public class StorageTankTileEntity  extends TileEntitySimpleFluidSource{
      * storage devices.
      * @return The lowest priority of power request that will be filled.
      */
+	@Override
     protected byte getMinimumSinkPriority(){
     	return PowerRequest.BACKUP_PRIORITY+1;
     }
