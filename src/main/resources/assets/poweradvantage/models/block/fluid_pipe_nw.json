@@ -1,6 +1,7 @@
 {
-    "parent": "poweradvantage:block/pipe3_nw",
+    "parent": "poweradvantage:block/pipe4_nw",
     "textures": {
-        "texture": "poweradvantage:blocks/fluid_pipe"
+        "texture": "poweradvantage:blocks/fluid_pipe",
+        "particle": "poweradvantage:materials/iron"
     }
 }
