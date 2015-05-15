@@ -10,7 +10,7 @@ import cyano.poweradvantage.api.simple.BlockSimpleFluidConduit;
 public class FluidPipeBlock extends BlockSimpleFluidConduit{
 
 	public FluidPipeBlock() {
-		super(Material.piston, 0.75f, 3f/16f);
+		super(Material.piston, 0.75f, 4f/16f);
 		super.setCreativeTab(CreativeTabs.tabDecorations);
 	}
 

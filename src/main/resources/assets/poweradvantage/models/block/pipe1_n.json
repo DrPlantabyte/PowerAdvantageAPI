@@ -1,28 +1,39 @@
 {
+    "ambientocclusion": false,
     "textures": {
-        "particle": "#texture"
+        "particle": "#particle"
     },
     "elements": [
-        {   "from": [ 7, 7, 7 ],
-            "to": [ 9, 9, 9 ],
+        {   "__comment": "north-south",
+            "from": [ 7, 7, 7 ],
+            "to": [ 9, 9, 8 ],
             "faces": {
-                "down":  { "uv": [ 7, 7, 9, 9 ], "texture": "#texture" },
-                "up":    { "uv": [ 7, 7, 9, 9 ], "texture": "#texture" },
-                "north": { "uv": [ 7, 7, 9, 9 ], "texture": "#texture" },
-                "south": { "uv": [ 7, 7, 9, 9 ], "texture": "#texture" },
-                "west":  { "uv": [ 7, 7, 9, 9 ], "texture": "#texture" },
-                "east":  { "uv": [ 7, 7, 9, 9 ], "texture": "#texture" }
+                "down":  { "uv": [ 12, 3, 13, 5 ], "texture": "#texture", "rotation": 90 },
+                "up":    { "uv": [ 12, 3, 13, 5 ], "texture": "#texture", "rotation": 270 },
+                "west":  { "uv": [ 13, 3, 12, 5 ], "texture": "#texture" },
+                "east":  { "uv": [ 12, 3, 13, 5 ], "texture": "#texture" }
             }
         },
-        {   "from": [ 7, 7, 0 ],
-            "to": [ 9, 9, 7 ],
+        {   "__comment": "north-south",
+            "from": [ 7, 7, 8 ],
+            "to": [ 9, 9, 12 ],
             "faces": {
-                "down":  { "uv": [ 0, 7, 7, 9 ], "texture": "#texture" },
-                "up":    { "uv": [ 0, 7, 7, 9 ], "texture": "#texture" },
-                "north": { "uv": [ 7, 7, 9, 9 ], "texture": "#texture" },
-                "south": { "uv": [ 7, 7, 9, 9 ], "texture": "#texture" },
-                "west":  { "uv": [ 0, 7, 7, 9 ], "texture": "#texture" },
-                "east":  { "uv": [ 0, 7, 7, 9 ], "texture": "#texture" }
+                "down":  { "uv": [ 8, 3, 12, 5 ], "texture": "#texture", "rotation": 90 },
+                "up":    { "uv": [ 8, 3, 12, 5 ], "texture": "#texture", "rotation": 270 },
+                "south": { "uv": [ 11, 11, 13, 13 ], "texture": "#texture" },
+                "west":  { "uv": [ 12, 3, 8, 5 ], "texture": "#texture" },
+                "east":  { "uv": [ 8, 3, 12, 5 ], "texture": "#texture" }
+            }
+        },
+        {   "__comment": "north",
+            "from": [ 7, 7, 0 ],
+            "to": [  9,  9, 7 ],
+            "faces": {
+                "down":  { "uv": [ 8, 3, 12, 5 ], "texture": "#texture", "rotation": 90 },
+                "up":    { "uv": [ 8, 3, 12, 5 ], "texture": "#texture", "rotation": 270 },
+                "north": { "uv": [ 11, 11, 13, 13], "texture": "#texture" },
+                "west":  { "uv": [ 12, 3, 8, 5 ], "texture": "#texture" },
+                "east":  { "uv": [ 8, 3, 12, 5 ], "texture": "#texture" }
             }
         }
     ]
