@@ -9,6 +9,7 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -165,22 +166,23 @@ guiContainer.drawTexturedModalRect(x+79, y+35, 0, 0, arrowLength, 17); // x, y, 
 		
 		@Override
 		public ItemStack transferStackInSlot(EntityPlayer player, int slot) {
+			int hostSize = inventorySlotCoordinates.length;
 			ItemStack stack = null;
 			Slot slotObject = (Slot) inventorySlots.get(slot);
-
+FMLLog.info("transferStackInSlot slot #"+slot+", slot item is "+slotObject.getStack()); // TODO: remove debug code
 			//null checks and checks if the item can be stacked (maxStackSize > 1)
 			if (slotObject != null && slotObject.getHasStack()) {
 				ItemStack stackInSlot = slotObject.getStack();
 				stack = stackInSlot.copy();
 
 				//merges the item into player inventory since its in the tileEntity
-				if (slot < 9) {
-					if (!this.mergeItemStack(stackInSlot, 0, 35, true)) {
+				if (slot < hostSize) {
+					if (!this.mergeItemStack(stackInSlot, hostSize, 36+hostSize, true)) {
 						return null;
 					}
 				}
-				//places it into the tileEntity is possible since its in the player inventory
-				else if (!this.mergeItemStack(stackInSlot, 0, 9, false)) {
+				//places it into the tileEntity if possible since it's in the player inventory
+				else if (!this.mergeItemStack(stackInSlot, 0, hostSize, false)) {
 					return null;
 				}
 
