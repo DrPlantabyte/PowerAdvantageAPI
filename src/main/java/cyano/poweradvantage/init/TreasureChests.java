@@ -33,6 +33,7 @@ public abstract class TreasureChests {
 	private static void addChestLoot(ItemStack item, float weight, int number, int range){
 		WeightedRandomChestContent loot = makeChestLootEntry(item,(int)(weight*PowerAdvantage.chestLootFactor),number,number+range);
 		if(loot != null){
+			ChestGenHooks.getInfo(ChestGenHooks.VILLAGE_BLACKSMITH).addItem(loot);
 			ChestGenHooks.getInfo(ChestGenHooks.DUNGEON_CHEST).addItem(loot);
 			ChestGenHooks.getInfo(ChestGenHooks.STRONGHOLD_CORRIDOR).addItem(loot);
 			ChestGenHooks.getInfo(ChestGenHooks.STRONGHOLD_CROSSING).addItem(loot);
