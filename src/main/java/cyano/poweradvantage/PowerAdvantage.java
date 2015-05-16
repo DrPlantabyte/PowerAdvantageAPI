@@ -218,7 +218,7 @@ public class PowerAdvantage
      * This is the recipe mode set for this mod. Add-on mods may want to adjust their recipes 
      * accordingly.
      */
-    public static Enum recipeMode = RecipeMode.NORMAL;
+    public static RecipeMode recipeMode = RecipeMode.NORMAL;
     /** adjustment for frequency of loot spawns in treasure chests */
     public static float chestLootFactor = 0.5f;
     
