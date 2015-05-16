@@ -169,7 +169,6 @@ guiContainer.drawTexturedModalRect(x+79, y+35, 0, 0, arrowLength, 17); // x, y, 
 			int hostSize = inventorySlotCoordinates.length;
 			ItemStack stack = null;
 			Slot slotObject = (Slot) inventorySlots.get(slot);
-FMLLog.info("transferStackInSlot slot #"+slot+", slot item is "+slotObject.getStack()); // TODO: remove debug code
 			//null checks and checks if the item can be stacked (maxStackSize > 1)
 			if (slotObject != null && slotObject.getHasStack()) {
 				ItemStack stackInSlot = slotObject.getStack();
