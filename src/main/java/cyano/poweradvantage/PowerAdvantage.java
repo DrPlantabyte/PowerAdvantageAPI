@@ -21,9 +21,6 @@ import cyano.poweradvantage.registry.MachineGUIRegistry;
 // dependencies = "required-after:poweradvantage" 
 
 
-// TODO: translations
-
-// TODO: follow the to-do list:
 /* TODO list
  * drain block ✓
  * fluid pipes ✓
