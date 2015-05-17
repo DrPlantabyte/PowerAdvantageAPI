@@ -1,0 +1,29 @@
+language_support_goals=english (en_US,en_EN,en_CA,en_GB, en_AU, en_PT), spanish (es_MX,es_ES), chinese (zh_CN), japanese (ja_JA), portugese (pt_BR), german (de_DE), italian (it_IT), korean (ko_KR)
+nei.poweradvantage.recipehandler.shapelessfurnace.name=Große Ofen (formlos)
+nei.poweradvantage.recipehandler.shapedfurnace.name=Große Ofen (geformt)
+
+tooltip.poweradvantage.empty=Leer
+tooltip.poweradvantage.buckets_of=%x Eimer %y
+
+itemGroup.poweradvantage=Leistungsvorteil
+
+tile.poweradvantage.fluid_drain.name=Ablauf
+tile.poweradvantage.fluid_discharge.name=Austragsrost
+tile.poweradvantage.fluid_storage_tank.name=Lagertank
+item.poweradvantage.fluid_storage_tank_item.name=Speicher
+tile.poweradvantage.fluid_pipe.name=Rohr
+
+tile.poweradvantage.item_conveyor.name=Förderer
+tile.poweradvantage.item_filter_block.name=Block Auswahl Förder
+tile.poweradvantage.item_filter_food.name=Lebensmittel Auswahl Förder
+tile.poweradvantage.item_filter_fuel.name=Brennstoff Auswahl Förder
+tile.poweradvantage.item_filter_inventory.name=Anpassbare Auswahl Förder
+tile.poweradvantage.item_filter_ore.name=Erz Auswahl Förder
+tile.poweradvantage.item_filter_plant.name=Pflanze Auswahl Förder
+tile.poweradvantage.item_filter_smelt.name=Kochbare Auswahl Förder
+tile.poweradvantage.steel_frame.name=Stahlrahmen
+
+
+item.poweradvantage.starch.name=Kartoffelstärke
+item.poweradvantage.bioplastic_ingot.name=Biokunststoff-Barren
+item.poweradvantage.sprocket.name=Kettenrad

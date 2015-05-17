@@ -1,0 +1,29 @@
+language_support_goals=english (en_US,en_EN,en_CA,en_GB, en_AU, en_PT), spanish (es_MX,es_ES), chinese (zh_CN), japanese (ja_JA), portugese (pt_BR), german (de_DE), italian (it_IT), korean (ko_KR)
+nei.poweradvantage.recipehandler.shapelessfurnace.name=Large Furnace (Shapeless)
+nei.poweradvantage.recipehandler.shapedfurnace.name=Large Furnace (Shaped)
+
+tooltip.poweradvantage.empty=Empty
+tooltip.poweradvantage.buckets_of=%x buckets of %y
+
+itemGroup.poweradvantage=Power Advantage
+
+tile.poweradvantage.fluid_drain.name=Drain
+tile.poweradvantage.fluid_discharge.name=Discharge Grate
+tile.poweradvantage.fluid_storage_tank.name=Storage Tank
+item.poweradvantage.fluid_storage_tank_item.name=Storage Tank
+tile.poweradvantage.fluid_pipe.name=Pipe
+
+tile.poweradvantage.item_conveyor.name=Conveyor
+tile.poweradvantage.item_filter_block.name=Block Filter Conveyor
+tile.poweradvantage.item_filter_food.name=Food Filter Conveyor
+tile.poweradvantage.item_filter_fuel.name=Fuel Filter Conveyor
+tile.poweradvantage.item_filter_inventory.name=Filter Conveyor
+tile.poweradvantage.item_filter_ore.name=Ore Filter Conveyor
+tile.poweradvantage.item_filter_plant.name=Plantable Filter Conveyor
+tile.poweradvantage.item_filter_smelt.name=Furnace Filter Conveyor
+tile.poweradvantage.steel_frame.name=Steel Frame
+
+
+item.poweradvantage.starch.name=Starch
+item.poweradvantage.bioplastic_ingot.name=Bioplastic Ingot
+item.poweradvantage.sprocket.name=Sprocket

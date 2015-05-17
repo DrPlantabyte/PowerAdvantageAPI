@@ -1,0 +1,29 @@
+language_support_goals=english (en_US,en_EN,en_CA,en_GB, en_AU, en_PT), spanish (es_MX,es_ES), chinese (zh_CN), japanese (ja_JA), portugese (pt_BR), german (de_DE), italian (it_IT), korean (ko_KR)
+nei.poweradvantage.recipehandler.shapelessfurnace.name=대형 전기로 (못생긴)
+nei.poweradvantage.recipehandler.shapedfurnace.name=대형 전기로 (모양)
+
+tooltip.poweradvantage.empty=빈
+tooltip.tooltip.poweradvantage.buckets_of=%는 X 버킷
+
+itemGroup.poweradvantage=전원의 장점을 
+
+tile.poweradvantage.fluid_drain.name=드레인
+tile.poweradvantage.fluid_discharge.name=방전 화격자
+tile.poweradvantage.fluid_storage_tank.name=저장 탱크
+item.poweradvantage.fluid_storage_tank_item.name=는 저장 탱크를 
+tile.poweradvantage.fluid_pipe.name=파이프
+
+tile.poweradvantage.item_conveyor.name=컨베이어
+tile.poweradvantage.item_filter_block.name=블록 필터 컨베이어
+tile.poweradvantage.item_filter_food.name=식품 필터 컨베이어
+tile.poweradvantage.item_filter_fuel.name=연료 필터 컨베이어
+tile.poweradvantage.item_filter_inventory.name=필터 컨베이어
+tile.poweradvantage.item_filter_ore.name=광석 필터 컨베이어
+tile.poweradvantage.item_filter_plant.name=물만 주면 식물이 필터 컨베이어
+tile.poweradvantage.item_filter_smelt.name=노 필터 컨베이어
+tile.poweradvantage.steel_frame.name=스틸 프레임
+
+
+item.poweradvantage.starch.name=전분
+item.poweradvantage.bioplastic_ingot.name=는 바이오 플라스틱 잉곳을 
+item.poweradvantage.sprocket.name=스프로킷
