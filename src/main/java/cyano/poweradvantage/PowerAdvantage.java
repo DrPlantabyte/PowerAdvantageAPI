@@ -23,9 +23,6 @@ import cyano.poweradvantage.registry.MachineGUIRegistry;
 
 // TODO: translations
 
-// TODO: change texture mapping for pipe models (bottom-right corner as end-cap, top-right corner as 
-// pipe-side, top-left corner as pipe-bend, bottom-left corner as pipe-junction)
-
 // TODO: follow the to-do list:
 /* TODO list
  * drain block ✓
