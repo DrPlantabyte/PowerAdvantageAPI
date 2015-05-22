@@ -48,12 +48,29 @@ public class FluidDischargeTileEntity extends TileEntitySimpleFluidConsumer{
 	public void powerUpdate(){
 		// server-side
 		FluidTank tank = getTank();
+		// push fluid to below
+		BlockPos space = this.pos.down();
+		// from fluid container
+		if(tank.getFluidAmount() > 0 && worldObj.getTileEntity(space) instanceof IFluidHandler){
+			IFluidHandler other = (IFluidHandler) worldObj.getTileEntity(space);
+			FluidTankInfo[] tanks = other.getTankInfo(EnumFacing.DOWN);
+			for(int i = 0; i < tanks.length; i++){
+				FluidTankInfo t = tanks[i];
+				if(t.fluid != null && tank.getFluid().getFluid() != t.fluid.getFluid()){
+					continue;
+				}
+				if(other.canFill(EnumFacing.UP, tank.getFluid().getFluid())){
+					int amount = other.fill(EnumFacing.UP, tank.getFluid(), true);
+					tank.drain(amount,true);
+				}
+			}
+		} else 
 		// place fluid block
 		if(tank.getFluidAmount() >= FluidContainerRegistry.BUCKET_VOLUME){
 			FluidStack fstack = tank.getFluid();
 			Fluid fluid = fstack.getFluid();
 			Block fluidBlock = fluid.getBlock();
-			BlockPos coord = this.pos.down();
+			BlockPos coord = space;
 			if(worldObj.isAirBlock(coord)){
 				worldObj.setBlockState(coord, fluidBlock.getDefaultState());
 				worldObj.notifyBlockOfStateChange(coord, fluidBlock);

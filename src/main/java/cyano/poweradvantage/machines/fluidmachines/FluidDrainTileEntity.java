@@ -5,20 +5,12 @@ import net.minecraft.block.BlockDynamicLiquid;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.Packet;
-import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.IChatComponent;
-import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -28,13 +20,7 @@ import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fluids.IFluidHandler;
 import net.minecraftforge.fml.common.FMLLog;
-
-import com.google.common.collect.ImmutableMap;
-
-import cyano.poweradvantage.api.ConduitType;
-import cyano.poweradvantage.api.fluid.FluidRequest;
 import cyano.poweradvantage.api.simple.TileEntitySimpleFluidSource;
-import cyano.poweradvantage.api.simple.TileEntitySimplePowerSource;
 
 
 public class FluidDrainTileEntity extends TileEntitySimpleFluidSource{
@@ -61,8 +47,25 @@ public class FluidDrainTileEntity extends TileEntitySimpleFluidSource{
 		if(tank.getFluidAmount() > 0) tryPushFluid(this.pos.south(), EnumFacing.NORTH);
 		if(tank.getFluidAmount() > 0) tryPushFluid(this.pos.west(), EnumFacing.EAST);
 		// pull fluid from above
+		BlockPos space = this.pos.up();
+		// from fluid container
+		if(worldObj.getTileEntity(space) instanceof IFluidHandler){
+			IFluidHandler other = (IFluidHandler) worldObj.getTileEntity(space);
+			FluidTankInfo[] tanks = other.getTankInfo(EnumFacing.DOWN);
+			for(int i = 0; i < tanks.length; i++){
+				FluidTankInfo t = tanks[i];
+				if((t.fluid == null) || (tank.getFluidAmount() > 0 && tank.getFluid().getFluid() != t.fluid.getFluid())){
+					continue;
+				}
+				if(other.canDrain(EnumFacing.DOWN, t.fluid.getFluid())){
+					FluidStack fluid = other.drain(EnumFacing.DOWN, tank.getCapacity() - tank.getFluidAmount(), true);
+					tank.fill(fluid,true);
+				}
+			}
+		} else 
+		// from fluid source block
 		if(tank.getFluidAmount() <= 0){
-			IBlockState bs = worldObj.getBlockState(this.pos.up());
+			IBlockState bs = worldObj.getBlockState(space);
 			if(bs.getBlock() instanceof BlockLiquid || bs.getBlock() instanceof IFluidBlock){
 				Block block = (BlockLiquid)bs.getBlock();
 				Fluid fluid;
