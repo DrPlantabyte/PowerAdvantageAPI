@@ -20,6 +20,7 @@ import cyano.poweradvantage.registry.MachineGUIRegistry;
 // NOTE: other mods dependant on this one need to add the following to their @Mod annotation:
 // dependencies = "required-after:poweradvantage" 
 
+// TODO: add item to rotate machines/blocks
 
 /* TODO list
  * drain block ✓
@@ -235,7 +236,7 @@ public class PowerAdvantage
     			+ "treasure chests, requiring the players to pillage for their machines. \n"
     			+ "In TECH_PROGRESSION mode, important items are very complicated to craft using vanilla \n"
     			+ "items, but are easy to duplicate once they are made. This gives the players a sense of \n"
-    			+ "invention and rising throught the ages from stone-age to space-age.").toUpperCase(Locale.US);
+    			+ "invention and rising throught the ages from stone-age to space-age.").toUpperCase(Locale.US).trim();
     	switch (mode){
     	case "NORMAL":
     		recipeMode = RecipeMode.NORMAL;
