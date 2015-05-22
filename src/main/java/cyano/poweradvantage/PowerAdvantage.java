@@ -4,6 +4,7 @@ import java.util.Locale;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -251,6 +252,7 @@ public class PowerAdvantage
     		break;
 
     	default:
+    		FMLLog.severe(MODID+" does not recognize recipe_mode '"+mode+"'");
     		throw new IllegalArgumentException("'"+mode+"' is not valid for config option 'recipe_mode'. Valid options are: NORMAL, APOCALYPTIC, or TECH_PROGRESSION");
     	}
     	
