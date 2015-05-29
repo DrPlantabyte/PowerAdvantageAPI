@@ -30,14 +30,14 @@ import cyano.poweradvantage.registry.MachineGUIRegistry;
  * portable tank block ✓
  * item chute ✓
  * fluid discharge block ✓
- * example crusher machine (SteamAfvantage will be the example mod)
+ * example crusher machine (SteamAfvantage will be the example mod) ✓
  * -- SteamAdvantage mod --
- * Coal-Fired Steam Boiler
- * Boiler Tank
- * Steam Conduit
- * Steam Powered Rock Crusher
- * Steam Powered Blast Furnace (expanded furnace 2x2)
- * Steam Powered Drill
+ * Coal-Fired Steam Boiler ✓
+ * Boiler Tank ✓
+ * Steam Conduit ✓
+ * Steam Powered Rock Crusher ✓
+ * Steam Powered Blast Furnace ✓
+ * Steam Powered Drill ✓
  * Steam Powered Lift (pushes up special lift blocks, like an extendable piston)
  * Steam Powered Machine Shop (automatable crafter)
  * Musket (slow-loading ranged weapon)
