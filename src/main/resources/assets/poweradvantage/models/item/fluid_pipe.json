@@ -1,0 +1,14 @@
+{
+    "parent": "poweradvantage:block/fluid_pipe_ns",
+    "ambientocclusion": false,
+    "display": {
+        "thirdperson": {
+            "rotation": [ 0, 0, 90 ],
+            "translation": [ 0, 1.5, -2.75 ],
+            "scale": [ 0.5, 0.5, 0.5 ]
+        },
+        "gui": {
+            "rotation": [ 0, 90, 0 ]
+        }
+    }
+}

@@ -2,18 +2,13 @@ package cyano.poweradvantage.api.simple;
 
 import java.util.Random;
 
-import com.google.common.base.Predicate;
-
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.Item;
@@ -21,22 +16,22 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import cyano.poweradvantage.PowerAdvantage;
-import cyano.poweradvantage.api.ConductorType;
-import cyano.poweradvantage.api.ITypedConductor;
-import cyano.poweradvantage.api.PowerSinkEntity;
-import cyano.poweradvantage.api.PowerSourceEntity;
-import cyano.poweradvantage.api.example.RedstoneGeneratorBlock;
-import cyano.poweradvantage.api.example.RedstoneGeneratorGUI;
-import cyano.poweradvantage.registry.MachineGUIRegistry;
+
+import com.google.common.base.Predicate;
+
+import cyano.poweradvantage.api.ConduitType;
+import cyano.poweradvantage.api.GUIBlock;
+import cyano.poweradvantage.api.ITypedConduit;
+import cyano.poweradvantage.api.PoweredEntity;
+import cyano.poweradvantage.conduitnetwork.ConduitRegistry;
 /**
  * This block class provides all of the standard code for creating a machine 
- * block with an inventory and user interface that receives power from adjacent 
- * power conductors.<br>
+ * block with an inventory and user interface that receives power from connected 
+ * power sources.<br>
  * Example usage:<br><pre>
 int guiID = cyano.poweradvantage.registry.MachineGUIRegistry.addGUI(new MySimpleMachineGUI());
 Block myMachineBlock = new MyBlockSimplePowerConsumer(guiID,PowerAdvantage.getInstance());
@@ -46,16 +41,15 @@ GameRegistry.registerBlock(myMachineBlock,"my_machine");
  * @author DrCyano
  *
  */
-public abstract class BlockSimplePowerConsumer  extends BlockContainer implements ITypedConductor {
-	private final int guiID;
-	private final ConductorType type;
-	private final Object guiHandlerOwner;
+public abstract class BlockSimplePowerConsumer  extends GUIBlock implements ITypedConduit {
+	private final ConduitType type;
 	/**
 	 * Blockstate property
 	 */
     public static final PropertyDirection FACING = PropertyDirection.create("facing", (Predicate)EnumFacing.Plane.HORIZONTAL);
     /**
-     * Standard constructor for a machine block. 
+     * Standard constructor for a machine block. Remember to set the GUI ID so that a GUI can pop-up 
+     * when the player interacts with this block.
      * @param blockMaterial This is the material for the block. Typically is set 
 	 * to net.minecraft.block.material.Material.piston, though any material can 
 	 * be used.
@@ -63,28 +57,37 @@ public abstract class BlockSimplePowerConsumer  extends BlockContainer implement
 	 * a good value if you want it to be easy to break.
      * @param energyType This is the energy type for this block. This is used by 
      * power conduits to determine whether to connect to this block.
-     * @param guiHandlerID This is the numerical ID in the GUI registry, used by 
-     * the Forge API to show a custom GUI when you right-click on this block. 
-     * For the sake of simplicity, PowerAdvatageAPI has a GUI registry that will 
-     * automatically handle all of the details for you and give you a number to 
-     * use. To use this registry, call 
-     * <code>int guiID = cyano.poweradvantage.registry.MachineGUIRegistry.addGUI(new SimpleMachineGUI(...));</code>
-     * and then use the returned guiID number as the guiHandlerID in this 
-     * consructor.
-     * @param ownerOfGUIHandler This is the object instance that is registered 
-     * with Forge's GUI handler registry. If you don't have a GUI for this 
-     * block, make this value null. If you used the MachineGUIRegistry from 
-     * PowerAdvantageAPI, then this parameter should have the value 
-     * <code>cyano.poweradvantage.PowerAdvantage.getInstance()</code>
      */
-	public BlockSimplePowerConsumer(Material blockMaterial, float hardness, ConductorType energyType, int guiHandlerID, Object ownerOfGUIHandler){
+	public BlockSimplePowerConsumer(Material blockMaterial, float hardness, ConduitType energyType){
 		super(blockMaterial);
-		this.guiID = guiHandlerID;
 		this.type = energyType;
-		this.guiHandlerOwner = ownerOfGUIHandler;
     	super.setHardness(hardness);
 	}
-	
+	 
+	/**
+	 * Override of default block behavior
+	 */
+	@Override
+	public void onBlockAdded(final World world, final BlockPos coord, final IBlockState state) {
+		this.setDefaultFacing(world, coord, state);
+		ConduitRegistry.getInstance().conduitBlockPlacedEvent(world, world.provider.getDimensionId(), coord, getType());
+	}
+	/**
+	 * This method is called when the block is removed from the world by an entity.
+	 */
+	@Override
+	public void onBlockDestroyedByPlayer(World w, BlockPos coord, IBlockState state){
+		super.onBlockDestroyedByPlayer(w, coord, state);
+		ConduitRegistry.getInstance().conduitBlockRemovedEvent(w, w.provider.getDimensionId(), coord, getType());
+	}
+	/**
+	 * This method is called when the block is destroyed by an explosion.
+	 */
+	@Override
+	public void onBlockDestroyedByExplosion(World w, BlockPos coord, Explosion boom){
+		super.onBlockDestroyedByExplosion(w, coord, boom);
+		ConduitRegistry.getInstance().conduitBlockRemovedEvent(w, w.provider.getDimensionId(), coord, getType());
+	}
 	/**
 	 * Creates a TileEntity for this block when the block is placed into the 
 	 * world.
@@ -92,7 +95,7 @@ public abstract class BlockSimplePowerConsumer  extends BlockContainer implement
 	 * <b>TileEntitySimplePowerConsumer</b>.
 	 */
 	@Override
-    public abstract PowerSinkEntity createNewTileEntity(final World world, final int metaDataValue);
+    public abstract PoweredEntity createNewTileEntity(final World world, final int metaDataValue);
 	
 	/**
 	 * Used to decides whether or not a conduit should connect to this block 
@@ -100,8 +103,43 @@ public abstract class BlockSimplePowerConsumer  extends BlockContainer implement
 	 * @return The type of energy for this block 
 	 */
 	@Override
-	public ConductorType getEnergyType() {
+	public ConduitType getType() {
 		return type;
+	}
+
+	/**
+	 * Determines whether this conduit is compatible with an adjacent one
+	 * @param type The type of energy in the conduit
+	 * @param blockFace The side through-which the energy is flowing
+	 * @return true if this conduit can flow the given energy type through the given face, false 
+	 * otherwise
+	 */
+	public boolean canAcceptType(ConduitType type, EnumFacing blockFace){
+		return ConduitType.areSameType(getType(), type);
+	}
+	/**
+	 * Determines whether this conduit is compatible with a type of energy through any side
+	 * @param type The type of energy in the conduit
+	 * @return true if this conduit can flow the given energy type through one or more of its block 
+	 * faces, false otherwise
+	 */
+	public boolean canAcceptType(ConduitType type){
+		return ConduitType.areSameType(getType(), type);
+	}
+	
+	/**
+	 * Determines whether this block/entity should receive energy 
+	 * @return true if this block/entity should receive energy
+	 */
+	public boolean isPowerSink(){
+		return true;
+	}
+	/**
+	 * Determines whether this block/entity can provide energy 
+	 * @return true if this block/entity can provide energy
+	 */
+	public boolean isPowerSource(){
+		return false;
 	}
 
 	/**
@@ -111,15 +149,8 @@ public abstract class BlockSimplePowerConsumer  extends BlockContainer implement
     public Item getItemDropped(final IBlockState state, final Random prng, final int i3) {
         return Item.getItemFromBlock(this);
     }
-    
-   /**
-    * Override of default block behavior
-    */
-   @Override
-   public void onBlockAdded(final World world, final BlockPos coord, final IBlockState state) {
-	   this.setDefaultFacing(world, coord, state);
-   }
-    
+   
+
 	/**
 	 * Creates the blockstate of this block when it is placed in the world
 	 */
@@ -139,8 +170,8 @@ public abstract class BlockSimplePowerConsumer  extends BlockContainer implement
         world.setBlockState(coord, bs.withProperty((IProperty) FACING, (Comparable)placer.getHorizontalFacing().getOpposite()), 2);
         if (srcItemStack.hasDisplayName()) {
         	final TileEntity tileEntity = world.getTileEntity(coord);
-        	if (tileEntity instanceof PowerSourceEntity){
-        		((PowerSourceEntity)tileEntity).setCustomInventoryName(srcItemStack.getDisplayName());
+        	if (tileEntity instanceof PoweredEntity){
+        		((PoweredEntity)tileEntity).setCustomInventoryName(srcItemStack.getDisplayName());
         	}
         }
     }
@@ -148,28 +179,7 @@ public abstract class BlockSimplePowerConsumer  extends BlockContainer implement
     
     
     
-    /**
-     * Override of default block behavior to show the player the GUI for this 
-     * block
-     * @return true if the interaction resulted in opening the GUI, false 
-     * otherwise
-     */
-    @Override
-    public boolean onBlockActivated(final World w, final BlockPos coord, final IBlockState bs, 
-    		final EntityPlayer player, final EnumFacing facing, final float f1, final float f2, 
-    		final float f3) {
-        if (w.isRemote) {
-            return true;
-        }
-        final TileEntity tileEntity = w.getTileEntity(coord);
-        if (tileEntity == null || player.isSneaking()) {
-        	return false;
-        }
-        // open GUI
-        if(guiHandlerOwner == null) return false;
-        player.openGui(guiHandlerOwner, guiID, w, coord.getX(), coord.getY(), coord.getZ());
-        return true;
-    }
+    
     /**
      * Destroys the TileEntity associated with this block when this block 
      * breaks.
@@ -186,6 +196,9 @@ public abstract class BlockSimplePowerConsumer  extends BlockContainer implement
     
     /**
      * Sets the default blockstate
+     * @param w World instance
+     * @param coord Block coordinate
+     * @param state Block state
      */
     protected void setDefaultFacing(final World w, final BlockPos coord, final IBlockState state) {
         if (w.isRemote) {

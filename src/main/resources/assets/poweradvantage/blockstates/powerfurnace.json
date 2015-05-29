@@ -1,8 +1,0 @@
-{
-    "variants": {
-        "facing=north": { "model": "poweradvantage:powerfurnace" },
-        "facing=south": { "model": "poweradvantage:powerfurnace", "y": 180 },
-        "facing=west":  { "model": "poweradvantage:powerfurnace", "y": 270 },
-        "facing=east":  { "model": "poweradvantage:powerfurnace", "y": 90 }
-    }
-}

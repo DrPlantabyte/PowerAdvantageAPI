@@ -1,6 +1,0 @@
-{
-    "parent": "poweradvantage:block/pipe2_nuw",
-    "textures": {
-        "texture": "poweradvantage:blocks/powercable"
-    }
-}

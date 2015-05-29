@@ -1,8 +1,0 @@
-{
-    "parent": "block/orientable",
-    "textures": {
-        "top": "blocks/gold_block",
-        "front": "blocks/furnace_front_on",
-        "side": "blocks/gold_block"
-    }
-}

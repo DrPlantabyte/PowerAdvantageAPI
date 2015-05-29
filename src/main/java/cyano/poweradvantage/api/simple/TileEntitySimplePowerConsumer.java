@@ -1,6 +1,5 @@
 package cyano.poweradvantage.api.simple;
 
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
@@ -9,15 +8,13 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IChatComponent;
-import cyano.poweradvantage.api.ConductorType;
-import cyano.poweradvantage.api.PowerConductorEntity;
-import cyano.poweradvantage.api.PowerSinkEntity;
+import cyano.poweradvantage.api.ConduitType;
+import cyano.poweradvantage.api.PowerRequest;
+import cyano.poweradvantage.api.PoweredEntity;
 
 
 /**
@@ -29,9 +26,9 @@ import cyano.poweradvantage.api.PowerSinkEntity;
  * @author DrCyano
  *
  */
-public abstract class TileEntitySimplePowerConsumer extends PowerSinkEntity implements ISidedInventory {
+public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implements ISidedInventory {
 
-	private final ConductorType type;
+	private final ConduitType type;
 	private final float energyBufferSize;
 	private float energyBuffer = 0;
 	
@@ -47,7 +44,7 @@ public abstract class TileEntitySimplePowerConsumer extends PowerSinkEntity impl
      * @param unlocalizedName The string used for language look-up and 
      * entity registration. 
      */
-    public TileEntitySimplePowerConsumer(ConductorType type,float energyBufferSize, String unlocalizedName){
+    public TileEntitySimplePowerConsumer(ConduitType type,float energyBufferSize, String unlocalizedName){
     	this.type = type;
     	this.energyBufferSize = energyBufferSize;
     	this.unlocalizedName = unlocalizedName;
@@ -149,6 +146,21 @@ public abstract class TileEntitySimplePowerConsumer extends PowerSinkEntity impl
     	// do nothing
 	}
 	
+
+	/**
+	 * Specify how much energy this power sink wants from a power generator. If this tile entity is 
+	 * not a sink, then simply return <code>PowerRequest.REQUEST_NOTHING</code>
+	 * @param type The type of energy available upon request
+	 * @return A PowerRequest instance indicated how much power you'd like to get
+	 */
+	public PowerRequest getPowerRequest(ConduitType type){
+		float space = this.getEnergyCapacity() - this.getEnergy(); 
+		if(this.canAcceptType(type) && space > 0){
+			return new PowerRequest(PowerRequest.MEDIUM_PRIORITY,space,this);
+		} else {
+			return PowerRequest.REQUEST_NOTHING;
+		}
+	}
     
     /**
      * You must override this method and call super.readFromNBT(...).<br><br>
@@ -208,7 +220,7 @@ public abstract class TileEntitySimplePowerConsumer extends PowerSinkEntity impl
 	 * @return The type of energy/power for this block
 	 */
 	@Override
-	public ConductorType getEnergyType() {
+	public ConduitType getType() {
 		return type;
 	}
 
@@ -217,7 +229,7 @@ public abstract class TileEntitySimplePowerConsumer extends PowerSinkEntity impl
 	 * @return Maximum energy storage
 	 */
 	@Override
-	public float getEnergyBufferCapacity() {
+	public float getEnergyCapacity() {
 		return energyBufferSize;
 	}
 
@@ -226,7 +238,7 @@ public abstract class TileEntitySimplePowerConsumer extends PowerSinkEntity impl
 	 * @return Current energy level
 	 */
 	@Override
-	public float getEnergyBuffer() {
+	public float getEnergy() {
 		return energyBuffer;
 	}
 
@@ -235,25 +247,52 @@ public abstract class TileEntitySimplePowerConsumer extends PowerSinkEntity impl
 	 * @param energy New value of the energy buffer
 	 */
 	@Override
-	public void setEnergy(float energy) {
+	public void setEnergy(float energy,ConduitType type) {
 		energyBuffer = energy;
 		
 	}
+	
+	
+	
 	/**
-	 * Determines whether energy can be added to this block by a conductor of 
-	 * the indicated energy type
-	 * @param blockFace The side of the block into which someone wants to push 
-	 * the energy 
-	 * @param requestType The type of energy of the other conductor that wants 
-	 * to add energy to this block 
-	 * @return True if energy is allowed to be pushed into the given side of 
-	 * this block
+	 * Determines whether this conduit is compatible with an adjacent one
+	 * @param type The type of energy in the conduit
+	 * @param blockFace The side through-which the energy is flowing
+	 * @return true if this conduit can flow the given energy type through the given face, false 
+	 * otherwise
 	 */
 	@Override
-	public boolean canPushEnergyTo(EnumFacing blockFace,
-			ConductorType requestType) {
-		return ConductorType.areSameType(type, requestType);
+	public boolean canAcceptType(ConduitType type, EnumFacing blockFace) {
+		return canAcceptType(type);
 	}
+	/**
+	 * Determines whether this conduit is compatible with a type of energy through any side
+	 * @param type The type of energy in the conduit
+	 * @return true if this conduit can flow the given energy type through one or more of its block 
+	 * faces, false otherwise
+	 */
+	@Override
+	public boolean canAcceptType(ConduitType type) {
+		return ConduitType.areSameType(getType(), type);
+	}
+
+	/**
+	 * Returns true because this is a machine that wants to make power requests
+	 * @return true
+	 */
+	@Override
+	public boolean isPowerSink() {
+		return true;
+	}
+	/**
+	 * Returns false because this is a machine that does not produce power
+	 * @return false
+	 */
+	@Override
+	public boolean isPowerSource() {
+		return false;
+	}
+
 	
 
 	/**
@@ -521,9 +560,9 @@ public abstract class TileEntitySimplePowerConsumer extends PowerSinkEntity impl
 	/**
 	 * Determines whether another block (such as a Hopper) is allowed to pull an 
 	 * item from this block out through a given face
-	 * @param The inventory slot (index) of the item in question
-	 * @param The item to be pulled
-	 * @param The side of the block through which to pull the item
+	 * @param slot The inventory slot (index) of the item in question
+	 * @param targetItem The item to be pulled
+	 * @param side The side of the block through which to pull the item
 	 * @return true if the item is allowed to be pulled, false otherwise
 	 */
 	@Override
@@ -534,9 +573,9 @@ public abstract class TileEntitySimplePowerConsumer extends PowerSinkEntity impl
 	/**
 	 * Determines whether another block (such as a Hopper) is allowed to put an 
 	 * item into this block through a given face
-	 * @param The inventory slot (index) of the item in question
-	 * @param The item to be inserted
-	 * @param The side of the block through which to insertt the item
+	 * @param slot The inventory slot (index) of the item in question
+	 * @param srcItem The item to be inserted
+	 * @param side The side of the block through which to insertt the item
 	 * @return true if the item is allowed to be inserted, false otherwise
 	 */
 	@Override
@@ -555,7 +594,7 @@ public abstract class TileEntitySimplePowerConsumer extends PowerSinkEntity impl
 	 * furnace).<br><br>
 	 * The default implementation here makes all inventory slots accessible from 
 	 * all sides.
-	 * @param The side of this block through which the other entity wants to 
+	 * @param side The side of this block through which the other entity wants to 
 	 * access the inventory 
 	 * @return An array listing all of the inventory indices that are accessible 
 	 * through the given side of this block

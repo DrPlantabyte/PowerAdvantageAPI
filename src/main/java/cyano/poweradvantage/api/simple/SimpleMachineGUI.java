@@ -9,6 +9,9 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.lwjgl.opengl.GL11;
 
@@ -62,6 +65,22 @@ public class SimpleMachineGUI implements ITileEntityGUI {
 		}
 	}
 	
+	/**
+	 * Standard constructor for SimpleMachineGUI. You must provide a texture 
+	 * resource location for the GUI background image. The inventory slots are 
+	 * positioned besed on the array of coordinates (as Integer2D objects) 
+	 * passed in to this constructor.
+	 * @param guiImage The location of the texture resource for the GUI
+	 * @param inventorySlotCoordinates List of pixel coordinates (relative to 
+	 * the top-left corner of the GUI image) to draw the inventory slots. If you 
+	 * don't want to show GUI slots, you can provide a null or empty array. It 
+	 * is assumed that the index in this list of coordinates corresponds to the 
+	 * inventory index of the TileEntity's inventory.  
+	 */
+	public SimpleMachineGUI(String guiImage, Integer2D... inventorySlotCoordinates){
+		this(new ResourceLocation(guiImage),inventorySlotCoordinates);
+	}
+	
 	
 
 	/**
@@ -81,8 +100,9 @@ guiContainer.drawTexturedModalRect(x+79, y+35, 0, 0, arrowLength, 17); // x, y, 
 	 * the GUI
 	 * @param y This is the y coordinate (in pixels) from the top-left corner of 
 	 * the GUI
+	 * @param z This is the z coordinate (no units) into the depth of the screen
 	 */
-	public void drawGUIDecorations(Object srcEntity, GUIContainer guiContainer, int x, int y){}
+	public void drawGUIDecorations(Object srcEntity, GUIContainer guiContainer, int x, int y, float z){}
 
 	/**
 	 * Gets an instance of net.minecraft.inventory.Container for the 
@@ -104,11 +124,10 @@ guiContainer.drawTexturedModalRect(x+79, y+35, 0, 0, arrowLength, 17); // x, y, 
 	 * @return An instance of net.minecraft.client.gui.inventory.GuiContainer
 	 */
 	@Override
+	@SideOnly(Side.CLIENT)
 	public GuiContainer getContainerGUI(TileEntity e, EntityPlayer player) {
 		return new GUIContainer(player.inventory,(IInventory)e);
 	}
-	
-	
 	
 	
 	/**
@@ -147,22 +166,22 @@ guiContainer.drawTexturedModalRect(x+79, y+35, 0, 0, arrowLength, 17); // x, y, 
 		
 		@Override
 		public ItemStack transferStackInSlot(EntityPlayer player, int slot) {
+			int hostSize = inventorySlotCoordinates.length;
 			ItemStack stack = null;
 			Slot slotObject = (Slot) inventorySlots.get(slot);
-
 			//null checks and checks if the item can be stacked (maxStackSize > 1)
 			if (slotObject != null && slotObject.getHasStack()) {
 				ItemStack stackInSlot = slotObject.getStack();
 				stack = stackInSlot.copy();
 
 				//merges the item into player inventory since its in the tileEntity
-				if (slot < 9) {
-					if (!this.mergeItemStack(stackInSlot, 0, 35, true)) {
+				if (slot < hostSize) {
+					if (!this.mergeItemStack(stackInSlot, hostSize, 36+hostSize, true)) {
 						return null;
 					}
 				}
-				//places it into the tileEntity is possible since its in the player inventory
-				else if (!this.mergeItemStack(stackInSlot, 0, 9, false)) {
+				//places it into the tileEntity if possible since it's in the player inventory
+				else if (!this.mergeItemStack(stackInSlot, 0, hostSize, false)) {
 					return null;
 				}
 
@@ -187,6 +206,8 @@ guiContainer.drawTexturedModalRect(x+79, y+35, 0, 0, arrowLength, 17); // x, y, 
 	 * net.minecraft.client.gui.inventory.GuiContainer to fulfill the 
 	 * requirements of the interface ITileEntityGUI.
 	 */
+
+	@SideOnly(Side.CLIENT)
 	public class GUIContainer extends net.minecraft.client.gui.inventory.GuiContainer{
 		private final Object entity;
 		public GUIContainer(InventoryPlayer playerItems, IInventory entity) {
@@ -207,7 +228,44 @@ guiContainer.drawTexturedModalRect(x+79, y+35, 0, 0, arrowLength, 17); // x, y, 
 			this.drawTexturedModalRect(x, y, 0, 0, playerInventoryWidth, playerInventoryHeight); // x, y, textureOffsetX, textureOffsetY, width, height)
 			this.mc.renderEngine.bindTexture(guiDisplayImage);
 			this.drawTexturedModalRect(x, y, 0, 0, guiWidth, guiHeight); // x, y, textureOffsetX, textureOffsetY, width, height)
-			drawGUIDecorations(entity, this, x, y);
+			drawGUIDecorations(entity, this, x, y, this.zLevel);
+		}
+		/**
+		 * Gets the z-coordinate of this GUI element
+		 * @return screen depth coordinate
+		 */
+		public float getZLevel(){
+			return this.zLevel;
+		}
+		/**
+		 * Gets the width of the GUI
+		 * @return size of GUI
+		 */
+		public int getXSize(){
+			return this.xSize;
+		}
+
+		/**
+		 * Gets the height of the GUI
+		 * @return size of GUI
+		 */
+		public int getYSize(){
+			return this.ySize;
+		}
+		/**
+		 * Gets the GUI offset from left side of screen, in pixels
+		 * @return pixels to left of GUI
+		 */
+		public int getLeft(){
+			return this.guiLeft;
+		}
+
+		/**
+		 * Gets the GUI offset from top of screen, in pixels
+		 * @return pixels to above the GUI
+		 */
+		public int getTop(){
+			return this.guiTop;
 		}
 		
 	}

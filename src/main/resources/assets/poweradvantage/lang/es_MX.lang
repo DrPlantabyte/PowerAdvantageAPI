@@ -1,0 +1,29 @@
+language_support_goals=english (en_US,en_EN,en_CA,en_GB, en_AU, en_PT), spanish (es_MX,es_ES), chinese (zh_CN), japanese (ja_JA), portugese (pt_BR), german (de_DE), italian (it_IT), korean (ko_KR)
+nei.poweradvantage.recipehandler.shapelessfurnace.name=Gran Horno (no forma)
+nei.poweradvantage.recipehandler.shapedfurnace.name=Gran Horno (en forma)
+
+tooltip.poweradvantage.empty=Vacío
+tooltip.poweradvantage.buckets_of=%x cubos de %y
+
+itemGroup.poweradvantage=Ventaja de Energía
+
+tile.poweradvantage.fluid_drain.name=Drenaje
+tile.poweradvantage.fluid_discharge.name=Descarga Grate
+tile.poweradvantage.fluid_storage_tank.name=Tanque de almacenamiento
+item.poweradvantage.fluid_storage_tank_item.name=Tanque de almacenamiento
+tile.poweradvantage.fluid_pipe.name=Tubo
+
+tile.poweradvantage.item_conveyor.name=Transportadores
+tile.poweradvantage.item_filter_block.name=Bloquear Filtro Transportadores
+tile.poweradvantage.item_filter_food.name=Filtro Alimentos Transportadores
+tile.poweradvantage.item_filter_fuel.name=Filtro de combustible Transportadores
+tile.poweradvantage.item_filter_inventory.name=Filtro Transportadores
+tile.poweradvantage.item_filter_ore.name=Ore Transportadores Filtro
+tile.poweradvantage.item_filter_plant.name=Plantable Transportadores Filtro
+tile.poweradvantage.item_filter_smelt.name=Horno Filtro Transportadores
+tile.poweradvantage.steel_frame.name=Marco de Acero
+
+
+item.poweradvantage.starch.name=Almidón
+item.poweradvantage.bioplastic_ingot.name=Bioplástico Lingote
+item.poweradvantage.sprocket.name=Piñón

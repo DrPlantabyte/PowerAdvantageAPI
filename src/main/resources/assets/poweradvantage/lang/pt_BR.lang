@@ -1,0 +1,29 @@
+language_support_goals=english (en_US,en_EN,en_CA,en_GB, en_AU, en_PT), spanish (es_MX,es_ES), chinese (zh_CN), japanese (ja_JA), portugese (pt_BR), german (de_DE), italian (it_IT), korean (ko_KR)
+nei.poweradvantage.recipehandler.shapelessfurnace.name=Forno Grande (no forma)
+nei.poweradvantage.recipehandler.shapedfurnace.name=Forno Grande (em forma)
+
+tooltip.poweradvantage.empty=vazio
+tooltip.poweradvantage.buckets_of=%x baldes de %y
+
+itemGroup.poweradvantage=Vantagem de Poder
+
+tile.poweradvantage.fluid_drain.name=Dreno
+tile.poweradvantage.fluid_discharge.name=Grate Discharge
+tile.poweradvantage.fluid_storage_tank.name=Tanque de armazenamento
+item.poweradvantage.fluid_storage_tank_item.name=Tanque de armazenamento
+tile.poweradvantage.fluid_pipe.name=Tubulação
+
+tile.poweradvantage.item_conveyor.name=Transportador
+tile.poweradvantage.item_filter_block.name=Bloquear filtro transportador
+tile.poweradvantage.item_filter_food.name=Transportador Filtro de Alimentos
+tile.poweradvantage.item_filter_fuel.name=Filtro de combustível Transportador
+tile.poweradvantage.item_filter_inventory.name=Transportador Filtro
+tile.poweradvantage.item_filter_ore.name=Ore Transportadora Filtro
+tile.poweradvantage.item_filter_plant.name=Plantable Transportadora Filtro
+tile.poweradvantage.item_filter_smelt.name=fornalha filtro transportador
+tile.poweradvantage.steel_frame.name=Armação de Aço
+
+
+item.poweradvantage.starch.name=Amido
+item.poweradvantage.bioplastic_ingot.name=Bioplastic lingote
+item.poweradvantage.sprocket.name=Roda Dentada

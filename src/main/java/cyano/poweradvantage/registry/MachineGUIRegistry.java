@@ -12,6 +12,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.IGuiHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * The MachineGUIRegistry registry provides a simple way to add GUIs for your 
@@ -82,6 +84,7 @@ public class MachineGUIRegistry  implements IGuiHandler {
 	 * Implementation of net.minecraftforge.fml.common.network.IGuiHandler
 	 */
 	@Override
+	@SideOnly(Side.CLIENT)
 	public Object getClientGuiElement(int id, EntityPlayer player, World world,
 			int x, int y, int z) {
 		TileEntity tileEntity = world.getTileEntity(new BlockPos(x,y,z));

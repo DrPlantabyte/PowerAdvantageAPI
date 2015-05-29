@@ -23,4 +23,16 @@ public final class Integer2D {
 		this.X = x;
 		this.Y = y;
 	}
+	/**
+	 * Generates an array of Integer2D objects from a series of integers
+	 * @param xy Series of coordinates in order of x0, y0, x1, y1, ...
+	 * @return Array of Integer2D instances
+	 */
+	public static Integer2D[] fromCoordinates(int... xy){
+		Integer2D[] arr = new Integer2D[xy.length/2];
+		for(int i = 0; i < arr.length; i++){
+			arr[i] = new Integer2D(xy[2*i],xy[2*i + 1]);
+		}
+		return arr;
+	}
 }
