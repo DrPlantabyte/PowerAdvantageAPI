@@ -24,7 +24,7 @@ public abstract class Items {
 	public static Item bioplastic_ingot;
 	public static Item sprocket;
 	
-//	public static ItemBucket bucket_crude_oil;
+	public static ItemBucket bucket_crude_oil;
 	public static final Map<String,Item> allItems = new HashMap<>();
 	
 	
@@ -39,9 +39,9 @@ public abstract class Items {
 		sprocket = addItem("sprocket", new Item(),"sprocket","gear","sprocketSteel","gearSteel");
 		
 		
-//		bucket_crude_oil = (ItemBucket)addItem("bucket_crude_oil",new ItemBucket(Blocks.crude_oil_block),"bucketOil","bucketCrudeOil");
-//		FluidContainerRegistry.registerFluidContainer(Fluids.crude_oil, new ItemStack(bucket_crude_oil), new ItemStack(net.minecraft.init.Items.bucket));
-//		BucketHandler.getInstance().buckets.put(Blocks.crude_oil_block, bucket_crude_oil);
+		bucket_crude_oil = (ItemBucket)addItem("bucket_crude_oil",new ItemBucket(Blocks.crude_oil_block),"bucketOil","bucketCrudeOil");
+		FluidContainerRegistry.registerFluidContainer(Fluids.crude_oil, new ItemStack(bucket_crude_oil), new ItemStack(net.minecraft.init.Items.bucket));
+		BucketHandler.getInstance().buckets.put(Blocks.crude_oil_block, bucket_crude_oil);
 		
 		initDone = true;
 	}

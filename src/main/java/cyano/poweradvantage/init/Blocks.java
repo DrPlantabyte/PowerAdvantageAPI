@@ -1,14 +1,19 @@
 package cyano.poweradvantage.init;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.statemap.StateMap;
 import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fluids.BlockFluidBase;
-import net.minecraftforge.fluids.BlockFluidClassic;
+import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
@@ -16,7 +21,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
 import cyano.poweradvantage.PowerAdvantage;
 import cyano.poweradvantage.api.GUIBlock;
+import cyano.poweradvantage.blocks.BlockFluid;
 import cyano.poweradvantage.blocks.BlockFrame;
+import cyano.poweradvantage.blocks.BlockMaterialFluid;
 import cyano.poweradvantage.machines.conveyors.BlockConveyor;
 import cyano.poweradvantage.machines.conveyors.BlockConveyorFilter;
 import cyano.poweradvantage.machines.conveyors.TileEntityBlockFilter;
@@ -49,7 +56,8 @@ public abstract class Blocks {
 	public static Block steel_frame;
 	
 
-//	public static BlockFluidBase crude_oil_block;
+	public static Block crude_oil_block;
+	public static net.minecraft.block.material.MaterialLiquid crude_oil_material;
 	/* Hope is not lost yet for fluids:
 [20:18:57] [Client thread/ERROR] [FML/]: Model definition for location poweradvantage:crude_oil#level=14 not found
 [20:18:57] [Client thread/ERROR] [FML/]: Model definition for location poweradvantage:crude_oil#level=15 not found
@@ -100,6 +108,13 @@ public abstract class Blocks {
 		item_filter_plant = (GUIBlock)addBlock(new BlockConveyorFilter(defaultMachineMaterial,defaultMachineHardness,TileEntityPlantFilter.class),"item_filter_plant");
 		item_filter_smelt = (GUIBlock)addBlock(new BlockConveyorFilter(defaultMachineMaterial,defaultMachineHardness,TileEntitySmeltableFilter.class),"item_filter_smelt");
 
+		// TODO: update when custom fluids are fully implemented in Forge
+		Integer nextMapColorID;
+		for(nextMapColorID = 0; nextMapColorID < MapColor.mapColorArray.length && MapColor.mapColorArray[nextMapColorID] != null; nextMapColorID++);
+		FMLLog.info("Found free block MapColor ID #"+nextMapColorID);
+		
+		crude_oil_material = new BlockMaterialFluid(MapColor.blackColor);
+		crude_oil_block = addBlock(new BlockFluid(Fluids.crude_oil, Material.water), "crude_oil");
 //		crude_oil_still = (BlockStaticLiquid)addBlock(new CustomBlockStaticLiquid(cyano.poweradvantage.init.Materials.crude_oil).setHardness(100.0f),"crude_oil_still");
 //		crude_oil_flowing = (BlockDynamicLiquid)addBlock(new CustomBlockDynamicLiquid(cyano.poweradvantage.init.Materials.crude_oil).setHardness(100.0f),"crude_oil_flowing");
 //		crude_oil_block = new BlockFluidClassic(Fluids.crude_oil,cyano.poweradvantage.init.Materials.crude_oil);
@@ -127,6 +142,7 @@ public abstract class Blocks {
 			.register(net.minecraft.item.Item.getItemFromBlock(block), 0, 
 				new ModelResourceLocation(PowerAdvantage.MODID+":"+name, "inventory"));
 		}
+		
 	}
 
 	

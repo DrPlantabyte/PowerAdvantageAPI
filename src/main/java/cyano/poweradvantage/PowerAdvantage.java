@@ -2,8 +2,11 @@ package cyano.poweradvantage;
 
 import java.util.Locale;
 
+import net.minecraft.client.renderer.block.statemap.StateMap;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -282,6 +285,10 @@ public class PowerAdvantage
 	@SideOnly(Side.CLIENT)
 	private void clientPreInit(FMLPreInitializationEvent event){
 		// client-only code
+// TODO: generalize custom fluid addition into an API
+		ModelLoader.setCustomStateMapper(
+				cyano.poweradvantage.init.Blocks.crude_oil_block, 
+				(new StateMap.Builder()).addPropertiesToIgnore(BlockFluidBase.LEVEL).build());
 	}
 	@SideOnly(Side.SERVER)
 	private void serverPreInit(FMLPreInitializationEvent event){
