@@ -66,7 +66,9 @@ public class TileEntityConveyor extends TileEntity implements IUpdatePlayerListB
 						ISidedInventory them;
 						if(target instanceof  TileEntityChest){
 							// special handling for chests in case of double-chest
-							them = InventoryWrapper.wrap(handleChest((TileEntityChest)target));
+							IInventory realChest = handleChest((TileEntityChest)target);
+							if(realChest == null) return; // chest cannot open or is not initialized
+							them = InventoryWrapper.wrap(realChest);
 						} else {
 							them = InventoryWrapper.wrap((IInventory)target);
 						}
@@ -85,7 +87,9 @@ public class TileEntityConveyor extends TileEntity implements IUpdatePlayerListB
 						ISidedInventory them;
 						if(target instanceof  TileEntityChest){
 							// special handling for chests in case of double-chest
-							them = InventoryWrapper.wrap(handleChest((TileEntityChest)target));
+							IInventory realChest = handleChest((TileEntityChest)target);
+							if(realChest == null) return; // chest cannot open or is not initialized
+							them = InventoryWrapper.wrap(realChest);
 						} else {
 							them = InventoryWrapper.wrap((IInventory)target);
 						}
@@ -102,13 +106,14 @@ public class TileEntityConveyor extends TileEntity implements IUpdatePlayerListB
 	protected boolean isLocked(Object o){
 		return o instanceof ILockableContainer && ((ILockableContainer)o).isLocked();
 	}
-	
+
 	protected IInventory handleChest(TileEntityChest chest){
 		final Block block = getWorld().getBlockState(chest.getPos()).getBlock();
-        if (block instanceof BlockChest) {
-            return ((BlockChest)block).getLockableContainer(getWorld(), chest.getPos());
-        }
-        return chest;
+		if (block instanceof BlockChest) {
+			// Note: BlockChest.getLockableContainer(...) returns null if chest is blocked from opening
+			return ((BlockChest)block).getLockableContainer(getWorld(), chest.getPos());
+		}
+		return chest;
 	}
 	
 	protected boolean transferItem(ISidedInventory src, EnumFacing srcFace, ISidedInventory dest, EnumFacing destFace){
