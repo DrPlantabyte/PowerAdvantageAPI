@@ -9,7 +9,7 @@ itemGroup.poweradvantage=Power Advantage
 
 tile.poweradvantage.fluid_drain.name=Drain
 tile.poweradvantage.fluid_discharge.name=Discharge Grate
-tile.poweradvantage.fluid_storage_tank.name=Storage Tank
+tile.poweradvantage.fluid_storage_tank.name=Portable Fluid Tank
 item.poweradvantage.fluid_storage_tank_item.name=Storage Tank
 tile.poweradvantage.fluid_pipe.name=Pipe
 

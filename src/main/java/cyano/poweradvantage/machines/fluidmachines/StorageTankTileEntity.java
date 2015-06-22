@@ -16,7 +16,7 @@ import cyano.poweradvantage.init.Fluids;
 public class StorageTankTileEntity  extends TileEntitySimpleFluidSource{
 
 	public StorageTankTileEntity() {
-		super(FluidContainerRegistry.BUCKET_VOLUME * 8, StorageTankTileEntity.class.getName());
+		super(FluidContainerRegistry.BUCKET_VOLUME * 4, StorageTankTileEntity.class.getName());
 	}
 
 	

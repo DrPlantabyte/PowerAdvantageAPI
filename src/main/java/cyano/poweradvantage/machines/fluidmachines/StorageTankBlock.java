@@ -1,27 +1,28 @@
 package cyano.poweradvantage.machines.fluidmachines;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagString;
 import net.minecraft.stats.StatList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
-import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fml.common.FMLLog;
+
+import com.google.common.collect.Multimap;
+
 import cyano.poweradvantage.api.PoweredEntity;
 import cyano.poweradvantage.api.simple.BlockSimpleFluidSource;
 
@@ -179,22 +180,48 @@ public class StorageTankBlock extends BlockSimpleFluidSource{
 			dataTag.setInteger("Volume", te.getTank().getFluidAmount());
 			item.setTagCompound(dataTag);
 		}
-		item.setStackDisplayName(this.getLocalizedName()+" ("+information(item)+")");
+		displayInformation(item);
 		return item;
 	}
 
 
 	
-	public String information(ItemStack stack){
-		if(stack.hasTagCompound()){
-			NBTTagCompound dataTag = stack.getTagCompound();
+	public void displayInformation(ItemStack stack){
+		String message;
+		NBTTagCompound dataTag;
+		if(!stack.hasTagCompound()){
+			dataTag = new NBTTagCompound();
+		} else {
+			dataTag = stack.getTagCompound();
+		}
+		if(dataTag.hasKey("Volume") && dataTag.hasKey("FluidID")){
 			float buckets = (float)dataTag.getInteger("Volume") / (float)FluidContainerRegistry.BUCKET_VOLUME;
-			return (StatCollector.translateToLocal("tooltip.poweradvantage.buckets_of")
+			message = (StatCollector.translateToLocal("tooltip.poweradvantage.buckets_of")
 					.replace("%x", String.valueOf(buckets))
 					.replace("%y",FluidRegistry.getFluidName(dataTag.getInteger("FluidID"))));
 		} else {
-			return (StatCollector.translateToLocal("tooltip.poweradvantage.empty"));
+			message = (StatCollector.translateToLocal("tooltip.poweradvantage.empty"));
+		}
+		
+		NBTTagCompound displayTag;
+		if(dataTag.hasKey("display")){
+			displayTag = dataTag.getCompoundTag("display");
+		} else {
+			displayTag = new NBTTagCompound();
+			dataTag.setTag("display", displayTag);
+		}
+		NBTTagList loreTag;
+		if(dataTag.hasKey("Lore")){
+			loreTag = displayTag.getTagList("Lore",8);
+		} else {
+			loreTag = new NBTTagList();
+			displayTag.setTag("Lore", loreTag);
+		}
+		loreTag.appendTag(new NBTTagString(message));
+		if(!stack.hasTagCompound()){
+			stack.setTagCompound(new NBTTagCompound());
 		}
 	}
+	
 
 }
