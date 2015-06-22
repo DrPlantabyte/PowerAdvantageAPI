@@ -21,6 +21,8 @@ public abstract class GUI {
 		Blocks.fluid_discharge.setGuiID(MachineGUIRegistry.addGUI(new FluidTankGUI(new ResourceLocation(PowerAdvantage.MODID+":"+"textures/gui/container/fluid_discharge_gui.png"))),PowerAdvantage.getInstance());
 
 		Blocks.storage_tank.setGuiID(MachineGUIRegistry.addGUI(new FluidTankGUI(new ResourceLocation(PowerAdvantage.MODID+":"+"textures/gui/container/fluid_storage_tank_gui.png"))),PowerAdvantage.getInstance());
+		
+		Blocks.metal_storage_tank.setGuiID(MachineGUIRegistry.addGUI(new FluidTankGUI(new ResourceLocation(PowerAdvantage.MODID+":"+"textures/gui/container/fluid_metal_tank_gui.png"))),PowerAdvantage.getInstance());
 
 		Blocks.item_conveyor.setGuiID(MachineGUIRegistry.addGUI(new SimpleMachineGUI(
 				PowerAdvantage.MODID+":textures/gui/container/item_conveyor.png",

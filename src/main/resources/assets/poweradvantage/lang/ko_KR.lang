@@ -27,3 +27,7 @@ tile.poweradvantage.steel_frame.name=스틸 프레임
 item.poweradvantage.starch.name=전분
 item.poweradvantage.bioplastic_ingot.name=는 바이오 플라스틱 잉곳을 
 item.poweradvantage.sprocket.name=스프로킷
+
+
+tile.poweradvantage.fluid_metal_tank.name=금속 저장조
+item.poweradvantage.rotator_tool.name=회전 도구

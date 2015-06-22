@@ -28,3 +28,7 @@ tile.poweradvantage.steel_frame.name=鋼框架
 item.poweradvantage.starch.name=澱粉
 item.poweradvantage.bioplastic_ingot.name=錠生物塑料
 item.poweradvantage.sprocket.name=鏈輪
+
+
+tile.poweradvantage.fluid_metal_tank.name=金屬儲罐
+item.poweradvantage.rotator_tool.name=旋轉工具

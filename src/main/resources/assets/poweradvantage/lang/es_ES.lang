@@ -27,3 +27,7 @@ tile.poweradvantage.steel_frame.name=Marco de Acero
 item.poweradvantage.starch.name=Almidón
 item.poweradvantage.bioplastic_ingot.name=Bioplástico Lingote
 item.poweradvantage.sprocket.name=Piñón
+
+
+tile.poweradvantage.fluid_metal_tank.name=Tanque de Almacenamiento de Acero
+item.poweradvantage.rotator_tool.name=Herramienta de Rotación

@@ -27,3 +27,7 @@ tile.poweradvantage.steel_frame.name=Stahlrahmen
 item.poweradvantage.starch.name=Kartoffelstärke
 item.poweradvantage.bioplastic_ingot.name=Biokunststoff-Barren
 item.poweradvantage.sprocket.name=Kettenrad
+
+
+tile.poweradvantage.fluid_metal_tank.name=Metall-Lagertank
+item.poweradvantage.rotator_tool.name=Drehwerkzeug

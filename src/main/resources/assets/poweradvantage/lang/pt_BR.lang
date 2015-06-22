@@ -27,3 +27,7 @@ tile.poweradvantage.steel_frame.name=Armação de Aço
 item.poweradvantage.starch.name=Amido
 item.poweradvantage.bioplastic_ingot.name=Bioplastic lingote
 item.poweradvantage.sprocket.name=Roda Dentada
+
+
+tile.poweradvantage.fluid_metal_tank.name=Tanque de Armazenamento de Aço
+item.poweradvantage.rotator_tool.name=Ferramenta de Rotação

@@ -27,3 +27,6 @@ tile.poweradvantage.steel_frame.name=Steel Frame
 item.poweradvantage.starch.name=Starch
 item.poweradvantage.bioplastic_ingot.name=Bioplastic Ingot
 item.poweradvantage.sprocket.name=Sprocket
+
+tile.poweradvantage.fluid_metal_tank.name=Metal Fluid Tank
+item.poweradvantage.rotator_tool.name=Rotation Wrench

@@ -28,3 +28,7 @@ tile.poweradvantage.steel_frame.name=鉄骨
 item.poweradvantage.starch.name=デンプン
 item.poweradvantage.bioplastic_ingot.name=は、バイオプラスチックインゴットを
 item.poweradvantage.sprocket.name=スプロケット
+
+
+tile.poweradvantage.fluid_metal_tank.name=金属製貯蔵タンク
+item.poweradvantage.rotator_tool.name=回転ツール

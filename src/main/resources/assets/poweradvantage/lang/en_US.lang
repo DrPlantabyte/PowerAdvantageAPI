@@ -10,7 +10,6 @@ itemGroup.poweradvantage=Power Advantage
 tile.poweradvantage.fluid_drain.name=Drain
 tile.poweradvantage.fluid_discharge.name=Discharge Grate
 tile.poweradvantage.fluid_storage_tank.name=Portable Fluid Tank
-item.poweradvantage.fluid_storage_tank_item.name=Storage Tank
 tile.poweradvantage.fluid_pipe.name=Pipe
 
 tile.poweradvantage.item_conveyor.name=Conveyor
@@ -27,3 +26,7 @@ tile.poweradvantage.steel_frame.name=Steel Frame
 item.poweradvantage.starch.name=Starch
 item.poweradvantage.bioplastic_ingot.name=Bioplastic Ingot
 item.poweradvantage.sprocket.name=Sprocket
+
+
+tile.poweradvantage.fluid_metal_tank.name=Metal Fluid Tank
+item.poweradvantage.rotator_tool.name=Rotation Wrench

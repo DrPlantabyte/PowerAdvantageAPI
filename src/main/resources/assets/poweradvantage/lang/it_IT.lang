@@ -27,3 +27,7 @@ tile.poweradvantage.steel_frame.name=Steel Frame
 item.poweradvantage.starch.name=Amido
 item.poweradvantage.bioplastic_ingot.name=Bioplastica Lingotto
 item.poweradvantage.sprocket.name=Sprocket
+
+
+tile.poweradvantage.fluid_metal_tank.name=Serbatoio in Metallo
+item.poweradvantage.rotator_tool.name=Strumento di Rotazione

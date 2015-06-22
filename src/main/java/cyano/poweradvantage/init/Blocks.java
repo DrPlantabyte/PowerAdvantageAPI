@@ -7,8 +7,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraftforge.fluids.BlockFluidBase;
-import net.minecraftforge.fluids.BlockFluidClassic;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
@@ -29,6 +27,7 @@ import cyano.poweradvantage.machines.conveyors.TileEntitySmeltableFilter;
 import cyano.poweradvantage.machines.fluidmachines.FluidDischargeBlock;
 import cyano.poweradvantage.machines.fluidmachines.FluidDrainBlock;
 import cyano.poweradvantage.machines.fluidmachines.FluidPipeBlock;
+import cyano.poweradvantage.machines.fluidmachines.MetalTankBlock;
 import cyano.poweradvantage.machines.fluidmachines.StorageTankBlock;
 
 public abstract class Blocks {
@@ -37,6 +36,7 @@ public abstract class Blocks {
 	public static GUIBlock fluid_drain; 
 	public static GUIBlock fluid_discharge; 
 	public static GUIBlock storage_tank;
+	public static GUIBlock metal_storage_tank;
 	public static Block fluid_pipe;
 	public static GUIBlock item_conveyor;
 	public static GUIBlock item_filter_block;
@@ -81,6 +81,7 @@ public abstract class Blocks {
 		fluid_drain = (GUIBlock)addBlock(new FluidDrainBlock(),"fluid_drain");
 		fluid_discharge = (GUIBlock)addBlock(new FluidDischargeBlock(),"fluid_discharge");
 		storage_tank = (GUIBlock)addBlock(new StorageTankBlock(),"fluid_storage_tank");
+		metal_storage_tank = (GUIBlock)addBlock(new MetalTankBlock(),"fluid_metal_tank");
 		fluid_pipe = addBlock(new FluidPipeBlock(),"fluid_pipe");
 		OreDictionary.registerOre("pipe", fluid_pipe);
 		steel_frame = addBlock(new BlockFrame(net.minecraft.block.material.Material.piston)

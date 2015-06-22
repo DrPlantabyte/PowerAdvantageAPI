@@ -1,0 +1,8 @@
+{
+    "variants": {
+        "facing=east": { "model": "poweradvantage:fluid_metal_tank", "y": 90, "uvlock": true },
+        "facing=north": { "model": "poweradvantage:fluid_metal_tank", "uvlock": true },
+        "facing=south": { "model": "poweradvantage:fluid_metal_tank", "y": 180, "uvlock": true },
+        "facing=west": { "model": "poweradvantage:fluid_metal_tank", "y": 270, "uvlock": true }
+    }
+}

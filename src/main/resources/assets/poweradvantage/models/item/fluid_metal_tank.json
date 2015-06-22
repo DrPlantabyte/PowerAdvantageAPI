@@ -1,5 +1,5 @@
 {
-    "parent": "poweradvantage:block/fluid_storage_tank",
+    "parent": "poweradvantage:block/fluid_metal_tank",
     "ambientocclusion": false,
     "display": {
         "thirdperson": {
