@@ -154,7 +154,7 @@ public abstract class GUIBlock extends net.minecraft.block.BlockContainer{
 		if(FluidContainerRegistry.isEmptyContainer(bucket)){
 			// pull from tank
 			FluidStack practice = target.drain(blockFace, FluidContainerRegistry.BUCKET_VOLUME, false);
-			if(practice.amount ==  FluidContainerRegistry.BUCKET_VOLUME
+			if(practice != null && practice.amount ==  FluidContainerRegistry.BUCKET_VOLUME
 					&& FluidContainerRegistry.fillFluidContainer(practice, bucket) != null){
 				FluidStack drain = target.drain(blockFace, FluidContainerRegistry.BUCKET_VOLUME, true);
 				ItemStack newBucket = FluidContainerRegistry.fillFluidContainer(drain, bucket);

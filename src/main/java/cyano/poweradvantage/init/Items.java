@@ -36,6 +36,10 @@ public abstract class Items {
 		
 		starch = addItem("starch", new Item(),"starch");
 		bioplastic_ingot = addItem("bioplastic_ingot", new Item(),"plastic","ingotPlastic");
+		if(PowerAdvantage.plasticIsAlsoRubber){
+			OreDictionary.registerOre("rubber", bioplastic_ingot);
+			OreDictionary.registerOre("ingotRubber", bioplastic_ingot);
+		}
 		sprocket = addItem("sprocket", new Item(),"sprocket","gear","sprocketSteel","gearSteel");
 		
 		

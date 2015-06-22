@@ -203,82 +203,88 @@ dependencies {
 public class PowerAdvantage
 {
 	/** The identifier for this mod */
-    public static final String MODID = "poweradvantage";
-    /** The display name for this mod */
-    public static final String NAME = "Power Advantage";
-    /** The version of this mod, in the format major.minor.update */
-    public static final String VERSION = "1.0.3";
+	public static final String MODID = "poweradvantage";
+	/** The display name for this mod */
+	public static final String NAME = "Power Advantage";
+	/** The version of this mod, in the format major.minor.update */
+	public static final String VERSION = "1.1.0";
 
-    /** singleton instance */
-    private static PowerAdvantage instance;
-    /**
-     * This is the recipe mode set for this mod. Add-on mods may want to adjust their recipes 
-     * accordingly.
-     */
-    public static RecipeMode recipeMode = RecipeMode.NORMAL;
-    /** adjustment for frequency of loot spawns in treasure chests */
-    public static float chestLootFactor = 0.5f;
-    
-    /**
-     * Pre-initialization step. Used for initializing objects and reading the 
-     * config file
-     * @param event FML event object
-     */
-    @EventHandler
-    public void preInit(FMLPreInitializationEvent event)
-    {
-    	instance = this;
-    	Configuration config = new Configuration(event.getSuggestedConfigurationFile());
-    	config.load();
-    	String mode = config.getString("recipe_mode", "options", "NORMAL", "NORMAL, APOCALYPTIC, or TECH_PROGRESSION. \n"
-    			+ "Sets the style of recipes used in your game. \n"
-    			+ "In NORMAL mode, everything needed is craftable from vanilla items and the machines are \n"
-    			+ "available pretty much as soon as the player returns from their first mining expedition. \n"
-    			+ "In APOCALYPTIC mode, some important items are not craftable, but can be found in \n"
-    			+ "treasure chests, requiring the players to pillage for their machines. \n"
-    			+ "In TECH_PROGRESSION mode, important items are very complicated to craft using vanilla \n"
-    			+ "items, but are easy to duplicate once they are made. This gives the players a sense of \n"
-    			+ "invention and rising throught the ages from stone-age to space-age.").toUpperCase(Locale.US).trim();
-    	switch (mode){
-    	case "NORMAL":
-    		recipeMode = RecipeMode.NORMAL;
-    		break;
+	/** singleton instance */
+	private static PowerAdvantage instance;
+	/**
+	 * This is the recipe mode set for this mod. Add-on mods may want to adjust their recipes 
+	 * accordingly.
+	 */
+	public static RecipeMode recipeMode = RecipeMode.NORMAL;
+	/** adjustment for frequency of loot spawns in treasure chests */
+	public static float chestLootFactor = 0.5f;
+	/** If true, plastic will be registered as rubber in ore dictionary */
+	public static boolean plasticIsAlsoRubber = true;
 
-    	case "APOCALYPTIC":
-    		recipeMode = RecipeMode.APOCALYPTIC;
-    		break;
+	/**
+	 * Pre-initialization step. Used for initializing objects and reading the 
+	 * config file
+	 * @param event FML event object
+	 */
+	@EventHandler
+	public void preInit(FMLPreInitializationEvent event)
+	{
+		instance = this;
+		Configuration config = new Configuration(event.getSuggestedConfigurationFile());
+		config.load();
+		String[] presets = {"NORMAL", "TECH_PROGRESSION", "APOCALYPTIC"};
+		String mode = config.getString("recipe_mode", "options", "NORMAL", "NORMAL, APOCALYPTIC, or TECH_PROGRESSION. \n"
+		+ "Sets the style of recipes used in your game. \n"
+		+ "In NORMAL mode, everything needed is craftable from vanilla items and the machines are \n"
+		+ "available pretty much as soon as the player returns from their first mining expedition. \n"
+		+ "In APOCALYPTIC mode, some important items are not craftable, but can be found in \n"
+		+ "treasure chests, requiring the players to pillage for their machines. \n"
+		+ "In TECH_PROGRESSION mode, important items are very complicated to craft using vanilla \n"
+		+ "items, but are easy to duplicate once they are made. This gives the players a sense of \n"
+		+ "invention and rising throught the ages from stone-age to space-age.",presets).toUpperCase(Locale.US).trim();
+		switch (mode){
+		case "NORMAL":
+			recipeMode = RecipeMode.NORMAL;
+			break;
 
-    	case "TECH_PROGRESSION":
-    		recipeMode = RecipeMode.TECH_PROGRESSION;
-    		break;
+		case "APOCALYPTIC":
+			recipeMode = RecipeMode.APOCALYPTIC;
+			break;
 
-    	default:
-    		FMLLog.severe(MODID+" does not recognize recipe_mode '"+mode+"'");
-    		throw new IllegalArgumentException("'"+mode+"' is not valid for config option 'recipe_mode'. Valid options are: NORMAL, APOCALYPTIC, or TECH_PROGRESSION");
-    	}
-    	
-    	
-    	chestLootFactor  = config.getFloat("treasure_chest_loot_factor", "options", 0.5f, 0.0f, 1000.0f, 
+		case "TECH_PROGRESSION":
+			recipeMode = RecipeMode.TECH_PROGRESSION;
+			break;
+
+		default:
+			FMLLog.severe(MODID+" does not recognize recipe_mode '"+mode+"'");
+			throw new IllegalArgumentException("'"+mode+"' is not valid for config option 'recipe_mode'. Valid options are: NORMAL, APOCALYPTIC, or TECH_PROGRESSION");
+		}
+
+
+		chestLootFactor  = config.getFloat("treasure_chest_loot_factor", "options", 0.5f, 0.0f, 1000.0f, 
 				"Controls the rarity of items from this mod being found in treasure chests relative to \n"
-			 +  "the frequency of other chest loot items. Set to 0 to disable metal ingots from \n"
-			 +  "appearing in treasure chests.");
-    	
-    	config.save();
+						+  "the frequency of other chest loot items. Set to 0 to disable metal ingots from \n"
+						+  "appearing in treasure chests.");
 		
+		plasticIsAlsoRubber = config.getBoolean("plastic_equals_rubber", "options", plasticIsAlsoRubber, 
+				"If true, then plastic will be useable in recipes as if it were rubber (for cross-mod compatibility)");
+
+		config.save();
+
 		cyano.poweradvantage.init.Fluids.init(); 
-    	cyano.poweradvantage.init.Blocks.init();
-    	cyano.poweradvantage.init.Items.init();
-    	
-    	// keep this comment, it is useful for finding Vanilla recipes
-    	//OreDictionary.initVanillaEntries();
-    	if(event.getSide() == Side.CLIENT){
+		cyano.poweradvantage.init.Blocks.init();
+		cyano.poweradvantage.init.Items.init();
+
+		// keep this next comment, it is useful for finding Vanilla recipes
+		//OreDictionary.initVanillaEntries();
+		if(event.getSide() == Side.CLIENT){
 			clientPreInit(event);
 		}
 		if(event.getSide() == Side.SERVER){
 			serverPreInit(event);
 		}
 	}
-	
+
 	@SideOnly(Side.CLIENT)
 	private void clientPreInit(FMLPreInitializationEvent event){
 		// client-only code
@@ -288,37 +294,37 @@ public class PowerAdvantage
 		// client-only code
 	}
 
-    /**
-     * Initialization step. Used for adding renderers and most content to the 
-     * game
-     * @param event FML event object
-     */
-    @EventHandler
-    public void init(FMLInitializationEvent event)
-    {
+	/**
+	 * Initialization step. Used for adding renderers and most content to the 
+	 * game
+	 * @param event FML event object
+	 */
+	@EventHandler
+	public void init(FMLInitializationEvent event)
+	{
 
 		NetworkRegistry.INSTANCE.registerGuiHandler(PowerAdvantage.getInstance(), MachineGUIRegistry.getInstance());
 		GameRegistry.registerFuelHandler(FuelRegistry.getInstance());
-		
+
 		cyano.poweradvantage.init.Fuels.init();
 		cyano.poweradvantage.init.Entities.init();
 		cyano.poweradvantage.init.Recipes.init();
 		cyano.poweradvantage.init.Villages.init(); 
 		cyano.poweradvantage.init.GUI.init();
 		cyano.poweradvantage.init.TreasureChests.init();
-		
+
 		MinecraftForge.EVENT_BUS.register(BucketHandler.getInstance());
-		
-		
-    	
-    	if(event.getSide() == Side.CLIENT){
+
+
+
+		if(event.getSide() == Side.CLIENT){
 			clientInit(event);
 		}
 		if(event.getSide() == Side.SERVER){
 			serverInit(event);
 		}
 	}
-	
+
 
 	@SideOnly(Side.CLIENT)
 	private void clientInit(FMLInitializationEvent event){
@@ -331,16 +337,16 @@ public class PowerAdvantage
 		// client-only code
 	}
 
-    /**
-     * Post-initialization step. Used for cross-mod options
-     * @param event FML event object
-     */
-    @EventHandler
-    public void postInit(FMLPostInitializationEvent event)
-    {
-    	
-    }
-	
+	/**
+	 * Post-initialization step. Used for cross-mod options
+	 * @param event FML event object
+	 */
+	@EventHandler
+	public void postInit(FMLPostInitializationEvent event)
+	{
+
+	}
+
 
 	@SideOnly(Side.CLIENT)
 	private void clientPostInit(FMLPostInitializationEvent event){
@@ -350,13 +356,13 @@ public class PowerAdvantage
 	private void serverPostInit(FMLPostInitializationEvent event){
 		// client-only code
 	}
-/**
- * Gets a singleton instance of this mod. Is null until the completion of the 
- * pre-initialization step
- * @return The global instance of this mod
- */
+	/**
+	 * Gets a singleton instance of this mod. Is null until the completion of the 
+	 * pre-initialization step
+	 * @return The global instance of this mod
+	 */
 	public static PowerAdvantage getInstance() {
 		return instance;
 	}
-    
+
 }
