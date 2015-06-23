@@ -33,6 +33,8 @@ public abstract class Recipes {
 		OreDictionary.registerOre("potato", net.minecraft.init.Items.potato);
 		CrusherRecipeRegistry.addNewCrusherRecipe("potato", new ItemStack(Items.starch,1));
 		GameRegistry.addSmelting(Items.starch, new ItemStack(Items.bioplastic_ingot,1), 0.1f);
+
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Items.rotator_tool,1),"xx","x*"," x",'x',"ingotIron",'*',"sprocket"));
 		
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Blocks.item_conveyor,5),"xxx","ghg","xxx",'x',"plateSteel",'g',"sprocket",'h',net.minecraft.init.Blocks.hopper));
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Blocks.item_filter_block,1),"x","y","z",'y',"stone",'x',Blocks.item_conveyor,'z',net.minecraft.init.Blocks.wooden_pressure_plate));
@@ -46,7 +48,7 @@ public abstract class Recipes {
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Blocks.steel_frame,1),"xxx","x x","xxx",'x',"barsSteel"));
 
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Blocks.storage_tank,1),"xxx","xpx","xxx",'x',"ingotPlastic",'p',"pipe"));
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Blocks.storage_tank,1),"xxx","xpx","xxx",'x',"ingotSteel",'p',"pipe"));
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Blocks.metal_storage_tank,1),"xxx","xpx","xxx",'x',"ingotSteel",'p',"pipe"));
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Blocks.fluid_drain,1)," x ","w#w","ppp",'x',"bars",'w',"plateSteel",'#',"frameSteel",'p',"pipe"));
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Blocks.fluid_discharge,1),"ppp","w#w"," x ",'x',"bars",'w',"plateSteel",'#',"frameSteel",'p',"pipe"));
 		
@@ -58,7 +60,7 @@ public abstract class Recipes {
 
 			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Blocks.fluid_pipe,6),"xxx","   ","xxx",'x',"ingotIron"));
 			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Blocks.fluid_pipe,6),"xxx","   ","xxx",'x',"ingotCopper"));
-			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Blocks.storage_tank,1),"xxx","xpx","xxx",'x',"ingotIron",'p',"pipe"));
+			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Blocks.metal_storage_tank,1),"xxx","xpx","xxx",'x',"ingotIron",'p',"pipe"));
 		}else if(PowerAdvantage.recipeMode == RecipeMode.TECH_PROGRESSION){
 			// make things a little more complicated with tech-progression mode
 			BaseMetals.strongHammers = false;

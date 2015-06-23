@@ -7,22 +7,20 @@ import java.util.Set;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBucket;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
 import cyano.poweradvantage.PowerAdvantage;
-import cyano.poweradvantage.events.BucketHandler;
+import cyano.poweradvantage.items.RotationTool;
 
 public abstract class Items {
 
 	public static Item starch;
 	public static Item bioplastic_ingot;
 	public static Item sprocket;
+	public static Item rotator_tool;
 	
 //	public static ItemBucket bucket_crude_oil;
 	public static final Map<String,Item> allItems = new HashMap<>();
@@ -41,6 +39,7 @@ public abstract class Items {
 			OreDictionary.registerOre("ingotRubber", bioplastic_ingot);
 		}
 		sprocket = addItem("sprocket", new Item(),"sprocket","gear","sprocketSteel","gearSteel");
+		rotator_tool = addItem("rotator_tool", new RotationTool());
 		
 		
 //		bucket_crude_oil = (ItemBucket)addItem("bucket_crude_oil",new ItemBucket(Blocks.crude_oil_block),"bucketOil","bucketCrudeOil");
