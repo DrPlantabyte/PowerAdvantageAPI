@@ -21,8 +21,6 @@ import cyano.poweradvantage.registry.MachineGUIRegistry;
 // NOTE: other mods dependant on this one need to add the following to their @Mod annotation:
 // dependencies = "required-after:poweradvantage" 
 
-// TODO: add item to rotate machines/blocks
-// TODO: add a metal (iron or steel) liquid storage tank and reduce the capacity of the plastic one to 4 buckets
 
 /* TODO list
  * drain block ✓
@@ -207,7 +205,7 @@ public class PowerAdvantage
 	/** The display name for this mod */
 	public static final String NAME = "Power Advantage";
 	/** The version of this mod, in the format major.minor.update */
-	public static final String VERSION = "1.1.0";
+	public static final String VERSION = "1.2.0";
 
 	/** singleton instance */
 	private static PowerAdvantage instance;

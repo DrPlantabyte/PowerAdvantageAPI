@@ -187,7 +187,7 @@ public abstract class TileEntitySimplePowerSource extends PoweredEntity implemen
      * @return The amount of energy that was consumed by the requests
      */
     protected float transmitPowerToConsumers(final float availableEnergy, ConduitType powerType, byte minimumPriority){
-    	List<PowerRequest> requests = this.getRequestsForPower(type);
+    	List<PowerRequest> requests = this.getRequestsForPower(powerType);
     	float e = availableEnergy;
     	for(PowerRequest req : requests){
     		if(req.amount <= 0) continue;

@@ -69,14 +69,14 @@ public abstract class Recipes {
 			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Blocks.fluid_pipe,6),"xxx","   ","xxx",'x',"ingotIron"));
 		}else if(PowerAdvantage.recipeMode == RecipeMode.APOCALYPTIC){
 			// apocalyptic means some things are not craftable, but some stuff can be recycled
-			CrusherRecipeRegistry.addNewCrusherRecipe(Blocks.item_conveyor, new ItemStack(Items.sprocket,2));
-			CrusherRecipeRegistry.addNewCrusherRecipe(Blocks.item_filter_block, new ItemStack(Items.sprocket,2));
-			CrusherRecipeRegistry.addNewCrusherRecipe(Blocks.item_filter_food, new ItemStack(Items.sprocket,2));
-			CrusherRecipeRegistry.addNewCrusherRecipe(Blocks.item_filter_fuel, new ItemStack(Items.sprocket,2));
-			CrusherRecipeRegistry.addNewCrusherRecipe(Blocks.item_filter_inventory, new ItemStack(Items.sprocket,2));
-			CrusherRecipeRegistry.addNewCrusherRecipe(Blocks.item_filter_ore, new ItemStack(Items.sprocket,2));
-			CrusherRecipeRegistry.addNewCrusherRecipe(Blocks.item_filter_plant, new ItemStack(Items.sprocket,2));
-			CrusherRecipeRegistry.addNewCrusherRecipe(Blocks.item_filter_smelt, new ItemStack(Items.sprocket,2));
+			CrusherRecipeRegistry.addNewCrusherRecipe(Blocks.item_conveyor, new ItemStack(cyano.basemetals.init.Blocks.steel_plate,1));
+			CrusherRecipeRegistry.addNewCrusherRecipe(Blocks.item_filter_block, new ItemStack(cyano.basemetals.init.Blocks.steel_plate,1));
+			CrusherRecipeRegistry.addNewCrusherRecipe(Blocks.item_filter_food, new ItemStack(cyano.basemetals.init.Blocks.steel_plate,1));
+			CrusherRecipeRegistry.addNewCrusherRecipe(Blocks.item_filter_fuel, new ItemStack(cyano.basemetals.init.Blocks.steel_plate,1));
+			CrusherRecipeRegistry.addNewCrusherRecipe(Blocks.item_filter_inventory, new ItemStack(cyano.basemetals.init.Blocks.steel_plate,1));
+			CrusherRecipeRegistry.addNewCrusherRecipe(Blocks.item_filter_ore, new ItemStack(cyano.basemetals.init.Blocks.steel_plate,1));
+			CrusherRecipeRegistry.addNewCrusherRecipe(Blocks.item_filter_plant, new ItemStack(cyano.basemetals.init.Blocks.steel_plate,1));
+			CrusherRecipeRegistry.addNewCrusherRecipe(Blocks.item_filter_smelt, new ItemStack(cyano.basemetals.init.Blocks.steel_plate,1));
 
 			CrusherRecipeRegistry.addNewCrusherRecipe(Blocks.storage_tank, new ItemStack(Blocks.fluid_pipe,1));
 			CrusherRecipeRegistry.addNewCrusherRecipe(Blocks.fluid_discharge, new ItemStack(Blocks.fluid_pipe,2));
