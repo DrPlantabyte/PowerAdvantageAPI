@@ -63,6 +63,18 @@ public class ConduitType {
 	public static boolean areSameType(ConduitType a, ConduitType b){
 		return a.hashCache == b.hashCache;
 	}
+	
+
+	/**
+	 * High-performance convenience method for comparing conductor types
+	 * @param a a PowerConductorInstance
+	 * @param b the name of an energy type (e.g. "electricity" or "steam")
+	 * @return true if both are the same type of power conductor, false 
+	 * otherwise
+	 */
+	public static boolean areSameType(ConduitType a, String b){
+		return a.hashCache == HashCodeHelper.stringHashCode(b);
+	}
 	/**
 	 * Returns the energy type name
 	 * @return the energy type name
