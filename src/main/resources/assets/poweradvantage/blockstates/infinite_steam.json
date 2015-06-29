@@ -1,0 +1,8 @@
+{
+    "variants": {
+        "facing=east": { "model": "poweradvantage:infinite_steam", "y": 90 },
+        "facing=north": { "model": "poweradvantage:infinite_steam" },
+        "facing=south": { "model": "poweradvantage:infinite_steam", "y": 180 },
+        "facing=west": { "model": "poweradvantage:infinite_steam", "y": 270 }
+    }
+}

@@ -31,3 +31,7 @@ item.poweradvantage.sprocket.name=Roda Dentada
 
 tile.poweradvantage.fluid_metal_tank.name=Tanque de Armazenamento de Aço
 item.poweradvantage.rotator_tool.name=Ferramenta de Rotação
+
+tile.poweradvantage.infinite_steam.name=Energia a Vapor Infinito
+tile.poweradvantage.infinite_electricity.name=Energia Elétrica Infinito
+tile.poweradvantage.infinite_quantum.name=Energia Quantum Infinito

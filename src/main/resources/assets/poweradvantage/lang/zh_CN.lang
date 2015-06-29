@@ -32,3 +32,7 @@ item.poweradvantage.sprocket.name=鏈輪
 
 tile.poweradvantage.fluid_metal_tank.name=金屬儲罐
 item.poweradvantage.rotator_tool.name=旋轉工具
+
+tile.poweradvantage.infinite_steam.name=無限蒸汽動力
+tile.poweradvantage.infinite_electricity.name=無限電力
+tile.poweradvantage.infinite_quantum.name=無限量子動力

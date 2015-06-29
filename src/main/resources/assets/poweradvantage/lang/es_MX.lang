@@ -31,3 +31,7 @@ item.poweradvantage.sprocket.name=Piñón
 
 tile.poweradvantage.fluid_metal_tank.name=Tanque de Almacenamiento de Acero
 item.poweradvantage.rotator_tool.name=Herramienta de Rotación
+
+tile.poweradvantage.infinite_steam.name=La Energía de Vapor Infinito
+tile.poweradvantage.infinite_electricity.name=Energía Eléctrica Infinito
+tile.poweradvantage.infinite_quantum.name=Cuántica Infinito

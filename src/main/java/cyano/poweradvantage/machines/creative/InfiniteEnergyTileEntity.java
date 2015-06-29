@@ -1,17 +1,29 @@
 package cyano.poweradvantage.machines.creative;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.api.simple.TileEntitySimplePowerSource;
 
 public class InfiniteEnergyTileEntity extends TileEntitySimplePowerSource{
 
-	final ItemStack[] inventory = new ItemStack[0];
-	ConduitType type = null;
+	private final ItemStack[] inventory = new ItemStack[0];
+	private final int[] dataArray = new int[0];
+	private ConduitType type = null;
 	
-	public InfiniteEnergyTileEntity(String energyType) {
-		super(new ConduitType(energyType), 100f, InfiniteEnergyTileEntity.class.getName());
-		this.type = new ConduitType(energyType);
+	public InfiniteEnergyTileEntity(ConduitType energyType) {
+		super(energyType, 100f, InfiniteEnergyTileEntity.class.getName());
+		this.type = energyType;
+	}
+	
+
+	public InfiniteEnergyTileEntity() {
+		super(new ConduitType("power"), 100f, InfiniteEnergyTileEntity.class.getName());
+		this.type = new ConduitType("power");
+	}
+	
+	public void setPowerType(ConduitType type){
+		this.type = type;
 	}
 	
 	@Override
@@ -22,32 +34,48 @@ public class InfiniteEnergyTileEntity extends TileEntitySimplePowerSource{
 	
 	@Override
 	protected ItemStack[] getInventory() {
-		// TODO Auto-generated method stub
-		return null;
+		return inventory;
 	}
 
 	@Override
 	public int[] getDataFieldArray() {
-		// TODO Auto-generated method stub
-		return null;
+		return dataArray;
 	}
 
 	@Override
 	public void prepareDataFieldsForSync() {
-		// TODO Auto-generated method stub
+		// do nothing
 		
 	}
 
 	@Override
 	public void onDataFieldUpdate() {
-		// TODO Auto-generated method stub
+		// do nothing
 		
 	}
 
 	@Override
 	public void tickUpdate(boolean isServerWorld) {
-		// TODO Auto-generated method stub
-		
+		// do nothing
+	}
+	
+	@Override
+	public void powerUpdate(){
+		this.setEnergy(this.getEnergyCapacity(), this.getType());
 	}
 
+
+	@Override
+	public void writeToNBT(final NBTTagCompound tagRoot) {
+		super.writeToNBT(tagRoot);
+		tagRoot.setString("InfType", this.getType().toString());
+	}
+
+	@Override
+	public void readFromNBT(final NBTTagCompound tagRoot) {
+		super.readFromNBT(tagRoot);
+		if (tagRoot.hasKey("InfType")) {
+			this.type = new ConduitType(tagRoot.getString("InfType"));
+		}
+	}
 }

@@ -31,3 +31,7 @@ item.poweradvantage.sprocket.name=Kettenrad
 
 tile.poweradvantage.fluid_metal_tank.name=Metall-Lagertank
 item.poweradvantage.rotator_tool.name=Drehwerkzeug
+
+tile.poweradvantage.infinite_steam.name=Unendlichen Dampfkraft
+tile.poweradvantage.infinite_electricity.name=Unendliche Elektrische Leistung
+tile.poweradvantage.infinite_quantum.name=Unendliche Quanten Leistung

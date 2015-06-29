@@ -29,6 +29,10 @@ item.poweradvantage.starch.name=デンプン
 item.poweradvantage.bioplastic_ingot.name=は、バイオプラスチックインゴットを
 item.poweradvantage.sprocket.name=スプロケット
 
+tile.poweradvantage.infinite_steam.name=無限の蒸気動力
+tile.poweradvantage.infinite_electricity.name=無限の電力
+tile.poweradvantage.infinite_quantum.name=無限の量子パワー
+
 
 tile.poweradvantage.fluid_metal_tank.name=金属製貯蔵タンク
 item.poweradvantage.rotator_tool.name=回転ツール

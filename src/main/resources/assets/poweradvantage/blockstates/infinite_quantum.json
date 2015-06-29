@@ -1,0 +1,8 @@
+{
+    "variants": {
+        "facing=east": { "model": "poweradvantage:infinite_quantum", "y": 90 },
+        "facing=north": { "model": "poweradvantage:infinite_quantum" },
+        "facing=south": { "model": "poweradvantage:infinite_quantum", "y": 180 },
+        "facing=west": { "model": "poweradvantage:infinite_quantum", "y": 270 }
+    }
+}

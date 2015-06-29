@@ -13,6 +13,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
 import cyano.poweradvantage.PowerAdvantage;
+import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.api.GUIBlock;
 import cyano.poweradvantage.blocks.BlockFrame;
 import cyano.poweradvantage.machines.conveyors.BlockConveyor;
@@ -24,6 +25,7 @@ import cyano.poweradvantage.machines.conveyors.TileEntityInventoryFilter;
 import cyano.poweradvantage.machines.conveyors.TileEntityOreFilter;
 import cyano.poweradvantage.machines.conveyors.TileEntityPlantFilter;
 import cyano.poweradvantage.machines.conveyors.TileEntitySmeltableFilter;
+import cyano.poweradvantage.machines.creative.InfiniteEnergyBlock;
 import cyano.poweradvantage.machines.fluidmachines.FluidDischargeBlock;
 import cyano.poweradvantage.machines.fluidmachines.FluidDrainBlock;
 import cyano.poweradvantage.machines.fluidmachines.FluidPipeBlock;
@@ -47,6 +49,11 @@ public abstract class Blocks {
 	public static GUIBlock item_filter_plant;
 	public static GUIBlock item_filter_smelt;
 	public static Block steel_frame;
+	
+
+	public static GUIBlock infinite_steam;
+	public static GUIBlock infinite_electricity;
+	public static GUIBlock infinite_quantum;
 	
 
 //	public static BlockFluidBase crude_oil_block;
@@ -100,6 +107,11 @@ public abstract class Blocks {
 		item_filter_ore = (GUIBlock)addBlock(new BlockConveyorFilter(defaultMachineMaterial,defaultMachineHardness,TileEntityOreFilter.class),"item_filter_ore");
 		item_filter_plant = (GUIBlock)addBlock(new BlockConveyorFilter(defaultMachineMaterial,defaultMachineHardness,TileEntityPlantFilter.class),"item_filter_plant");
 		item_filter_smelt = (GUIBlock)addBlock(new BlockConveyorFilter(defaultMachineMaterial,defaultMachineHardness,TileEntitySmeltableFilter.class),"item_filter_smelt");
+		
+
+		infinite_steam = (GUIBlock)addBlock(new InfiniteEnergyBlock(new ConduitType("steam")),"infinite_steam");
+		infinite_electricity = (GUIBlock)addBlock(new InfiniteEnergyBlock(new ConduitType("electricity")),"infinite_electricity");
+		infinite_quantum = (GUIBlock)addBlock(new InfiniteEnergyBlock(new ConduitType("quantum")),"infinite_quantum");
 
 //		crude_oil_still = (BlockStaticLiquid)addBlock(new CustomBlockStaticLiquid(cyano.poweradvantage.init.Materials.crude_oil).setHardness(100.0f),"crude_oil_still");
 //		crude_oil_flowing = (BlockDynamicLiquid)addBlock(new CustomBlockDynamicLiquid(cyano.poweradvantage.init.Materials.crude_oil).setHardness(100.0f),"crude_oil_flowing");

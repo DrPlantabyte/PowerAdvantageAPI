@@ -31,3 +31,7 @@ item.poweradvantage.sprocket.name=Sprocket
 
 tile.poweradvantage.fluid_metal_tank.name=Serbatoio in Metallo
 item.poweradvantage.rotator_tool.name=Strumento di Rotazione
+
+tile.poweradvantage.infinite_steam.name=Forza Vapore Infinite
+tile.poweradvantage.infinite_electricity.name=Elettricità Infinite
+tile.poweradvantage.infinite_quantum.name=Atomica Infinite

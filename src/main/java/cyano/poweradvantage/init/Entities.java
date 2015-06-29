@@ -2,8 +2,19 @@ package cyano.poweradvantage.init;
 
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import cyano.poweradvantage.PowerAdvantage;
-import cyano.poweradvantage.machines.conveyors.*;
-import cyano.poweradvantage.machines.fluidmachines.*;
+import cyano.poweradvantage.machines.conveyors.TileEntityBlockFilter;
+import cyano.poweradvantage.machines.conveyors.TileEntityConveyor;
+import cyano.poweradvantage.machines.conveyors.TileEntityFoodFilter;
+import cyano.poweradvantage.machines.conveyors.TileEntityFuelFilter;
+import cyano.poweradvantage.machines.conveyors.TileEntityInventoryFilter;
+import cyano.poweradvantage.machines.conveyors.TileEntityOreFilter;
+import cyano.poweradvantage.machines.conveyors.TileEntityPlantFilter;
+import cyano.poweradvantage.machines.conveyors.TileEntitySmeltableFilter;
+import cyano.poweradvantage.machines.creative.InfiniteEnergyTileEntity;
+import cyano.poweradvantage.machines.fluidmachines.FluidDischargeTileEntity;
+import cyano.poweradvantage.machines.fluidmachines.FluidDrainTileEntity;
+import cyano.poweradvantage.machines.fluidmachines.MetalTankTileEntity;
+import cyano.poweradvantage.machines.fluidmachines.StorageTankTileEntity;
 
 public abstract class Entities {
 
@@ -26,6 +37,8 @@ public abstract class Entities {
 		GameRegistry.registerTileEntity(TileEntityOreFilter.class, PowerAdvantage.MODID+"."+"item_filter_ore");
 		GameRegistry.registerTileEntity(TileEntityPlantFilter.class, PowerAdvantage.MODID+"."+"item_filter_plant");
 		GameRegistry.registerTileEntity(TileEntitySmeltableFilter.class, PowerAdvantage.MODID+"."+"item_filter_smelt");
+		
+		GameRegistry.registerTileEntity(InfiniteEnergyTileEntity.class, PowerAdvantage.MODID+"."+"infinite_energy_source");
 		
 		
 		initDone = true;
