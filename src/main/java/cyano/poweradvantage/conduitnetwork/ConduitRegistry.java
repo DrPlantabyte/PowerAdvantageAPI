@@ -19,10 +19,13 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLLog;
+import cyano.poweradvantage.PowerAdvantage;
 import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.api.ITypedConduit;
 import cyano.poweradvantage.api.PowerRequest;
 import cyano.poweradvantage.api.PoweredEntity;
+import cyano.poweradvantage.api.modsupport.ExternalPowerRequest;
+import cyano.poweradvantage.api.modsupport.LightWeightPowerRegistry;
 import cyano.poweradvantage.math.BlockPos4D;
 
 /**
@@ -104,6 +107,15 @@ public class ConduitRegistry {
 				if(e != null && e instanceof PoweredEntity && ((ITypedConduit)e).isPowerSink()){
 					PowerRequest req = ((PoweredEntity)e).getPowerRequest(energyType);
 					if(req != PowerRequest.REQUEST_NOTHING)requests.add(req);
+				} else if(PowerAdvantage.enableExtendedModCompatibility){
+					if(LightWeightPowerRegistry.getInstance().isExternalPowerBlock(b)){
+						if(e != null ){
+							PowerRequest req = new ExternalPowerRequest(LightWeightPowerRegistry.getInstance().getRequestedPowerAmount(w, pos.pos, energyType),e);
+							if(req.amount > 0){
+								requests.add(req);
+							}
+						}
+					}
 				}
 			}
 		}

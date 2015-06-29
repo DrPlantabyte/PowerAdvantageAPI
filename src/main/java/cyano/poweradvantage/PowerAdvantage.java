@@ -1,7 +1,11 @@
 package cyano.poweradvantage;
 
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.FMLLog;
@@ -14,6 +18,9 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import cyano.poweradvantage.api.ConduitType;
+import cyano.poweradvantage.api.modsupport.ILightWeightPowerAcceptor;
+import cyano.poweradvantage.api.modsupport.LightWeightPowerRegistry;
 import cyano.poweradvantage.events.BucketHandler;
 import cyano.poweradvantage.registry.FuelRegistry;
 import cyano.poweradvantage.registry.MachineGUIRegistry;
@@ -218,6 +225,13 @@ public class PowerAdvantage
 	public static float chestLootFactor = 0.5f;
 	/** If true, plastic will be registered as rubber in ore dictionary */
 	public static boolean plasticIsAlsoRubber = true;
+	/** Set to false if all power system mods are add-ons to Power Advantage and you want to improve performance */
+	public static boolean enableExtendedModCompatibility = true;
+	/** If true, Power Advantage will try to interface with redstone flux machines that were not 
+	 * designed to accept power from Power Advantage mods (may cause crashes) */
+	public static boolean attemptAutomaticRFInterface = false;
+	/** used to convert energy to RF types when attempting autmoatic conversion */
+	public static final Map<ConduitType, Number> rfConversionTable = new HashMap<>();
 
 	/**
 	 * Pre-initialization step. Used for initializing objects and reading the 
@@ -266,6 +280,44 @@ public class PowerAdvantage
 		
 		plasticIsAlsoRubber = config.getBoolean("plastic_equals_rubber", "options", plasticIsAlsoRubber, 
 				"If true, then plastic will be useable in recipes as if it were rubber (for cross-mod compatibility)");
+		
+		enableExtendedModCompatibility = config.getBoolean("extended_compatibility", "Other Power Mods", enableExtendedModCompatibility, 
+				"If false, then you may have less lag. If true, then some mods that are not Power \n"
+				+ "Advantage add-ons may be able to draw power from Power Advantage power generators.");
+		if(enableExtendedModCompatibility){
+			FMLLog.info("Enabled external power mod interactions. If the server lags when using large power networks, consider disabling the 'extended_compatibility' option");
+		}
+		
+		attemptAutomaticRFInterface = config.getBoolean("attempt_automatic_RF_compatibility", "Other Power Mods", attemptAutomaticRFInterface, 
+				"If true, the Power Advantage will attempt to automatically create an interface with mods \n"
+				+ "that use RF (redstone flux) as their power source. THIS MAY CRASH YOUR GAME! This is \n"
+				+ "equivalent to jamming a square peg into a round hole with a bowling ball.");
+		if(attemptAutomaticRFInterface){
+			FMLLog.warning("Warning, 'attempt_automatic_RF_compatibility' option has been set. Power "
+					+ "Advantage will attempt to give power to mods that were not designed to handle "
+					+ "Power Advantage energy. This may destabilize your server!");
+			String[] conversions = config.getString("RF_conversions", "Other Power Mods", 
+					"steam=0.5;electricity=4", 
+					"List of conversions from Power Advantage power types to RF").split(";");
+			for(String c : conversions){
+				if(!c.contains("=")) continue;
+				String name = c.substring(0, c.indexOf('=')).trim().toLowerCase(Locale.US);
+				String val = c.substring(c.indexOf('=')).trim();
+				try{
+					Number d;
+					if(val.contains(".")){
+						d = Double.parseDouble(val);
+					} else {
+						d = Long.parseLong(val);
+					}
+					FMLLog.info("Adding conversion factor of "+d+" units of RF per unit of "+name);
+					rfConversionTable.put(new ConduitType(name), d);
+				}catch(NumberFormatException ex){
+					FMLLog.severe("Cannot parse '"+val+"' as number");
+				}
+			}
+		}
+		// TODO: automatic RF handling
 
 		config.save();
 
@@ -312,8 +364,6 @@ public class PowerAdvantage
 		cyano.poweradvantage.init.TreasureChests.init();
 
 		MinecraftForge.EVENT_BUS.register(BucketHandler.getInstance());
-
-
 
 		if(event.getSide() == Side.CLIENT){
 			clientInit(event);

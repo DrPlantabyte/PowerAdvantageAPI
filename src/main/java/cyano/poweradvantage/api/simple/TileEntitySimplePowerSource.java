@@ -14,10 +14,12 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IChatComponent;
-import net.minecraftforge.fml.common.FMLLog;
+import cyano.poweradvantage.PowerAdvantage;
 import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.api.PowerRequest;
 import cyano.poweradvantage.api.PoweredEntity;
+import cyano.poweradvantage.api.modsupport.ExternalPowerRequest;
+import cyano.poweradvantage.api.modsupport.LightWeightPowerRegistry;
 
 /**
  * This block implements the cyano.poweradvantage.api.PowerSourceEntity 
@@ -193,6 +195,13 @@ public abstract class TileEntitySimplePowerSource extends PoweredEntity implemen
     		if(req.amount <= 0) continue;
     		if(req.entity == this) continue;
     		if(req.priority < minimumPriority) continue;
+    		if(PowerAdvantage.enableExtendedModCompatibility){
+    			if(req instanceof ExternalPowerRequest){
+    				e -= LightWeightPowerRegistry.getInstance().addPower(getWorld(), ((ExternalPowerRequest)req).pos, 
+    						powerType, Math.min(e, req.amount));
+    				continue;
+    			}
+    		}
     		if(req.amount < e){
     			e -= req.entity.addEnergy(req.amount,powerType);
     		} else {

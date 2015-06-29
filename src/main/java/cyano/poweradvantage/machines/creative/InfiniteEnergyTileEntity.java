@@ -61,6 +61,7 @@ public class InfiniteEnergyTileEntity extends TileEntitySimplePowerSource{
 	
 	@Override
 	public void powerUpdate(){
+		super.powerUpdate();
 		this.setEnergy(this.getEnergyCapacity(), this.getType());
 	}
 

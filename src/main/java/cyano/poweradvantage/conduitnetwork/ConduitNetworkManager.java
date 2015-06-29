@@ -10,9 +10,10 @@ import java.util.concurrent.locks.ReadWriteLock;
 import net.minecraft.block.Block;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.FMLLog;
+import cyano.poweradvantage.PowerAdvantage;
 import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.api.ITypedConduit;
+import cyano.poweradvantage.api.modsupport.LightWeightPowerRegistry;
 import cyano.poweradvantage.math.BlockPos4D;
 
 /**
@@ -150,6 +151,11 @@ public class ConduitNetworkManager {
 			if(block instanceof ITypedConduit && ConduitType.areConnectable(w,coord.pos,face)){
 				addBlockToNetwork(coord, n);
 				recursiveScan(w,n,type);
+			} else if(PowerAdvantage.enableExtendedModCompatibility){
+				if(LightWeightPowerRegistry.getInstance().isExternalPowerBlock(block) && ConduitType.areConnectable(w,coord.pos,face)){
+					addBlockToNetwork(coord, n);
+					recursiveScan(w,n,type);
+				}
 			}
 		}
 	}

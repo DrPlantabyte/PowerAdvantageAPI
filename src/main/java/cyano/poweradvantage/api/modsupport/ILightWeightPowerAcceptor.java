@@ -1,5 +1,6 @@
-package cyano.poweradvantage.api;
+package cyano.poweradvantage.api.modsupport;
 
+import cyano.poweradvantage.api.ConduitType;
 import net.minecraft.tileentity.TileEntity;
 
 /**
@@ -11,6 +12,13 @@ import net.minecraft.tileentity.TileEntity;
  */
 public interface ILightWeightPowerAcceptor {
 
+	
+	/**
+	 * Used to determine which types of energy are acceptable
+	 * @param powerType A type of energy that you may or may not want to use as power
+	 * @return True if you accept this type, false if you reject it.
+	 */
+	public abstract boolean canAcceptEnergyType(ConduitType powerType);
 	/**
 	 * This method will be called whenever your machine block is polled for power requests. The 
 	 * TileEntity of the block being polled will be passed in (so you can safely cast it to your 

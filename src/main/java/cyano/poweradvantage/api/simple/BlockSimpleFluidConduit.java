@@ -16,6 +16,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import cyano.poweradvantage.PowerAdvantage;
 import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.api.ITypedConduit;
 import cyano.poweradvantage.api.fluid.FluidConduitBlock;
@@ -220,6 +221,9 @@ public abstract class BlockSimpleFluidConduit extends FluidConduitBlock{
 	protected boolean canConnectTo(IBlockAccess w, BlockPos thisBlock, EnumFacing face, BlockPos otherBlock){
 		Block other = w.getBlockState(otherBlock).getBlock();
 		if(other instanceof ITypedConduit){
+			if(PowerAdvantage.enableExtendedModCompatibility){
+				return ConduitType.areConnectable(w, thisBlock, face);
+			}
 			return ConduitType.areConnectable(this, face, other);
 		} else {
 			return false;

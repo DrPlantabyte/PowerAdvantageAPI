@@ -18,10 +18,12 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import cyano.poweradvantage.PowerAdvantage;
 import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.api.ITypedConduit;
 import cyano.poweradvantage.api.ConduitBlock;
 import cyano.poweradvantage.api.PoweredEntity;
+import cyano.poweradvantage.api.modsupport.LightWeightPowerRegistry;
 import cyano.poweradvantage.conduitnetwork.ConduitRegistry;
 /**
  * <p>
@@ -254,6 +256,11 @@ public abstract class BlockSimplePowerConduit extends ConduitBlock{
 	 */
 	protected boolean canConnectTo(IBlockAccess w, BlockPos thisBlock, EnumFacing face, BlockPos otherBlock){
 		Block other = w.getBlockState(otherBlock).getBlock();
+		if(PowerAdvantage.enableExtendedModCompatibility){
+			if(LightWeightPowerRegistry.getInstance().isExternalPowerBlock(other)){
+				return ConduitType.areConnectable(w, thisBlock, face);
+			}
+		}
 		if(other instanceof ITypedConduit){
 			return ConduitType.areConnectable(this, face, other);
 		} else {
