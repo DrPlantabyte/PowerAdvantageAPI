@@ -4,9 +4,8 @@ import net.minecraft.util.EnumFacing;
 
 
 /**
- * Implement this interface on Tile Entities which should receive energy, generally storing it in one or more internal {@link IEnergyStorage} objects.
+ * Implement this interface on Tile Entities which should receive energy, generally storing it in one or more internal IEnergyStorage objects.
  * <p>
- * A reference implementation is provided {@link TileEnergyHandler}.
  *
  * @author King Lemming
  *
@@ -30,6 +29,7 @@ public interface IEnergyReceiver extends IEnergyConnection {
 	 * Returns the amount of energy currently stored.
 	 * @param facing
 	 *            Orientation the energy is received from.
+	 * @return amount stored
 	 */
 	int getEnergyStored(EnumFacing facing);
 
@@ -37,6 +37,7 @@ public interface IEnergyReceiver extends IEnergyConnection {
 	 * Returns the maximum amount of energy that can be stored.
 	 * @param facing
 	 *            Orientation the energy is received from.
+	 * @return amount that can be stored
 	 */
 	int getMaxEnergyStored(EnumFacing facing);
 

@@ -199,6 +199,7 @@ public abstract class TileEntitySimplePowerSource extends PoweredEntity implemen
     			if(req instanceof ExternalPowerRequest){
     				e -= LightWeightPowerRegistry.getInstance().addPower(getWorld(), ((ExternalPowerRequest)req).pos, 
     						powerType, Math.min(e, req.amount));
+    				if(e <= 0) break;
     				continue;
     			}
     		}
