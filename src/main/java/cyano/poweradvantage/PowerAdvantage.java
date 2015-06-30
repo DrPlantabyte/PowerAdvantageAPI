@@ -3,9 +3,10 @@ package cyano.poweradvantage;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.block.Block;
+import net.minecraft.block.ITileEntityProvider;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.FMLLog;
@@ -15,12 +16,14 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.registry.GameData;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import cyano.poweradvantage.api.ConduitType;
-import cyano.poweradvantage.api.modsupport.ILightWeightPowerAcceptor;
+import cyano.poweradvantage.api.ITypedConduit;
 import cyano.poweradvantage.api.modsupport.LightWeightPowerRegistry;
+import cyano.poweradvantage.api.modsupport.MaybeRFPowerAcceptor;
 import cyano.poweradvantage.events.BucketHandler;
 import cyano.poweradvantage.registry.FuelRegistry;
 import cyano.poweradvantage.registry.MachineGUIRegistry;
@@ -317,7 +320,6 @@ public class PowerAdvantage
 				}
 			}
 		}
-		// TODO: automatic RF handling
 
 		config.save();
 
@@ -392,7 +394,22 @@ public class PowerAdvantage
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event)
 	{
-
+		// Handle inter-mod action
+		if(PowerAdvantage.attemptAutomaticRFInterface){
+			// Try to force a square peg into a round hole
+			FMLLog.warning("Attempting to interface all redstone flux (RF) blocks...");
+			MaybeRFPowerAcceptor genericRFAcceptor = new MaybeRFPowerAcceptor(rfConversionTable);
+			Set<String> allBlockNames = GameData.getBlockRegistry().getKeys();
+			for(String id : allBlockNames){
+				Block b = GameData.getBlockRegistry().getObject(id);
+				if(b instanceof ITileEntityProvider == false) continue;
+				if(b instanceof ITypedConduit) continue;
+				if(LightWeightPowerRegistry.getInstance().isExternalPowerBlock(b)) continue;
+				FMLLog.warning("Wrapping block "+b.getUnlocalizedName()+" with RF power handler interface.");
+				LightWeightPowerRegistry.registerLightWeightPowerAcceptor(b, genericRFAcceptor);
+			}
+			FMLLog.warning("...All redstone flux (RF) blocks accounted for (maybe)");
+		}
 	}
 
 

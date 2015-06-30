@@ -14,7 +14,7 @@ LightWeightPowerRegistry.registerLightWeightPowerAcceptor(Blocks.myMachine,
 		public float getEnergyDemand(TileEntity yourMachine,
 				ConduitType powerType) {
 			TileEntityMyMachine m = (TileEntityMyMachine)yourMachine;
-			return m.getMaxEnergyStored() = m.getEnergyStored();
+			return m.getMaxEnergyStored() - m.getEnergyStored();
 		}
 
 		public float addEnergy(TileEntity yourMachine,

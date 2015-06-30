@@ -32,7 +32,7 @@ import cyano.poweradvantage.api.PoweredEntity;
 					public float getEnergyDemand(TileEntity yourMachine,
 							ConduitType powerType) {
 						TileEntityMyMachine m = (TileEntityMyMachine)yourMachine;
-						return m.getMaxEnergyStored() = m.getEnergyStored();
+						return m.getMaxEnergyStored() - m.getEnergyStored();
 					}
 
 					public float addEnergy(TileEntity yourMachine,
@@ -83,6 +83,7 @@ public class LightWeightPowerRegistry {
 	 * and how to add power to that TileEntity
 	 */
 	public static void registerLightWeightPowerAcceptor(Block machineBlock, ILightWeightPowerAcceptor powerAcceptorImplementation){
+		FMLLog.info("Registered external power acceptor interfce for block "+machineBlock.getUnlocalizedName());
 		getInstance().externalPowerSinks.put(machineBlock, powerAcceptorImplementation);
 	}
 	
