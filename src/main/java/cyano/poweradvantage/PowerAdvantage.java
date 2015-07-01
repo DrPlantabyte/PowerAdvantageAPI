@@ -215,7 +215,7 @@ public class PowerAdvantage
 	/** The display name for this mod */
 	public static final String NAME = "Power Advantage";
 	/** The version of this mod, in the format major.minor.update */
-	public static final String VERSION = "1.2.0";
+	public static final String VERSION = "1.2.1";
 
 	/** singleton instance */
 	private static PowerAdvantage instance;
@@ -399,8 +399,8 @@ public class PowerAdvantage
 			// Try to force a square peg into a round hole
 			FMLLog.warning("Attempting to interface all redstone flux (RF) blocks...");
 			MaybeRFPowerAcceptor genericRFAcceptor = new MaybeRFPowerAcceptor(rfConversionTable);
-			Set<String> allBlockNames = GameData.getBlockRegistry().getKeys();
-			for(String id : allBlockNames){
+			Set allBlockNames = GameData.getBlockRegistry().getKeys();
+			for(Object id : allBlockNames){
 				Block b = GameData.getBlockRegistry().getObject(id);
 				if(b instanceof ITileEntityProvider == false) continue;
 				if(b instanceof ITypedConduit) continue;
