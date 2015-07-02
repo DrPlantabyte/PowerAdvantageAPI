@@ -30,9 +30,8 @@ public class MaybeRFPowerAcceptor implements ILightWeightPowerAcceptor{
 			cofh.api.energy.IEnergyReceiver r = (cofh.api.energy.IEnergyReceiver)te;
 			float rfDeficit = r.getMaxEnergyStored(EnumFacing.UP) - r.getEnergyStored(EnumFacing.UP);
 			return rfDeficit / conversionTable.get(powerType).floatValue();
-		} else {
-			return 0;
 		}
+		return 0;
 	}
 
 	@Override

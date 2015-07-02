@@ -215,7 +215,7 @@ public class PowerAdvantage
 	/** The display name for this mod */
 	public static final String NAME = "Power Advantage";
 	/** The version of this mod, in the format major.minor.update */
-	public static final String VERSION = "1.2.1";
+	public static final String VERSION = "1.2.2";
 
 	/** singleton instance */
 	private static PowerAdvantage instance;
@@ -293,19 +293,19 @@ public class PowerAdvantage
 		
 		attemptAutomaticRFInterface = config.getBoolean("attempt_automatic_RF_compatibility", "Other Power Mods", attemptAutomaticRFInterface, 
 				"If true, the Power Advantage will attempt to automatically create an interface with mods \n"
-				+ "that use RF (redstone flux) as their power source. THIS MAY CRASH YOUR GAME! This is \n"
+				+ "that use RF (redstone flux) as their power source. This may increase your lag. This is \n"
 				+ "equivalent to jamming a square peg into a round hole with a bowling ball.");
 		if(attemptAutomaticRFInterface){
 			FMLLog.warning("Warning, 'attempt_automatic_RF_compatibility' option has been set. Power "
 					+ "Advantage will attempt to give power to mods that were not designed to handle "
 					+ "Power Advantage energy. This may destabilize your server!");
 			String[] conversions = config.getString("RF_conversions", "Other Power Mods", 
-					"steam=0.5;electricity=4", 
+					"steam=16;electricity=24;quantum=32", 
 					"List of conversions from Power Advantage power types to RF").split(";");
 			for(String c : conversions){
 				if(!c.contains("=")) continue;
 				String name = c.substring(0, c.indexOf('=')).trim().toLowerCase(Locale.US);
-				String val = c.substring(c.indexOf('=')).trim();
+				String val = c.substring(c.indexOf('=')+1).trim();
 				try{
 					Number d;
 					if(val.contains(".")){
@@ -404,6 +404,7 @@ public class PowerAdvantage
 				Block b = GameData.getBlockRegistry().getObject(id);
 				if(b instanceof ITileEntityProvider == false) continue;
 				if(b instanceof ITypedConduit) continue;
+				if(cyano.poweradvantage.init.Blocks.getModBlockRegistry().containsKey(b)) continue;
 				if(LightWeightPowerRegistry.getInstance().isExternalPowerBlock(b)) continue;
 				FMLLog.warning("Wrapping block "+b.getUnlocalizedName()+" with RF power handler interface.");
 				LightWeightPowerRegistry.registerLightWeightPowerAcceptor(b, genericRFAcceptor);

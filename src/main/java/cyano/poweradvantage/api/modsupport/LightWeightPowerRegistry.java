@@ -130,7 +130,7 @@ public class LightWeightPowerRegistry {
 		if(te == null) return 0;
 		if(te instanceof PoweredEntity){
 			return ((PoweredEntity)te).getPowerRequest(energyType).amount;
-		} else if(externalPowerSinks.containsKey(b)){
+		} else if(externalPowerSinks.containsKey(b) && externalPowerSinks.get(b).canAcceptEnergyType(energyType)){
 			return externalPowerSinks.get(b).getEnergyDemand(te, energyType);
 		}
 		return 0;
@@ -152,7 +152,7 @@ public class LightWeightPowerRegistry {
 		if(te == null) return 0;
 		if(te instanceof PoweredEntity){
 			return ((PoweredEntity)te).addEnergy(amount, energyType);
-		} else if(externalPowerSinks.containsKey(b)){
+		} else if(externalPowerSinks.containsKey(b) && externalPowerSinks.get(b).canAcceptEnergyType(energyType)){
 			return externalPowerSinks.get(b).addEnergy(te, amount, energyType);
 		}
 		return 0;

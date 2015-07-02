@@ -1,5 +1,6 @@
 package cyano.poweradvantage.init;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -129,6 +130,10 @@ public abstract class Blocks {
 		block.setCreativeTab(ItemGroups.tab_powerAdvantage);
 		allBlocks.put(name, block);
 		return block;
+	}
+	
+	public static Map<String,Block> getModBlockRegistry(){
+		return Collections.unmodifiableMap(allBlocks);
 	}
 	
 	@SideOnly(Side.CLIENT)
