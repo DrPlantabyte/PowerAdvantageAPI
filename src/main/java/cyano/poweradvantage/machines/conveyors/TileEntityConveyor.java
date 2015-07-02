@@ -123,8 +123,8 @@ public class TileEntityConveyor extends TileEntity implements IUpdatePlayerListB
 		int[] srcValidSlots = src.getSlotsForFace(srcFace);
 		for(int i = 0; i < srcValidSlots.length; i++){
 			ItemStack item = src.getStackInSlot(srcValidSlots[i]);
+			if(item == null) continue;
 			if(src.canExtractItem(i, item, srcFace)){
-				if(item != null){
 					int[] destValidSlots = dest.getSlotsForFace(destFace);
 					for(int j = 0; j < destValidSlots.length; j++){
 						if(dest.canInsertItem(destValidSlots[j], item, destFace)){
@@ -141,7 +141,6 @@ public class TileEntityConveyor extends TileEntity implements IUpdatePlayerListB
 							}
 						}
 					}
-				}
 			}
 		}
 		return false;
