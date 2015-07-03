@@ -1,11 +1,14 @@
 package cyano.poweradvantage.machines.conveyors;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockChest;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.command.IEntitySelector;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
@@ -15,6 +18,8 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.server.gui.IUpdatePlayerListBox;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumFacing;
@@ -55,26 +60,48 @@ public class TileEntityConveyor extends TileEntity implements IUpdatePlayerListB
 		if(transferCooldown > 0) transferCooldown--;
 		if(transferCooldown == 0){
 			// do tick update
-			EnumFacing dir =this.getFacing(); 
+			EnumFacing dir =this.getFacing();
 			if(getInventory()[0] == null){
 				// not holding item, get item
 				EnumFacing myDir = dir.getOpposite();
 				EnumFacing theirDir = dir;
-				TileEntity target = w.getTileEntity(getPos().offset(myDir));
-				if(target != null){
-					if( target instanceof IInventory){
-						ISidedInventory them;
-						if(target instanceof  TileEntityChest){
-							// special handling for chests in case of double-chest
-							IInventory realChest = handleChest((TileEntityChest)target);
-							if(realChest == null) return; // chest cannot open or is not initialized
-							them = InventoryWrapper.wrap(realChest);
-						} else {
-							them = InventoryWrapper.wrap((IInventory)target);
-						}
-						if(transferItem(them,theirDir,this,myDir)){
-							transferCooldown = transferInvterval;
+				BlockPos upstreamBlock = getPos().offset(myDir);
+				if(w.isAirBlock(upstreamBlock)){
+					// grab items from air
+					List<EntityItem> list = w.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(
+							upstreamBlock.getX(), upstreamBlock.getY(), upstreamBlock.getZ(), 
+							upstreamBlock.getX()+1, upstreamBlock.getY()+1, upstreamBlock.getZ()+1), IEntitySelector.selectAnything);
+					if(!list.isEmpty()){
+						EntityItem e = list.get(0);
+						if(e.getEntityItem() != null){
+							ItemStack newItem = e.getEntityItem().copy();
+							newItem.stackSize = 1;
+							e.getEntityItem().stackSize--;
+							getInventory()[0] = newItem;
+							if(e.getEntityItem().stackSize <= 0){
+								e.setDead();
+							}
 							this.markDirty();
+						}
+					}
+					transferCooldown = transferInvterval;
+				} else {
+					TileEntity target = w.getTileEntity(upstreamBlock);
+					if(target != null){
+						if( target instanceof IInventory){
+							ISidedInventory them;
+							if(target instanceof  TileEntityChest){
+								// special handling for chests in case of double-chest
+								IInventory realChest = handleChest((TileEntityChest)target);
+								if(realChest == null) return; // chest cannot open or is not initialized
+								them = InventoryWrapper.wrap(realChest);
+							} else {
+								them = InventoryWrapper.wrap((IInventory)target);
+							}
+							if(transferItem(them,theirDir,this,myDir)){
+								transferCooldown = transferInvterval;
+								this.markDirty();
+							}
 						}
 					}
 				}
