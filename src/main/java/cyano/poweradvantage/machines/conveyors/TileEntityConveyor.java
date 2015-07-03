@@ -124,7 +124,7 @@ public class TileEntityConveyor extends TileEntity implements IUpdatePlayerListB
 		for(int i = 0; i < srcValidSlots.length; i++){
 			ItemStack item = src.getStackInSlot(srcValidSlots[i]);
 			if(item == null) continue;
-			if(src.canExtractItem(i, item, srcFace)){
+			if(src.canExtractItem(srcValidSlots[i], item, srcFace)){
 					int[] destValidSlots = dest.getSlotsForFace(destFace);
 					for(int j = 0; j < destValidSlots.length; j++){
 						if(dest.canInsertItem(destValidSlots[j], item, destFace)){
