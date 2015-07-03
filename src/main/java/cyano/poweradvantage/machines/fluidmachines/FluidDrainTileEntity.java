@@ -42,17 +42,17 @@ public class FluidDrainTileEntity extends TileEntitySimpleFluidSource{
 		
 		FluidTank tank = getTank();
 		if(tank.getFluidAmount() > 0) tryPushFluid(this.pos.down(), EnumFacing.UP);
-		if(tank.getFluidAmount() > 0) tryPushFluid(this.pos.north(), EnumFacing.SOUTH);
-		if(tank.getFluidAmount() > 0) tryPushFluid(this.pos.east(), EnumFacing.WEST);
-		if(tank.getFluidAmount() > 0) tryPushFluid(this.pos.south(), EnumFacing.NORTH);
-		if(tank.getFluidAmount() > 0) tryPushFluid(this.pos.west(), EnumFacing.EAST);
+//		if(tank.getFluidAmount() > 0) tryPushFluid(this.pos.north(), EnumFacing.SOUTH);
+//		if(tank.getFluidAmount() > 0) tryPushFluid(this.pos.east(), EnumFacing.WEST);
+//		if(tank.getFluidAmount() > 0) tryPushFluid(this.pos.south(), EnumFacing.NORTH);
+//		if(tank.getFluidAmount() > 0) tryPushFluid(this.pos.west(), EnumFacing.EAST);
 		fluidScan:{
 			// pull fluid from above
 			final EnumFacing[] cardinals = {EnumFacing.UP,EnumFacing.NORTH,EnumFacing.EAST,EnumFacing.SOUTH,EnumFacing.WEST,EnumFacing.DOWN};
 			for(int k = 0; k < cardinals.length; k++){
 				BlockPos space = this.pos.offset(cardinals[k]);
 				// from fluid container
-				if(getWorld().getBlockState(space) instanceof ITileEntityProvider && getWorld().getTileEntity(space) instanceof IFluidHandler){
+				if(getWorld().getBlockState(space).getBlock() instanceof ITileEntityProvider && getWorld().getTileEntity(space) instanceof IFluidHandler){
 					IFluidHandler other = (IFluidHandler) getWorld().getTileEntity(space);
 					FluidTankInfo[] tanks = other.getTankInfo(cardinals[k].getOpposite());
 					for(int i = 0; i < tanks.length; i++){
