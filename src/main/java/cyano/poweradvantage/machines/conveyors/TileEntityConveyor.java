@@ -73,15 +73,17 @@ public class TileEntityConveyor extends TileEntity implements IUpdatePlayerListB
 							upstreamBlock.getX()+1, upstreamBlock.getY()+1, upstreamBlock.getZ()+1), IEntitySelector.selectAnything);
 					if(!list.isEmpty()){
 						EntityItem e = list.get(0);
-						if(e.getEntityItem() != null){
-							ItemStack newItem = e.getEntityItem().copy();
-							newItem.stackSize = 1;
-							e.getEntityItem().stackSize--;
-							getInventory()[0] = newItem;
-							if(e.getEntityItem().stackSize <= 0){
-								e.setDead();
+						if(!e.isAirBorne){
+							if(e.getEntityItem() != null){
+								ItemStack newItem = e.getEntityItem().copy();
+								newItem.stackSize = 1;
+								e.getEntityItem().stackSize--;
+								getInventory()[0] = newItem;
+								if(e.getEntityItem().stackSize <= 0){
+									e.setDead();
+								}
+								this.markDirty();
 							}
-							this.markDirty();
 						}
 					}
 					transferCooldown = transferInvterval;

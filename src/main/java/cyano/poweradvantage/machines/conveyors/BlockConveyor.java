@@ -6,17 +6,15 @@ import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLLog;
-
-import com.google.common.base.Predicate;
-
 import cyano.poweradvantage.api.GUIBlock;
 import cyano.poweradvantage.init.ItemGroups;
-import cyano.poweradvantage.machines.fluidmachines.FluidDrainTileEntity;
 
 public class BlockConveyor extends GUIBlock{
 
@@ -100,6 +98,16 @@ public class BlockConveyor extends GUIBlock{
 			}
 		}
 		return 0;
+	}
+	
+	@Override
+	public void breakBlock(final World w, final BlockPos coord, final IBlockState bs) {
+		final TileEntity tileEntity = w.getTileEntity(coord);
+		if (tileEntity instanceof TileEntityConveyor) {
+			InventoryHelper.dropInventoryItems(w, coord, (IInventory)tileEntity);
+			w.updateComparatorOutputLevel(coord, this);
+		}
+		super.breakBlock(w, coord, bs);
 	}
     
 }
