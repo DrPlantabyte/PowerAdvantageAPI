@@ -215,7 +215,7 @@ public class PowerAdvantage
 	/** The display name for this mod */
 	public static final String NAME = "Power Advantage";
 	/** The version of this mod, in the format major.minor.update */
-	public static final String VERSION = "1.2.4";
+	public static final String VERSION = "1.2.5";
 
 	/** singleton instance */
 	private static PowerAdvantage instance;
@@ -404,7 +404,7 @@ public class PowerAdvantage
 				Block b = GameData.getBlockRegistry().getObject(id);
 				if(b instanceof ITileEntityProvider == false) continue;
 				if(b instanceof ITypedConduit) continue;
-				if(cyano.poweradvantage.init.Blocks.getModBlockRegistry().containsKey(b)) continue;
+				if(cyano.poweradvantage.init.Blocks.getModBlockRegistry().containsValue(b)) continue;
 				if(LightWeightPowerRegistry.getInstance().isExternalPowerBlock(b)) continue;
 				FMLLog.warning("Wrapping block "+b.getUnlocalizedName()+" with RF power handler interface.");
 				LightWeightPowerRegistry.registerLightWeightPowerAcceptor(b, genericRFAcceptor);
