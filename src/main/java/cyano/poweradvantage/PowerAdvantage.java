@@ -7,6 +7,7 @@ import java.util.Set;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
+import net.minecraft.init.Blocks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.FMLLog;
@@ -300,7 +301,7 @@ public class PowerAdvantage
 					+ "Advantage will attempt to give power to mods that were not designed to handle "
 					+ "Power Advantage energy. This may destabilize your server!");
 			String[] conversions = config.getString("RF_conversions", "Other Power Mods", 
-					"steam=16;electricity=24;quantum=32", 
+					"steam=1;electricity=0.03125;quantum=1", 
 					"List of conversions from Power Advantage power types to RF").split(";");
 			for(String c : conversions){
 				if(!c.contains("=")) continue;

@@ -22,6 +22,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +51,12 @@ public class TextReplacer {
 				for(int i = 0; i < content.size(); i++){
 					content.set(i, content.get(i).replace(inputText, replacementText));
 				}
-				Files.write(input.toPath(), content, charset);
+				Path inputPath = input.toPath();
+				Path outputPath = Paths.get(input.getParent(),input.getName().replace(inputText, replacementText));
+				Files.write(outputPath, content, charset);
+				if(inputPath.equals(outputPath) == false){
+					Files.deleteIfExists(inputPath);
+				}
 			}catch(IOException ex){
 				Logger.getLogger(TextReplacer.class.getName()).log(Level.SEVERE, "Error", ex);
 			}
