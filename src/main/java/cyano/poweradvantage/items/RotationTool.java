@@ -7,6 +7,7 @@ import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
@@ -27,7 +28,13 @@ public class RotationTool extends net.minecraft.item.Item{
 		for(Object o : block.getProperties().entrySet()){
 			Map.Entry e = (Map.Entry)o;
 			if(e.getKey() instanceof PropertyDirection){
-				w.setBlockState(coord, block.cycleProperty((PropertyDirection)e.getKey()));
+				final TileEntity save = w.getTileEntity(coord);
+				w.setBlockState(coord, block.cycleProperty((PropertyDirection)e.getKey()),3);
+				if(save != null){
+					w.removeTileEntity(coord);
+					save.validate();
+					w.setTileEntity(coord, save);
+				}
 				return true;
 			}
 		}
