@@ -256,14 +256,19 @@ public abstract class BlockSimplePowerConduit extends ConduitBlock{
 	 */
 	protected boolean canConnectTo(IBlockAccess w, BlockPos thisBlock, EnumFacing face, BlockPos otherBlock){
 		Block other = w.getBlockState(otherBlock).getBlock();
-		if(PowerAdvantage.enableExtendedModCompatibility){
-			if(LightWeightPowerRegistry.getInstance().isExternalPowerBlock(other)){
-				return ConduitType.areConnectable(w, thisBlock, face);
-			}
-		}
 		if(other instanceof ITypedConduit){
 			return ConduitType.areConnectable(this, face, other);
 		} else {
+			if(PowerAdvantage.enableExtendedModCompatibility){
+				if(LightWeightPowerRegistry.getInstance().isExternalPowerBlock(other)){
+					return ConduitType.areConnectable(w, thisBlock, face);
+				}
+			}
+			if(PowerAdvantage.attemptAutomaticRFInterface){
+				if(w.getTileEntity(otherBlock) instanceof cofh.api.energy.IEnergyReceiver){
+					return ((cofh.api.energy.IEnergyReceiver)w.getTileEntity(otherBlock)).canConnectEnergy(face.getOpposite());
+				}
+			}
 			return false;
 		}
 	}

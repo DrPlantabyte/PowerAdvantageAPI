@@ -215,7 +215,7 @@ public class PowerAdvantage
 	/** The display name for this mod */
 	public static final String NAME = "Power Advantage";
 	/** The version of this mod, in the format major.minor.update */
-	public static final String VERSION = "1.2.6";
+	public static final String VERSION = "1.3.0";
 
 	/** singleton instance */
 	private static PowerAdvantage instance;
