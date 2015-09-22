@@ -36,6 +36,8 @@ import java.util.stream.Collectors;
  */
 public class PipeRootModelMaker {
 	final static Charset charset = Charset.forName("UTF-8");
+	
+	final String[] orientations = {"0","densuw","desuw","dnu","ensuw","n","ns","nsuw","nsw","nuw","nw"};
 
 	/**
 	 * @param args the command line arguments
@@ -48,30 +50,19 @@ public class PipeRootModelMaker {
 		try{
 		
 			int r = Integer.parseInt(params.get("radius"));
-			Path srcDir = Paths.get("resources","models","block");
-			List<Path> srcFiles = Files.list(srcDir).filter((Path f)->{return f.getFileName().toString().startsWith("pipe_");}).collect(Collectors.toList());
 			
-			srcFiles.stream().forEach((Path input)->{
-				String filename = input.getFileName().toString().replace("pipe", params.get("name"));
-				Path output = Paths.get(dir.toString(), filename);
-				try{
-					StringBuilder inBuffer = new StringBuilder();
-					Files.readAllLines(input, charset).stream().forEach((String ln)->inBuffer.append(ln).append(System.lineSeparator()));
-					String outBuffer = inBuffer.toString()
-							.replace("6",String.valueOf(8-r))
-							.replace("10",String.valueOf(8+r));
-					Files.write(output, Arrays.asList(outBuffer.split(System.lineSeparator())));
-				}catch(IOException ex){
-					Logger.getLogger(PipeRootModelMaker.class.getName()).log(Level.SEVERE, "Error", ex);
-				}
-			});
+			
 		
-		} catch(IOException ex){
+		} catch(Exception ex){
 			Logger.getLogger(PipeRootModelMaker.class.getName()).log(Level.SEVERE, "Error", ex);
 			System.exit(ex.getClass().hashCode());
 		}
 		
 		System.exit(0);
+	}
+	
+	static class Box {
+		int x1,x2,y1,y2,z1,z2
 	}
 	
 }

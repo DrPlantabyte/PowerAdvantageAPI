@@ -28,8 +28,12 @@ public class MaybeRFPowerAcceptor implements ILightWeightPowerAcceptor{
 	public float getEnergyDemand(TileEntity te, ConduitType powerType) {
 		if(te instanceof cofh.api.energy.IEnergyReceiver){
 			cofh.api.energy.IEnergyReceiver r = (cofh.api.energy.IEnergyReceiver)te;
-			float rfDeficit = r.getMaxEnergyStored(EnumFacing.UP) - r.getEnergyStored(EnumFacing.UP);
-			return rfDeficit / conversionTable.get(powerType).floatValue();
+			for(EnumFacing dir : EnumFacing.values()){
+				if(r.canConnectEnergy(dir)){
+					float rfDeficit = r.getMaxEnergyStored(dir) - r.getEnergyStored(dir);
+					return rfDeficit / conversionTable.get(powerType).floatValue();
+				}
+			}
 		}
 		return 0;
 	}

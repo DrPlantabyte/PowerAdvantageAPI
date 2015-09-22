@@ -6,6 +6,8 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
@@ -189,6 +191,19 @@ public abstract class GUIBlock extends net.minecraft.block.BlockContainer{
 		} else {
 			return false;
 		}
+	}
+    
+
+	@Override
+	public void breakBlock(World world, BlockPos pos, IBlockState state){
+		TileEntity te = world.getTileEntity(pos);
+		if (te instanceof IInventory)
+		{
+			InventoryHelper.dropInventoryItems(world, pos, (IInventory)te);
+			((IInventory)te).clear();
+			world.updateComparatorOutputLevel(pos, this);
+		}
+		super.breakBlock(world, pos, state);
 	}
 	
 }
