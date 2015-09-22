@@ -27,7 +27,6 @@ public interface ILightWeightPowerAcceptor {
 	/**
 	 * Used to determine which types of energy are acceptable
 	 * @param powerType A type of energy that you may or may not want to use as power
-	 * @param inputSide Side through which the power is coming
 	 * @return True if you accept this type, false if you reject it.
 	 */
 	public abstract boolean canAcceptEnergyType(ConduitType powerType);
