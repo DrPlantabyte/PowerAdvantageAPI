@@ -111,7 +111,7 @@ public class ConduitRegistry {
 								requests.add(req);
 							}
 						}
-					} else if(PowerAdvantage.attemptAutomaticRFInterface && PowerAdvantage.rfConversionTable.containsKey(conduitType)){
+					} else if( PowerAdvantage.rfConversionTable.containsKey(conduitType)){
 						if(e instanceof cofh.api.energy.IEnergyReceiver){
 							float RFDemand = getRFDemand((cofh.api.energy.IEnergyReceiver)e);
 							if(RFDemand > 0){
@@ -150,8 +150,7 @@ public class ConduitRegistry {
 							powerType, Math.min(e, req.amount));
 					if(e <= 0) break;
 					continue;
-				} else if(PowerAdvantage.attemptAutomaticRFInterface 
-						&& req instanceof RFPowerRequest 
+				} else if(req instanceof RFPowerRequest 
 						&& PowerAdvantage.rfConversionTable.containsKey(powerType)){
 					int rf = (int)Math.min(req.amount, e * PowerAdvantage.rfConversionTable.get(powerType).floatValue());
 					e -= ((RFPowerRequest)req).fillRequest(rf);

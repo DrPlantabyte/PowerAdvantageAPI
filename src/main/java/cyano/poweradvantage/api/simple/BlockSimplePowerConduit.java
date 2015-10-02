@@ -16,6 +16,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import cyano.poweradvantage.PowerAdvantage;
@@ -262,11 +263,10 @@ public abstract class BlockSimplePowerConduit extends ConduitBlock{
 			if(PowerAdvantage.enableExtendedModCompatibility){
 				if(LightWeightPowerRegistry.getInstance().isExternalPowerBlock(other)){
 					return ConduitType.areConnectable(w, thisBlock, face);
-				}
-			}
-			if(PowerAdvantage.attemptAutomaticRFInterface){
-				if(w.getTileEntity(otherBlock) instanceof cofh.api.energy.IEnergyReceiver){
-					return ((cofh.api.energy.IEnergyReceiver)w.getTileEntity(otherBlock)).canConnectEnergy(face.getOpposite());
+				} else if(PowerAdvantage.rfConversionTable.containsKey(this.getType()) 
+						&& w.getTileEntity(otherBlock) instanceof cofh.api.energy.IEnergyReceiver){
+					//return ((cofh.api.energy.IEnergyReceiver)w.getTileEntity(otherBlock)).canConnectEnergy(face.getOpposite()); // Note: some mods always return false on the client side 
+					return true;
 				}
 			}
 			return false;

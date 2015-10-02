@@ -229,11 +229,8 @@ public class PowerAdvantage
 	public static boolean plasticIsAlsoRubber = true;
 	/** Set to false if all power system mods are add-ons to Power Advantage and you want to improve performance */
 	public static boolean enableExtendedModCompatibility = true;
-	/** If true, Power Advantage will try to interface with redstone flux machines that were not 
-	 * designed to accept power from Power Advantage mods (may cause crashes) */
-	public static boolean attemptAutomaticRFInterface = false;
 	/** used to convert energy to RF types when attempting autmoatic conversion */
-	public static final Map<ConduitType, Number> rfConversionTable = new HashMap<>();
+	public static final Map<ConduitType, Float> rfConversionTable = new HashMap<>();
 
 	/**
 	 * Pre-initialization step. Used for initializing objects and reading the 
@@ -290,17 +287,11 @@ public class PowerAdvantage
 			FMLLog.info("Enabled external power mod interactions. If the server lags when using large power networks, consider disabling the 'extended_compatibility' option");
 		}
 		
-		attemptAutomaticRFInterface = config.getBoolean("attempt_automatic_RF_compatibility", "Other Power Mods", attemptAutomaticRFInterface, 
-				"If true, the Power Advantage will attempt to automatically create an interface with mods \n"
-				+ "that use RF (redstone flux) as their power source. This may increase your lag. This is \n"
-				+ "equivalent to jamming a square peg into a round hole with a bowling ball.");
-		if(attemptAutomaticRFInterface){
-			FMLLog.warning("Warning, 'attempt_automatic_RF_compatibility' option has been set. Power "
-					+ "Advantage will attempt to give power to mods that were not designed to handle "
-					+ "Power Advantage energy. This may destabilize your server!");
+		if(enableExtendedModCompatibility){
 			String[] conversions = config.getString("RF_conversions", "Other Power Mods", 
 					"steam=1;electricity=0.03125;quantum=1", 
-					"List of conversions from Power Advantage power types to RF").split(";");
+					"List of conversions from Power Advantage power types to RF")
+					.split(";");
 			for(String c : conversions){
 				if(!c.contains("=")) continue;
 				String name = c.substring(0, c.indexOf('=')).trim().toLowerCase(Locale.US);
@@ -308,12 +299,12 @@ public class PowerAdvantage
 				try{
 					Number d;
 					if(val.contains(".")){
-						d = Double.parseDouble(val);
+						d = new Double(Double.parseDouble(val));
 					} else {
 						d = Long.parseLong(val);
 					}
 					FMLLog.info("Adding conversion factor of "+d+" units of RF per unit of "+name);
-					rfConversionTable.put(new ConduitType(name), d);
+					rfConversionTable.put(new ConduitType(name), d.floatValue());
 				}catch(NumberFormatException ex){
 					FMLLog.severe("Cannot parse '"+val+"' as number");
 				}

@@ -155,7 +155,7 @@ public class ConduitNetworkManager {
 				if(LightWeightPowerRegistry.getInstance().isExternalPowerBlock(block) && ConduitType.areConnectable(w,coord.pos,face)){
 					addBlockToNetwork(coord, n);
 					recursiveScan(w,n,type);
-				} else if(PowerAdvantage.attemptAutomaticRFInterface){
+				} else {
 					net.minecraft.tileentity.TileEntity te = w.getTileEntity(n.pos);
 					if(te instanceof cofh.api.energy.IEnergyReceiver){
 						addBlockToNetwork(coord, n);
