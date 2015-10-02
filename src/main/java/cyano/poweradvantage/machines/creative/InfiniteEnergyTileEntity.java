@@ -12,13 +12,13 @@ public class InfiniteEnergyTileEntity extends TileEntitySimplePowerSource{
 	private ConduitType type = null;
 	
 	public InfiniteEnergyTileEntity(ConduitType energyType) {
-		super(energyType, 100f, InfiniteEnergyTileEntity.class.getName());
+		super(energyType, 1000f, InfiniteEnergyTileEntity.class.getName());
 		this.type = energyType;
 	}
 	
 
 	public InfiniteEnergyTileEntity() {
-		super(new ConduitType("power"), 100f, InfiniteEnergyTileEntity.class.getName());
+		super(new ConduitType("power"), 1000f, InfiniteEnergyTileEntity.class.getName());
 		this.type = new ConduitType("power");
 	}
 	
