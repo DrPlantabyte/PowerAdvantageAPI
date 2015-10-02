@@ -1,24 +1,13 @@
 package cyano.poweradvantage.conduitnetwork;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.ITileEntityProvider;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.common.FMLLog;
 import cyano.poweradvantage.PowerAdvantage;
 import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.api.ITypedConduit;
@@ -26,7 +15,14 @@ import cyano.poweradvantage.api.PowerRequest;
 import cyano.poweradvantage.api.PoweredEntity;
 import cyano.poweradvantage.api.modsupport.ExternalPowerRequest;
 import cyano.poweradvantage.api.modsupport.LightWeightPowerRegistry;
+import cyano.poweradvantage.api.modsupport.RFPowerRequest;
 import cyano.poweradvantage.math.BlockPos4D;
+import net.minecraft.block.Block;
+import net.minecraft.block.ITileEntityProvider;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.world.World;
 
 /**
  * This is the master keeper of power networks.
@@ -115,12 +111,74 @@ public class ConduitRegistry {
 								requests.add(req);
 							}
 						}
+					} else if(PowerAdvantage.attemptAutomaticRFInterface && PowerAdvantage.rfConversionTable.containsKey(conduitType)){
+						if(e instanceof cofh.api.energy.IEnergyReceiver){
+							float RFDemand = getRFDemand((cofh.api.energy.IEnergyReceiver)e);
+							if(RFDemand > 0){
+								requests.add( new RFPowerRequest(RFDemand,(cofh.api.energy.IEnergyReceiver)e));
+							}
+						}
 					}
 				}
 			}
 		}
 		Collections.sort(requests);
 		return requests;
+	}
+	
+	/**
+	 * Sends the provided energy out to all machines requesting energy that are connected to the 
+	 * given TileEntity. The amount of energy actually sent out is returned
+	 * @param availableEnergy Maximum amount of energy to send
+	 * @param powerType The type of energy being sent
+	 * @param minimumPriority The lowest priority of power request that will be filled (prevents 
+	 * battery machines from sending circular power)
+	 * @param provider The source TileEntity sending the power
+	 * @return The amount of energy that was actually consumed by the requests
+	 */
+	public static float transmitPowerToConsumers(final float availableEnergy, ConduitType powerType, byte minimumPriority,
+			TileEntity provider){
+		List<PowerRequest> requests = ConduitRegistry.getInstance().getRequestsForPower(provider.getWorld(), provider.getPos(), powerType,powerType);
+		float e = availableEnergy;
+		for(PowerRequest req : requests){
+			if(req.amount <= 0) continue;
+			if(req.entity == provider) continue;
+			if(req.priority < minimumPriority) continue;
+			if(PowerAdvantage.enableExtendedModCompatibility){
+				if(req instanceof ExternalPowerRequest){
+					e -= LightWeightPowerRegistry.getInstance().addPower(provider.getWorld(), ((ExternalPowerRequest)req).pos, 
+							powerType, Math.min(e, req.amount));
+					if(e <= 0) break;
+					continue;
+				} else if(PowerAdvantage.attemptAutomaticRFInterface 
+						&& req instanceof RFPowerRequest 
+						&& PowerAdvantage.rfConversionTable.containsKey(powerType)){
+					int rf = (int)Math.min(req.amount, e * PowerAdvantage.rfConversionTable.get(powerType).floatValue());
+					e -= ((RFPowerRequest)req).fillRequest(rf);
+					if(e <= 0) break;
+					continue;
+				}
+			}
+			if(req.entity == null) continue;
+			if(req.amount < e){
+				e -= req.entity.addEnergy(req.amount,powerType);
+			} else {
+				req.entity.addEnergy(e,powerType);
+				e = 0;
+				break;
+			}
+		}
+		return availableEnergy - e;
+	}
+	
+	
+	private static float getRFDemand(cofh.api.energy.IEnergyReceiver er){
+		for(EnumFacing f : EnumFacing.values()){
+			if(er.canConnectEnergy(f)){
+				return er.getMaxEnergyStored(f) - er.getEnergyStored(f);
+			}
+		}
+		return 0;
 	}
 	/**
 	 * Invoke this method anytime a conduit block enters the world

@@ -7,14 +7,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.ReadWriteLock;
 
-import net.minecraft.block.Block;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.world.World;
 import cyano.poweradvantage.PowerAdvantage;
 import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.api.ITypedConduit;
 import cyano.poweradvantage.api.modsupport.LightWeightPowerRegistry;
 import cyano.poweradvantage.math.BlockPos4D;
+import net.minecraft.block.Block;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.world.World;
 
 /**
  * This class manages a global (trans-dimensional) cache of power networks of a single power type.
@@ -155,6 +155,12 @@ public class ConduitNetworkManager {
 				if(LightWeightPowerRegistry.getInstance().isExternalPowerBlock(block) && ConduitType.areConnectable(w,coord.pos,face)){
 					addBlockToNetwork(coord, n);
 					recursiveScan(w,n,type);
+				} else if(PowerAdvantage.attemptAutomaticRFInterface){
+					net.minecraft.tileentity.TileEntity te = w.getTileEntity(n.pos);
+					if(te instanceof cofh.api.energy.IEnergyReceiver){
+						addBlockToNetwork(coord, n);
+						recursiveScan(w,n,type);
+					}
 				}
 			}
 		}

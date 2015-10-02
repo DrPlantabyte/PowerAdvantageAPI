@@ -46,28 +46,27 @@ import cyano.poweradvantage.registry.MachineGUIRegistry;
  * Steam Powered Rock Crusher ✓
  * Steam Powered Blast Furnace ✓
  * Steam Powered Drill ✓
- * Steam Powered Lift (pushes up special lift blocks, like an extendable piston)
+ * Steam Powered Lift (pushes up special lift blocks, like an extendable piston) ✓
  * Steam Powered Machine Shop (automatable crafter)
- * Musket (slow-loading ranged weapon)
+ * Musket (slow-loading ranged weapon) ✓
  * Steam Powered Defense Cannon (manual aiming and requires redstone trigger)
  * Oil-Burning Steam Boiler
  * Bioreactor (slowly makes liquid fuel from organic matter)
  * -- ElectricalAdvantage --
- * Electricity Conduit
- * Steam Powered Generator
- * Combustion Generator (fuel burning)
- * Solar Generator
- * Water Turbine Generator
+ * Electricity Conduit ✓
+ * Steam Powered Generator ✓
+ * Solar Generator ✓
+ * Water Turbine Generator ✓
  * Wind Turbine Generator 
  * Electric Boiler (makes steam power from electricity)
- * Electric Battery
- * Electric Furnace
- * Electric Arc Furnace (expanded furnace 3x3)
- * Electric Rock Crusher
- * Electric Drill
- * Electric Assembler
+ * Electric Battery ✓
+ * Electric Furnace ✓
+ * Electric Arc Furnace ✓
+ * Electric Rock Crusher ✓
+ * Electric Drill ✓
+ * Electric Assembler ✓
  * Revolver Pistol (six-shots between slow reloads)
- * Electric Defense Cannon (auto-aiming and automatically attacks hostile mobs)
+ * Electric Defense Cannon (auto-aiming and automatically attacks hostile mobs) ✓
  * Electric Lift (electric version of steam lift)
  * Electric Tools
  * Electric Charging Station
@@ -395,22 +394,7 @@ public class PowerAdvantage
 	public void postInit(FMLPostInitializationEvent event)
 	{
 		// Handle inter-mod action
-		if(PowerAdvantage.attemptAutomaticRFInterface){
-			// Try to force a square peg into a round hole
-			FMLLog.warning("Attempting to interface all redstone flux (RF) blocks...");
-			MaybeRFPowerAcceptor genericRFAcceptor = new MaybeRFPowerAcceptor(rfConversionTable);
-			Set allBlockNames = GameData.getBlockRegistry().getKeys();
-			for(Object id : allBlockNames){
-				Block b = GameData.getBlockRegistry().getObject(id);
-				if(b instanceof ITileEntityProvider == false) continue;
-				if(b instanceof ITypedConduit) continue;
-				if(cyano.poweradvantage.init.Blocks.getModBlockRegistry().containsValue(b)) continue;
-				if(LightWeightPowerRegistry.getInstance().isExternalPowerBlock(b)) continue;
-				FMLLog.warning("Wrapping block "+b.getUnlocalizedName()+" with RF power handler interface.");
-				LightWeightPowerRegistry.registerLightWeightPowerAcceptor(b, genericRFAcceptor);
-			}
-			FMLLog.warning("...All redstone flux (RF) blocks accounted for (maybe)");
-		}
+		// TODO: explicitly handle NeoTech, Progressive Automation, and Open Computers
 	}
 
 
