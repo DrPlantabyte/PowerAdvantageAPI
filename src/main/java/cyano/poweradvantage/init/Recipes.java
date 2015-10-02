@@ -52,11 +52,12 @@ public abstract class Recipes {
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Blocks.fluid_drain,1)," x ","w#w","ppp",'x',"bars",'w',"plateSteel",'#',"frameSteel",'p',"pipe"));
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Blocks.fluid_discharge,1),"ppp","w#w"," x ",'x',"bars",'w',"plateSteel",'#',"frameSteel",'p',"pipe"));
 		
-		
+
 		// recipe modes
 		if(PowerAdvantage.recipeMode == RecipeMode.NORMAL){
 			// normal means easy
-			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Items.sprocket,4)," x ","x/x"," x ",'x',"ingotSteel",'/',"stickWood"));
+			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Items.sprocket,4)," x ","x x"," x ",'x',"ingotSteel"));
+			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Items.sprocket,4)," x ","x x"," x ",'x',"ingotIron"));
 
 			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Blocks.fluid_pipe,6),"xxx","   ","xxx",'x',"ingotIron"));
 			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Blocks.fluid_pipe,6),"xxx","   ","xxx",'x',"ingotCopper"));
@@ -64,8 +65,7 @@ public abstract class Recipes {
 		}else if(PowerAdvantage.recipeMode == RecipeMode.TECH_PROGRESSION){
 			// make things a little more complicated with tech-progression mode
 			BaseMetals.strongHammers = false;
-			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Items.sprocket,4)," x ","x/x"," x ",'x',"ingotSteel",'/',"ingotPlastic"));
-
+			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Items.sprocket,4)," x ","x/x"," x ",'x',"ingotSteel",'/',"stickWood"));
 			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Blocks.fluid_pipe,6),"xxx","   ","xxx",'x',"ingotIron"));
 		}else if(PowerAdvantage.recipeMode == RecipeMode.APOCALYPTIC){
 			// apocalyptic means some things are not craftable, but some stuff can be recycled

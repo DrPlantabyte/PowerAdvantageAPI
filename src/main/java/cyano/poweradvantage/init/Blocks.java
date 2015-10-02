@@ -93,8 +93,8 @@ public abstract class Blocks {
 		fluid_pipe = addBlock(new FluidPipeBlock(),"fluid_pipe");
 		OreDictionary.registerOre("pipe", fluid_pipe);
 		steel_frame = addBlock(new BlockFrame(net.minecraft.block.material.Material.piston)
-				.setResistance(cyano.basemetals.init.Materials.steel.getBlastResistance()*0.5f)
-				.setHardness(cyano.basemetals.init.Materials.steel.getMetalBlockHardness() * 0.5f)
+				.setResistance(cyano.basemetals.init.Materials.steel.getBlastResistance())
+				.setHardness(0.75f)
 				.setStepSound(Block.soundTypeMetal),"steel_frame");
 		OreDictionary.registerOre("frameSteel", steel_frame);
 		

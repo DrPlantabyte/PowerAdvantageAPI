@@ -16,7 +16,6 @@ public class BlockFrame extends Block {
 
 	public BlockFrame(Material m) {
 		super(m);
-		this.setHardness(1.0f);
 	}
 
 	@SideOnly(Side.CLIENT)
