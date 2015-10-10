@@ -22,6 +22,7 @@ tile.poweradvantage.item_filter_inventory.name=過濾器輸送
 tile.poweradvantage.item_filter_ore.name=礦石輸送帶篩選
 tile.poweradvantage.item_filter_plant.name=種用輸送帶篩選
 tile.poweradvantage.item_filter_smelt.name=爐過濾器輸送機
+tile.poweradvantage.item_filter_overflow.name=溢出過濾器輸送
 tile.poweradvantage.steel_frame.name=鋼框架
 
 

@@ -21,6 +21,7 @@ tile.poweradvantage.item_filter_inventory.name=Filtro Conveyor
 tile.poweradvantage.item_filter_ore.name=Ore Filtro Conveyor
 tile.poweradvantage.item_filter_plant.name=Plantable Filtro Conveyor
 tile.poweradvantage.item_filter_smelt.name=Forno Filtro Conveyor
+tile.poweradvantage.item_filter_overflow.name=Straripamento Filtro Conveyor
 tile.poweradvantage.steel_frame.name=Steel Frame
 
 

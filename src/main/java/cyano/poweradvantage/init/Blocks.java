@@ -24,6 +24,7 @@ import cyano.poweradvantage.machines.conveyors.TileEntityFoodFilter;
 import cyano.poweradvantage.machines.conveyors.TileEntityFuelFilter;
 import cyano.poweradvantage.machines.conveyors.TileEntityInventoryFilter;
 import cyano.poweradvantage.machines.conveyors.TileEntityOreFilter;
+import cyano.poweradvantage.machines.conveyors.TileEntityOverflowFilter;
 import cyano.poweradvantage.machines.conveyors.TileEntityPlantFilter;
 import cyano.poweradvantage.machines.conveyors.TileEntitySmeltableFilter;
 import cyano.poweradvantage.machines.creative.InfiniteEnergyBlock;
@@ -49,6 +50,7 @@ public abstract class Blocks {
 	public static GUIBlock item_filter_ore;
 	public static GUIBlock item_filter_plant;
 	public static GUIBlock item_filter_smelt;
+	public static GUIBlock item_filter_overflow;
 	public static Block steel_frame;
 	
 
@@ -108,6 +110,7 @@ public abstract class Blocks {
 		item_filter_ore = (GUIBlock)addBlock(new BlockConveyorFilter(defaultMachineMaterial,defaultMachineHardness,TileEntityOreFilter.class),"item_filter_ore");
 		item_filter_plant = (GUIBlock)addBlock(new BlockConveyorFilter(defaultMachineMaterial,defaultMachineHardness,TileEntityPlantFilter.class),"item_filter_plant");
 		item_filter_smelt = (GUIBlock)addBlock(new BlockConveyorFilter(defaultMachineMaterial,defaultMachineHardness,TileEntitySmeltableFilter.class),"item_filter_smelt");
+		item_filter_overflow = (GUIBlock)addBlock(new BlockConveyorFilter(defaultMachineMaterial,defaultMachineHardness,TileEntityOverflowFilter.class),"item_filter_overflow");
 		
 
 		infinite_steam = (GUIBlock)addBlock(new InfiniteEnergyBlock(new ConduitType("steam")),"infinite_steam");

@@ -20,7 +20,8 @@ tile.poweradvantage.item_filter_fuel.name=Filtro de combustível Transportador
 tile.poweradvantage.item_filter_inventory.name=Transportador Filtro
 tile.poweradvantage.item_filter_ore.name=Ore Transportadora Filtro
 tile.poweradvantage.item_filter_plant.name=Plantable Transportadora Filtro
-tile.poweradvantage.item_filter_smelt.name=fornalha filtro transportador
+tile.poweradvantage.item_filter_smelt.name=Fornalha Filtro Transportador
+tile.poweradvantage.item_filter_overflow.name=Transbordamento Transportador Filtro
 tile.poweradvantage.steel_frame.name=Armação de Aço
 
 

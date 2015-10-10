@@ -21,6 +21,7 @@ tile.poweradvantage.item_filter_inventory.name=필터 컨베이어
 tile.poweradvantage.item_filter_ore.name=광석 필터 컨베이어
 tile.poweradvantage.item_filter_plant.name=물만 주면 식물이 필터 컨베이어
 tile.poweradvantage.item_filter_smelt.name=노 필터 컨베이어
+tile.poweradvantage.item_filter_overflow.name=오버 플로우필터 컨베이어
 tile.poweradvantage.steel_frame.name=스틸 프레임
 
 

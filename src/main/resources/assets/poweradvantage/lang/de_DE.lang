@@ -21,6 +21,7 @@ tile.poweradvantage.item_filter_inventory.name=Anpassbare Auswahl Förder
 tile.poweradvantage.item_filter_ore.name=Erz Auswahl Förder
 tile.poweradvantage.item_filter_plant.name=Pflanze Auswahl Förder
 tile.poweradvantage.item_filter_smelt.name=Kochbare Auswahl Förder
+tile.poweradvantage.item_filter_overflow.name=Überlauf Auswahl Förder
 tile.poweradvantage.steel_frame.name=Stahlrahmen
 
 

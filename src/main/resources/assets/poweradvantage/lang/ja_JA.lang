@@ -22,6 +22,7 @@ tile.poweradvantage.item_filter_inventory.name=フィルタコンベヤー
 tile.poweradvantage.item_filter_ore.name=鉱石フィルターコンベア
 tile.poweradvantage.item_filter_plant.name=プラントフィルタコンベヤー
 tile.poweradvantage.item_filter_smelt.name=炉フィルターコンベア
+tile.poweradvantage.item_filter_overflow.name=オーバーフローフィルタコンベヤー
 tile.poweradvantage.steel_frame.name=鉄骨
 
 

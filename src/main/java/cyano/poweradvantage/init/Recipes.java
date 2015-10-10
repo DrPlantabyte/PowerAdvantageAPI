@@ -44,6 +44,7 @@ public abstract class Recipes {
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Blocks.item_filter_ore,1),"x","y","z",'y',"ingotGold",'x',Blocks.item_conveyor,'z',net.minecraft.init.Blocks.wooden_pressure_plate));
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Blocks.item_filter_plant,1),"x","y","z",'y',"treeSapling",'x',Blocks.item_conveyor,'z',net.minecraft.init.Blocks.wooden_pressure_plate));
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Blocks.item_filter_smelt,1),"x","y","z",'y',"furnace",'x',Blocks.item_conveyor,'z',net.minecraft.init.Blocks.wooden_pressure_plate));
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Blocks.item_filter_overflow,1),"x","z",'x',Blocks.item_conveyor,'z',net.minecraft.init.Blocks.wooden_pressure_plate));
 		
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Blocks.steel_frame,1),"xxx","x x","xxx",'x',"barsSteel"));
 
@@ -77,6 +78,7 @@ public abstract class Recipes {
 			CrusherRecipeRegistry.addNewCrusherRecipe(Blocks.item_filter_ore, new ItemStack(cyano.basemetals.init.Blocks.steel_plate,1));
 			CrusherRecipeRegistry.addNewCrusherRecipe(Blocks.item_filter_plant, new ItemStack(cyano.basemetals.init.Blocks.steel_plate,1));
 			CrusherRecipeRegistry.addNewCrusherRecipe(Blocks.item_filter_smelt, new ItemStack(cyano.basemetals.init.Blocks.steel_plate,1));
+			CrusherRecipeRegistry.addNewCrusherRecipe(Blocks.item_filter_overflow, new ItemStack(cyano.basemetals.init.Blocks.steel_plate,1));
 
 			CrusherRecipeRegistry.addNewCrusherRecipe(Blocks.storage_tank, new ItemStack(Blocks.fluid_pipe,1));
 			CrusherRecipeRegistry.addNewCrusherRecipe(Blocks.fluid_discharge, new ItemStack(Blocks.fluid_pipe,2));

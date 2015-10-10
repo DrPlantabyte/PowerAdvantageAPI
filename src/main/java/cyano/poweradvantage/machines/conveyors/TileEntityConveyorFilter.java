@@ -52,13 +52,14 @@ public abstract class TileEntityConveyorFilter extends TileEntityConveyor {
 					}
 				}
 			} else {
-				if(matchesFilter(this.getInventory()[0])){
-					dropItem();
-					return;
-				}
 				EnumFacing myDir = dir;
 				EnumFacing theirDir = dir.getOpposite();
 				TileEntity target = w.getTileEntity(getPos().offset(myDir));
+				TileEntity dropTarget = w.getTileEntity(getPos().offset(EnumFacing.DOWN));
+				if(matchesFilter(this.getInventory()[0]) && isValidItem(getInventory()[0],dropTarget,EnumFacing.UP)){
+					dropItem(dropTarget);
+					return;
+				}
 				if(target != null){
 					if( target instanceof IInventory){
 						ISidedInventory them;
@@ -78,9 +79,25 @@ public abstract class TileEntityConveyorFilter extends TileEntityConveyor {
 		}
 	}
 	
-	private void dropItem() {
+	private boolean isValidItem(ItemStack item, TileEntity target, EnumFacing side){
+		if(item == null) return false;
+		if(target instanceof IInventory){
+			ISidedInventory dt = InventoryWrapper.wrap((IInventory)target);
+			int[] slots = dt.getSlotsForFace(side);
+			for(int i = 0; i < slots.length; i++){
+				int slot = slots[i];
+				if(dt.isItemValidForSlot(slot, item)){
+					return true;
+				}
+			}
+			return false;
+		}else{
+			return true;
+		}
+	}
+	
+	private void dropItem(TileEntity target) {
 		World w = getWorld();
-		TileEntity target = w.getTileEntity(getPos().down());
 		if(target == null && !(w.getBlockState(getPos().down()).getBlock().getMaterial().blocksMovement())){
 			// drop item in the air
 			EntityItem ie = new EntityItem(w,getPos().getX()+0.5,getPos().getY()-0.5,getPos().getZ()+0.5,getInventory()[0]);

@@ -8,6 +8,7 @@ import cyano.poweradvantage.machines.conveyors.TileEntityFoodFilter;
 import cyano.poweradvantage.machines.conveyors.TileEntityFuelFilter;
 import cyano.poweradvantage.machines.conveyors.TileEntityInventoryFilter;
 import cyano.poweradvantage.machines.conveyors.TileEntityOreFilter;
+import cyano.poweradvantage.machines.conveyors.TileEntityOverflowFilter;
 import cyano.poweradvantage.machines.conveyors.TileEntityPlantFilter;
 import cyano.poweradvantage.machines.conveyors.TileEntitySmeltableFilter;
 import cyano.poweradvantage.machines.creative.InfiniteEnergyTileEntity;
@@ -37,6 +38,7 @@ public abstract class Entities {
 		GameRegistry.registerTileEntity(TileEntityOreFilter.class, PowerAdvantage.MODID+"."+"item_filter_ore");
 		GameRegistry.registerTileEntity(TileEntityPlantFilter.class, PowerAdvantage.MODID+"."+"item_filter_plant");
 		GameRegistry.registerTileEntity(TileEntitySmeltableFilter.class, PowerAdvantage.MODID+"."+"item_filter_smelt");
+		GameRegistry.registerTileEntity(TileEntityOverflowFilter.class, PowerAdvantage.MODID+"."+"item_filter_overflow");
 		
 		GameRegistry.registerTileEntity(InfiniteEnergyTileEntity.class, PowerAdvantage.MODID+"."+"infinite_energy_source");
 		
