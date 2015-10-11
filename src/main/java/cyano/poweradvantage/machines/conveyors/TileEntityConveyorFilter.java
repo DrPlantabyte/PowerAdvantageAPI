@@ -22,7 +22,7 @@ public abstract class TileEntityConveyorFilter extends TileEntityConveyor {
 
 	public abstract boolean matchesFilter(ItemStack item);
 	
-	
+	private boolean extractFlag = false;
 	@Override
 	public void update() {
 		World w = getWorld();
@@ -56,37 +56,42 @@ public abstract class TileEntityConveyorFilter extends TileEntityConveyor {
 				EnumFacing theirDir = dir.getOpposite();
 				TileEntity target = w.getTileEntity(getPos().offset(myDir));
 				TileEntity dropTarget = w.getTileEntity(getPos().offset(EnumFacing.DOWN));
-				if(matchesFilter(this.getInventory()[0]) && isValidItem(getInventory()[0],dropTarget,EnumFacing.UP)){
-					dropItem(dropTarget);
-					return;
-				}
-				if(target != null){
-					if( target instanceof IInventory){
-						ISidedInventory them;
-						if(target instanceof  TileEntityChest){
-							// special handling for chests in case of double-chest
-							them = InventoryWrapper.wrap(handleChest((TileEntityChest)target));
-						} else {
-							them = InventoryWrapper.wrap((IInventory)target);
-						}
-						if(transferItem(this,myDir,them,theirDir)){
-							transferCooldown = transferInvterval;
-							this.markDirty();
-						}
+				if(matchesFilter(this.getInventory()[0])){
+					if(isValidItemFor(getInventory()[0],dropTarget,EnumFacing.UP)){
+						dropItem(dropTarget);
+						return;
+					} else {
+						// flag safe extraction of invalid item
+						extractFlag = true;
 					}
 				}
+				if( target instanceof IInventory){
+					ISidedInventory them;
+					if(target instanceof  TileEntityChest){
+						// special handling for chests in case of double-chest
+						them = InventoryWrapper.wrap(handleChest((TileEntityChest)target));
+					} else {
+						them = InventoryWrapper.wrap((IInventory)target);
+					}
+					if(transferItem(this,myDir,them,theirDir)){
+						transferCooldown = transferInvterval;
+						this.markDirty();
+					}
+				}
+				// end of safe extraction section
+				extractFlag = false;
 			}
 		}
 	}
 	
-	private boolean isValidItem(ItemStack item, TileEntity target, EnumFacing side){
+	protected boolean isValidItemFor(ItemStack item, TileEntity target, EnumFacing side){
 		if(item == null) return false;
 		if(target instanceof IInventory){
 			ISidedInventory dt = InventoryWrapper.wrap((IInventory)target);
 			int[] slots = dt.getSlotsForFace(side);
 			for(int i = 0; i < slots.length; i++){
 				int slot = slots[i];
-				if(dt.isItemValidForSlot(slot, item)){
+				if(dt.canInsertItem(slot, item, side)){
 					return true;
 				}
 			}
@@ -149,11 +154,12 @@ public abstract class TileEntityConveyorFilter extends TileEntityConveyor {
 	 * @return true if the item is allowed to be pulled, false otherwise
 	 */
 	@Override
-    public boolean canExtractItem(final int slot, final ItemStack targetItem, final EnumFacing side) {
+	public boolean canExtractItem(final int slot, final ItemStack targetItem, final EnumFacing side) {
 		if(side == EnumFacing.DOWN) {
 			return slot == 0 && matchesFilter(targetItem);
 		} else {
-			return super.canExtractItem(slot, targetItem, side) && (!matchesFilter(targetItem));
+			return slot == 0 && super.canExtractItem(slot, targetItem, side) 
+					&& (extractFlag || !matchesFilter(targetItem));
 		}
-    }
+	}
 }

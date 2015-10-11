@@ -25,23 +25,32 @@ public class TileEntityOverflowFilter extends TileEntityConveyorFilter{
 	private boolean canInsert(ItemStack item, EnumFacing f){
 		TileEntity target = getWorld().getTileEntity(getPos().offset(f));
 		if(target instanceof IInventory){
+			EnumFacing side = f.getOpposite();
 			ISidedInventory dt = InventoryWrapper.wrap((IInventory)target);
-			int[] slots = dt.getSlotsForFace(f.getOpposite());
+			int[] slots = dt.getSlotsForFace(side);
 			for(int i = 0; i < slots.length; i++){
 				int slot = slots[i];
-				if(dt.isItemValidForSlot(slot, item)){
+				if(dt.canInsertItem(slot, item, side)){
 					ItemStack targetSlot = dt.getStackInSlot(slot);
-					return (targetSlot == null) || 
+					if( (targetSlot == null) || 
 							(ItemStack.areItemsEqual(item, targetSlot) 
 									&& !targetSlot.getItem().isDamageable()
 									&& targetSlot.stackSize < targetSlot.getMaxStackSize()
-									&& targetSlot.stackSize < dt.getInventoryStackLimit());
+									&& targetSlot.stackSize < dt.getInventoryStackLimit())){
+						return true;
+					}
 				}
 			}
 			return false;
 		}else{
 			return false;
 		}
+	}
+	
+	@Override
+	protected boolean isValidItemFor(ItemStack item, TileEntity target, EnumFacing side){
+		// do all of the logic in the matchesFilter method
+		return true;
 	}
 
 }
