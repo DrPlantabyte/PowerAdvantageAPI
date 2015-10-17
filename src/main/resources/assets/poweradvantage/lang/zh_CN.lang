@@ -1,39 +1,39 @@
 language_support_goals=english (en_US,en_EN,en_CA,en_GB, en_AU, en_PT), spanish (es_MX,es_ES), chinese (zh_CN), japanese (ja_JA), portugese (pt_BR), german (de_DE), italian (it_IT), korean (ko_KR)
 
-nei.poweradvantage.recipehandler.shapelessfurnace.name=大爐（無形）
-nei.poweradvantage.recipehandler.shapedfurnace.name=大爐（異型）
+nei.poweradvantage.recipehandler.shapelessfurnace.name=大熔炉(无形的)
+nei.poweradvantage.recipehandler.shapedfurnace.name=大熔炉(有形的)
 
 tooltip.poweradvantage.empty=空
 tooltip.poweradvantage.buckets_of=%x水桶的%y
 
-itemGroup.poweradvantage=功率優勢
+itemGroup.poweradvantage=能量优势
 
-tile.poweradvantage.fluid_drain.name=漏
-tile.poweradvantage.fluid_discharge.name=卸料箅
-tile.poweradvantage.fluid_storage_tank.name=儲罐
-item.poweradvantage.fluid_storage_tank_item.name=儲罐
-tile.poweradvantage.fluid_pipe.name=管
+tile.poweradvantage.fluid_drain.name=抽水机
+tile.poweradvantage.fluid_discharge.name=排液器
+tile.poweradvantage.fluid_storage_tank.name=便携式液体储罐
+item.poweradvantage.fluid_storage_tank_item.name=便携式液体储罐
+tile.poweradvantage.fluid_pipe.name=液体管
 
-tile.poweradvantage.item_conveyor.name=輸送機
-tile.poweradvantage.item_filter_block.name= 塊過濾器輸送機
-tile.poweradvantage.item_filter_food.name=食品輸送帶篩選
-tile.poweradvantage.item_filter_fuel.name=燃油濾清器輸送機
-tile.poweradvantage.item_filter_inventory.name=過濾器輸送
-tile.poweradvantage.item_filter_ore.name=礦石輸送帶篩選
-tile.poweradvantage.item_filter_plant.name=種用輸送帶篩選
-tile.poweradvantage.item_filter_smelt.name=爐過濾器輸送機
-tile.poweradvantage.item_filter_overflow.name=溢出過濾器輸送
-tile.poweradvantage.steel_frame.name=鋼框架
-
-
-item.poweradvantage.starch.name=澱粉
-item.poweradvantage.bioplastic_ingot.name=錠生物塑料
-item.poweradvantage.sprocket.name=鏈輪
+tile.poweradvantage.item_conveyor.name=输送机
+tile.poweradvantage.item_filter_block.name=方块过滤输送机
+tile.poweradvantage.item_filter_food.name=食品过滤输送机
+tile.poweradvantage.item_filter_fuel.name=燃料过滤输送机
+tile.poweradvantage.item_filter_inventory.name=选择过滤输送机
+tile.poweradvantage.item_filter_ore.name=矿物过滤输送机
+tile.poweradvantage.item_filter_plant.name=种子过滤输送机
+tile.poweradvantage.item_filter_smelt.name=熔炉过滤输送机
+tile.poweradvantage.item_filter_overflow.name=溢出过滤输送机
+tile.poweradvantage.steel_frame.name=钢框架
 
 
-tile.poweradvantage.fluid_metal_tank.name=金屬儲罐
-item.poweradvantage.rotator_tool.name=旋轉工具
+item.poweradvantage.starch.name=淀粉
+item.poweradvantage.bioplastic_ingot.name=生物塑料锭
+item.poweradvantage.sprocket.name=链轮
 
-tile.poweradvantage.infinite_steam.name=無限蒸汽動力
-tile.poweradvantage.infinite_electricity.name=無限電力
-tile.poweradvantage.infinite_quantum.name=無限量子動力
+
+tile.poweradvantage.fluid_metal_tank.name=金属液罐
+item.poweradvantage.rotator_tool.name=旋转扳手
+
+tile.poweradvantage.infinite_steam.name=无限蒸汽动力
+tile.poweradvantage.infinite_electricity.name=无限电力
+tile.poweradvantage.infinite_quantum.name=无限量子动力
