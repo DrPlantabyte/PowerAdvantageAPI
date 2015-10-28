@@ -214,7 +214,24 @@ public class PowerAdvantage
 	/** The display name for this mod */
 	public static final String NAME = "Power Advantage";
 	/** The version of this mod, in the format major.minor.update */
-	public static final String VERSION = "1.3.4";
+	public static final String VERSION = "1.3.5";
+	
+	// TODO: test drain and discharge grate with custom liquids, then push v1.3.5 if changes are needed
+	
+	// TODO: add crude oil
+	// TODO: add oil (smelt or distill from crude oil)
+	// TODO: add coal-powered distillation machine (furnace for liquids)
+	// TODO: add crude oil reservoir world-gen (make it spawn like normal ore)
+	
+	// TODO: make steam drill use crusher recipes, push version
+	// TODO: add oil-burning steam boiler
+	// TODO: add steam-powered pump (for pumping oil from a drill hole)
+	
+	// TODO: make laser drill dig 3x3 tunnel, push version
+	// TODO: add electric distillation machine
+	// TODO: add plastic refinery (makes plastic from oil)
+	// TODO: add biogas (fuel liquid, can be distilled into oil)
+	// TODO: add cellulose bioreactor (makes biogas from biodegradables)
 
 	/** singleton instance */
 	private static PowerAdvantage instance;
@@ -385,7 +402,6 @@ public class PowerAdvantage
 	public void postInit(FMLPostInitializationEvent event)
 	{
 		// Handle inter-mod action
-		// TODO: explicitly handle NeoTech, Progressive Automation, and Open Computers
 	}
 
 

@@ -73,7 +73,7 @@ public class FluidDrainTileEntity extends TileEntitySimpleFluidSource{
 			if(tank.getFluidAmount() <= 0){
 				IBlockState bs = getWorld().getBlockState(space);
 				if(bs.getBlock() instanceof BlockLiquid || bs.getBlock() instanceof IFluidBlock){
-					Block block = (BlockLiquid)bs.getBlock();
+					Block block = bs.getBlock();
 					Fluid fluid;
 					if(block == Blocks.water || block == Blocks.flowing_water){
 						// Minecraft fluid
