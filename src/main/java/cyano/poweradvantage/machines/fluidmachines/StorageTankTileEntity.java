@@ -29,12 +29,12 @@ public class StorageTankTileEntity  extends TileEntitySimpleFluidSource{
 	@Override
 	public FluidRequest getFluidRequest(Fluid offer) {
 		if(getTank().getFluidAmount() > 0 && offer.equals(getTank().getFluid().getFluid())){
-			FluidRequest req = new FluidRequest(FluidRequest.BACKUP_PRIORITY,
+			FluidRequest req = new FluidRequest(FluidRequest.BACKUP_PRIORITY+1,
 					(getTank().getCapacity() - getTank().getFluidAmount()),
 					this);
 			return req;
 		} else if(getTank().getFluidAmount() <= 0 && canAccept(offer)){
-			FluidRequest req = new FluidRequest(FluidRequest.BACKUP_PRIORITY,
+			FluidRequest req = new FluidRequest(FluidRequest.BACKUP_PRIORITY+1,
 					getTank().getCapacity(),
 					this);
 			return req;
@@ -52,7 +52,7 @@ public class StorageTankTileEntity  extends TileEntitySimpleFluidSource{
      */
 	@Override
     protected byte getMinimumSinkPriority(){
-    	return PowerRequest.BACKUP_PRIORITY+1;
+    	return PowerRequest.BACKUP_PRIORITY+2;
     }
 	
 	/**
@@ -78,8 +78,8 @@ public class StorageTankTileEntity  extends TileEntitySimpleFluidSource{
 	public void tickUpdate(boolean isServerWorld) {
 		if(isServerWorld && this.getWorld().getTotalWorldTime() % 11 == 0){
 			// send update
-			if(this.getTank().getFluid() != lastTime){
-				this.markDirty();
+			if(!this.getTank().getFluid().isFluidStackIdentical(lastTime)){
+				this.sync();
 				lastTime = this.getTank().getFluid();
 			}
 		}

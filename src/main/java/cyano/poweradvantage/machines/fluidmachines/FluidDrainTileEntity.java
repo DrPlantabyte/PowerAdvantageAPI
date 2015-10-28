@@ -1,5 +1,6 @@
 package cyano.poweradvantage.machines.fluidmachines;
 
+import cyano.poweradvantage.api.simple.TileEntitySimpleFluidSource;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDynamicLiquid;
 import net.minecraft.block.BlockLiquid;
@@ -12,6 +13,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraftforge.fluids.BlockFluidBase;
+import net.minecraftforge.fluids.BlockFluidClassic;
+import net.minecraftforge.fluids.BlockFluidFinite;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -20,7 +24,6 @@ import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fluids.IFluidHandler;
-import cyano.poweradvantage.api.simple.TileEntitySimpleFluidSource;
 
 
 public class FluidDrainTileEntity extends TileEntitySimpleFluidSource{
@@ -141,15 +144,31 @@ public class FluidDrainTileEntity extends TileEntitySimpleFluidSource{
 	
 	private int getFluidLevel(BlockPos coord, Fluid fluid){
 		Block fblock = fluid.getBlock();
-		Block b = getWorld().getBlockState(coord).getBlock();
+		IBlockState state = getWorld().getBlockState(coord);
+		Block b = state.getBlock();
 		if(b instanceof BlockLiquid && b.getMaterial() == fblock.getMaterial()){
 			Integer L = (Integer)getWorld().getBlockState(coord).getValue(BlockDynamicLiquid.LEVEL);
 			if(L == null) return 0;
 			if(L == 0) return 16; // source block
 			if(L < 8) return 8 - L; // 1-7 are horizontal flow blocks with increasing value per decreasing level
 			return 8; // 8 or greator means vertical falling liquid blocks
+		} else if(b instanceof BlockFluidClassic && ((IFluidBlock)b).getFluid() == fluid){
+			if(((BlockFluidClassic)b).isSourceBlock(getWorld(), coord)){
+				// is source block
+				return 16;
+			} else {
+				// not source block
+				return ((Integer)state.getValue(BlockFluidBase.LEVEL)).intValue();
+			}
+		} else if(b instanceof BlockFluidFinite && ((IFluidBlock)b).getFluid() == fluid){
+			return ((BlockFluidFinite)b).getQuantaValue(getWorld(), coord);
 		} else if(b instanceof IFluidBlock && ((IFluidBlock)b).getFluid() == fluid){
-			return (int)(16 * ((IFluidBlock)b).getFilledPercentage(worldObj, coord));
+			if(((IFluidBlock)b).canDrain(getWorld(), coord)){
+				// source block?
+				return 16;
+			} else {
+				return (int)(15 * ((IFluidBlock)b).getFilledPercentage(worldObj, coord));
+			}
 		}
 		// non-liquid block (or wrong liquid)
 		return 0;
