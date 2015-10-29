@@ -1,5 +1,7 @@
 package cyano.poweradvantage.machines.fluidmachines;
 
+import org.apache.logging.log4j.Level;
+
 import cyano.poweradvantage.api.simple.TileEntitySimpleFluidSource;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDynamicLiquid;
@@ -24,6 +26,7 @@ import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fluids.IFluidHandler;
+import net.minecraftforge.fml.common.FMLLog;
 
 
 public class FluidDrainTileEntity extends TileEntitySimpleFluidSource{
@@ -98,6 +101,7 @@ public class FluidDrainTileEntity extends TileEntitySimpleFluidSource{
 					BlockPos coord = this.pos.up();
 					do{
 						int Q = getFluidLevel(coord,fluid);
+						FMLLog.info("%s: Q=%s",coord,Q);// TODO: remove
 						if(Q == 16){
 							// source block
 							break;
@@ -112,7 +116,6 @@ public class FluidDrainTileEntity extends TileEntitySimpleFluidSource{
 								coord = coord.up();
 								continue;
 							}
-							if(Q >= 8) Q = -1; // vertical block must be downstream
 							if(getFluidLevel(coord.north(),fluid) > Q){
 								coord = coord.north();
 							} else if(getFluidLevel(coord.east(),fluid) > Q){
@@ -150,15 +153,21 @@ public class FluidDrainTileEntity extends TileEntitySimpleFluidSource{
 			Integer L = (Integer)getWorld().getBlockState(coord).getValue(BlockDynamicLiquid.LEVEL);
 			if(L == null) return 0;
 			if(L == 0) return 16; // source block
-			if(L < 8) return 8 - L; // 1-7 are horizontal flow blocks with increasing value per decreasing level
-			return 8; // 8 or greator means vertical falling liquid blocks
+			if(L < 8) {
+				return 8 - L; // 1-7 are horizontal flow blocks with increasing value per decreasing level
+			} else {
+				return -1; // 8 or greator means vertical falling liquid blocks
+			} 
 		} else if(b instanceof BlockFluidClassic && ((IFluidBlock)b).getFluid() == fluid){
 			if(((BlockFluidClassic)b).isSourceBlock(getWorld(), coord)){
 				// is source block
 				return 16;
 			} else {
 				// not source block
-				return ((Integer)state.getValue(BlockFluidBase.LEVEL)).intValue();
+				FMLLog.info( "Fluid %s block at %s has quanta percent %s and blockstate LEVEL %s", 
+						fluid.getName(), coord, ((BlockFluidClassic)b).getQuantaPercentage(getWorld(), coord), state.getValue(BlockFluidBase.LEVEL)
+				);// TODO: remove
+				return (int)(15 * ((IFluidBlock)b).getFilledPercentage(worldObj, coord));
 			}
 		} else if(b instanceof BlockFluidFinite && ((IFluidBlock)b).getFluid() == fluid){
 			return ((BlockFluidFinite)b).getQuantaValue(getWorld(), coord);

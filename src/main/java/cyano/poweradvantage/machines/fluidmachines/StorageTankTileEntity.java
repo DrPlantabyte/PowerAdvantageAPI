@@ -78,7 +78,8 @@ public class StorageTankTileEntity  extends TileEntitySimpleFluidSource{
 	public void tickUpdate(boolean isServerWorld) {
 		if(isServerWorld && this.getWorld().getTotalWorldTime() % 11 == 0){
 			// send update
-			if(!this.getTank().getFluid().isFluidStackIdentical(lastTime)){
+			if((this.getTank().getFluid() != null && !this.getTank().getFluid().isFluidStackIdentical(lastTime))
+					|| (this.getTank().getFluid() == null && lastTime != null)){
 				this.sync();
 				lastTime = this.getTank().getFluid();
 			}
