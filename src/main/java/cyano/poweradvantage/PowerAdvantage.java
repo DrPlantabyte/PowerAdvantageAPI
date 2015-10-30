@@ -347,6 +347,7 @@ public class PowerAdvantage
 	@SideOnly(Side.CLIENT)
 	private void clientPreInit(FMLPreInitializationEvent event){
 		// client-only code
+		cyano.poweradvantage.init.Blocks.bakeModels();
 	}
 	@SideOnly(Side.SERVER)
 	private void serverPreInit(FMLPreInitializationEvent event){

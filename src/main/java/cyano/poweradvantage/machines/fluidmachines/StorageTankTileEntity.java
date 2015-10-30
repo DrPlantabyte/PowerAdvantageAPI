@@ -81,7 +81,7 @@ public class StorageTankTileEntity  extends TileEntitySimpleFluidSource{
 			if((this.getTank().getFluid() != null && !this.getTank().getFluid().isFluidStackIdentical(lastTime))
 					|| (this.getTank().getFluid() == null && lastTime != null)){
 				this.sync();
-				lastTime = this.getTank().getFluid();
+				lastTime = (this.getTank().getFluid() == null) ? null : this.getTank().getFluid().copy();
 			}
 		}
 	}

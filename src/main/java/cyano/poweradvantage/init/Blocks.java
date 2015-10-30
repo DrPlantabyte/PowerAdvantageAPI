@@ -4,18 +4,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.oredict.OreDictionary;
 import cyano.poweradvantage.PowerAdvantage;
 import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.api.GUIBlock;
+import cyano.poweradvantage.api.fluid.InteractiveFluidBlock;
 import cyano.poweradvantage.blocks.BlockFrame;
 import cyano.poweradvantage.machines.conveyors.BlockConveyor;
 import cyano.poweradvantage.machines.conveyors.BlockConveyorFilter;
@@ -33,6 +25,28 @@ import cyano.poweradvantage.machines.fluidmachines.FluidDrainBlock;
 import cyano.poweradvantage.machines.fluidmachines.FluidPipeBlock;
 import cyano.poweradvantage.machines.fluidmachines.MetalTankBlock;
 import cyano.poweradvantage.machines.fluidmachines.StorageTankBlock;
+import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.ItemMeshDefinition;
+import net.minecraft.client.renderer.block.statemap.StateMapperBase;
+import net.minecraft.client.resources.model.ModelBakery;
+import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.potion.Potion;
+import net.minecraft.potion.PotionEffect;
+import net.minecraft.world.World;
+import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.fluids.BlockFluidBase;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.oredict.OreDictionary;
 
 public abstract class Blocks {
 	private static final Map<String,Block> allBlocks = new HashMap<>();
@@ -59,7 +73,7 @@ public abstract class Blocks {
 	public static GUIBlock infinite_quantum;
 	
 
-//	public static BlockFluidBase crude_oil_block;
+	public static BlockFluidBase crude_oil_block;
 	/* Hope is not lost yet for fluids:
 [20:18:57] [Client thread/ERROR] [FML/]: Model definition for location poweradvantage:crude_oil#level=14 not found
 [20:18:57] [Client thread/ERROR] [FML/]: Model definition for location poweradvantage:crude_oil#level=15 not found
@@ -117,15 +131,46 @@ public abstract class Blocks {
 		infinite_electricity = (GUIBlock)addBlock(new InfiniteEnergyBlock(new ConduitType("electricity")),"infinite_electricity");
 		infinite_quantum = (GUIBlock)addBlock(new InfiniteEnergyBlock(new ConduitType("quantum")),"infinite_quantum");
 
-//		crude_oil_still = (BlockStaticLiquid)addBlock(new CustomBlockStaticLiquid(cyano.poweradvantage.init.Materials.crude_oil).setHardness(100.0f),"crude_oil_still");
-//		crude_oil_flowing = (BlockDynamicLiquid)addBlock(new CustomBlockDynamicLiquid(cyano.poweradvantage.init.Materials.crude_oil).setHardness(100.0f),"crude_oil_flowing");
-//		crude_oil_block = new BlockFluidClassic(Fluids.crude_oil,cyano.poweradvantage.init.Materials.crude_oil);
-//		crude_oil_block.setUnlocalizedName(PowerAdvantage.MODID+"."+"crude_oil");
-//		GameRegistry.registerBlock(crude_oil_block, "crude_oil");
+		crude_oil_block = (BlockFluidBase)addBlock(new InteractiveFluidBlock(Fluids.crude_oil,true,(World w, EntityLivingBase e)->{
+			e.addPotionEffect(new PotionEffect(Potion.moveSlowdown.id,200,2));
+		}),"crude_oil");
 		
 		initDone = true;
 	}
-	
+
+	/**
+	 * Adds fluid block models to the game and applies them to the fluid blocks
+	 */
+	@SideOnly(Side.CLIENT)
+	public static void bakeModels(){
+		String modID = PowerAdvantage.MODID;
+		for(Map.Entry<String,Block> e : allBlocks.entrySet()){
+			Block b = e.getValue();
+			String name = e.getKey();
+			if(b instanceof BlockFluidBase){
+				BlockFluidBase block = (BlockFluidBase)b;
+				Fluid fluid = block.getFluid();
+				Item item = Item.getItemFromBlock(block);
+				final ModelResourceLocation fluidModelLocation = new ModelResourceLocation(
+						modID.toLowerCase() + ":" + name, "fluid");
+				ModelBakery.addVariantName(item);
+				ModelLoader.setCustomMeshDefinition(item, new ItemMeshDefinition()
+				{
+					public ModelResourceLocation getModelLocation(ItemStack stack)
+					{
+						return fluidModelLocation;
+					}
+				});
+				ModelLoader.setCustomStateMapper(block, new StateMapperBase()
+				{
+					protected ModelResourceLocation getModelResourceLocation(IBlockState state)
+					{
+						return fluidModelLocation;
+					}
+				});
+			}
+		}
+	}
 
 	private static Block addBlock(Block block, String name ){
 		block.setUnlocalizedName(PowerAdvantage.MODID+"."+name);

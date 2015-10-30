@@ -101,8 +101,7 @@ public class FluidDrainTileEntity extends TileEntitySimpleFluidSource{
 					BlockPos coord = this.pos.up();
 					do{
 						int Q = getFluidLevel(coord,fluid);
-						FMLLog.info("%s: Q=%s",coord,Q);// TODO: remove
-						if(Q == 16){
+						if(Q == 100){
 							// source block
 							break;
 						} else if(Q == 0){
@@ -110,7 +109,6 @@ public class FluidDrainTileEntity extends TileEntitySimpleFluidSource{
 							limit = 0;
 							break;
 						} else {
-	
 							if(getFluidLevel(coord.up(),fluid) > 0){
 								// go up, regardless
 								coord = coord.up();
@@ -132,7 +130,7 @@ public class FluidDrainTileEntity extends TileEntitySimpleFluidSource{
 						}
 						limit--;
 					}while(limit > 0);
-					if(getFluidLevel(coord,fluid) == 16){
+					if(getFluidLevel(coord,fluid) == 100){
 						// found source block
 						tank.fill(new FluidStack(fluid,FluidContainerRegistry.BUCKET_VOLUME), true);
 						getWorld().setBlockToAir(coord);
@@ -149,34 +147,40 @@ public class FluidDrainTileEntity extends TileEntitySimpleFluidSource{
 		Block fblock = fluid.getBlock();
 		IBlockState state = getWorld().getBlockState(coord);
 		Block b = state.getBlock();
+		Block upBlock = getWorld().getBlockState(coord.up()).getBlock();
 		if(b instanceof BlockLiquid && b.getMaterial() == fblock.getMaterial()){
 			Integer L = (Integer)getWorld().getBlockState(coord).getValue(BlockDynamicLiquid.LEVEL);
 			if(L == null) return 0;
-			if(L == 0) return 16; // source block
+			if(L == 0) return 100; // source block
+			if(upBlock instanceof BlockLiquid && upBlock.getMaterial() == fblock.getMaterial()){
+				return 99;
+			}
 			if(L < 8) {
-				return 8 - L; // 1-7 are horizontal flow blocks with increasing value per decreasing level
+				return (8 - L) * 10; // 1-7 are horizontal flow blocks with increasing value per decreasing level
 			} else {
 				return -1; // 8 or greator means vertical falling liquid blocks
 			} 
 		} else if(b instanceof BlockFluidClassic && ((IFluidBlock)b).getFluid() == fluid){
 			if(((BlockFluidClassic)b).isSourceBlock(getWorld(), coord)){
 				// is source block
-				return 16;
+				return 100;
 			} else {
 				// not source block
-				FMLLog.info( "Fluid %s block at %s has quanta percent %s and blockstate LEVEL %s", 
-						fluid.getName(), coord, ((BlockFluidClassic)b).getQuantaPercentage(getWorld(), coord), state.getValue(BlockFluidBase.LEVEL)
-				);// TODO: remove
-				return (int)(15 * ((IFluidBlock)b).getFilledPercentage(worldObj, coord));
+				if(upBlock instanceof IFluidBlock && ((IFluidBlock)upBlock).getFluid() == fluid){
+					return 99;
+				}
+				return (int)(80 * ((IFluidBlock)b).getFilledPercentage(worldObj, coord));
 			}
 		} else if(b instanceof BlockFluidFinite && ((IFluidBlock)b).getFluid() == fluid){
 			return ((BlockFluidFinite)b).getQuantaValue(getWorld(), coord);
 		} else if(b instanceof IFluidBlock && ((IFluidBlock)b).getFluid() == fluid){
 			if(((IFluidBlock)b).canDrain(getWorld(), coord)){
 				// source block?
-				return 16;
+				return 100;
+			} else if(upBlock instanceof IFluidBlock && ((IFluidBlock)upBlock).getFluid() == fluid){
+				return 99;
 			} else {
-				return (int)(15 * ((IFluidBlock)b).getFilledPercentage(worldObj, coord));
+				return (int)(80 * ((IFluidBlock)b).getFilledPercentage(worldObj, coord));
 			}
 		}
 		// non-liquid block (or wrong liquid)

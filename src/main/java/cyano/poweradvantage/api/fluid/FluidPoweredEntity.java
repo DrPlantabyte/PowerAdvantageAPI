@@ -9,6 +9,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+import net.minecraftforge.fml.common.FMLLog;
 import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.api.PowerRequest;
 import cyano.poweradvantage.api.PoweredEntity;
@@ -41,6 +42,7 @@ public abstract class FluidPoweredEntity extends PoweredEntity implements IFluid
 	 */
 	@Override
 	public PowerRequest getPowerRequest(ConduitType type) {
+		FMLLog.info("Fluid Power Request for type %s",type.toString());// TODO: remove
 		// Type will be lava or water or other specific fluid
 		// implementation of getFluidRequest() decides whether this machine wants it
 		if(Fluids.isFluidType(type)){
