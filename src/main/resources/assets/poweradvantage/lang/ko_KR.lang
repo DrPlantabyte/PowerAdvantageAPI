@@ -37,3 +37,6 @@ item.poweradvantage.rotator_tool.name=회전 도구
 tile.poweradvantage.infinite_steam.name=무한 증기 력
 tile.poweradvantage.infinite_electricity.name=무한 전력
 tile.poweradvantage.infinite_quantum.name=무한 양자 전력
+
+tile.poweradvantage.crude_oil.name=원유
+item.poweradvantage.bucket_crude_oil.name=원유의 버킷

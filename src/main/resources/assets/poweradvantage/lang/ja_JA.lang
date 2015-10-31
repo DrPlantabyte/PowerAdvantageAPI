@@ -37,3 +37,6 @@ tile.poweradvantage.infinite_quantum.name=無限の量子パワー
 
 tile.poweradvantage.fluid_metal_tank.name=金属製貯蔵タンク
 item.poweradvantage.rotator_tool.name=回転ツール
+
+tile.poweradvantage.crude_oil.name=原油
+item.poweradvantage.bucket_crude_oil.name=原油のバケット

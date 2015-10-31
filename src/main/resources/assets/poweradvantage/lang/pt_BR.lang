@@ -36,3 +36,6 @@ item.poweradvantage.rotator_tool.name=Ferramenta de Rotação
 tile.poweradvantage.infinite_steam.name=Energia a Vapor Infinito
 tile.poweradvantage.infinite_electricity.name=Energia Elétrica Infinito
 tile.poweradvantage.infinite_quantum.name=Energia Quantum Infinito
+
+tile.poweradvantage.crude_oil.name=Óleo Cru
+item.poweradvantage.bucket_crude_oil.name=Balde de Óleo Cru

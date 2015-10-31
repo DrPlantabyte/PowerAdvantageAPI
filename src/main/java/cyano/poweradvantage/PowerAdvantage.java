@@ -218,7 +218,6 @@ public class PowerAdvantage
 	
 	// TODO: test drain and discharge grate with custom liquids, then push v1.3.5 if changes are needed
 	
-	// TODO: add crude oil
 	// TODO: add oil (smelt or distill from crude oil)
 	// TODO: add coal-powered distillation machine (furnace for liquids)
 	// TODO: add crude oil reservoir world-gen (make it spawn like normal ore)

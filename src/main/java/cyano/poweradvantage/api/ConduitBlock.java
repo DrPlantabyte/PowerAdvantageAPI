@@ -7,18 +7,19 @@ import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLLog;
 import cyano.poweradvantage.conduitnetwork.ConduitRegistry;
+
 /**
- * <p>
+ * 
  * This is the superclass for blocks that conduct power from power generators to 
  * the machines that need power. If you are making an add-on mod, you probably 
  * want to extend the 
  * <b>cyano.poweradvantage.api.simple.BlockSimplePowerConduit</b> class 
  * instead of this class.
- * </p><p>
+ * <br><br>
  * Note that the conduit blocks do not have tile entities. They do not store data for energy 
  * transmission. Simply implementing the ITypedConduit interface adds them to the energy 
  * transmission algorithm that finds the connections between generators and machines. 
- * </p>
+ * 
  * 
  * @author DrCyano
  *

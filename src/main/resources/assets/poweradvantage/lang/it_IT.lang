@@ -36,3 +36,6 @@ item.poweradvantage.rotator_tool.name=Strumento di Rotazione
 tile.poweradvantage.infinite_steam.name=Forza Vapore Infinite
 tile.poweradvantage.infinite_electricity.name=Elettricità Infinite
 tile.poweradvantage.infinite_quantum.name=Atomica Infinite
+
+tile.poweradvantage.crude_oil.name=Olio a Crudo
+item.poweradvantage.bucket_crude_oil.name=Secchio di Greggio

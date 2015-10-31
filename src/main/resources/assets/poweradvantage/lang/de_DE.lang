@@ -36,3 +36,6 @@ item.poweradvantage.rotator_tool.name=Drehwerkzeug
 tile.poweradvantage.infinite_steam.name=Unendlichen Dampfkraft
 tile.poweradvantage.infinite_electricity.name=Unendliche Elektrische Leistung
 tile.poweradvantage.infinite_quantum.name=Unendliche Quanten Leistung
+
+tile.poweradvantage.crude_oil.name=Rohöl
+item.poweradvantage.bucket_crude_oil.name=Eimer Rohöl
