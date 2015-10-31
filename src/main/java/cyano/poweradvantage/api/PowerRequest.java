@@ -107,6 +107,6 @@ public class PowerRequest implements Comparable<PowerRequest>, Cloneable{
 	 */
 	@Override
 	public String toString(){
-		return "PowerRequest: "+amount+" units at priority="+priority;
+		return "PowerRequest: "+amount+" units at priority="+((int)priority)+" from entity "+((entity == null)?("null"):(entity.getClass().getSimpleName()));
 	}
 }

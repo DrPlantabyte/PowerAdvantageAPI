@@ -42,7 +42,6 @@ public abstract class FluidPoweredEntity extends PoweredEntity implements IFluid
 	 */
 	@Override
 	public PowerRequest getPowerRequest(ConduitType type) {
-		FMLLog.info("Fluid Power Request for type %s",type.toString());// TODO: remove
 		// Type will be lava or water or other specific fluid
 		// implementation of getFluidRequest() decides whether this machine wants it
 		if(Fluids.isFluidType(type)){

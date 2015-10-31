@@ -28,18 +28,15 @@ public class MetalTankTileEntity  extends TileEntitySimpleFluidSource{
 	 */
 	@Override
 	public FluidRequest getFluidRequest(Fluid offer) {
-		FMLLog.info("Offered %s, currently holding %s", offer.getUnlocalizedName(),(this.getTank().getFluid() != null) ? this.getTank().getFluid().getFluid().getUnlocalizedName() : "nothing");// TODO: remove
 		if(getTank().getFluidAmount() > 0 && offer.equals(getTank().getFluid().getFluid())){
 			FluidRequest req = new FluidRequest(FluidRequest.BACKUP_PRIORITY,
 					(getTank().getCapacity() - getTank().getFluidAmount()),
 					this);
-			FMLLog.info("Accepted");// TODO: remove
 			return req;
 		} else if(getTank().getFluidAmount() <= 0 && canAccept(offer)){
 			FluidRequest req = new FluidRequest(FluidRequest.BACKUP_PRIORITY,
 					getTank().getCapacity(),
 					this);
-			FMLLog.info("Accepted");// TODO: remove
 			return req;
 		} else {
 			return FluidRequest.REQUEST_NOTHING;

@@ -238,20 +238,7 @@ public abstract class TileEntitySimpleFluidSource extends FluidPoweredEntity imp
     }
     
 
-	/**
-	 * Specify how much energy this power sink wants from a power generator. If this tile entity is 
-	 * not a sink, then simply return PowerRequest.REQUEST_NOTHING
-	 * @param type The type of energy available upon request
-	 * @return A PowerRequest instance indicated how much power you'd like to get
-	 */
-	public PowerRequest getPowerRequest(ConduitType type){
-		float space = this.getEnergyCapacity() - this.getEnergy(); 
-		if(this.canAcceptType(type) && space > 0){
-			return new PowerRequest(PowerRequest.MEDIUM_PRIORITY,space,this);
-		} else {
-			return PowerRequest.REQUEST_NOTHING;
-		}
-	}
+	
     
     
     /**
@@ -340,7 +327,7 @@ public abstract class TileEntitySimpleFluidSource extends FluidPoweredEntity imp
 	 */
 	@Override
 	public void setEnergy(float energy,ConduitType type) {
-		
+		FMLLog.severe("%s.%s(%s, \"%s\") was invoked. This is an error state!",this.getClass().getName(),"setEnergy",energy,type);
 	}
 	
 	/**

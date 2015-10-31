@@ -580,10 +580,12 @@ public abstract class TileEntitySimpleFluidConsumer extends FluidPoweredEntity i
 	@Override
 	public FluidRequest getFluidRequest(Fluid offer) {
 		if(getTank().getFluidAmount() > 0 && offer.equals(getTank().getFluid().getFluid())){
-			return new FluidRequest(FluidRequest.MEDIUM_PRIORITY,
+			// same type of fluid as is already in tank
+			return new FluidRequest(FluidRequest.MEDIUM_PRIORITY+1,
 					(getTank().getCapacity() - getTank().getFluidAmount()),
 					this);
 		} else if(getTank().getFluidAmount() <= 0 && canAccept(offer)){
+			// empty tank
 			return new FluidRequest(FluidRequest.MEDIUM_PRIORITY,
 					getTank().getCapacity(),
 					this);

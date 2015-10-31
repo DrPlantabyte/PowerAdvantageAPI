@@ -67,7 +67,7 @@ public class InteractiveFluidBlock extends BlockFluidClassic{
 	 */
 	public int getFlammability(IBlockAccess world, BlockPos pos, EnumFacing face)
 	{
-		if(isFlammable) return 50;
+		if(isFlammable) return 60;
 		return 0;
 	}
 	
@@ -82,7 +82,7 @@ public class InteractiveFluidBlock extends BlockFluidClassic{
 	 */
 	public int getFireSpreadSpeed(IBlockAccess world, BlockPos pos, EnumFacing face)
 	{
-		if(isFlammable) return 5;
+		if(isFlammable) return 30;
 		return 0;
 	}
 }
