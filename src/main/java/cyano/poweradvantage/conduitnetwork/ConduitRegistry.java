@@ -12,7 +12,7 @@ import cyano.poweradvantage.PowerAdvantage;
 import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.api.ITypedConduit;
 import cyano.poweradvantage.api.PowerRequest;
-import cyano.poweradvantage.api.PoweredEntity;
+import cyano.poweradvantage.api.IPowerMachine;
 import cyano.poweradvantage.api.modsupport.ExternalPowerRequest;
 import cyano.poweradvantage.api.modsupport.LightWeightPowerRegistry;
 import cyano.poweradvantage.api.modsupport.RFPowerRequest;
@@ -101,8 +101,8 @@ public class ConduitRegistry {
 			Block b = w.getBlockState(pos.pos).getBlock();
 			if(b  instanceof ITileEntityProvider ){
 				TileEntity e = w.getTileEntity(pos.pos);
-				if(e != null && e instanceof PoweredEntity && ((ITypedConduit)e).isPowerSink()){
-					PowerRequest req = ((PoweredEntity)e).getPowerRequest(energyType);
+				if(e != null && e instanceof IPowerMachine && ((ITypedConduit)e).isPowerSink()){
+					PowerRequest req = ((IPowerMachine)e).getPowerRequest(energyType);
 					if(req != PowerRequest.REQUEST_NOTHING)requests.add(req);
 				} else if(PowerAdvantage.enableExtendedModCompatibility){
 					if(LightWeightPowerRegistry.getInstance().isExternalPowerBlock(b)){
@@ -139,15 +139,36 @@ public class ConduitRegistry {
 	 */
 	public static float transmitPowerToConsumers(final float availableEnergy, ConduitType powerType, byte minimumPriority,
 			TileEntity provider){
-		List<PowerRequest> requests = ConduitRegistry.getInstance().getRequestsForPower(provider.getWorld(), provider.getPos(), powerType,powerType);
+		return transmitPowerToConsumers(availableEnergy, powerType,powerType,minimumPriority,provider.getWorld(),provider.getPos(),provider);
+	}
+	
+	/**
+	 * Sends the provided energy out to all machines requesting energy that are connected to the 
+	 * given TileEntity. The amount of energy actually sent out is returned
+	 * @param availableEnergy Maximum amount of energy to send
+	 * @param networkType The power network to access (almost always the same as 
+	 * <code>powerType</code>).
+	 * @param powerType The type of energy being sent
+	 * @param minimumPriority The lowest priority of power request that will be filled (prevents 
+	 * battery machines from sending circular power)
+	 * @param world World object instance
+	 * @param srcPos A position within the power network that you wish to transmit power into. This 
+	 * is usually the position of the tile entity of the generator machine.
+	 * @param providerInstance The source sending the power (used to prevent the power source from 
+	 * adding to itself, this parameter can be null).
+	 * @return The amount of energy that was actually consumed by the requests
+	 */
+	public static float transmitPowerToConsumers(final float availableEnergy, ConduitType networkType, ConduitType powerType, byte minimumPriority,
+			World world, BlockPos srcPos, Object providerInstance){
+		List<PowerRequest> requests = ConduitRegistry.getInstance().getRequestsForPower(world, srcPos, networkType,powerType);
 		float e = availableEnergy;
 		for(PowerRequest req : requests){
 			if(req.amount <= 0) continue;
-			if(req.entity == provider) continue;
+			if(req.entity == providerInstance) continue;
 			if(req.priority < minimumPriority) continue;
 			if(PowerAdvantage.enableExtendedModCompatibility){
 				if(req instanceof ExternalPowerRequest){
-					e -= LightWeightPowerRegistry.getInstance().addPower(provider.getWorld(), ((ExternalPowerRequest)req).pos, 
+					e -= LightWeightPowerRegistry.getInstance().addPower(world, ((ExternalPowerRequest)req).pos, 
 							powerType, Math.min(e, req.amount));
 					if(e <= 0) break;
 					continue;

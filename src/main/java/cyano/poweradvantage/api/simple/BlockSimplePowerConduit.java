@@ -2,30 +2,26 @@ package cyano.poweradvantage.api.simple;
 
 import java.util.List;
 
+import cyano.poweradvantage.PowerAdvantage;
+import cyano.poweradvantage.api.ConduitBlock;
+import cyano.poweradvantage.api.ConduitType;
+import cyano.poweradvantage.api.ITypedConduit;
+import cyano.poweradvantage.api.modsupport.LightWeightPowerRegistry;
+import cyano.poweradvantage.util.PowerHelper;
 import net.minecraft.block.Block;
-import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import cyano.poweradvantage.PowerAdvantage;
-import cyano.poweradvantage.api.ConduitType;
-import cyano.poweradvantage.api.ITypedConduit;
-import cyano.poweradvantage.api.ConduitBlock;
-import cyano.poweradvantage.api.PoweredEntity;
-import cyano.poweradvantage.api.modsupport.LightWeightPowerRegistry;
-import cyano.poweradvantage.conduitnetwork.ConduitRegistry;
 /**
  * <p>
  * This block class implements the cyano.poweradvantage.api.ConduitBlock 
@@ -258,14 +254,13 @@ public abstract class BlockSimplePowerConduit extends ConduitBlock{
 	protected boolean canConnectTo(IBlockAccess w, BlockPos thisBlock, EnumFacing face, BlockPos otherBlock){
 		Block other = w.getBlockState(otherBlock).getBlock();
 		if(other instanceof ITypedConduit){
-			return ConduitType.areConnectable(this, face, other);
+			return PowerHelper.areConnectable(this, face, other);
 		} else {
 			if(PowerAdvantage.enableExtendedModCompatibility){
 				if(LightWeightPowerRegistry.getInstance().isExternalPowerBlock(other)){
-					return ConduitType.areConnectable(w, thisBlock, face);
+					return PowerHelper.areConnectable(w, thisBlock, face);
 				} else if(PowerAdvantage.rfConversionTable.containsKey(this.getType()) 
 						&& w.getTileEntity(otherBlock) instanceof cofh.api.energy.IEnergyReceiver){
-					//return ((cofh.api.energy.IEnergyReceiver)w.getTileEntity(otherBlock)).canConnectEnergy(face.getOpposite()); // Note: some mods always return false on the client side 
 					return true;
 				}
 			}

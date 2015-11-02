@@ -2,6 +2,10 @@ package cyano.poweradvantage.api.simple;
 
 import java.util.List;
 
+import cyano.poweradvantage.PowerAdvantage;
+import cyano.poweradvantage.api.ITypedConduit;
+import cyano.poweradvantage.api.fluid.FluidConduitBlock;
+import cyano.poweradvantage.util.PowerHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
@@ -16,10 +20,6 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import cyano.poweradvantage.PowerAdvantage;
-import cyano.poweradvantage.api.ConduitType;
-import cyano.poweradvantage.api.ITypedConduit;
-import cyano.poweradvantage.api.fluid.FluidConduitBlock;
 /**
  * <p>
  * This block class implements the cyano.poweradvantage.api.ConduitBlock 
@@ -222,9 +222,9 @@ public abstract class BlockSimpleFluidConduit extends FluidConduitBlock{
 		Block other = w.getBlockState(otherBlock).getBlock();
 		if(other instanceof ITypedConduit){
 			if(PowerAdvantage.enableExtendedModCompatibility){
-				return ConduitType.areConnectable(w, thisBlock, face);
+				return PowerHelper.areConnectable(w, thisBlock, face);
 			}
-			return ConduitType.areConnectable(this, face, other);
+			return PowerHelper.areConnectable(this, face, other);
 		} else {
 			return false;
 		}

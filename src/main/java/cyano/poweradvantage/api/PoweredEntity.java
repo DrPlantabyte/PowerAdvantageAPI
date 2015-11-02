@@ -20,7 +20,7 @@ import net.minecraft.util.EnumFacing;
  * @author DrCyano
  *
  */
-public abstract class PoweredEntity extends TileEntity implements IUpdatePlayerListBox, ITypedConduit{
+public abstract class PoweredEntity extends TileEntity implements IUpdatePlayerListBox, IPowerMachine{
 	
 	private final int powerUpdateInterval = 8;
 	
@@ -28,17 +28,20 @@ public abstract class PoweredEntity extends TileEntity implements IUpdatePlayerL
 	 * Gets the amount of energy that can be stored in this machine.
 	 * @return Size of the energy buffer
 	 */
+	@Override
 	public abstract float getEnergyCapacity();
 	/**
 	 * Gets the amount of energy stored in this machine
 	 * @return The amount of energy in the energy buffer
 	 */
+	@Override
 	public abstract float getEnergy();
 	/**
 	 * Sets the amount of energy in the buffer
 	 * @param energy The amount of energy to be added to the buffer
 	 * @param type The type of energy to be added to the buffer
 	 */
+	@Override
 	public abstract void setEnergy(float energy, ConduitType type); 
 	/**
 	 * Adds energy to this conductor, up to the maximum allowed energy. The 
@@ -49,6 +52,7 @@ public abstract class PoweredEntity extends TileEntity implements IUpdatePlayerL
 	 * @param type The type of energy to be added to the buffer
 	 * @return The actual change to the internal energy buffer.
 	 */
+	@Override
 	public float addEnergy(float energy, ConduitType type){
 		float newValue = this.getEnergy() + energy;
 		if(newValue < 0){
@@ -72,6 +76,7 @@ public abstract class PoweredEntity extends TileEntity implements IUpdatePlayerL
 	 * @param type The type of energy to be subtracted to the buffer
 	 * @return The actual change to the internal energy buffer
 	 */
+	@Override
 	public float subtractEnergy(float energy, ConduitType type){
 		return addEnergy(-1 * energy,type);
 	}
@@ -177,6 +182,7 @@ public abstract class PoweredEntity extends TileEntity implements IUpdatePlayerL
 	 * @param type The type of energy available upon request
 	 * @return A PowerRequest instance indicated how much power you'd like to get
 	 */
+	@Override
 	public abstract PowerRequest getPowerRequest(ConduitType type);
 	
 	/**

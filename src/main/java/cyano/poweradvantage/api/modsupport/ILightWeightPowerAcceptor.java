@@ -1,8 +1,8 @@
 package cyano.poweradvantage.api.modsupport;
 
+import cyano.poweradvantage.api.ConduitType;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import cyano.poweradvantage.api.ConduitType;
 
 /**
  * This interface is used in the LightWeightPowerRegistry to allow established mods to optionally 
@@ -53,4 +53,6 @@ public interface ILightWeightPowerAcceptor {
 	 * @return The actual amount of power taken
 	 */
 	public abstract float addEnergy(TileEntity yourMachine, float amountAdded, ConduitType powerType);
+	
+	
 }

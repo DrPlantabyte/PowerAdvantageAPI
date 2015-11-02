@@ -31,7 +31,7 @@ javadoc {
     failOnError = false
 }
 
-version = "1.3.5"
+version = "1.4.0"
 group= "cyano.poweradvantage" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "PowerAdvantage"
 
