@@ -216,9 +216,6 @@ public class PowerAdvantage
 	/** The version of this mod, in the format major.minor.update */
 	public static final String VERSION = "1.4.0";
 	
-	// TODO: API clean-up: replace some class functions with interfaces so that power network can 
-	// operate using only interfaces
-	// TODO: add default methods and new methods to power interfaces
 	// TODO: add distillation recipe registry and NEI config (fluid or item -> fluid and/or item)
 	
 	// TODO: add oil (smelt or distill from crude oil)
