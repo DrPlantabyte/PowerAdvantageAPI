@@ -14,6 +14,7 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import cyano.poweradvantage.PowerAdvantage;
@@ -82,6 +83,12 @@ public abstract class Fluids {
 	 * @return A new fluid instance.
 	 */
 	private static Fluid newFluid(String modID, String name, int density, int viscosity, int temperature, int luminosity, int tintColor) {
+		if(PowerAdvantage.useOtherFluids && FluidRegistry.isFluidRegistered(name)){
+			// fluid already exists. Use that one.
+			FMLLog.warning("Using fluid %s from mod %s instead of creating a new fluid %s:%s",FluidRegistry.getFluid(name).getName(),
+					FluidRegistry.getFluid(name).getFlowing().getResourceDomain(), modID,name);
+			return FluidRegistry.getFluid(name);
+		}
 		Fluid f = new ColoredFluid(name,new ResourceLocation(modID+":blocks/"+name+"_still"),new ResourceLocation(modID+":blocks/"+name+"_flow"),tintColor);
 		f.setDensity(density);
 		f.setViscosity(viscosity);

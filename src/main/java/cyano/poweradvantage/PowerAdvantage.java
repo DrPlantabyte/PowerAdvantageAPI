@@ -239,6 +239,7 @@ public class PowerAdvantage
 	 * accordingly.
 	 */
 	public static RecipeMode recipeMode = RecipeMode.NORMAL;
+	public static boolean useOtherFluids = false;
 	/** adjustment for frequency of loot spawns in treasure chests */
 	public static float chestLootFactor = 0.5f;
 	/** If true, plastic will be registered as rubber in ore dictionary */
@@ -295,6 +296,10 @@ public class PowerAdvantage
 		
 		plasticIsAlsoRubber = config.getBoolean("plastic_equals_rubber", "options", plasticIsAlsoRubber, 
 				"If true, then plastic will be useable in recipes as if it were rubber (for cross-mod compatibility)");
+		
+		useOtherFluids = config.getBoolean("use_other_fluids", "Other Power Mods", useOtherFluids, 
+				"If true, then Power Advantage will use existing fluids added by other mods where possible");
+		
 		
 		enableExtendedModCompatibility = config.getBoolean("extended_compatibility", "Other Power Mods", enableExtendedModCompatibility, 
 				"If false, then you may have less lag. If true, then some mods that are not Power \n"
