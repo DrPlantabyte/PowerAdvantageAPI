@@ -216,21 +216,23 @@ public class PowerAdvantage
 	/** The version of this mod, in the format major.minor.update */
 	public static final String VERSION = "1.4.0";
 	
-	// TODO: add distillation recipe registry and NEI config (fluid or item -> fluid and/or item)
-	
+	// TODO: add distillation recipe registry and NEI config (fluid -> fluid)
+	// TODO: add distillation machine (furnace + bucket)
+	// TODO: add injection recipe registry and NEI config (fluid + item -> item)
+	// TODO: add filling machine (applies injection recipes and fills containers)
 	// TODO: add oil (smelt or distill from crude oil)
-	// TODO: add coal-powered distillation machine (furnace for liquids)
 	// TODO: add crude oil reservoir world-gen (make it spawn like normal ore)
 	
 	// TODO: make steam drill use crusher recipes, push version
 	// TODO: add oil-burning steam boiler
 	// TODO: add steam-powered pump (for pumping oil from a drill hole)
+	// TODO: add steam distillation machine
+	// TODO: add condenser (makes water from steam)
 	
 	// TODO: make laser drill dig 3x3 tunnel, push version
 	// TODO: add electric distillation machine
 	// TODO: add plastic refinery (makes plastic from oil)
-	// TODO: add biogas (fuel liquid, can be distilled into oil)
-	// TODO: add cellulose bioreactor (makes biogas from biodegradables)
+	// TODO: add ice machine (uses water and electricity to make blocks of ice)
 
 	/** singleton instance */
 	private static PowerAdvantage instance;
