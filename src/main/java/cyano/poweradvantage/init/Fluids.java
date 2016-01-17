@@ -85,7 +85,7 @@ public abstract class Fluids {
 	private static Fluid newFluid(String modID, String name, int density, int viscosity, int temperature, int luminosity, int tintColor) {
 		if(PowerAdvantage.useOtherFluids && FluidRegistry.isFluidRegistered(name)){
 			// fluid already exists. Use that one.
-			FMLLog.warning("Using fluid %s from mod %s instead of creating a new fluid %s:%s",FluidRegistry.getFluid(name).getName(),
+			FMLLog.warning("Using fluid %s from %s instead of creating a new fluid %s:%s",FluidRegistry.getFluid(name).getName(),
 					FluidRegistry.getFluid(name).getFlowing().getResourceDomain(), modID,name);
 			return FluidRegistry.getFluid(name);
 		}
