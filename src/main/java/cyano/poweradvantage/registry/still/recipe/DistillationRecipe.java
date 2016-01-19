@@ -13,20 +13,59 @@ import net.minecraftforge.fluids.FluidStack;
  * @author DrCyano
  *
  */
-public abstract class DistillationRecipe {
+public class DistillationRecipe {
+	
+
+	private final FluidReference inputFluid;
+	private final int inputAmount;
+	private final FluidReference outputFluid;
+	private final int outputAmount;
+	private FluidStack outputCache = null;
+	
+	/**
+	 * Constructs a distillation recipe by fluid registry names
+	 * @param inputName Input fluid reference
+	 * @param inputVolume Amount of input fluid per amount of output fluid created (e.g. 2 in a 2:1 
+	 * conversion ratio)
+	 * @param outputName Output fluid reference
+	 * @param outputVolume Amount of output fluid per amount of input fluid consumed (e.g. 1 in a 2:1 
+	 * conversion ratio)
+	 */
+	public DistillationRecipe(FluidReference inputName, int inputVolume, FluidReference outputName, int outputVolume){
+		// sanity checks
+		if(inputName == null || inputVolume <= 0 || outputName == null || outputVolume <= 0){
+			throw new IllegalArgumentException(String.format("Constructor %s(%s,%s,%s,%s) contains invalid input parameters", 
+					this.getClass().getName(),inputName,inputVolume,outputName,outputVolume));
+		}
+		// init
+		this.inputFluid = inputName;
+		this.inputAmount = inputVolume;
+		this.outputFluid = outputName;
+		this.outputAmount = outputVolume;
+	}
 	
 	/**
 	 * Gets the output from applying this recipe. 
 	 * @return The output fluid per application of this recipe
 	 */
-	public abstract FluidStack getOutput();
+	public FluidStack getOutput(){
+		if(outputCache == null ){
+			outputCache = new FluidStack(outputFluid.getFluid(),outputAmount);
+		}
+		return outputCache.copy();
+	}
 	/**
 	 * Checks if the given FluidStack instance can be input for this recipe.
 	 * @param input Input for the recipe to test.
 	 * @return Returns true if and only if this recipe should produce an output from the given 
 	 * input.
 	 */
-	public abstract boolean isValidInput(FluidStack input);
+	public boolean isValidInput(FluidStack input){
+		if(input == null || input.getFluid() == null){
+			return false;
+		}
+		return inputFluid.matches(input) && input.amount >= this.inputAmount;
+	}
 	/**
 	 * Returns a list of all registered fluids for which <code>isValidInput(...)</code> would 
 	 * return true. This method is only used for displaying recipes in NEI and does not need to be 
@@ -47,9 +86,20 @@ public abstract class DistillationRecipe {
 	/**
 	 * Applies a recipe to a given input, returning null if the input is not valid for this recipe.
 	 * @param input The input fluid (it will have it's amount decreased)
+	 * @param numberApplications Number of times to apply the recipe
 	 * @return The output fluid produced, or null if the input is not valid
 	 */
-	public abstract FluidStack applyRecipe(FluidStack input);
+	public FluidStack applyRecipe(FluidStack input, int numberApplications){
+		if(this.isValidInput(input)){
+			int n = Math.min(numberApplications, input.amount / this.inputAmount);
+			input.amount -= (this.inputAmount * n);
+			FluidStack out =  this.getOutput();
+			out.amount *= n;
+			return out;
+		} else {
+			return null;
+		}
+	}
 	
 	
 }

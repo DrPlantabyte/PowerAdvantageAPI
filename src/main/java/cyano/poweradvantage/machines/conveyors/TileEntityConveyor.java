@@ -4,10 +4,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
+import cyano.poweradvantage.util.InventoryWrapper;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockChest;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.command.IEntitySelector;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -15,21 +15,21 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.server.gui.IUpdatePlayerListBox;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatComponentTranslation;
+import net.minecraft.util.EntitySelectors;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IChatComponent;
+import net.minecraft.util.ITickable;
 import net.minecraft.world.ILockableContainer;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLLog;
-import cyano.poweradvantage.util.InventoryWrapper;
 
-public class TileEntityConveyor extends TileEntity implements IUpdatePlayerListBox, ISidedInventory {
+public class TileEntityConveyor extends TileEntity implements ITickable, ISidedInventory {
 
 	
 	
@@ -93,7 +93,7 @@ public class TileEntityConveyor extends TileEntity implements IUpdatePlayerListB
 				// grab items sitting on the ground behind the conveyor
 				List<EntityItem> list = w.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(
 						upstreamBlock.getX(), upstreamBlock.getY(), upstreamBlock.getZ(), 
-						upstreamBlock.getX()+1, upstreamBlock.getY()+1, upstreamBlock.getZ()+1), IEntitySelector.selectAnything);
+						upstreamBlock.getX()+1, upstreamBlock.getY()+1, upstreamBlock.getZ()+1), EntitySelectors.selectAnything);
 				if(!list.isEmpty()){
 					EntityItem e = list.get(0);
 					if(!e.isAirBorne){
@@ -323,16 +323,14 @@ public class TileEntityConveyor extends TileEntity implements IUpdatePlayerListB
 		return this.getInventory()[slot];
 	}
 	
-
 	@Override
-	public ItemStack getStackInSlotOnClosing(final int slot) {
-		if (this.getInventory()[slot] != null) {
-			final ItemStack itemstack = this.getInventory()[slot];
-			this.getInventory()[slot] = null;
-			return itemstack;
-		}
-		return null;
+	public ItemStack removeStackFromSlot(int slot) {
+		ItemStack i = this.getInventory()[slot];
+		this.getInventory()[slot] = null;
+		return i;
 	}
+
+
 
 	@Override
 	public boolean isItemValidForSlot(final int slot, final ItemStack item) {
@@ -454,6 +452,7 @@ public class TileEntityConveyor extends TileEntity implements IUpdatePlayerListB
 	}
 	//////////  //////////
 
+	
 	
 	
 

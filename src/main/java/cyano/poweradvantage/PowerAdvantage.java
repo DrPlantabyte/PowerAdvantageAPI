@@ -28,6 +28,7 @@ import cyano.poweradvantage.api.modsupport.MaybeRFPowerAcceptor;
 import cyano.poweradvantage.events.BucketHandler;
 import cyano.poweradvantage.registry.FuelRegistry;
 import cyano.poweradvantage.registry.MachineGUIRegistry;
+import cyano.poweradvantage.registry.still.recipe.DistillationRecipeRegistry;
 
 // NOTE: other mods dependant on this one need to add the following to their @Mod annotation:
 // dependencies = "required-after:poweradvantage" 
@@ -408,7 +409,11 @@ public class PowerAdvantage
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event)
 	{
+		// Clear caches
+		DistillationRecipeRegistry.clearRecipeCache();
+		
 		// Handle inter-mod action
+		
 	}
 
 

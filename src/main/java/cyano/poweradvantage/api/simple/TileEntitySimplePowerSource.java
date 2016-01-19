@@ -25,6 +25,7 @@ import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.FMLLog;
 
 /**
  * This block implements the cyano.poweradvantage.api.PowerSourceEntity 
@@ -513,6 +514,7 @@ public abstract class TileEntitySimplePowerSource extends PoweredEntity implemen
 
 	/**
 	 * boilerplate inventory code
+	 * @param slot inventory slot index
 	 * @return Item in a given inventory slot (null means no item)
 	 */
 	@Override
@@ -526,17 +528,21 @@ public abstract class TileEntitySimplePowerSource extends PoweredEntity implemen
 	
 	/**
 	 * boilerplate inventory code
+	 * @param slot inventory slot index
+	 * @return Item in a given inventory slot (null means no item)
 	 */
 	@Override
-	public ItemStack getStackInSlotOnClosing(final int slot) {
-		if(this.getInventory() == null) return null;
-		if (this.getInventory()[slot] != null) {
-			final ItemStack itemstack = this.getInventory()[slot];
+	public ItemStack removeStackFromSlot(int slot) {
+		if(this.getInventory() != null){
+			ItemStack i = this.getInventory()[slot];
 			this.getInventory()[slot] = null;
-			return itemstack;
+			return i;
+		} else {
+			return null;
 		}
-		return null;
 	}
+	
+	
 
 	/**
 	 * Determines whether a given item is allowed to be added to a given 

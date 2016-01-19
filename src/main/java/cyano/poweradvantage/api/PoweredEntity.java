@@ -4,10 +4,9 @@ import java.util.List;
 
 import cyano.poweradvantage.conduitnetwork.ConduitRegistry;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.server.gui.IUpdatePlayerListBox;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ITickable;
 /**
  * This class is the superclass for all machines. 
  * If you are making an add-on mod, you probably want to extend the 
@@ -20,7 +19,7 @@ import net.minecraft.util.EnumFacing;
  * @author DrCyano
  *
  */
-public abstract class PoweredEntity extends TileEntity implements IUpdatePlayerListBox, IPowerMachine{
+public abstract class PoweredEntity extends TileEntity implements ITickable, IPowerMachine{
 	
 	private final int powerUpdateInterval = 8;
 	

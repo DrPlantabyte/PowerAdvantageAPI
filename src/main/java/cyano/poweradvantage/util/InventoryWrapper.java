@@ -112,8 +112,8 @@ public class InventoryWrapper implements ISidedInventory {
 	}
 
 	@Override
-	public ItemStack getStackInSlotOnClosing(int arg0) {
-		return inventory.getStackInSlotOnClosing(arg0);
+	public ItemStack removeStackFromSlot(int index) {
+		return inventory.removeStackFromSlot(index);
 	}
 
 	@Override
@@ -164,5 +164,6 @@ public class InventoryWrapper implements ISidedInventory {
 		if(isLocked())return NO_SLOTS;
 		return slots;
 	}
+	
 
 }

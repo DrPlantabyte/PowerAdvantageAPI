@@ -1,14 +1,15 @@
 package cyano.poweradvantage.machines.fluidmachines;
 
+import cyano.poweradvantage.api.PoweredEntity;
+import cyano.poweradvantage.api.simple.BlockSimpleFluidSource;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagInt;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.stats.StatList;
@@ -17,14 +18,10 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
-
-import com.google.common.collect.Multimap;
-
-import cyano.poweradvantage.api.PoweredEntity;
-import cyano.poweradvantage.api.simple.BlockSimpleFluidSource;
 
 public class StorageTankBlock extends BlockSimpleFluidSource{
 
@@ -72,8 +69,9 @@ public class StorageTankBlock extends BlockSimpleFluidSource{
 	public void onBlockPlacedBy(final World world, final BlockPos coord, final IBlockState bs, final EntityLivingBase player, final ItemStack item) {
 		super.onBlockPlacedBy(world, coord, bs, player, item);
 		if( item.hasTagCompound() && item.getTagCompound().hasKey("FluidID") && item.getTagCompound().hasKey("Volume")){
+			updateFluidID(item.getTagCompound());
 			StorageTankTileEntity st = (StorageTankTileEntity)world.getTileEntity(coord);
-			FluidStack fs = new FluidStack(FluidRegistry.getFluid(item.getTagCompound().getInteger("FluidID")),item.getTagCompound().getInteger("Volume"));
+			FluidStack fs = new FluidStack(FluidRegistry.getFluid(item.getTagCompound().getString("FluidID")),item.getTagCompound().getInteger("Volume"));
 			st.getTank().setFluid(fs);
 		}
     }
@@ -176,7 +174,7 @@ public class StorageTankBlock extends BlockSimpleFluidSource{
 		ItemStack item = new ItemStack(this,1);
 		if(te.getTank().getFluidAmount() > 0){
 			NBTTagCompound dataTag = new NBTTagCompound();
-			dataTag.setInteger("FluidID", te.getTank().getFluid().getFluid().getID());
+			dataTag.setString("FluidID", te.getTank().getFluid().getFluid().getName());
 			dataTag.setInteger("Volume", te.getTank().getFluidAmount());
 			item.setTagCompound(dataTag);
 		}
@@ -195,10 +193,11 @@ public class StorageTankBlock extends BlockSimpleFluidSource{
 			dataTag = stack.getTagCompound();
 		}
 		if(dataTag.hasKey("Volume") && dataTag.hasKey("FluidID")){
+			updateFluidID(dataTag);
 			float buckets = (float)dataTag.getInteger("Volume") / (float)FluidContainerRegistry.BUCKET_VOLUME;
 			message = (StatCollector.translateToLocal("tooltip.poweradvantage.buckets_of")
 					.replace("%x", String.valueOf(buckets))
-					.replace("%y",FluidRegistry.getFluidName(dataTag.getInteger("FluidID"))));
+					.replace("%y",FluidRegistry.getFluid(dataTag.getString("FluidID")).getName()));
 		} else {
 			message = (StatCollector.translateToLocal("tooltip.poweradvantage.empty"));
 		}
@@ -223,5 +222,17 @@ public class StorageTankBlock extends BlockSimpleFluidSource{
 		}
 	}
 	
+	// TODO: remove in Minecraft 1.9
+	@Deprecated
+	private static void updateFluidID(NBTTagCompound tag){
+		if(tag.getTag("FluidID") instanceof NBTTagInt){
+			Fluid f = FluidRegistry.getFluid(tag.getInteger("FluidID"));
+			if(f == null){
+				f = FluidRegistry.WATER;
+			}
+			tag.removeTag("FluidID");
+			tag.setString("FluidID", f.getName());
+		}
+	}
 
 }

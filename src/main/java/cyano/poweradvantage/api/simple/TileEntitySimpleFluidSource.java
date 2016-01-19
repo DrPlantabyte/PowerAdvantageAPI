@@ -554,17 +554,22 @@ public abstract class TileEntitySimpleFluidSource extends FluidPoweredEntity imp
 	
 	/**
 	 * boilerplate inventory code
+	 * @param slot inventory slot index
+	 * @return Item in a given inventory slot (null means no item)
 	 */
 	@Override
-	public ItemStack getStackInSlotOnClosing(final int slot) {
-		if(this.getInventory() == null) return null;
-		if (this.getInventory()[slot] != null) {
-			final ItemStack itemstack = this.getInventory()[slot];
+	public ItemStack removeStackFromSlot(int slot) {
+		if(this.getInventory() != null){
+			ItemStack i = this.getInventory()[slot];
 			this.getInventory()[slot] = null;
-			return itemstack;
+			return i;
+		} else {
+			return null;
 		}
-		return null;
 	}
+	
+	
+	
 
 	/**
 	 * Determines whether a given item is allowed to be added to a given 

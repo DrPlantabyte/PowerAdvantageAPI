@@ -12,6 +12,7 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IChatComponent;
+import net.minecraftforge.fml.common.FMLLog;
 import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.api.PowerRequest;
 import cyano.poweradvantage.api.PoweredEntity;
@@ -471,20 +472,23 @@ public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implem
 			return null;
 		}
 	}
-	
+
 	/**
 	 * boilerplate inventory code
+	 * @param slot inventory slot index
+	 * @return Item in a given inventory slot (null means no item)
 	 */
 	@Override
-	public ItemStack getStackInSlotOnClosing(final int slot) {
-		if(this.getInventory() == null) return null;
-		if (this.getInventory()[slot] != null) {
-			final ItemStack itemstack = this.getInventory()[slot];
+	public ItemStack removeStackFromSlot(int slot) {
+		if(this.getInventory() != null){
+			ItemStack i = this.getInventory()[slot];
 			this.getInventory()[slot] = null;
-			return itemstack;
+			return i;
+		} else {
+			return null;
 		}
-		return null;
 	}
+	
 
 	/**
 	 * Determines whether a given item is allowed to be added to a given 
