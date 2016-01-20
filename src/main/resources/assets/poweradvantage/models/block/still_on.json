@@ -1,0 +1,6 @@
+{
+    "parent": "poweradvantage:block/still_off",
+    "textures": {
+        "front": "blocks/furnace_front_on"
+    }
+}

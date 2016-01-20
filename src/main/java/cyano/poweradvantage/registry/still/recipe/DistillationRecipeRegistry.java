@@ -1,20 +1,17 @@
 package cyano.poweradvantage.registry.still.recipe;
 
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import cyano.poweradvantage.PowerAdvantage;
-import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.FMLLog;
-import net.minecraftforge.oredict.OreDictionary;
 
 /**
  * This class handles all of the recipes for machines that "smelt" fluids.
@@ -152,5 +149,29 @@ public class DistillationRecipeRegistry {
 			if(a % f == 0 && b % f == 0) return f;
 		}
 		return 1;
+	}
+
+
+	/**
+	 * Looks-up the appropriate distillation recipe for a given input fluid.
+	 * @param fluid The fluid that may or may not have a distillation recipe
+	 * @return A DistillationRecipe, or null if there is no recipe for this fluid
+	 */
+	public DistillationRecipe getDistillationRecipeForFluid(Fluid fluid) {
+		if(recipeCache.containsKey(fluid)){
+			return recipeCache.get(fluid);
+		} else {
+			DistillationRecipe recipe = null;
+			scan:{
+				for(DistillationRecipe r : recipes){
+					if(r.isValidInput(fluid)){
+						recipe = r;
+						break scan;
+					}
+				}
+			}
+			recipeCache.put(fluid, recipe);
+			return recipe;
+		}
 	}
 }

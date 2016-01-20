@@ -38,3 +38,5 @@ tile.poweradvantage.infinite_quantum.name=Unlimited Quantum Power
 
 tile.poweradvantage.crude_oil.name=Crude Oil
 item.poweradvantage.bucket_crude_oil.name=Bucket of Crude Oil
+
+tile.poweradvantage.still.name=Distillation Furnace

@@ -36,5 +36,7 @@ tile.poweradvantage.infinite_steam.name=Unlimited Steam Power
 tile.poweradvantage.infinite_electricity.name=Unlimited Electrical Power
 tile.poweradvantage.infinite_quantum.name=Unlimited Quantum Power
 
-tile.poweradvantage.crude_oil.name=Blck Gold
+tile.poweradvantage.crude_oil.name=Black Gold
 item.poweradvantage.bucket_crude_oil.name=Bucket o' Black Gold
+
+tile.poweradvantage.still.name='Stillery

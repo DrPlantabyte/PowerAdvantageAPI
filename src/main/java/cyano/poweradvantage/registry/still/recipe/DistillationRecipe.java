@@ -61,10 +61,43 @@ public class DistillationRecipe {
 	 * input.
 	 */
 	public boolean isValidInput(FluidStack input){
-		if(input == null || input.getFluid() == null){
+		if(input == null ){
 			return false;
 		}
-		return inputFluid.matches(input) && input.amount >= this.inputAmount;
+		return isValidInput(input.getFluid()) && input.amount >= this.inputAmount;
+	}
+	/**
+	 * Checks if the given Fluid instance can be input for this recipe.
+	 * @param input Input fluid for the recipe to test.
+	 * @return Returns true if and only if this recipe should produce an output from the given 
+	 * input.
+	 */
+	public boolean isValidInput(Fluid input){
+		if(input == null ){
+			return false;
+		}
+		return inputFluid.matches(input);
+	}
+	/**
+	 * This method is used to check if you can add to an already existing fluid stack
+	 * @param output A fluid stack that you may or may not consider equivalent to the output of this 
+	 * recipe
+	 * @return True if it is appropriate to add the output of this recipe to the given fluid stack, 
+	 * false if the given fluid stack is different from the output of this recipe.
+	 */
+	public boolean isValidOutput(FluidStack output){
+		return outputFluid.matches(output);
+	}
+
+	/**
+	 * This method is used to check if you can add to an already existing fluid stack
+	 * @param output A fluid that you may or may not consider equivalent to the output of this 
+	 * recipe
+	 * @return True if it is appropriate to add the output of this recipe to the given fluid, 
+	 * false if the given fluid is different from the output of this recipe.
+	 */
+	public boolean isValidOutput(Fluid output){
+		return outputFluid.matches(output);
 	}
 	/**
 	 * Returns a list of all registered fluids for which <code>isValidInput(...)</code> would 

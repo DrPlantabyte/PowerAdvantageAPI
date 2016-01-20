@@ -40,3 +40,6 @@ tile.poweradvantage.infinite_quantum.name=무한 양자 전력
 
 tile.poweradvantage.crude_oil.name=원유
 item.poweradvantage.bucket_crude_oil.name=원유의 버킷
+
+
+tile.poweradvantage.still.name=증류소
