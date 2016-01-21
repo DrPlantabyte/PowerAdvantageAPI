@@ -52,6 +52,7 @@ public abstract class PowerHelper {
 	 * @return Returns true if either the given block or its neighbor can accept the type of the 
 	 * other block
 	 */
+	// TODO: switch to blockstates instead of blocks for conductivity
 	public static boolean areConnectable( Block a1, EnumFacing faceOnB1,  Block a2){
 		if(a1 instanceof ITypedConduit && a2 instanceof ITypedConduit){
 			return ((ITypedConduit)a1).canAcceptType(((ITypedConduit)a2).getType(), faceOnB1) || ((ITypedConduit)a2).canAcceptType(((ITypedConduit)a1).getType(), faceOnB1.getOpposite());

@@ -55,7 +55,6 @@ public abstract class Fluids {
 		FluidRegistry.registerFluid(crude_oil);
 		refined_oil = newFluid(PowerAdvantage.MODID,"refined_oil",720,1000,300,0,0xFFFFFFFF);
 		FluidRegistry.registerFluid(refined_oil);
-		// TODO: add crude oil spawning and refined oil fluid
 		
 		initDone = true;
 	}

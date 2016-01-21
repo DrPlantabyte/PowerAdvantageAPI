@@ -14,6 +14,7 @@ import cyano.poweradvantage.api.modsupport.LightWeightPowerRegistry;
 import cyano.poweradvantage.math.BlockPos4D;
 import cyano.poweradvantage.util.PowerHelper;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 
@@ -148,7 +149,8 @@ public class ConduitNetworkManager {
 			EnumFacing face = EnumFacing.values()[i];
 			BlockPos4D n = coord.offset(face);
 			if(areInSameNetwork(coord,n)) {continue;}
-			Block block = w.getBlockState(n.pos).getBlock();
+			IBlockState blockstate = w.getBlockState(n.pos);
+			Block block = blockstate.getBlock();
 			if(block instanceof ITypedConduit && PowerHelper.areConnectable(w,coord.pos,face)){
 				addBlockToNetwork(coord, n);
 				recursiveScan(w,n,type);
