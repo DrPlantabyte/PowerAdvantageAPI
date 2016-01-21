@@ -8,6 +8,7 @@ import cyano.poweradvantage.api.simple.SimpleMachineGUI;
 import cyano.poweradvantage.math.Integer2D;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
 public class FluidTankGUI extends SimpleMachineGUI{
@@ -26,22 +27,10 @@ public class FluidTankGUI extends SimpleMachineGUI{
 		if(srcEntity instanceof FluidPoweredEntity){
 			FluidStack fs = ((FluidPoweredEntity)srcEntity).getTank().getFluid();
 			if(fs != null && ((FluidPoweredEntity)srcEntity).getTank().getFluidAmount() > 0){
-				final int w = 16;
-				final int h = 60 * fs.amount / ((FluidPoweredEntity)srcEntity).getTank().getCapacity();
-				ResourceLocation fluidTexture = realTextureLocationCache.computeIfAbsent(fs.getFluid().getStill(fs),
-						(ResourceLocation r) -> new ResourceLocation(r.getResourceDomain(),"textures/".concat(r.getResourcePath()).concat(".png"))
-						);
-				guiContainer.mc.renderEngine.bindTexture(fluidTexture);
-				int tintARGB = fs.getFluid().getColor();
-				GlStateManager.color(
-						((tintARGB >> 24) & 0xFF)/255f,
-						((tintARGB >> 16) & 0xFF)/255f,
-						((tintARGB >> 8) & 0xFF)/255f,
-						((tintARGB     ) & 0xFF)/255f); // set fluid tint
-				for(int m = h; m > 0; m -= w){
-					int hp = Math.min(m, w);
-					guiContainer.drawModalRectWithCustomSizedTexture(x+80, y+69-m, 0, 0, w, hp, 16, 512); // x, y, u, v, width, height, textureWidth, textureHeight
-				} 
+				drawFluidBar(fs,
+						(float)fs.amount / (float)((FluidPoweredEntity)srcEntity).getTank().getCapacity(),
+						80, 9,
+						guiDisplayImage, guiContainer, x, y);
 			}
 		}
 		GlStateManager.color(1f,1f,1f,1f); // reset tint
@@ -50,6 +39,24 @@ public class FluidTankGUI extends SimpleMachineGUI{
 	}
 
 
+	public static void drawFluidBar(FluidStack fs, float barHeight, int xPos, int yPos, 
+			ResourceLocation displayImage, GUIContainer guiContainer, int x, int y){
+		final int w = 16;
+		final int barSlotHeight = 60;
+		final int h = (int)(barSlotHeight * barHeight);
+		final float fluidTexWidth = 16;
+		final float fluidTexHeight = 512;
+		final float texPerPixel = 4 * (fluidTexWidth / fluidTexHeight) / barSlotHeight;
+		ResourceLocation fluidTexture = realTextureLocationCache.computeIfAbsent(fs.getFluid().getStill(fs),
+				(ResourceLocation r) -> new ResourceLocation(r.getResourceDomain(),"textures/".concat(r.getResourcePath()).concat(".png"))
+				);
+		guiContainer.mc.renderEngine.bindTexture(fluidTexture);
+		
+		guiContainer.drawModalRectWithCustomSizedTexture(x+xPos, y+yPos+barSlotHeight-h, 0, 0, w, h, 16, h);//h * texPerPixel); // x, y, u, v, width, height, textureWidth, textureHeight
+		
+		guiContainer.mc.renderEngine.bindTexture(displayImage);
+		guiContainer.drawTexturedModalRect(x+xPos-3, y+yPos-3, 176, 0, 22, 66); // x, y, textureOffsetX, textureOffsetY, width, height)
+	}
 	
 
 

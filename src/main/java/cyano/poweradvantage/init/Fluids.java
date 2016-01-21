@@ -1,27 +1,14 @@
 package cyano.poweradvantage.init;
 
-import net.minecraft.block.BlockDynamicLiquid;
-import net.minecraft.block.BlockStaticLiquid;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.ItemMeshDefinition;
-import net.minecraft.client.renderer.block.statemap.StateMapperBase;
-import net.minecraft.client.resources.model.ModelBakery;
-import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.fluids.BlockFluidBase;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fml.common.FMLLog;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import cyano.poweradvantage.PowerAdvantage;
 import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.api.fluid.ColoredFluid;
 import cyano.poweradvantage.util.ReversibleHashMap;
 import cyano.poweradvantage.util.ReversibleMap;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fml.common.FMLLog;
 
 public abstract class Fluids {
 
@@ -64,9 +51,9 @@ public abstract class Fluids {
 		fluidConduitLUT.put(FluidRegistry.WATER, fluidConduit_water);
 		fluidConduitLUT.put(FluidRegistry.LAVA, fluidConduit_lava);
 
-		crude_oil = newFluid(PowerAdvantage.MODID,"crude_oil",850,6000,300,0,0xFF180E02);
+		crude_oil = newFluid(PowerAdvantage.MODID,"crude_oil",850,6000,300,0,0xFFFFFFFF);
 		FluidRegistry.registerFluid(crude_oil);
-		refined_oil = newFluid(PowerAdvantage.MODID,"refined_oil",720,1000,300,0,0xFFF6EdA0);
+		refined_oil = newFluid(PowerAdvantage.MODID,"refined_oil",720,1000,300,0,0xFFFFFFFF);
 		FluidRegistry.registerFluid(refined_oil);
 		// TODO: add crude oil spawning and refined oil fluid
 		

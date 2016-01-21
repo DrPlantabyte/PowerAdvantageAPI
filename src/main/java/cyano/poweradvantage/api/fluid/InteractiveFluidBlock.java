@@ -1,6 +1,8 @@
 package cyano.poweradvantage.api.fluid;
 
+import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.material.MaterialLiquid;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
@@ -22,51 +24,46 @@ public class InteractiveFluidBlock extends BlockFluidClassic{
 
 	private final java.util.function.BiConsumer<net.minecraft.world.World, net.minecraft.entity.EntityLivingBase> immersionEffect;
 	private final boolean isFlammable;
+	/** Material used in the constructor of this block **/
+	public final Material material;
 	/**
 	 * Constructor for this fluid block.
 	 * @param fluid The Fluid of this fluid block
+	 * @param material Material to use (usually water)
 	 * @param flammable If true, then this block can burn
 	 * @param immersionEffect A function to define what happens to swimming entities. Can be null.
 	 */
-	public InteractiveFluidBlock(Fluid fluid, boolean flammable, java.util.function.BiConsumer<net.minecraft.world.World, net.minecraft.entity.EntityLivingBase> immersionEffect) {
-		super(fluid, Material.water);
+	public InteractiveFluidBlock(Fluid fluid, Material material, boolean flammable, java.util.function.BiConsumer<net.minecraft.world.World, net.minecraft.entity.EntityLivingBase> immersionEffect) {
+		super(fluid, material);
+		this.material = material;
 		this.isFlammable = flammable;
 		this.immersionEffect = immersionEffect;
 	}
 	/**
 	 * Constructor for this fluid block.
 	 * @param fluid The Fluid of this fluid block
+	 * @param material Material to use (usually water)
 	 * @param immersionEffect A function to define what happens to swimming entities. Can be null.
 	 */
-	public InteractiveFluidBlock(Fluid fluid, java.util.function.BiConsumer<net.minecraft.world.World, net.minecraft.entity.EntityLivingBase> immersionEffect) {
-		this(fluid,false,immersionEffect);
+	public InteractiveFluidBlock(Fluid fluid, Material material, java.util.function.BiConsumer<net.minecraft.world.World, net.minecraft.entity.EntityLivingBase> immersionEffect) {
+		this(fluid,material,false,immersionEffect);
 	}
 	/**
 	 * Constructor for this fluid block.
 	 * @param fluid The Fluid of this fluid block
 	 */
 	public InteractiveFluidBlock(Fluid fluid) {
-		this(fluid,false,null);
+		this(fluid,Material.water,false,null);
 	}
 
 	
 	@Override
 	public void onEntityCollidedWithBlock( World world, BlockPos coord, Entity entity ) {
-		if (immersionEffect != null && entity instanceof EntityLivingBase && isBelowHalfHeight(entity)) {
+		if (immersionEffect != null && entity instanceof EntityLivingBase && world.getBlockState(entity.getPosition()).getBlock() == this) {
 			immersionEffect.accept(world,(EntityLivingBase)entity);
 		}
 	}
 	
-	/**
-	 * 
-	 * @param e
-	 * @return returns true if height - block height is less than 0.5
-	 */
-	private boolean isBelowHalfHeight(Entity e){
-		double real = e.getPositionVector().yCoord;
-		double integer = Math.floor(real);
-		return (real - integer) < 0.5;
-	}
 	/**
 	 * Chance that fire will spread and consume this block.
 	 * 300 being a 100% chance, 0, being a 0% chance.
