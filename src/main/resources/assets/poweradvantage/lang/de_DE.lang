@@ -42,3 +42,6 @@ item.poweradvantage.bucket_crude_oil.name=Eimer Rohöl
 
 
 tile.poweradvantage.still.name=Brennerei
+
+tile.poweradvantage.refined_oil.name=Raffiniertes Öl
+item.poweradvantage.bucket_refined_oil.name=Eimer für Raffiniertes Öl

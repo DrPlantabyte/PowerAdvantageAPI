@@ -42,3 +42,5 @@ item.poweradvantage.bucket_crude_oil.name=Secchio di Greggio
 
 
 tile.poweradvantage.still.name=Distilleria
+tile.poweradvantage.refined_oil.name=Olio Raffinato
+item.poweradvantage.bucket_refined_oil.name=Secchio di Olio Raffinato

@@ -40,3 +40,6 @@ tile.poweradvantage.crude_oil.name=Black Gold
 item.poweradvantage.bucket_crude_oil.name=Bucket o' Black Gold
 
 tile.poweradvantage.still.name='Stillery
+
+tile.poweradvantage.refined_oil.name=Lamp Oil
+item.poweradvantage.bucket_refined_oil.name=Bucket o' Lamp Oil

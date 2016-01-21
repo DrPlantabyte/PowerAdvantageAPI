@@ -40,3 +40,5 @@ tile.poweradvantage.crude_oil.name=Crude Oil
 item.poweradvantage.bucket_crude_oil.name=Bucket of Crude Oil
 
 tile.poweradvantage.still.name=Distillation Furnace
+tile.poweradvantage.refined_oil.name=Refined Oil
+item.poweradvantage.bucket_refined_oil.name=Bucket of Refined Oil

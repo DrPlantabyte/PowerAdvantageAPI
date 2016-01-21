@@ -9,22 +9,9 @@ import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.api.GUIBlock;
 import cyano.poweradvantage.api.fluid.InteractiveFluidBlock;
 import cyano.poweradvantage.blocks.BlockFrame;
-import cyano.poweradvantage.machines.conveyors.BlockConveyor;
-import cyano.poweradvantage.machines.conveyors.BlockConveyorFilter;
-import cyano.poweradvantage.machines.conveyors.TileEntityBlockFilter;
-import cyano.poweradvantage.machines.conveyors.TileEntityFoodFilter;
-import cyano.poweradvantage.machines.conveyors.TileEntityFuelFilter;
-import cyano.poweradvantage.machines.conveyors.TileEntityInventoryFilter;
-import cyano.poweradvantage.machines.conveyors.TileEntityOreFilter;
-import cyano.poweradvantage.machines.conveyors.TileEntityOverflowFilter;
-import cyano.poweradvantage.machines.conveyors.TileEntityPlantFilter;
-import cyano.poweradvantage.machines.conveyors.TileEntitySmeltableFilter;
+import cyano.poweradvantage.machines.conveyors.*;
 import cyano.poweradvantage.machines.creative.InfiniteEnergyBlock;
-import cyano.poweradvantage.machines.fluidmachines.FluidDischargeBlock;
-import cyano.poweradvantage.machines.fluidmachines.FluidDrainBlock;
-import cyano.poweradvantage.machines.fluidmachines.FluidPipeBlock;
-import cyano.poweradvantage.machines.fluidmachines.MetalTankBlock;
-import cyano.poweradvantage.machines.fluidmachines.StorageTankBlock;
+import cyano.poweradvantage.machines.fluidmachines.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -55,6 +42,7 @@ public abstract class Blocks {
 	public static GUIBlock fluid_discharge; 
 	public static GUIBlock storage_tank;
 	public static GUIBlock metal_storage_tank;
+	public static GUIBlock still;
 	public static Block fluid_pipe;
 	public static GUIBlock item_conveyor;
 	public static GUIBlock item_filter_block;
@@ -74,6 +62,7 @@ public abstract class Blocks {
 	
 
 	public static BlockFluidBase crude_oil_block;
+	public static BlockFluidBase refined_oil_block;
 	/* Hope is not lost yet for fluids:
 [20:18:57] [Client thread/ERROR] [FML/]: Model definition for location poweradvantage:crude_oil#level=14 not found
 [20:18:57] [Client thread/ERROR] [FML/]: Model definition for location poweradvantage:crude_oil#level=15 not found
@@ -106,6 +95,7 @@ public abstract class Blocks {
 		fluid_discharge = (GUIBlock)addBlock(new FluidDischargeBlock(),"fluid_discharge");
 		storage_tank = (GUIBlock)addBlock(new StorageTankBlock(),"fluid_storage_tank");
 		metal_storage_tank = (GUIBlock)addBlock(new MetalTankBlock(),"fluid_metal_tank");
+		still = (GUIBlock)addBlock(new StillBlock(),"still");
 		fluid_pipe = addBlock(new FluidPipeBlock(),"fluid_pipe");
 		OreDictionary.registerOre("pipe", fluid_pipe);
 		steel_frame = addBlock(new BlockFrame(net.minecraft.block.material.Material.piston)
@@ -134,6 +124,10 @@ public abstract class Blocks {
 		crude_oil_block = (BlockFluidBase)addBlock(new InteractiveFluidBlock(Fluids.crude_oil,true,(World w, EntityLivingBase e)->{
 			e.addPotionEffect(new PotionEffect(Potion.moveSlowdown.id,200,2));
 		}),"crude_oil");
+		
+		refined_oil_block = (BlockFluidBase)addBlock(new InteractiveFluidBlock(Fluids.refined_oil,true,(World w, EntityLivingBase e)->{
+			e.addPotionEffect(new PotionEffect(Potion.poison.id,40));
+		}),"refined_oil");
 		
 		initDone = true;
 	}
@@ -175,7 +169,7 @@ public abstract class Blocks {
 	private static Block addBlock(Block block, String name ){
 		block.setUnlocalizedName(PowerAdvantage.MODID+"."+name);
 		GameRegistry.registerBlock(block, name);
-		block.setCreativeTab(ItemGroups.tab_powerAdvantage);
+		if((block instanceof BlockFluidBase) == false)block.setCreativeTab(ItemGroups.tab_powerAdvantage);
 		allBlocks.put(name, block);
 		return block;
 	}

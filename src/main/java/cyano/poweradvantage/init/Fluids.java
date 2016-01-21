@@ -46,9 +46,13 @@ public abstract class Fluids {
 	public static ConduitType fluidConduit_lava;
 
 	/**
-	 * Coming soon...
+	 * black gold
 	 */
 	public static Fluid crude_oil;
+	/**
+	 * general purpose (fuel) oil
+	 */
+	public static Fluid refined_oil;
 	
 	public static void init(){
 		if(initDone) return;
@@ -59,9 +63,11 @@ public abstract class Fluids {
 		fluidConduit_lava = new ConduitType("lava");
 		fluidConduitLUT.put(FluidRegistry.WATER, fluidConduit_water);
 		fluidConduitLUT.put(FluidRegistry.LAVA, fluidConduit_lava);
-		
-		crude_oil = newFluid(PowerAdvantage.MODID,"crude_oil",850,6000,300,0,0xFFFFFFFF);
+
+		crude_oil = newFluid(PowerAdvantage.MODID,"crude_oil",850,6000,300,0,0xFF180E02);
 		FluidRegistry.registerFluid(crude_oil);
+		refined_oil = newFluid(PowerAdvantage.MODID,"refined_oil",720,1000,300,0,0xFFF6EdA0);
+		FluidRegistry.registerFluid(refined_oil);
 		// TODO: add crude oil spawning and refined oil fluid
 		
 		initDone = true;

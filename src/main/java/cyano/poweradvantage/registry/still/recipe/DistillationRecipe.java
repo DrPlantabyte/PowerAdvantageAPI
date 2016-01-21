@@ -117,7 +117,9 @@ public class DistillationRecipe {
 	}
 	
 	/**
-	 * Applies a recipe to a given input, returning null if the input is not valid for this recipe.
+	 * Applies a recipe to a given input, returning null if the input is not valid for this recipe. 
+	 * This method will change the stack size of the input, so be sure to revalidate it after this 
+	 * method (e.g. delete the stack if its size is 0)
 	 * @param input The input fluid (it will have it's amount decreased)
 	 * @param numberApplications Number of times to apply the recipe
 	 * @return The output fluid produced, or null if the input is not valid

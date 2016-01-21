@@ -2,20 +2,9 @@ package cyano.poweradvantage.init;
 
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import cyano.poweradvantage.PowerAdvantage;
-import cyano.poweradvantage.machines.conveyors.TileEntityBlockFilter;
-import cyano.poweradvantage.machines.conveyors.TileEntityConveyor;
-import cyano.poweradvantage.machines.conveyors.TileEntityFoodFilter;
-import cyano.poweradvantage.machines.conveyors.TileEntityFuelFilter;
-import cyano.poweradvantage.machines.conveyors.TileEntityInventoryFilter;
-import cyano.poweradvantage.machines.conveyors.TileEntityOreFilter;
-import cyano.poweradvantage.machines.conveyors.TileEntityOverflowFilter;
-import cyano.poweradvantage.machines.conveyors.TileEntityPlantFilter;
-import cyano.poweradvantage.machines.conveyors.TileEntitySmeltableFilter;
+import cyano.poweradvantage.machines.conveyors.*;
 import cyano.poweradvantage.machines.creative.InfiniteEnergyTileEntity;
-import cyano.poweradvantage.machines.fluidmachines.FluidDischargeTileEntity;
-import cyano.poweradvantage.machines.fluidmachines.FluidDrainTileEntity;
-import cyano.poweradvantage.machines.fluidmachines.MetalTankTileEntity;
-import cyano.poweradvantage.machines.fluidmachines.StorageTankTileEntity;
+import cyano.poweradvantage.machines.fluidmachines.*;
 
 public abstract class Entities {
 
@@ -30,6 +19,7 @@ public abstract class Entities {
 		GameRegistry.registerTileEntity(FluidDischargeTileEntity.class,PowerAdvantage.MODID+".tileentity."+"fluid_discharge");
 		GameRegistry.registerTileEntity(StorageTankTileEntity.class,PowerAdvantage.MODID+".tileentity."+"fluid_storage_tank");
 		GameRegistry.registerTileEntity(MetalTankTileEntity.class,PowerAdvantage.MODID+".tileentity."+"fluid_metal_tank");
+		GameRegistry.registerTileEntity(StillTileEntity.class,PowerAdvantage.MODID+".tileentity."+"still");
 		GameRegistry.registerTileEntity(TileEntityConveyor.class, PowerAdvantage.MODID+"."+"item_conveyor");
 		GameRegistry.registerTileEntity(TileEntityBlockFilter.class, PowerAdvantage.MODID+"."+"item_filter_block");
 		GameRegistry.registerTileEntity(TileEntityFoodFilter.class, PowerAdvantage.MODID+"."+"item_filter_food");

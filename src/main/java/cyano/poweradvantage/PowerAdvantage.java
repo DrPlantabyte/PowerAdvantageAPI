@@ -1,13 +1,21 @@
 package cyano.poweradvantage;
 
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.ITileEntityProvider;
-import net.minecraft.init.Blocks;
+import cyano.poweradvantage.api.ConduitType;
+import cyano.poweradvantage.events.BucketHandler;
+import cyano.poweradvantage.init.WorldGen;
+import cyano.poweradvantage.registry.FuelRegistry;
+import cyano.poweradvantage.registry.MachineGUIRegistry;
+import cyano.poweradvantage.registry.still.recipe.DistillationRecipeRegistry;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.FMLLog;
@@ -17,18 +25,9 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.common.registry.GameData;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import cyano.poweradvantage.api.ConduitType;
-import cyano.poweradvantage.api.ITypedConduit;
-import cyano.poweradvantage.api.modsupport.LightWeightPowerRegistry;
-import cyano.poweradvantage.api.modsupport.MaybeRFPowerAcceptor;
-import cyano.poweradvantage.events.BucketHandler;
-import cyano.poweradvantage.registry.FuelRegistry;
-import cyano.poweradvantage.registry.MachineGUIRegistry;
-import cyano.poweradvantage.registry.still.recipe.DistillationRecipeRegistry;
 
 // NOTE: other mods dependant on this one need to add the following to their @Mod annotation:
 // dependencies = "required-after:poweradvantage" 
@@ -335,6 +334,19 @@ public class PowerAdvantage
 			}
 		}
 
+		
+		Path orespawnFolder = Paths.get(event.getSuggestedConfigurationFile().toPath().getParent().toString(),"orespawn");
+		Path orespawnFile = Paths.get(orespawnFolder.toString(),MODID+".json");
+		if(!Files.exists(orespawnFile)){
+			try{
+				Files.createDirectories(orespawnFile.getParent());
+				Files.write(orespawnFile, Arrays.asList(WorldGen.ORESPAWN_FILE_CONTENTS.split("\n")), Charset.forName("UTF-8"));
+				cyano.basemetals.BaseMetals.oreSpawnConfigFiles.add(orespawnFile);
+			} catch (IOException e) {
+				FMLLog.severe(MODID+": Error: Failed to write file "+orespawnFile);
+			}
+		}
+		
 		config.save();
 
 		cyano.poweradvantage.init.Fluids.init(); 

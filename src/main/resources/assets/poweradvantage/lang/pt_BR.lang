@@ -42,3 +42,5 @@ item.poweradvantage.bucket_crude_oil.name=Balde de Óleo Cru
 
 
 tile.poweradvantage.still.name=Destilaria
+tile.poweradvantage.refined_oil.name=Óleo Refinado
+item.poweradvantage.bucket_refined_oil.name=Balde de Óleo Refinado

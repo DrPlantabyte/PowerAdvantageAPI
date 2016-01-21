@@ -43,3 +43,6 @@ item.poweradvantage.bucket_crude_oil.name=原油桶
 
 
 tile.poweradvantage.still.name=酒廠
+
+tile.poweradvantage.refined_oil.name=成品油
+item.poweradvantage.bucket_refined_oil.name=成品油的桶

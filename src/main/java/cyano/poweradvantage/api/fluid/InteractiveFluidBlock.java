@@ -52,9 +52,20 @@ public class InteractiveFluidBlock extends BlockFluidClassic{
 	
 	@Override
 	public void onEntityCollidedWithBlock( World world, BlockPos coord, Entity entity ) {
-		if (immersionEffect != null && entity instanceof EntityLivingBase) {
+		if (immersionEffect != null && entity instanceof EntityLivingBase && isBelowHalfHeight(entity)) {
 			immersionEffect.accept(world,(EntityLivingBase)entity);
 		}
+	}
+	
+	/**
+	 * 
+	 * @param e
+	 * @return returns true if height - block height is less than 0.5
+	 */
+	private boolean isBelowHalfHeight(Entity e){
+		double real = e.getPositionVector().yCoord;
+		double integer = Math.floor(real);
+		return (real - integer) < 0.5;
 	}
 	/**
 	 * Chance that fire will spread and consume this block.

@@ -16,4 +16,24 @@ public abstract class WorldGen {
 		initDone = true;
 	}
 	
+	
+	
+	public static final String ORESPAWN_FILE_CONTENTS = "{\n"
+			+ "	\"dimensions\":[\n"
+			+ "		{\n"
+			+ "			\"dimension\":\"+\",\n"
+			+ "			\"ores\":[\n"
+			+ "				{\n"
+			+ "					\"blockID\":\"poweradvantage:crude_oil_block\",\n"
+			+ "					\"size\":64,\n"
+			+ "					\"variation\":50,\n"
+			+ "					\"frequency\":0.1,\n"
+			+ "					\"minHeight\":32,\n"
+			+ "					\"maxHeight\":64,\n"
+			+ "					\"biomes\":[]\n"
+			+ "				}\n"
+			+ "			]\n"
+			+ "		}\n"
+			+ "	]\n"
+			+ "}";
 }

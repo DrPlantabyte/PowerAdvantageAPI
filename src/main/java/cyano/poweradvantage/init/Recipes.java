@@ -1,13 +1,15 @@
 package cyano.poweradvantage.init;
 
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.oredict.OreDictionary;
-import net.minecraftforge.oredict.ShapedOreRecipe;
 import cyano.basemetals.BaseMetals;
 import cyano.basemetals.registry.CrusherRecipeRegistry;
 import cyano.poweradvantage.PowerAdvantage;
 import cyano.poweradvantage.RecipeMode;
+import cyano.poweradvantage.registry.still.recipe.DistillationRecipeRegistry;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.oredict.OreDictionary;
+import net.minecraftforge.oredict.ShapedOreRecipe;
 
 
 public abstract class Recipes {
@@ -52,8 +54,12 @@ public abstract class Recipes {
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Blocks.metal_storage_tank,1),"xxx","xpx","xxx",'x',"ingotSteel",'p',"pipe"));
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Blocks.fluid_drain,1)," x ","w#w","ppp",'x',"bars",'w',"plateSteel",'#',"frameSteel",'p',"pipe"));
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Blocks.fluid_discharge,1),"ppp","w#w"," x ",'x',"bars",'w',"plateSteel",'#',"frameSteel",'p',"pipe"));
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Blocks.still,1),"bpb"," f ",'b',net.minecraft.init.Items.bucket,'p',"pipe",'f',net.minecraft.init.Blocks.furnace));
 		
 
+		// fluid recipes
+		DistillationRecipeRegistry.addDistillationRecipe(new FluidStack(Fluids.crude_oil,2), new FluidStack(Fluids.refined_oil,1));
+		
 		// recipe modes
 		if(PowerAdvantage.recipeMode == RecipeMode.NORMAL){
 			// normal means easy
