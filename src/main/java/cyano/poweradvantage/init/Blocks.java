@@ -7,7 +7,6 @@ import java.util.Map;
 import cyano.poweradvantage.PowerAdvantage;
 import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.api.GUIBlock;
-import cyano.poweradvantage.api.fluid.FluidMaterial;
 import cyano.poweradvantage.api.fluid.InteractiveFluidBlock;
 import cyano.poweradvantage.blocks.BlockFrame;
 import cyano.poweradvantage.machines.conveyors.BlockConveyor;
@@ -28,7 +27,6 @@ import cyano.poweradvantage.machines.fluidmachines.MetalTankBlock;
 import cyano.poweradvantage.machines.fluidmachines.StillBlock;
 import cyano.poweradvantage.machines.fluidmachines.StorageTankBlock;
 import net.minecraft.block.Block;
-import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -138,11 +136,11 @@ public abstract class Blocks {
 		infinite_quantum = (GUIBlock)addBlock(new InfiniteEnergyBlock(new ConduitType("quantum")),"infinite_quantum");
 
 		
-		refined_oil_block = (BlockFluidBase)addBlock(new InteractiveFluidBlock(Fluids.refined_oil, new FluidMaterial(MapColor.yellowColor),true,(World w, EntityLivingBase e)->{
+		refined_oil_block = (BlockFluidBase)addBlock(new InteractiveFluidBlock(Fluids.refined_oil,true,(World w, EntityLivingBase e)->{
 			e.addPotionEffect(new PotionEffect(Potion.poison.id,40));
 		}),"refined_oil");
 		
-		crude_oil_block = (BlockFluidBase)addBlock(new InteractiveFluidBlock(Fluids.crude_oil, new FluidMaterial(MapColor.blackColor),true,(World w, EntityLivingBase e)->{
+		crude_oil_block = (BlockFluidBase)addBlock(new InteractiveFluidBlock(Fluids.crude_oil,true,(World w, EntityLivingBase e)->{
 			e.addPotionEffect(new PotionEffect(Potion.moveSlowdown.id,200,2));
 		}),"crude_oil");
 		
