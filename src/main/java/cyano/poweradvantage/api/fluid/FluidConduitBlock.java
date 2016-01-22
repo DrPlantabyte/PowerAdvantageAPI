@@ -3,7 +3,9 @@ package cyano.poweradvantage.api.fluid;
 import java.util.Set;
 
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.EnumFacing;
+import net.minecraftforge.fml.common.FMLLog;
 import cyano.poweradvantage.api.ConduitBlock;
 import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.init.Fluids;
@@ -37,11 +39,14 @@ public abstract class FluidConduitBlock extends ConduitBlock{
 	 * This default implementation assumes that all sides are valid for fluid input/output and that 
 	 * this block does not handle power in addition to fluids. Override this method if that is not 
 	 * true.
+	 * @param blockstate The blockstate of this conduit when this method is invoked.
+	 * @param type The type of energy in the conduit
+	 * @param blockFace The side through-which the energy is flowing
 	 * @return true if this conduit can flow the given energy type through the given face, false 
 	 * otherwise
 	 */
 	@Override
-	public boolean canAcceptType(ConduitType type, EnumFacing blockFace) {
+	public boolean canAcceptType(IBlockState blockstate, ConduitType type, EnumFacing blockFace) {
 		return canAcceptType(type);
 	}
 
@@ -52,8 +57,7 @@ public abstract class FluidConduitBlock extends ConduitBlock{
 	 * @return true if this conduit can flow the given type through one or more of its block faces, 
 	 * false otherwise
 	 */
-	@Override
-	public boolean canAcceptType(ConduitType type) {
+	protected final boolean canAcceptType(ConduitType type) {
 		return ConduitType.areSameType(type, Fluids.fluidConduit_general) ;
 	}
 

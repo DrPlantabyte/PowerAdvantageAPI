@@ -34,7 +34,7 @@ public class MetalTankTileEntity  extends TileEntitySimpleFluidSource{
 					this);
 			return req;
 		} else if(getTank().getFluidAmount() <= 0 && canAccept(offer)){
-			FluidRequest req = new FluidRequest(FluidRequest.BACKUP_PRIORITY,
+			FluidRequest req = new FluidRequest(FluidRequest.BACKUP_PRIORITY - 1,
 					getTank().getCapacity(),
 					this);
 			return req;

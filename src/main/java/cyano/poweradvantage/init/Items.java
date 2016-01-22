@@ -48,10 +48,12 @@ public abstract class Items {
 		
 		
 		bucket_crude_oil = (ItemBucket)addItem("bucket_crude_oil",new ItemBucket(Blocks.crude_oil_block),"bucketOil","bucketCrudeOil");
+		bucket_crude_oil.setContainerItem(net.minecraft.init.Items.bucket);
 		FluidContainerRegistry.registerFluidContainer(Fluids.crude_oil, new ItemStack(bucket_crude_oil), new ItemStack(net.minecraft.init.Items.bucket));
 		BucketHandler.getInstance().buckets.put(Blocks.crude_oil_block, bucket_crude_oil);
 		
 		bucket_refined_oil = (ItemBucket)addItem("bucket_refined_oil",new ItemBucket(Blocks.refined_oil_block),"bucketOil","bucketRefinedOil");
+		bucket_refined_oil.setContainerItem(net.minecraft.init.Items.bucket);
 		FluidContainerRegistry.registerFluidContainer(Fluids.refined_oil, new ItemStack(bucket_refined_oil), new ItemStack(net.minecraft.init.Items.bucket));
 		BucketHandler.getInstance().buckets.put(Blocks.refined_oil_block, bucket_refined_oil);
 		

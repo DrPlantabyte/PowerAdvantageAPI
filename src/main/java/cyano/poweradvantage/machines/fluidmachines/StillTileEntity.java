@@ -242,6 +242,8 @@ public class StillTileEntity extends TileEntitySimpleFluidSource{
 		NBTTagCompound tankTag2 = new NBTTagCompound();
 		inputTank.writeToNBT(tankTag2);
 		tagRoot.setTag("InputTank", tankTag2);
+		tagRoot.setShort("burnTime", this.burnTime);
+		tagRoot.setShort("totalBurnTime", this.totalBurnTime);
 	}
 	
 	/**
@@ -258,6 +260,12 @@ public class StillTileEntity extends TileEntitySimpleFluidSource{
 				// empty the tank if NBT says its empty (not default behavior of Tank.readFromNBT(...) )
 				inputTank.setFluid(null);
 			}
+		}
+		if(tagRoot.hasKey("burnTime")){
+			this.burnTime = tagRoot.getShort("burnTime");
+		}
+		if(tagRoot.hasKey("totalBurnTime")){
+			this.totalBurnTime = tagRoot.getShort("totalBurnTime");
 		}
 	}
 	

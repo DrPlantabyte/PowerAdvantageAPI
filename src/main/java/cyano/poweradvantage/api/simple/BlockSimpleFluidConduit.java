@@ -18,6 +18,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 /**
@@ -106,13 +107,14 @@ public abstract class BlockSimpleFluidConduit extends FluidConduitBlock{
 	 */
     @Override
     public IBlockState getActualState(final IBlockState bs, final IBlockAccess world, final BlockPos coord) {
+    	IBlockState oldBS = bs;
         return bs
-        		.withProperty(WEST, this.canConnectTo(world,coord,EnumFacing.WEST, coord.west()))
-        		.withProperty(DOWN, this.canConnectTo(world,coord,EnumFacing.DOWN, coord.down()))
-        		.withProperty(SOUTH, this.canConnectTo(world,coord,EnumFacing.SOUTH, coord.south()))
-        		.withProperty(EAST, this.canConnectTo(world,coord,EnumFacing.EAST, coord.east()))
-        		.withProperty(UP, this.canConnectTo(world,coord,EnumFacing.UP, coord.up()))
-        		.withProperty(NORTH, this.canConnectTo(world,coord,EnumFacing.NORTH, coord.north()));
+        		.withProperty(WEST, this.canConnectTo(world,coord,oldBS,EnumFacing.WEST, coord.west()))
+        		.withProperty(DOWN, this.canConnectTo(world,coord,oldBS,EnumFacing.DOWN, coord.down()))
+        		.withProperty(SOUTH, this.canConnectTo(world,coord,oldBS,EnumFacing.SOUTH, coord.south()))
+        		.withProperty(EAST, this.canConnectTo(world,coord,oldBS,EnumFacing.EAST, coord.east()))
+        		.withProperty(UP, this.canConnectTo(world,coord,oldBS,EnumFacing.UP, coord.up()))
+        		.withProperty(NORTH, this.canConnectTo(world,coord,oldBS,EnumFacing.NORTH, coord.north()));
     }
     
 	
@@ -121,12 +123,13 @@ public abstract class BlockSimpleFluidConduit extends FluidConduitBlock{
      */
 	@Override
     public void setBlockBoundsBasedOnState(final IBlockAccess world, final BlockPos coord) {
-        final boolean connectNorth = this.canConnectTo(world,coord,EnumFacing.NORTH, coord.north());
-        final boolean connectSouth = this.canConnectTo(world,coord,EnumFacing.SOUTH, coord.south());
-        final boolean connectWest = this.canConnectTo(world,coord,EnumFacing.WEST, coord.west());
-        final boolean connectEast = this.canConnectTo(world,coord,EnumFacing.EAST, coord.east());
-        final boolean connectUp = this.canConnectTo(world,coord,EnumFacing.UP, coord.up());
-        final boolean connectDown = this.canConnectTo(world,coord,EnumFacing.DOWN, coord.down());
+		final IBlockState bs =world.getBlockState(coord); 
+        final boolean connectNorth = bs.getValue(NORTH);
+        final boolean connectSouth = bs.getValue(SOUTH);
+        final boolean connectWest = bs.getValue(WEST);
+        final boolean connectEast = bs.getValue(EAST);
+        final boolean connectUp = bs.getValue(UP);
+        final boolean connectDown = bs.getValue(DOWN);
         
         float radius = pipeRadius;
         float rminus = 0.5f - radius;
@@ -166,12 +169,12 @@ public abstract class BlockSimpleFluidConduit extends FluidConduitBlock{
     public void addCollisionBoxesToList(final World world, final BlockPos coord, 
     		final IBlockState bs, final AxisAlignedBB box, final List collisionBoxList, 
     		final Entity entity) {
-        final boolean connectNorth = this.canConnectTo(world,coord,EnumFacing.NORTH, coord.north());
-        final boolean connectSouth = this.canConnectTo(world,coord,EnumFacing.SOUTH, coord.south());
-        final boolean connectWest = this.canConnectTo(world,coord,EnumFacing.WEST, coord.west());
-        final boolean connectEast = this.canConnectTo(world,coord,EnumFacing.EAST, coord.east());
-        final boolean connectUp = this.canConnectTo(world,coord,EnumFacing.UP, coord.up());
-        final boolean connectDown = this.canConnectTo(world,coord,EnumFacing.DOWN, coord.down());
+        final boolean connectNorth = bs.getValue(NORTH);
+        final boolean connectSouth = bs.getValue(SOUTH);
+        final boolean connectWest = bs.getValue(WEST);
+        final boolean connectEast = bs.getValue(EAST);
+        final boolean connectUp = bs.getValue(UP);
+        final boolean connectDown = bs.getValue(DOWN);
         
         float radius = pipeRadius;
         float rminus = 0.5f - radius;
@@ -211,6 +214,7 @@ public abstract class BlockSimpleFluidConduit extends FluidConduitBlock{
 	 * Override this method to change block connection behavior. 
 	 * @param w World instance
 	 * @param thisBlock The block that is checking its neighbor
+	 * @param bs Block state of this block
 	 * @param face The face on the first block through which the connection would happen
 	 * @param otherBlock Coordinate of neighboring block
 	 * @return Default implementation: true if the neighboring block implements 
@@ -218,13 +222,13 @@ public abstract class BlockSimpleFluidConduit extends FluidConduitBlock{
 	 * the canConnectTo(ConductorType) method will change the results of this 
 	 * method.
 	 */
-	protected boolean canConnectTo(IBlockAccess w, BlockPos thisBlock, EnumFacing face, BlockPos otherBlock){
-		Block other = w.getBlockState(otherBlock).getBlock();
-		if(other instanceof ITypedConduit){
+	protected boolean canConnectTo(IBlockAccess w, BlockPos thisBlock, IBlockState bs, EnumFacing face, BlockPos otherBlock){
+		IBlockState other = w.getBlockState(otherBlock);
+		if(other.getBlock() instanceof ITypedConduit){
 			if(PowerAdvantage.enableExtendedModCompatibility){
 				return PowerHelper.areConnectable(w, thisBlock, face);
 			}
-			return PowerHelper.areConnectable(this, face, other);
+			return PowerHelper.areConnectable(bs, face, other);
 		} else {
 			return false;
 		}

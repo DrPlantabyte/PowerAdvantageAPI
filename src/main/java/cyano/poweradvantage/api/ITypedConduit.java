@@ -1,5 +1,6 @@
 package cyano.poweradvantage.api;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.EnumFacing;
 
 /**
@@ -12,19 +13,13 @@ import net.minecraft.util.EnumFacing;
 public interface ITypedConduit {
 	/**
 	 * Determines whether this conduit is compatible with an adjacent one
+	 * @param blockstate The blockstate of this conduit when this method is invoked.
 	 * @param type The type of energy in the conduit
 	 * @param blockFace The side through-which the energy is flowing
 	 * @return true if this conduit can flow the given energy type through the given face, false 
 	 * otherwise
 	 */
-	public abstract boolean canAcceptType(ConduitType type, EnumFacing blockFace);
-	/**
-	 * Determines whether this conduit is compatible with a type of energy through any side
-	 * @param type The type of energy in the conduit
-	 * @return true if this conduit can flow the given energy type through one or more of its block 
-	 * faces, false otherwise
-	 */
-	public abstract boolean canAcceptType(ConduitType type);
+	public abstract boolean canAcceptType(IBlockState blockstate, ConduitType type, EnumFacing blockFace);
 	
 	/**
 	 * Gets the energy type of this conduit. Most conduits can only interact 
@@ -44,5 +39,5 @@ public interface ITypedConduit {
 	 */
 	public abstract boolean isPowerSource();
 	
-
+	
 }

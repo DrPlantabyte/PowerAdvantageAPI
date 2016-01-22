@@ -34,7 +34,7 @@ public class StorageTankTileEntity  extends TileEntitySimpleFluidSource{
 					this);
 			return req;
 		} else if(getTank().getFluidAmount() <= 0 && canAccept(offer)){
-			FluidRequest req = new FluidRequest(FluidRequest.BACKUP_PRIORITY+1,
+			FluidRequest req = new FluidRequest(FluidRequest.BACKUP_PRIORITY+2,
 					getTank().getCapacity(),
 					this);
 			return req;
@@ -52,7 +52,7 @@ public class StorageTankTileEntity  extends TileEntitySimpleFluidSource{
      */
 	@Override
     protected byte getMinimumSinkPriority(){
-    	return PowerRequest.BACKUP_PRIORITY+2;
+    	return PowerRequest.BACKUP_PRIORITY+3;
     }
 	
 	/**

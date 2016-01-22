@@ -1,5 +1,10 @@
 package cyano.poweradvantage.api.simple;
 
+import cyano.poweradvantage.api.ConduitType;
+import cyano.poweradvantage.api.fluid.FluidPoweredEntity;
+import cyano.poweradvantage.api.fluid.FluidRequest;
+import cyano.poweradvantage.init.Fluids;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
@@ -16,12 +21,6 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
-import net.minecraftforge.fml.common.FMLLog;
-import cyano.poweradvantage.api.ConduitType;
-import cyano.poweradvantage.api.PowerRequest;
-import cyano.poweradvantage.api.fluid.FluidPoweredEntity;
-import cyano.poweradvantage.api.fluid.FluidRequest;
-import cyano.poweradvantage.init.Fluids;
 
 
 /**
@@ -199,12 +198,13 @@ public abstract class TileEntitySimpleFluidConsumer extends FluidPoweredEntity i
 	/**
 	 * Determines whether this conduit is compatible with an adjacent one
 	 * @param type The type of energy in the conduit
+	 * @param blockstate The blockstate of this block
 	 * @param blockFace The side through-which the energy is flowing
 	 * @return true if this conduit can flow the given energy type through the given face, false 
 	 * otherwise
 	 */
 	@Override
-	public boolean canAcceptType(ConduitType type, EnumFacing blockFace) {
+	public boolean canAcceptType(IBlockState blockstate, ConduitType type, EnumFacing blockFace) {
 		return canAcceptType(type);
 	}
 	/**
@@ -213,7 +213,6 @@ public abstract class TileEntitySimpleFluidConsumer extends FluidPoweredEntity i
 	 * @return true if this conduit can flow the given energy type through one or more of its block 
 	 * faces, false otherwise
 	 */
-	@Override
 	public boolean canAcceptType(ConduitType type) {
 		return ConduitType.areSameType(type,Fluids.fluidConduit_general) || (Fluids.conduitTypeToFluid(type) != null);
 	}

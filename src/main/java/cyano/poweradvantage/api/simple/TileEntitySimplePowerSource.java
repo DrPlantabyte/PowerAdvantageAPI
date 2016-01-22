@@ -10,6 +10,7 @@ import cyano.poweradvantage.api.modsupport.ExternalPowerRequest;
 import cyano.poweradvantage.api.modsupport.LightWeightPowerRegistry;
 import cyano.poweradvantage.api.modsupport.RFPowerRequest;
 import cyano.poweradvantage.conduitnetwork.ConduitRegistry;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
@@ -274,13 +275,14 @@ public abstract class TileEntitySimplePowerSource extends PoweredEntity implemen
 	/**
 	 * Determines whether this conduit is compatible with an adjacent one
 	 * @param type The type of energy in the conduit
+	 * @param blockstate The blockstate of this block
 	 * @param blockFace The side through-which the energy is flowing
 	 * @return true if this conduit can flow the given energy type through the given face, false 
 	 * otherwise
 	 */
 	@Override
-	public boolean canAcceptType(ConduitType type, EnumFacing blockFace) {
-		return ConduitType.areSameType(getType(), type);
+	public boolean canAcceptType(IBlockState blockstate, ConduitType type, EnumFacing blockFace) {
+		return canAcceptType(type);
 	}
 	/**
 	 * Determines whether this conduit is compatible with a type of energy through any side
@@ -288,7 +290,6 @@ public abstract class TileEntitySimplePowerSource extends PoweredEntity implemen
 	 * @return true if this conduit can flow the given energy type through one or more of its block 
 	 * faces, false otherwise
 	 */
-	@Override
 	public boolean canAcceptType(ConduitType type) {
 		return ConduitType.areSameType(getType(), type);
 	}

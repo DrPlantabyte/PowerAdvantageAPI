@@ -113,10 +113,23 @@ public abstract class BlockSimplePowerSource  extends GUIBlock implements ITyped
 	/**
 	 * Determines whether this conduit is compatible with an adjacent one
 	 * @param type The type of energy in the conduit
+	 * @param blockstate The blockstate of this block
 	 * @param blockFace The side through-which the energy is flowing
 	 * @return true if this conduit can flow the given energy type through the given face, false 
 	 * otherwise
 	 */
+	@Override
+	public boolean canAcceptType(IBlockState blockstate, ConduitType type, EnumFacing blockFace) {
+		return ConduitType.areSameType(getType(), type);
+	}
+	/**
+	 * Determines whether this conduit is compatible with an adjacent one
+	 * @param type The type of energy in the conduit
+	 * @param blockFace The side through-which the energy is flowing
+	 * @return true if this conduit can flow the given energy type through the given face, false 
+	 * otherwise
+	 */
+	@Deprecated
 	public boolean canAcceptType(ConduitType type, EnumFacing blockFace){
 		return ConduitType.areSameType(getType(), type);
 	}
@@ -126,6 +139,7 @@ public abstract class BlockSimplePowerSource  extends GUIBlock implements ITyped
 	 * @return true if this conduit can flow the given energy type through one or more of its block 
 	 * faces, false otherwise
 	 */
+	@Deprecated
 	public boolean canAcceptType(ConduitType type){
 		return ConduitType.areSameType(getType(), type);
 	}

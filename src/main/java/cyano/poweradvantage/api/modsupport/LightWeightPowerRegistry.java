@@ -5,16 +5,16 @@ import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import net.minecraft.block.Block;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
-import net.minecraft.world.IBlockAccess;
-import net.minecraftforge.fml.common.FMLLog;
-import net.minecraftforge.fml.common.Loader;
 import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.api.ITypedConduit;
 import cyano.poweradvantage.api.PoweredEntity;
+import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.world.IBlockAccess;
+import net.minecraftforge.fml.common.FMLLog;
 
 /**
  * <p>This class provides a place to register blocks from other mods as power consumers. Such mods are 
@@ -164,13 +164,14 @@ public class LightWeightPowerRegistry {
 	 * either a Power Advantage block or an external machine block.
 	 * @param b A block
 	 * @param energyType The type of power being connected
+	 * @param face the face being connected
 	 * @return true if the block can accept that kind of power, false otherwise.
 	 */
-	public boolean canAcceptType(Block b, ConduitType energyType){
-		if(b  instanceof ITypedConduit){
-			return ((ITypedConduit)b).canAcceptType(energyType);
-		} else if(externalPowerSinks.containsKey(b)){
-			return externalPowerSinks.get(b).canAcceptEnergyType(energyType);
+	public boolean canAcceptType(IBlockState b, ConduitType energyType, EnumFacing face){
+		if(b.getBlock()  instanceof ITypedConduit){
+			return ((ITypedConduit)b.getBlock()).canAcceptType(b,energyType,face);
+		} else if(externalPowerSinks.containsKey(b.getBlock())){
+			return externalPowerSinks.get(b.getBlock()).canAcceptEnergyType(energyType,face);
 		}
 		return false;
 	}
