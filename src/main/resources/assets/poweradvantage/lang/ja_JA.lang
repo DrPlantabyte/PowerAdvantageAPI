@@ -45,3 +45,5 @@ item.poweradvantage.bucket_crude_oil.name=原油のバケット
 tile.poweradvantage.still.name=蒸留酒製造所
 tile.poweradvantage.refined_oil.name=精製油
 item.poweradvantage.bucket_refined_oil.name=精製油のバケツ
+tile.poweradvantage.fluid_switch.name=バルブ
+

@@ -1,0 +1,7 @@
+{
+    "parent": "block/cube_all",
+    "textures": {
+        "all": "poweradvantage:blocks/fluid_switch_on",
+        "particle": "poweradvantage:materials/steel"
+    }
+}

@@ -1,0 +1,6 @@
+{
+    "variants": {
+        "active=false":  { "model": "poweradvantage:fluid_switch_off"},
+        "active=true":   { "model": "poweradvantage:fluid_switch_on"}
+    }
+}

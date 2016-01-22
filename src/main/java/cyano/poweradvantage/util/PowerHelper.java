@@ -57,7 +57,7 @@ public abstract class PowerHelper {
 	public static boolean areConnectable( IBlockState a1, EnumFacing faceOnA1,  IBlockState a2){
 		if(a1.getBlock() instanceof ITypedConduit && a2.getBlock() instanceof ITypedConduit){
 			return ((ITypedConduit)a1.getBlock()).canAcceptType(a1,((ITypedConduit)a2.getBlock()).getType(), faceOnA1) 
-					|| ((ITypedConduit)a2.getBlock()).canAcceptType(a2,((ITypedConduit)a1.getBlock()).getType(), faceOnA1.getOpposite());
+					&& ((ITypedConduit)a2.getBlock()).canAcceptType(a2,((ITypedConduit)a1.getBlock()).getType(), faceOnA1.getOpposite());
 		}
 		return false;
 	}

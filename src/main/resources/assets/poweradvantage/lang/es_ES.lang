@@ -45,3 +45,5 @@ tile.poweradvantage.still.name=Destilería
 
 tile.poweradvantage.refined_oil.name=Refinado de Petróleo
 item.poweradvantage.bucket_refined_oil.name=Cubo de Refinado de Petróleo
+tile.poweradvantage.fluid_switch.name=Válvula
+

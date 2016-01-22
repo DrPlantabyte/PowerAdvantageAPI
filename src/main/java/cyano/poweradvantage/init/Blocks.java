@@ -9,6 +9,7 @@ import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.api.GUIBlock;
 import cyano.poweradvantage.api.fluid.InteractiveFluidBlock;
 import cyano.poweradvantage.blocks.BlockFrame;
+import cyano.poweradvantage.blocks.BlockPowerSwitch;
 import cyano.poweradvantage.machines.conveyors.BlockConveyor;
 import cyano.poweradvantage.machines.conveyors.BlockConveyorFilter;
 import cyano.poweradvantage.machines.conveyors.TileEntityBlockFilter;
@@ -58,6 +59,7 @@ public abstract class Blocks {
 	public static GUIBlock metal_storage_tank;
 	public static GUIBlock still;
 	public static Block fluid_pipe;
+	public static Block fluid_switch;
 	public static GUIBlock item_conveyor;
 	public static GUIBlock item_filter_block;
 	public static GUIBlock item_filter_food;
@@ -111,6 +113,7 @@ public abstract class Blocks {
 		metal_storage_tank = (GUIBlock)addBlock(new MetalTankBlock(),"fluid_metal_tank");
 		still = (GUIBlock)addBlock(new StillBlock(),"still");
 		fluid_pipe = addBlock(new FluidPipeBlock(),"fluid_pipe");
+		fluid_switch = addBlock(new BlockPowerSwitch(Fluids.fluidConduit_general),"fluid_switch");
 		OreDictionary.registerOre("pipe", fluid_pipe);
 		steel_frame = addBlock(new BlockFrame(net.minecraft.block.material.Material.piston)
 				.setResistance(cyano.basemetals.init.Materials.steel.getBlastResistance())
