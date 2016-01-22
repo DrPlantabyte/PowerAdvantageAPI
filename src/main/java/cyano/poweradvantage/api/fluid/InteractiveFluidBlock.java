@@ -14,6 +14,8 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.BlockFluidClassic;
 import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fml.common.FMLLog;
 
 /**
  * This class represents a fluid that applies a function to any living entities that swim in it.
@@ -59,7 +61,8 @@ public class InteractiveFluidBlock extends BlockFluidClassic{
 	
 	@Override
 	public void onEntityCollidedWithBlock( World world, BlockPos coord, Entity entity ) {
-		if (immersionEffect != null && entity instanceof EntityLivingBase && world.getBlockState(entity.getPosition()).getBlock() == this) {
+		if (immersionEffect != null && entity instanceof EntityLivingBase 
+				) {
 			immersionEffect.accept(world,(EntityLivingBase)entity);
 		}
 	}
