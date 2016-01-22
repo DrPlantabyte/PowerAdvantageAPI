@@ -15,7 +15,7 @@ public abstract class WorldGen {
 		
 		initDone = true;
 	}
-	
+	// TODO: fix oil spawning
 	
 	
 	public static final String ORESPAWN_FILE_CONTENTS = "{\n"
