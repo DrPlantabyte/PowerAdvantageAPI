@@ -26,7 +26,7 @@ public abstract class WorldGen {
 			+ "					\"blockID\":\"poweradvantage:crude_oil\",\n"
 			+ "					\"size\":64,\n"
 			+ "					\"variation\":50,\n"
-			+ "					\"frequency\":0.1,\n"
+			+ "					\"frequency\":0.25,\n"
 			+ "					\"minHeight\":16,\n"
 			+ "					\"maxHeight\":64,\n"
 			+ "					\"biomes\":[]\n"
