@@ -8,8 +8,8 @@ import cyano.poweradvantage.registry.FuelRegistry;
 
 public abstract class Fuels {
 
-	public static final int CRUDE_OIL_FUEL_PER_FLUID_UNIT = 12;
-	public static final int REFINED_OIL_FUEL_PER_FLUID_UNIT = 30;
+	public static final int CRUDE_OIL_FUEL_PER_FLUID_UNIT = 5;
+	public static final int REFINED_OIL_FUEL_PER_FLUID_UNIT = 25;
 	
 	private static boolean initDone = false;
 	public static void init(){
