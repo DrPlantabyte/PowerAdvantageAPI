@@ -15,7 +15,6 @@ public abstract class WorldGen {
 		
 		initDone = true;
 	}
-	// TODO: fix oil spawning
 	
 	
 	public static final String ORESPAWN_FILE_CONTENTS = "{\n"
@@ -24,11 +23,11 @@ public abstract class WorldGen {
 			+ "			\"dimension\":\"+\",\n"
 			+ "			\"ores\":[\n"
 			+ "				{\n"
-			+ "					\"blockID\":\"poweradvantage:crude_oil_block\",\n"
+			+ "					\"blockID\":\"poweradvantage:crude_oil\",\n"
 			+ "					\"size\":64,\n"
 			+ "					\"variation\":50,\n"
 			+ "					\"frequency\":0.1,\n"
-			+ "					\"minHeight\":32,\n"
+			+ "					\"minHeight\":16,\n"
 			+ "					\"maxHeight\":64,\n"
 			+ "					\"biomes\":[]\n"
 			+ "				}\n"
