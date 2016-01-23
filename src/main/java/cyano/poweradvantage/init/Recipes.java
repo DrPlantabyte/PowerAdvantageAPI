@@ -55,6 +55,7 @@ public abstract class Recipes {
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Blocks.fluid_drain,1)," x ","w#w","ppp",'x',"bars",'w',"plateSteel",'#',"frameSteel",'p',"pipe"));
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Blocks.fluid_discharge,1),"ppp","w#w"," x ",'x',"bars",'w',"plateSteel",'#',"frameSteel",'p',"pipe"));
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Blocks.still,1),"bpb"," f ",'b',net.minecraft.init.Items.bucket,'p',"pipe",'f',net.minecraft.init.Blocks.furnace));
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Blocks.fluid_switch,1)," l ","pfp",'l',net.minecraft.init.Blocks.lever,'p',"pipe",'f',"frameSteel"));
 		
 
 		// fluid recipes
