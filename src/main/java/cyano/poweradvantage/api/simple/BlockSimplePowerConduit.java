@@ -170,12 +170,13 @@ public abstract class BlockSimplePowerConduit extends ConduitBlock{
 	@Override
     public void setBlockBoundsBasedOnState(final IBlockAccess world, final BlockPos coord) {
 		final IBlockState bs = world.getBlockState(coord);
-        final boolean connectNorth = bs.getValue(NORTH);
-        final boolean connectSouth = bs.getValue(SOUTH);
-        final boolean connectWest = bs.getValue(WEST);
-        final boolean connectEast = bs.getValue(EAST);
-        final boolean connectUp = bs.getValue(UP);
-        final boolean connectDown = bs.getValue(DOWN);
+		IBlockState oldBS = bs;
+        final boolean connectNorth = this.canConnectTo(world,coord,oldBS,EnumFacing.NORTH, coord.north());
+        final boolean connectSouth = this.canConnectTo(world,coord,oldBS,EnumFacing.SOUTH, coord.south());
+        final boolean connectWest = this.canConnectTo(world,coord,oldBS,EnumFacing.WEST, coord.west());
+        final boolean connectEast = this.canConnectTo(world,coord,oldBS,EnumFacing.EAST, coord.east());
+        final boolean connectUp = this.canConnectTo(world,coord,oldBS,EnumFacing.UP, coord.up());
+        final boolean connectDown = this.canConnectTo(world,coord,oldBS,EnumFacing.DOWN, coord.down());
         
         float radius = pipeRadius;
         float rminus = 0.5f - radius;
@@ -215,12 +216,13 @@ public abstract class BlockSimplePowerConduit extends ConduitBlock{
     public void addCollisionBoxesToList(final World world, final BlockPos coord, 
     		final IBlockState bs, final AxisAlignedBB box, final List collisionBoxList, 
     		final Entity entity) {
-        final boolean connectNorth = bs.getValue(NORTH);
-        final boolean connectSouth = bs.getValue(SOUTH);
-        final boolean connectWest = bs.getValue(WEST);
-        final boolean connectEast = bs.getValue(EAST);
-        final boolean connectUp = bs.getValue(UP);
-        final boolean connectDown = bs.getValue(DOWN);
+		IBlockState oldBS = bs;
+        final boolean connectNorth = this.canConnectTo(world,coord,oldBS,EnumFacing.NORTH, coord.north());
+        final boolean connectSouth = this.canConnectTo(world,coord,oldBS,EnumFacing.SOUTH, coord.south());
+        final boolean connectWest = this.canConnectTo(world,coord,oldBS,EnumFacing.WEST, coord.west());
+        final boolean connectEast = this.canConnectTo(world,coord,oldBS,EnumFacing.EAST, coord.east());
+        final boolean connectUp = this.canConnectTo(world,coord,oldBS,EnumFacing.UP, coord.up());
+        final boolean connectDown = this.canConnectTo(world,coord,oldBS,EnumFacing.DOWN, coord.down());
         
         float radius = pipeRadius;
         float rminus = 0.5f - radius;
@@ -270,7 +272,7 @@ public abstract class BlockSimplePowerConduit extends ConduitBlock{
 	 */
 	protected boolean canConnectTo(IBlockAccess w, BlockPos thisBlock, IBlockState bs, EnumFacing face, BlockPos otherBlock){
 		IBlockState other = w.getBlockState(otherBlock);
-		if(other instanceof ITypedConduit){
+		if(other.getBlock() instanceof ITypedConduit){
 			return PowerHelper.areConnectable(bs, face, other);
 		} else {
 			if(PowerAdvantage.enableExtendedModCompatibility){

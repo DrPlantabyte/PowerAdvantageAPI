@@ -215,17 +215,12 @@ public class PowerAdvantage
 	/** The display name for this mod */
 	public static final String NAME = "Power Advantage";
 	/** The version of this mod, in the format major.minor.update */
-	public static final String VERSION = "1.4.1";
+	public static final String VERSION = "1.4.2";
 	
 	// TODO: add oil compatibility with BuildCraft
 	
-	// TODO: make steam drill use crusher recipes, push version
-	// TODO: add oil-burning steam boiler
-	// TODO: add steam-powered pump (for pumping oil from a drill hole)
-	// TODO: add steam distillation machine
 	// TODO: add condenser (makes water from steam)
 	
-	// TODO: make laser drill dig 3x3 tunnel, push version
 	// TODO: add electric distillation machine
 	// TODO: add plastic refinery (makes plastic from oil)
 	// TODO: add ice machine (uses water and electricity to make blocks of ice)
