@@ -7,6 +7,7 @@ import cyano.poweradvantage.api.ConduitBlock;
 import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.api.ITypedConduit;
 import cyano.poweradvantage.api.modsupport.LightWeightPowerRegistry;
+import cyano.poweradvantage.init.Fluids;
 import cyano.poweradvantage.util.PowerHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -103,7 +104,7 @@ public abstract class BlockSimplePowerConduit extends ConduitBlock{
 	 */
 	@Override
 	public boolean canAcceptType(IBlockState blockstate, ConduitType type, EnumFacing blockFace) {
-		return ConduitType.areSameType(getType(), type);
+		return canAcceptType( type, blockFace);
 	}
 	/**
 	 * Determines whether this conduit is compatible with an adjacent one
@@ -114,7 +115,7 @@ public abstract class BlockSimplePowerConduit extends ConduitBlock{
 	 */
 	@Deprecated
 	public boolean canAcceptType(ConduitType type, EnumFacing blockFace){
-		return ConduitType.areSameType(getType(), type);
+		return canAcceptType( type);
 	}
 	/**
 	 * Determines whether this conduit is compatible with a type of energy through any side

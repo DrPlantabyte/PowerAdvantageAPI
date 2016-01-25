@@ -117,7 +117,7 @@ public abstract class BlockSimplePowerConsumer  extends GUIBlock implements ITyp
 	 */
 	@Override
 	public boolean canAcceptType(IBlockState blockstate, ConduitType type, EnumFacing blockFace) {
-		return ConduitType.areSameType(getType(), type);
+		return canAcceptType( type, blockFace);
 	}
 	/**
 	 * Determines whether this conduit is compatible with an adjacent one
@@ -128,7 +128,7 @@ public abstract class BlockSimplePowerConsumer  extends GUIBlock implements ITyp
 	 */
 	@Deprecated
 	public boolean canAcceptType(ConduitType type, EnumFacing blockFace){
-		return ConduitType.areSameType(getType(), type);
+		return canAcceptType( type);
 	}
 	/**
 	 * Determines whether this conduit is compatible with a type of energy through any side

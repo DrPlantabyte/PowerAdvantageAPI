@@ -57,6 +57,7 @@ public abstract class FluidConduitBlock extends ConduitBlock{
 	 * @return true if this conduit can flow the given type through one or more of its block faces, 
 	 * false otherwise
 	 */
+	@Deprecated
 	protected final boolean canAcceptType(ConduitType type) {
 		return ConduitType.areSameType(type, Fluids.fluidConduit_general) ;
 	}
