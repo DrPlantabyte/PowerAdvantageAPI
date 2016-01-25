@@ -1,14 +1,13 @@
 package cyano.poweradvantage.util;
 
 import cyano.poweradvantage.PowerAdvantage;
+import cyano.poweradvantage.api.ISwitchingConduit;
 import cyano.poweradvantage.api.ITypedConduit;
 import cyano.poweradvantage.api.modsupport.LightWeightPowerRegistry;
-import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
-import net.minecraftforge.fml.common.FMLLog;
 
 /**
  * Collection of utility methods
@@ -55,6 +54,11 @@ public abstract class PowerHelper {
 	 * other block
 	 */
 	public static boolean areConnectable( IBlockState a1, EnumFacing faceOnA1,  IBlockState a2){
+		if(a1.getBlock() instanceof ISwitchingConduit 
+				&& ((ISwitchingConduit)a1.getBlock()).canConduct(a1) == false) return false;
+		if(a2.getBlock() instanceof ISwitchingConduit 
+				&& ((ISwitchingConduit)a2.getBlock()).canConduct(a2) == false) return false;
+		
 		if(a1.getBlock() instanceof ITypedConduit && a2.getBlock() instanceof ITypedConduit){
 			return ((ITypedConduit)a1.getBlock()).canAcceptType(a1,((ITypedConduit)a2.getBlock()).getType(), faceOnA1) 
 					|| ((ITypedConduit)a2.getBlock()).canAcceptType(a2,((ITypedConduit)a1.getBlock()).getType(), faceOnA1.getOpposite());

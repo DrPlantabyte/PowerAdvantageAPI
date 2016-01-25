@@ -1,23 +1,21 @@
 package cyano.poweradvantage.blocks;
 
 import cyano.poweradvantage.api.ConduitType;
-import cyano.poweradvantage.api.ITypedConduit;
+import cyano.poweradvantage.api.ISwitchingConduit;
 import cyano.poweradvantage.conduitnetwork.ConduitRegistry;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockLever;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.Explosion;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.FMLLog;
 
 /**
  * This block class is a user-friendly power switch for turning power on and off. You do not need to 
@@ -25,7 +23,7 @@ import net.minecraftforge.fml.common.FMLLog;
  * @author DrCyano
  *
  */
-public class BlockPowerSwitch extends Block implements ITypedConduit{
+public class BlockPowerSwitch extends Block implements ISwitchingConduit{
 	/** Blockstate peroperty. If true, conduct power, if false, don't */
 	public static final PropertyBool ACTIVE = PropertyBool.create("active");
 	private final ConduitType powerType;
@@ -163,5 +161,10 @@ public class BlockPowerSwitch extends Block implements ITypedConduit{
 			ConduitRegistry.getInstance().conduitBlockRemovedEvent(world, world.provider.getDimensionId(), pos, getType());
 		}
 		return true;
+	}
+	
+	@Override
+	public boolean canConduct(IBlockState state) {
+		return (Boolean)state.getValue(ACTIVE);
 	}
 }
