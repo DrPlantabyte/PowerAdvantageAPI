@@ -152,11 +152,13 @@ public class ConduitNetworkManager {
 			if(areInSameNetwork(coord,n)) {continue;}
 			IBlockState blockstate = w.getBlockState(n.pos);
 			Block block = blockstate.getBlock();
-			if(block instanceof ITypedConduit && PowerHelper.areConnectable(w,coord.pos,face)){
+			if(block instanceof ITypedConduit && ((ITypedConduit)block).canAcceptType(blockstate, type, face) && PowerHelper.areConnectable(w,coord.pos,face)){
 				addBlockToNetwork(coord, n);
 				recursiveScan(w,n,type);
 			} else if(PowerAdvantage.enableExtendedModCompatibility){
-				if(LightWeightPowerRegistry.getInstance().isExternalPowerBlock(block) && PowerHelper.areConnectable(w,coord.pos,face)){
+				if(LightWeightPowerRegistry.getInstance().isExternalPowerBlock(block) 
+						&& LightWeightPowerRegistry.getInstance().canAcceptType(blockstate, type, face) 
+						&& PowerHelper.areConnectable(w,coord.pos,face)){
 					addBlockToNetwork(coord, n);
 					recursiveScan(w,n,type);
 				} else {

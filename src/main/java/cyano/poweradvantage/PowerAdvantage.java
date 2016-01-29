@@ -185,8 +185,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 allprojects {
     apply plugin: 'java'
-    sourceCompatibility = 1.7
-    targetCompatibility = 1.7
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
 }
 
 dependencies {
@@ -215,7 +215,7 @@ public class PowerAdvantage
 	/** The display name for this mod */
 	public static final String NAME = "Power Advantage";
 	/** The version of this mod, in the format major.minor.update */
-	public static final String VERSION = "1.4.3";
+	public static final String VERSION = "1.4.4";
 	
 	// TODO: add oil compatibility with BuildCraft
 	
