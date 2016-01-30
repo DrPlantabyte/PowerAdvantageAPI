@@ -6,7 +6,7 @@ import cyano.poweradvantage.conduitnetwork.ConduitRegistry;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.ITickable;
+import net.minecraft.server.gui.IUpdatePlayerListBox;
 /**
  * This class is the superclass for all machines. 
  * If you are making an add-on mod, you probably want to extend the 
@@ -19,7 +19,7 @@ import net.minecraft.util.ITickable;
  * @author DrCyano
  *
  */
-public abstract class PoweredEntity extends TileEntity implements ITickable, IPowerMachine{
+public abstract class PoweredEntity extends TileEntity implements IUpdatePlayerListBox, IPowerMachine{
 	
 	private final int powerUpdateInterval = 8;
 	

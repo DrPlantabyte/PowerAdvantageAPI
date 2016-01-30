@@ -216,7 +216,11 @@ public class FluidDischargeTileEntity extends TileEntitySimpleFluidConsumer{
 	
 	
 
-	
+
+	@Override
+	public ItemStack getStackInSlotOnClosing(int index) {
+		return this.getStackInSlot(index);
+	}
 	
 	//////////
 }

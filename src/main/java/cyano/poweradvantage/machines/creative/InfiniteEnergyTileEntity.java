@@ -79,4 +79,10 @@ public class InfiniteEnergyTileEntity extends TileEntitySimplePowerSource{
 			this.type = new ConduitType(tagRoot.getString("InfType"));
 		}
 	}
+
+
+	@Override
+	public ItemStack getStackInSlotOnClosing(int index) {
+		return this.getStackInSlot(index);
+	}
 }

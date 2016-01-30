@@ -35,7 +35,7 @@ public class BlockPowerSwitch extends Block implements ISwitchingConduit{
 	 * @param mapColor Color on a map
 	 */
 	public BlockPowerSwitch(ConduitType powerType, Material blockMaterial, float blockHardness, MapColor mapColor) {
-		super(blockMaterial, mapColor);
+		super(blockMaterial);
 		this.powerType = powerType;
 		this.setHardness(blockHardness);
 		this.setDefaultState(getDefaultState().withProperty(ACTIVE, false));
@@ -153,7 +153,7 @@ public class BlockPowerSwitch extends Block implements ISwitchingConduit{
 			EnumFacing face, float hitX, float hitY, float hitZ)
 	{ 
 		// player right-clicked
-		boolean newState = !(state.getValue(ACTIVE));
+		boolean newState = !((Boolean)state.getValue(ACTIVE));
 		world.setBlockState(pos, state.withProperty(ACTIVE, newState), 2);
 		if(newState){
 			ConduitRegistry.getInstance().conduitBlockPlacedEvent(world, world.provider.getDimensionId(), pos, getType());

@@ -394,5 +394,9 @@ public class StillTileEntity extends TileEntitySimpleFluidSource{
 	public int getRedstoneOutput() {
 		return inputTank.getFluidAmount() * 15 / inputTank.getCapacity();
 	}
+	@Override
+	public ItemStack getStackInSlotOnClosing(int index) {
+		return this.getStackInSlot(index);
+	}
 
 }

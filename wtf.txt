@@ -1,0 +1,299 @@
+removed ‘build/libs/PowerAdvantage-1.4.4-backport.jar’
+removed ‘build/dev/PowerAdvantage-API-1.4.4-backport.jar’
+removed ‘build/dev/PowerAdvantage-javadoc.zip’
+removed ‘build/dev/PowerAdvantage-src.zip’
+removed ‘build/dist/PowerAdvantage-1.4.4-backport.jar’
+removed ‘build/dist/PowerAdvantage-API-1.4.4-backport.jar’
+removed ‘build/dist/PowerAdvantage-javadoc.zip’
+removed ‘build/dist/PowerAdvantage-src.zip’
+****************************
+ Powered By MCP:             
+ http://modcoderpack.com/    
+ Searge, ProfMobius, Fesh0r, 
+ R4wk, ZeuX, IngisKahn, bspkrs
+ MCP Data version : 9.10
+****************************
+:deobfCompileDummyTask
+:deobfProvidedDummyTask
+:compileApiJava UP-TO-DATE
+:processApiResources UP-TO-DATE
+:apiClasses UP-TO-DATE
+:sourceMainJava UP-TO-DATE
+:compileJava UP-TO-DATE
+:processResources UP-TO-DATE
+:classes UP-TO-DATE
+:jar
+
+BUILD SUCCESSFUL
+
+Total time: 14.491 secs
+
+This build could be faster, please consider using the Gradle Daemon: https://docs.gradle.org/2.7/userguide/gradle_daemon.html
+‘build/libs/PowerAdvantage-1.4.4-backport.jar’ -> ‘build/dev/PowerAdvantage-1.4.4-backport.jar’
+****************************
+ Powered By MCP:             
+ http://modcoderpack.com/    
+ Searge, ProfMobius, Fesh0r, 
+ R4wk, ZeuX, IngisKahn, bspkrs
+ MCP Data version : 9.10
+****************************
+:deobfCompileDummyTask
+:deobfProvidedDummyTask
+:compileApiJava UP-TO-DATE
+:processApiResources UP-TO-DATE
+:apiClasses UP-TO-DATE
+:sourceMainJava UP-TO-DATE
+:compileJava UP-TO-DATE
+:processResources UP-TO-DATE
+:classes UP-TO-DATE
+:jar UP-TO-DATE
+:compileTestJava UP-TO-DATE
+:processTestResources UP-TO-DATE
+:testClasses UP-TO-DATE
+:test UP-TO-DATE
+:extractMcpData SKIPPED
+:extractMcpMappings SKIPPED
+:getVersionJson
+:extractUserdev UP-TO-DATE
+:genSrgs SKIPPED
+:reobfJar
+:extractRangemapSrc UP-TO-DATE
+:retromapSources UP-TO-DATE
+:sourceJar
+:assemble
+:check UP-TO-DATE
+:build
+:javadoc UP-TO-DATE
+
+BUILD SUCCESSFUL
+
+Total time: 15.775 secs
+
+This build could be faster, please consider using the Gradle Daemon: https://docs.gradle.org/2.7/userguide/gradle_daemon.html
+deleting: assets/
+deleting: assets/poweradvantage/
+deleting: assets/poweradvantage/blockstates/
+deleting: assets/poweradvantage/blockstates/crude_oil.json
+deleting: assets/poweradvantage/blockstates/fluid_discharge.json
+deleting: assets/poweradvantage/blockstates/fluid_drain.json
+deleting: assets/poweradvantage/blockstates/fluid_metal_tank.json
+deleting: assets/poweradvantage/blockstates/fluid_pipe.json
+deleting: assets/poweradvantage/blockstates/fluid_storage_tank.json
+deleting: assets/poweradvantage/blockstates/fluid_switch.json
+deleting: assets/poweradvantage/blockstates/infinite_electricity.json
+deleting: assets/poweradvantage/blockstates/infinite_quantum.json
+deleting: assets/poweradvantage/blockstates/infinite_steam.json
+deleting: assets/poweradvantage/blockstates/item_conveyor.json
+deleting: assets/poweradvantage/blockstates/item_filter_block.json
+deleting: assets/poweradvantage/blockstates/item_filter_food.json
+deleting: assets/poweradvantage/blockstates/item_filter_fuel.json
+deleting: assets/poweradvantage/blockstates/item_filter_inventory.json
+deleting: assets/poweradvantage/blockstates/item_filter_ore.json
+deleting: assets/poweradvantage/blockstates/item_filter_overflow.json
+deleting: assets/poweradvantage/blockstates/item_filter_plant.json
+deleting: assets/poweradvantage/blockstates/item_filter_smelt.json
+deleting: assets/poweradvantage/blockstates/refined_oil.json
+deleting: assets/poweradvantage/blockstates/steel_frame.json
+deleting: assets/poweradvantage/blockstates/still.json
+deleting: assets/poweradvantage/lang/
+deleting: assets/poweradvantage/lang/de_DE.lang
+deleting: assets/poweradvantage/lang/en_AU.lang
+deleting: assets/poweradvantage/lang/en_CA.lang
+deleting: assets/poweradvantage/lang/en_EN.lang
+deleting: assets/poweradvantage/lang/en_GB.lang
+deleting: assets/poweradvantage/lang/en_PT.lang
+deleting: assets/poweradvantage/lang/en_US.lang
+deleting: assets/poweradvantage/lang/es_ES.lang
+deleting: assets/poweradvantage/lang/es_MX.lang
+deleting: assets/poweradvantage/lang/it_IT.lang
+deleting: assets/poweradvantage/lang/ja_JA.lang
+deleting: assets/poweradvantage/lang/ko_KR.lang
+deleting: assets/poweradvantage/lang/pt_BR.lang
+deleting: assets/poweradvantage/lang/zh_CN.lang
+deleting: assets/poweradvantage/models/
+deleting: assets/poweradvantage/models/block/
+deleting: assets/poweradvantage/models/block/conveyor_base.json
+deleting: assets/poweradvantage/models/block/fluid_discharge.json
+deleting: assets/poweradvantage/models/block/fluid_drain.json
+deleting: assets/poweradvantage/models/block/fluid_metal_tank.json
+deleting: assets/poweradvantage/models/block/fluid_pipe_0.json
+deleting: assets/poweradvantage/models/block/fluid_pipe_densuw.json
+deleting: assets/poweradvantage/models/block/fluid_pipe_desuw.json
+deleting: assets/poweradvantage/models/block/fluid_pipe_dnu.json
+deleting: assets/poweradvantage/models/block/fluid_pipe_ensw.json
+deleting: assets/poweradvantage/models/block/fluid_pipe_n.json
+deleting: assets/poweradvantage/models/block/fluid_pipe_ns.json
+deleting: assets/poweradvantage/models/block/fluid_pipe_nsuw.json
+deleting: assets/poweradvantage/models/block/fluid_pipe_nsw.json
+deleting: assets/poweradvantage/models/block/fluid_pipe_nuw.json
+deleting: assets/poweradvantage/models/block/fluid_pipe_nw.json
+deleting: assets/poweradvantage/models/block/fluid_storage_tank.json
+deleting: assets/poweradvantage/models/block/fluid_switch_off.json
+deleting: assets/poweradvantage/models/block/fluid_switch_on.json
+deleting: assets/poweradvantage/models/block/infinite_quantum.json
+deleting: assets/poweradvantage/models/block/infinite_steam.json
+deleting: assets/poweradvantage/models/block/item_conveyor.json
+deleting: assets/poweradvantage/models/block/item_filter_block.json
+deleting: assets/poweradvantage/models/block/item_filter_food.json
+deleting: assets/poweradvantage/models/block/item_filter_fuel.json
+deleting: assets/poweradvantage/models/block/item_filter_inventory.json
+deleting: assets/poweradvantage/models/block/item_filter_ore.json
+deleting: assets/poweradvantage/models/block/item_filter_overflow.json
+deleting: assets/poweradvantage/models/block/item_filter_plant.json
+deleting: assets/poweradvantage/models/block/item_filter_smelt.json
+deleting: assets/poweradvantage/models/block/pipe1_0.json
+deleting: assets/poweradvantage/models/block/pipe1_densuw.json
+deleting: assets/poweradvantage/models/block/pipe1_desuw.json
+deleting: assets/poweradvantage/models/block/pipe1_dnu.json
+deleting: assets/poweradvantage/models/block/pipe1_ensw.json
+deleting: assets/poweradvantage/models/block/pipe1_n.json
+deleting: assets/poweradvantage/models/block/pipe1_nsuw.json
+deleting: assets/poweradvantage/models/block/pipe1_nsw.json
+deleting: assets/poweradvantage/models/block/pipe1_nuw.json
+deleting: assets/poweradvantage/models/block/pipe1_nw.json
+deleting: assets/poweradvantage/models/block/pipe2_0.json
+deleting: assets/poweradvantage/models/block/pipe2_densuw.json
+deleting: assets/poweradvantage/models/block/pipe2_desuw.json
+deleting: assets/poweradvantage/models/block/pipe2_dnu.json
+deleting: assets/poweradvantage/models/block/pipe2_ensw.json
+deleting: assets/poweradvantage/models/block/pipe2_n.json
+deleting: assets/poweradvantage/models/block/pipe2_ns.json
+deleting: assets/poweradvantage/models/block/pipe2_nsuw.json
+deleting: assets/poweradvantage/models/block/pipe2_nsw.json
+deleting: assets/poweradvantage/models/block/pipe2_nuw.json
+deleting: assets/poweradvantage/models/block/pipe2_nw.json
+deleting: assets/poweradvantage/models/block/pipe3_0.json
+deleting: assets/poweradvantage/models/block/pipe3_densuw.json
+deleting: assets/poweradvantage/models/block/pipe3_dnu.json
+deleting: assets/poweradvantage/models/block/pipe3_ensw.json
+deleting: assets/poweradvantage/models/block/pipe3_n.json
+deleting: assets/poweradvantage/models/block/pipe3_ns.json
+deleting: assets/poweradvantage/models/block/pipe3_nsuw.json
+deleting: assets/poweradvantage/models/block/pipe3_nsw.json
+deleting: assets/poweradvantage/models/block/pipe3_nuw.json
+deleting: assets/poweradvantage/models/block/pipe3_nw.json
+deleting: assets/poweradvantage/models/block/pipe4_0.json
+deleting: assets/poweradvantage/models/block/pipe4_densuw.json
+deleting: assets/poweradvantage/models/block/pipe4_desuw.json
+deleting: assets/poweradvantage/models/block/pipe4_dnu.json
+deleting: assets/poweradvantage/models/block/pipe4_ensw.json
+deleting: assets/poweradvantage/models/block/pipe4_n.json
+deleting: assets/poweradvantage/models/block/pipe4_ns.json
+deleting: assets/poweradvantage/models/block/pipe4_nsuw.json
+deleting: assets/poweradvantage/models/block/pipe4_nsw.json
+deleting: assets/poweradvantage/models/block/pipe4_nuw.json
+deleting: assets/poweradvantage/models/block/pipe4_nw.json
+deleting: assets/poweradvantage/models/block/steel_frame.json
+deleting: assets/poweradvantage/models/block/still_off.json
+deleting: assets/poweradvantage/models/block/still_on.json
+deleting: assets/poweradvantage/models/block/infinite_electricity.json
+deleting: assets/poweradvantage/models/block/pipe1_ns.json
+deleting: assets/poweradvantage/models/block/pipe3_desuw.json
+deleting: assets/poweradvantage/models/item/
+deleting: assets/poweradvantage/models/item/bioplastic_ingot.json
+deleting: assets/poweradvantage/models/item/bucket_crude_oil.json
+deleting: assets/poweradvantage/models/item/bucket_refined_oil.json
+deleting: assets/poweradvantage/models/item/fluid_discharge.json
+deleting: assets/poweradvantage/models/item/fluid_drain.json
+deleting: assets/poweradvantage/models/item/fluid_metal_tank.json
+deleting: assets/poweradvantage/models/item/fluid_pipe.json
+deleting: assets/poweradvantage/models/item/fluid_storage_tank.json
+deleting: assets/poweradvantage/models/item/fluid_switch.json
+deleting: assets/poweradvantage/models/item/infinite_electricity.json
+deleting: assets/poweradvantage/models/item/infinite_quantum.json
+deleting: assets/poweradvantage/models/item/infinite_steam.json
+deleting: assets/poweradvantage/models/item/item_conveyor.json
+deleting: assets/poweradvantage/models/item/item_filter_block.json
+deleting: assets/poweradvantage/models/item/item_filter_food.json
+deleting: assets/poweradvantage/models/item/item_filter_fuel.json
+deleting: assets/poweradvantage/models/item/item_filter_inventory.json
+deleting: assets/poweradvantage/models/item/item_filter_ore.json
+deleting: assets/poweradvantage/models/item/item_filter_overflow.json
+deleting: assets/poweradvantage/models/item/item_filter_plant.json
+deleting: assets/poweradvantage/models/item/item_filter_smelt.json
+deleting: assets/poweradvantage/models/item/rotator_tool.json
+deleting: assets/poweradvantage/models/item/sprocket.json
+deleting: assets/poweradvantage/models/item/starch.json
+deleting: assets/poweradvantage/models/item/steel_frame.json
+deleting: assets/poweradvantage/models/item/still.json
+deleting: assets/poweradvantage/textures/
+deleting: assets/poweradvantage/textures/blocks/
+deleting: assets/poweradvantage/textures/blocks/fluid_discharge_face.png
+deleting: assets/poweradvantage/textures/blocks/crude_oil_flow.png
+deleting: assets/poweradvantage/textures/blocks/crude_oil_flow.png.mcmeta
+deleting: assets/poweradvantage/textures/blocks/crude_oil_flowing.png
+deleting: assets/poweradvantage/textures/blocks/crude_oil_flowing.png.mcmeta
+deleting: assets/poweradvantage/textures/blocks/crude_oil_still.png
+deleting: assets/poweradvantage/textures/blocks/crude_oil_still.png.mcmeta
+deleting: assets/poweradvantage/textures/blocks/filter_bottom.png
+deleting: assets/poweradvantage/textures/blocks/filter_side_block.png
+deleting: assets/poweradvantage/textures/blocks/filter_side_food.png
+deleting: assets/poweradvantage/textures/blocks/filter_side_fuel.png
+deleting: assets/poweradvantage/textures/blocks/filter_side_inventory.png
+deleting: assets/poweradvantage/textures/blocks/filter_side_ore.png
+deleting: assets/poweradvantage/textures/blocks/filter_side_overflow.png
+deleting: assets/poweradvantage/textures/blocks/filter_side_plantable.png
+deleting: assets/poweradvantage/textures/blocks/filter_side_smeltable.png
+deleting: assets/poweradvantage/textures/blocks/fluid_discharge_side.png
+deleting: assets/poweradvantage/textures/blocks/fluid_drain_face.png
+deleting: assets/poweradvantage/textures/blocks/fluid_drain_side.png
+deleting: assets/poweradvantage/textures/blocks/fluid_metal_tank_side.png
+deleting: assets/poweradvantage/textures/blocks/fluid_metal_tank_top.png
+deleting: assets/poweradvantage/textures/blocks/fluid_pipe.png
+deleting: assets/poweradvantage/textures/blocks/fluid_switch_off.png
+deleting: assets/poweradvantage/textures/blocks/fluid_switch_on.png
+deleting: assets/poweradvantage/textures/blocks/item_conveyor_end.png
+deleting: assets/poweradvantage/textures/blocks/item_conveyor_side.png
+deleting: assets/poweradvantage/textures/blocks/item_conveyor_top.png
+deleting: assets/poweradvantage/textures/blocks/metal_panel.png
+deleting: assets/poweradvantage/textures/blocks/powercable.png
+deleting: assets/poweradvantage/textures/blocks/refined_oil_flow.png
+deleting: assets/poweradvantage/textures/blocks/refined_oil_flow.png.mcmeta
+deleting: assets/poweradvantage/textures/blocks/refined_oil_still.png
+deleting: assets/poweradvantage/textures/blocks/refined_oil_still.png.mcmeta
+deleting: assets/poweradvantage/textures/blocks/steel_frame.png
+deleting: assets/poweradvantage/textures/gui/
+deleting: assets/poweradvantage/textures/gui/container/
+deleting: assets/poweradvantage/textures/gui/container/fluid_discharge_gui.png
+deleting: assets/poweradvantage/textures/gui/container/fluid_drain_gui.png
+deleting: assets/poweradvantage/textures/gui/container/fluid_metal_tank_gui.png
+deleting: assets/poweradvantage/textures/gui/container/fluid_storage_tank_gui.png
+deleting: assets/poweradvantage/textures/gui/container/item_conveyor.png
+deleting: assets/poweradvantage/textures/gui/container/item_conveyor_block.png
+deleting: assets/poweradvantage/textures/gui/container/item_conveyor_food.png
+deleting: assets/poweradvantage/textures/gui/container/item_conveyor_fuel.png
+deleting: assets/poweradvantage/textures/gui/container/item_conveyor_inventory.png
+deleting: assets/poweradvantage/textures/gui/container/item_conveyor_ore.png
+deleting: assets/poweradvantage/textures/gui/container/item_conveyor_overflow.png
+deleting: assets/poweradvantage/textures/gui/container/item_conveyor_plant.png
+deleting: assets/poweradvantage/textures/gui/container/item_conveyor_smelt.png
+deleting: assets/poweradvantage/textures/gui/container/machineGUI_template.png
+deleting: assets/poweradvantage/textures/gui/container/player_inventory.png
+deleting: assets/poweradvantage/textures/gui/container/still_gui.png
+deleting: assets/poweradvantage/textures/items/
+deleting: assets/poweradvantage/textures/items/bioplastic_ingot.png
+deleting: assets/poweradvantage/textures/items/bucket_crude_oil.png
+deleting: assets/poweradvantage/textures/items/bucket_refined_oil.png
+deleting: assets/poweradvantage/textures/items/rotator_tool.png
+deleting: assets/poweradvantage/textures/items/sprocket.png
+deleting: assets/poweradvantage/textures/items/starch.png
+deleting: assets/poweradvantage/textures/materials/
+deleting: assets/poweradvantage/textures/materials/brass.png
+deleting: assets/poweradvantage/textures/materials/copper.png
+deleting: assets/poweradvantage/textures/materials/invar.png
+deleting: assets/poweradvantage/textures/materials/iron.png
+deleting: assets/poweradvantage/textures/materials/metal_panel.png
+deleting: assets/poweradvantage/textures/materials/plastic.png
+deleting: assets/poweradvantage/textures/materials/steel.png
+deleting: assets/poweradvantage/textures/materials/steel_dark.png
+deleting: assets/poweradvantage/textures/materials/stone.png
+deleting: assets/poweradvantage/textures/materials/stone_brick.png
+deleting: assets/poweradvantage/textures/materials/wood.png
+deleting: assets/poweradvantage/textures/gui/nei/
+‘PowerAdvantage-1.4.4-backport.jar’ -> ‘PowerAdvantage-API-1.4.4-backport.jar’
+‘src.zip’ -> ‘PowerAdvantage-src.zip’
+‘javadoc.zip’ -> ‘PowerAdvantage-javadoc.zip’
+‘build/libs/PowerAdvantage-1.4.4-backport.jar’ -> ‘build/dist/PowerAdvantage-1.4.4-backport.jar’
+‘build/dev/PowerAdvantage-API-1.4.4-backport.jar’ -> ‘build/dist/PowerAdvantage-API-1.4.4-backport.jar’
+‘build/dev/PowerAdvantage-javadoc.zip’ -> ‘build/dist/PowerAdvantage-javadoc.zip’
+‘build/dev/PowerAdvantage-src.zip’ -> ‘build/dist/PowerAdvantage-src.zip’

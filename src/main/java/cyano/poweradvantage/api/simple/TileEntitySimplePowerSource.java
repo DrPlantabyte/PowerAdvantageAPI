@@ -532,7 +532,6 @@ public abstract class TileEntitySimplePowerSource extends PoweredEntity implemen
 	 * @param slot inventory slot index
 	 * @return Item in a given inventory slot (null means no item)
 	 */
-	@Override
 	public ItemStack removeStackFromSlot(int slot) {
 		if(this.getInventory() != null){
 			ItemStack i = this.getInventory()[slot];

@@ -15,21 +15,20 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.server.gui.IUpdatePlayerListBox;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatComponentTranslation;
-import net.minecraft.util.EntitySelectors;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IChatComponent;
-import net.minecraft.util.ITickable;
 import net.minecraft.world.ILockableContainer;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLLog;
 
-public class TileEntityConveyor extends TileEntity implements ITickable, ISidedInventory {
+public class TileEntityConveyor extends TileEntity implements IUpdatePlayerListBox, ISidedInventory {
 
 	
 	
@@ -93,7 +92,7 @@ public class TileEntityConveyor extends TileEntity implements ITickable, ISidedI
 				// grab items sitting on the ground behind the conveyor
 				List<EntityItem> list = w.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(
 						upstreamBlock.getX(), upstreamBlock.getY(), upstreamBlock.getZ(), 
-						upstreamBlock.getX()+1, upstreamBlock.getY()+1, upstreamBlock.getZ()+1), EntitySelectors.selectAnything);
+						upstreamBlock.getX()+1, upstreamBlock.getY()+1, upstreamBlock.getZ()+1));
 				if(!list.isEmpty()){
 					EntityItem e = list.get(0);
 					if(!e.isAirBorne){
@@ -323,7 +322,6 @@ public class TileEntityConveyor extends TileEntity implements ITickable, ISidedI
 		return this.getInventory()[slot];
 	}
 	
-	@Override
 	public ItemStack removeStackFromSlot(int slot) {
 		ItemStack i = this.getInventory()[slot];
 		this.getInventory()[slot] = null;
@@ -431,6 +429,12 @@ public class TileEntityConveyor extends TileEntity implements ITickable, ISidedI
 		return slot == 0 && this.isItemValidForSlot(slot, srcItem);
 	}
 
+	@Override
+	public ItemStack getStackInSlotOnClosing(int index) {
+		return this.getStackInSlot(index);
+	}
+
+	
 	/** cache for default implementation of getSlotsForFace(...)*/
 	private int[] slotAccessCache = {0};
 	/**
@@ -452,6 +456,7 @@ public class TileEntityConveyor extends TileEntity implements ITickable, ISidedI
 	}
 	//////////  //////////
 
+	
 	
 	
 	

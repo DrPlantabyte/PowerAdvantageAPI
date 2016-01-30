@@ -261,4 +261,8 @@ public class FluidDrainTileEntity extends TileEntitySimpleFluidSource{
 	
 	
 	//////////
+	@Override
+	public ItemStack getStackInSlotOnClosing(int index) {
+		return this.getStackInSlot(index);
+	}
 }

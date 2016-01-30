@@ -107,4 +107,8 @@ public class StorageTankTileEntity  extends TileEntitySimpleFluidSource{
 		return true;
 	}
 
+	@Override
+	public ItemStack getStackInSlotOnClosing(int index) {
+		return this.getStackInSlot(index);
+	}
 }
