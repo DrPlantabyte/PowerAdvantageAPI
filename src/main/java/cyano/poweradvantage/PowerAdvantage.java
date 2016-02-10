@@ -241,6 +241,8 @@ public class PowerAdvantage
 	public static boolean enableExtendedModCompatibility = true;
 	/** used to convert energy to RF types when attempting autmoatic conversion */
 	public static final Map<ConduitType, Float> rfConversionTable = new HashMap<>();
+	
+	// TODO: add config recipes for distilling
 
 	/**
 	 * Pre-initialization step. Used for initializing objects and reading the 
