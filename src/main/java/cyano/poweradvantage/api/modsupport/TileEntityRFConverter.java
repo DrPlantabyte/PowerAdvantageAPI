@@ -1,5 +1,5 @@
 package cyano.poweradvantage.api.modsupport;
 
-public class TileEntityRFConverter {
+public class TileEntityRFConverter extends TileEntityConverter{
 
 }

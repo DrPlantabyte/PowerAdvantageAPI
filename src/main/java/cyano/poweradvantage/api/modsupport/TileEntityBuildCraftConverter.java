@@ -1,5 +1,5 @@
 package cyano.poweradvantage.api.modsupport;
 
-public class TileEntityBuildCraftConverter {
+public class TileEntityBuildCraftConverter extends TileEntityConverter{
 
 }

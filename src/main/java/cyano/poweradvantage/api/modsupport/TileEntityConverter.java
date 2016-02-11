@@ -4,6 +4,7 @@ import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.api.PowerRequest;
 import cyano.poweradvantage.api.simple.TileEntitySimplePowerSource;
 import net.minecraft.item.ItemStack;
+import scala.actors.threadpool.Arrays;
 
 /**
  * This class is a superclass used by machines that convert between other types of power. The way it 
@@ -14,13 +15,14 @@ import net.minecraft.item.ItemStack;
  * @author DrCyano
  *
  */
-public class TileEntityConverter extends TileEntitySimplePowerSource{
+public abstract class TileEntityConverter extends TileEntitySimplePowerSource{
 
 	private final float halfFull;
 	
-	int[] dataArray = new int[2];
+	final int[] dataArray = new int[3];
 	final int INDEX_ENERGY = 0;
-	final int INDEX_OTHER_ENERGY = 1;
+	final int INDEX_OTHER_ENERGY_LOWER = 1;
+	final int INDEX_OTHER_ENERGY_UPPER = 2;
 	
 	
 	public TileEntityConverter(ConduitType type, float powerAdvantageEnergyBuffer, String unlocalizedName) {
@@ -28,21 +30,83 @@ public class TileEntityConverter extends TileEntitySimplePowerSource{
 		halfFull = powerAdvantageEnergyBuffer * 0.5f;
 	}
 
-	
+	final int[] dataArrayOld = new int[dataArray.length];
 	@Override
 	public void powerUpdate(){
 		if(this.getEnergy() > halfFull){
-			// TODO: convert to other mod energy
+			// convert to other mod energy
+			if(getOtherEnergy().doubleValue() < getOtherEnergyCapacity().doubleValue()){
+				this.subtractEnergy(
+						addEnergyToOther(this.getEnergy() - halfFull, getType()), getType());
+			}
 		} else if(this.getEnergy() < halfFull){
-			// TODO: convert from other mod energy
+			// convert from other mod energy
+			if(getOtherEnergy().doubleValue() > 0){
+				this.addEnergy(
+						subtractEnergyFromOther(halfFull - getEnergy(),getType()), getType());
+			}
 		}
+		if(!Arrays.equals(dataArray, dataArrayOld)){
+			this.sync();
+		}
+		System.arraycopy(dataArrayOld, 0, dataArrayOld, 0, dataArrayOld.length);
 	}
 
+	/**
+	 * Gets the amount of energy in the non-power-advantage energy buffer 
+	 * @return Energy in non-power-advantage energy buffer
+	 */
 	public abstract Number getOtherEnergy();
+	/**
+	 * Gets the energy capacity of the non-power-advantage energy buffer 
+	 * @return Energy capacity
+	 */
 	public abstract Number getOtherEnergyCapacity();
-	public abstract boolean canConvertEnergy(ConduitType type);
-	public abstract Number convertEnergy(float amount, ConduitType type);
+	/**
+	 * Sets the amount of energy in the non-power-advantage energy buffer 
+	 * @param Energy in non-power-advantage energy buffer
+	 */
 	public abstract void setOtherEnergy(Number value);
+	/**
+	 * Determines whether the given Power Advantage energy type can be converted
+	 * @param type Power Advantage energy type
+	 * @return true if the energy can be converted, false otherwise
+	 */
+	public abstract boolean canConvertEnergy(ConduitType type);
+	/**
+	 * Adds Power Advantage energy to the non-power-advantage energy buffer. The implementation must 
+	 * convert the energy to the other energy type and return the amount of Power Advantage energy 
+	 * that was actually consumed.
+	 * @param amount Amount of Power Advantage energy being added
+	 * @param type The type of Power Advantage energy
+	 * @return The amount of Power Advantage that was actually used to add to the other energy 
+	 * buffer
+	 */
+	public abstract float addEnergyToOther(float amount, ConduitType type);
+	/**
+	 * Withdraws Power Advantage energy to the non-power-advantage energy buffer. The implementation 
+	 * must convert the energy to the other energy type and return the amount of Power Advantage 
+	 * energy that was actually produced.
+	 * @param amount Requested amount of Power Advantage energy
+	 * @param type The type of Power Advantage energy
+	 * @return The amount of Power Advantage that was actually produced from the other energy 
+	 * buffer
+	 */
+	public abstract float subtractEnergyFromOther(float amount, ConduitType type);
+	/**
+	 * Performs an energy conversion between Power Advantage energy and the other energy type.
+	 * @param amountOfOther Amount of non-power-advantage energy to convert
+	 * @param type Type of Power Advantage energy
+	 * @return Amount of Power Advantage energy equivalent to the input energy.
+	 */
+	public abstract float convertOtherToEnergy(Number amountOfOther, ConduitType type);
+	/**
+	 * Performs an energy conversion between Power Advantage energy and the other energy type.
+	 * @param amountOfEnergy Amount of Power Advantage energy to convert
+	 * @param type Type of Power Advantage energy
+	 * @return Amount of non-power-advantage energy equivalent to the input energy.
+	 */
+	public abstract Number convertEnergyToOther(float amountOfEnergy, ConduitType type);
 	
 	
 	private final ItemStack[] inv = new ItemStack[0];
@@ -54,18 +118,22 @@ public class TileEntityConverter extends TileEntitySimplePowerSource{
 
 	@Override
 	public int[] getDataFieldArray() {
-		// TODO: data sync
-		return null;
+		return dataArray;
 	}
 
 	@Override
 	public void prepareDataFieldsForSync() {
-		// TODO: data sync
+		dataArray[INDEX_ENERGY] = Float.floatToRawIntBits(getEnergy());
+		long otherBits = Double.doubleToRawLongBits(getOtherEnergy().doubleValue());
+		dataArray[INDEX_OTHER_ENERGY_LOWER] = (int)((otherBits      ) & 0xFFFFFFFF);
+		dataArray[INDEX_OTHER_ENERGY_UPPER] = (int)((otherBits >> 32) & 0xFFFFFFFF);
 	}
 
 	@Override
 	public void onDataFieldUpdate() {
-		// TODO: data sync
+		this.setEnergy(Float.intBitsToFloat(dataArray[INDEX_ENERGY]), getType());
+		long otherBits = ((long)dataArray[INDEX_OTHER_ENERGY_UPPER] << 32) | ((long)dataArray[INDEX_OTHER_ENERGY_LOWER]);
+		this.setOtherEnergy(Double.longBitsToDouble(otherBits));
 	}
 
 	@Override
