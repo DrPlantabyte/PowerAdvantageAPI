@@ -6,8 +6,8 @@ import java.util.Map;
 import cyano.poweradvantage.PowerAdvantage;
 import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.api.GUIBlock;
-import cyano.poweradvantage.api.modsupport.rf.BlockRFConverter;
-import cyano.poweradvantage.api.modsupport.rf.TileEntityRFSteamConverter;
+import cyano.poweradvantage.api.modsupport.rf.*;
+import cyano.poweradvantage.api.modsupport.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
@@ -23,6 +23,8 @@ public abstract class ModSupport {
 	
 
 	public static Block converter_rf_steam;
+	public static Block converter_rf_electricity;
+	public static Block converter_rf_quantum;
 	
 	private static final Map<String,Block> allBlocks = new HashMap<>();
 
@@ -36,8 +38,12 @@ public abstract class ModSupport {
 		if(rfSupport){
 			FMLLog.info("Initializing RF interface content");
 			converter_rf_steam = addBlock(new BlockRFConverter(defaultMachineMaterial,defaultMachineHardness,new ConduitType("steam")),"converter_rf_steam");
-			
+			converter_rf_electricity = addBlock(new BlockRFConverter(defaultMachineMaterial,defaultMachineHardness,new ConduitType("electricity")),"converter_rf_electricity");
+			converter_rf_quantum = addBlock(new BlockRFConverter(defaultMachineMaterial,defaultMachineHardness,new ConduitType("quantum")),"converter_rf_quantum");
+
 			GameRegistry.registerTileEntity(TileEntityRFSteamConverter.class, PowerAdvantage.MODID+"."+"rf_steam_converter_tileentity");
+			GameRegistry.registerTileEntity(TileEntityRFElectricityConverter.class, PowerAdvantage.MODID+"."+"rf_electricity_converter_tileentity");
+			GameRegistry.registerTileEntity(TileEntityRFQuantumConverter.class, PowerAdvantage.MODID+"."+"rf_quantum_converter_tileentity");
 		}
 		initDone = true;
 	}

@@ -1,0 +1,8 @@
+{
+    "variants": {
+        "facing=east": { "model": "poweradvantage:converter_rf_electricity", "y": 90 },
+        "facing=north": { "model": "poweradvantage:converter_rf_electricity" },
+        "facing=south": { "model": "poweradvantage:converter_rf_electricity", "y": 180 },
+        "facing=west": { "model": "poweradvantage:converter_rf_electricity", "y": 270 }
+    }
+}

@@ -19,6 +19,7 @@ import cyano.poweradvantage.registry.FuelRegistry;
 import cyano.poweradvantage.registry.MachineGUIRegistry;
 import cyano.poweradvantage.registry.still.recipe.DistillationRecipeRegistry;
 import net.minecraft.block.Block;
+import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.MinecraftForge;
@@ -248,7 +249,6 @@ public class PowerAdvantage
 	/** used to convert energy to RF types when attempting autmoatic conversion */
 	public static final Map<ConduitType, Float> rfConversionTable = new HashMap<>();
 	
-	// TODO: add config recipes for distilling
 
 	public boolean detectedRF = false;
 
@@ -323,7 +323,7 @@ public class PowerAdvantage
 		
 		if(enableExtendedModCompatibility){
 			String[] conversions = config.getString("RF_conversions", "Other Power Mods", 
-					"steam=12;electricity=0.375;quantum=12", 
+					"steam=1.5;electricity=0.05;quantum=1.5", 
 					"List of conversions from Power Advantage power types to RF, in units of RF per energy unit")
 					.split(";");
 			for(String c : conversions){
@@ -452,7 +452,7 @@ public class PowerAdvantage
 		// Handle inter-mod action
 		
 		// hacking
-		printHackingInfo(); // TODO: comment this line out
+		//printHackingInfo(); // XXX: hacker stuff
 	}
 
 
@@ -500,21 +500,26 @@ public class PowerAdvantage
 		GameData.getBlockRegistry().forEach((Block b)->{
 			FMLLog.info("Block: %s %s",b.getUnlocalizedName(),objectDump(b));
 		});
-		Field[] vars = TileEntity.class.getFields();
+		GameData.getItemRegistry().forEach((Item i)->{
+			FMLLog.info("Item: %s %s",i.getUnlocalizedName(),objectDump(i));
+		});
+		FMLLog.info("class TileEntity: %s",classDump(TileEntity.class));
+		Field[] vars = TileEntity.class.getDeclaredFields();
 		for(Field f : vars){
 			try{
 				f.setAccessible(true);
-			if(java.util.Map.class.isAssignableFrom(f.getType())){
-				// is either class->name map or name->class map
-				Map m = (java.util.Map)f.get(null);
-				if(m.entrySet().toArray()[0] instanceof String){
-					// name->class map
-					// do TileEntity class dump
-					for(Object o : m.values()){
-						FMLLog.info("TileEntity: %s",classDump((Class)o));
+				if(java.util.Map.class.isAssignableFrom(f.getType())){
+					// is either class->name map or name->class map
+					Map m = (java.util.Map)f.get(null);
+					if(m.entrySet().toArray()[0] instanceof String){
+						// name->class map
+						// do TileEntity class dump
+						for(Object o : m.values()){
+							FMLLog.info("TileEntity: %s",classDump((Class)o));
+						}
+						break;
 					}
 				}
-			}
 			}catch(Exception ex){
 				FMLLog.severe("%s: Exception\n%s", MODID, ex);
 			}

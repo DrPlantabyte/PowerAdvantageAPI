@@ -37,25 +37,19 @@ public abstract class TileEntityConverter extends TileEntitySimplePowerSource{
 	@Override
 	public void powerUpdate(){
 		super.powerUpdate();
-		FMLLog.info("%s: PA energy is %s/%s, other energy is %s/%s",getClass().getSimpleName(),getEnergy(),getEnergyCapacity(),getOtherEnergy(),getOtherEnergyCapacity());// TODO: remove
 		if(this.getEnergy() > halfFull){
-			FMLLog.info("%s: more than half-full",getClass().getSimpleName());// TODO: remove
 			// convert to other mod energy
 			if(getOtherEnergy() < getOtherEnergyCapacity()){
-				FMLLog.info("%s: adding energy to other",getClass().getSimpleName());// TODO: remove
 				this.subtractEnergy(
 						addEnergyToOther(this.getEnergy() - halfFull, getType()), getType());
 			}
 		} else if(this.getEnergy() < halfFull){
-			FMLLog.info("%s: less than half-full",getClass().getSimpleName());// TODO: remove
 			// convert from other mod energy
 			if(getOtherEnergy() > 0){
-				FMLLog.info("%s: getting energy from other",getClass().getSimpleName());// TODO: remove
 				this.addEnergy(
 						-1 * subtractEnergyFromOther(halfFull - getEnergy(),getType()), getType());
 			}
 		}
-		FMLLog.info("%s: PA energy is now %s/%s, other energy is now %s/%s",getClass().getSimpleName(),getEnergy(),getEnergyCapacity(),getOtherEnergy(),getOtherEnergyCapacity());// TODO: remove
 		if(!Arrays.equals(dataArray, dataArrayOld)){
 			this.sync();
 		}
