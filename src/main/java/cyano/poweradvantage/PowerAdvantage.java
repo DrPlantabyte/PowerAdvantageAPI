@@ -1,6 +1,7 @@
 package cyano.poweradvantage;
 
 import java.io.IOException;
+import java.lang.reflect.*;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -11,11 +12,15 @@ import java.util.Locale;
 import java.util.Map;
 
 import cyano.poweradvantage.api.ConduitType;
+import cyano.poweradvantage.api.ITypedConduit;
 import cyano.poweradvantage.events.BucketHandler;
 import cyano.poweradvantage.init.WorldGen;
 import cyano.poweradvantage.registry.FuelRegistry;
 import cyano.poweradvantage.registry.MachineGUIRegistry;
 import cyano.poweradvantage.registry.still.recipe.DistillationRecipeRegistry;
+import net.minecraft.block.Block;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.FMLLog;
@@ -25,6 +30,7 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.registry.GameData;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -244,6 +250,11 @@ public class PowerAdvantage
 	
 	// TODO: add config recipes for distilling
 
+	public boolean detectedRF = false;
+
+	
+	private String[] distillRecipes = new String[0]; // used to pass config data to the init() method
+	
 	/**
 	 * Pre-initialization step. Used for initializing objects and reading the 
 	 * config file
@@ -291,6 +302,13 @@ public class PowerAdvantage
 		
 		plasticIsAlsoRubber = config.getBoolean("plastic_equals_rubber", "options", plasticIsAlsoRubber, 
 				"If true, then plastic will be useable in recipes as if it were rubber (for cross-mod compatibility)");
+
+		distillRecipes = config.getString("distiller_recipes", "recipes", 
+				"2*crude_oil->1*refined_oil;2*oil->1*refined_oil", 
+				  "List of distiller recipes in the format of #*name1->#*name2 where # is an \n"
+				+ "integer number and name1 and name2 are the fluid names of the input and \n"
+				+ "output of the recipe")
+				.split(";");
 		
 		useOtherFluids = config.getBoolean("use_other_fluids", "Other Power Mods", useOtherFluids, 
 				"If true, then Power Advantage will use existing fluids added by other mods where possible");
@@ -300,13 +318,13 @@ public class PowerAdvantage
 				"If false, then you may have less lag. If true, then some mods that are not Power \n"
 				+ "Advantage add-ons may be able to draw power from Power Advantage power generators.");
 		if(enableExtendedModCompatibility){
-			FMLLog.info("Enabled external power mod interactions. If the server lags when using large power networks, consider disabling the 'extended_compatibility' option");
+			FMLLog.info("Enabled external power mod interactions. If the server lags when using large power networks, try disabling the 'extended_compatibility' option");
 		}
 		
 		if(enableExtendedModCompatibility){
 			String[] conversions = config.getString("RF_conversions", "Other Power Mods", 
-					"steam=1;electricity=0.03125;quantum=1", 
-					"List of conversions from Power Advantage power types to RF")
+					"steam=12;electricity=0.375;quantum=12", 
+					"List of conversions from Power Advantage power types to RF, in units of RF per energy unit")
 					.split(";");
 			for(String c : conversions){
 				if(!c.contains("=")) continue;
@@ -375,15 +393,28 @@ public class PowerAdvantage
 	public void init(FMLInitializationEvent event)
 	{
 
+		try {
+			Class rfClass = Class.forName("cofh.api.energy.IEnergyReceiver", false, getClass().getClassLoader());
+			detectedRF = rfClass != null;
+			FMLLog.info("%s: RF class detected: %s", MODID, rfClass);
+		} catch (ClassNotFoundException e) {
+			detectedRF = false;
+			FMLLog.info("%s: did not detect RF classes: %s", MODID, e.getMessage());
+		}
+		
+		
 		NetworkRegistry.INSTANCE.registerGuiHandler(PowerAdvantage.getInstance(), MachineGUIRegistry.getInstance());
 		GameRegistry.registerFuelHandler(FuelRegistry.getInstance());
 
 		cyano.poweradvantage.init.Fuels.init();
 		cyano.poweradvantage.init.Entities.init();
 		cyano.poweradvantage.init.Recipes.init();
+		cyano.poweradvantage.init.Recipes.initDistillationRecipes(distillRecipes);
 		cyano.poweradvantage.init.Villages.init(); 
 		cyano.poweradvantage.init.GUI.init();
 		cyano.poweradvantage.init.TreasureChests.init();
+		
+		cyano.poweradvantage.init.ModSupport.init(detectedRF);
 
 		MinecraftForge.EVENT_BUS.register(BucketHandler.getInstance());
 
@@ -401,6 +432,7 @@ public class PowerAdvantage
 		// client-only code
 		cyano.poweradvantage.init.Items.registerItemRenders(event);
 		cyano.poweradvantage.init.Blocks.registerItemRenders(event);
+		cyano.poweradvantage.init.ModSupport.registerItemRenders(event);
 	}
 	@SideOnly(Side.SERVER)
 	private void serverInit(FMLInitializationEvent event){
@@ -419,7 +451,10 @@ public class PowerAdvantage
 		
 		// Handle inter-mod action
 		
+		// hacking
+		printHackingInfo(); // TODO: comment this line out
 	}
+
 
 
 	@SideOnly(Side.CLIENT)
@@ -437,6 +472,154 @@ public class PowerAdvantage
 	 */
 	public static PowerAdvantage getInstance() {
 		return instance;
+	}
+
+	/**
+	 * Used to check a TileEntity instance to see if it can accept/give energy from/to a power 
+	 * source. This method is not intended for Power Advantage machines.
+	 * @param tileEntity The tile entity to test
+	 * @param powerType The type of power
+	 * @param side
+	 * @return
+	 */
+	public boolean canConnectToTileEntity(TileEntity tileEntity, ConduitType powerType, EnumFacing side) {
+		if(tileEntity instanceof ITypedConduit) {
+			return ((ITypedConduit)tileEntity).canAcceptType(tileEntity.getWorld().getBlockState(tileEntity.getPos()), powerType, side);
+		}
+		if(PowerAdvantage.enableExtendedModCompatibility){
+			if(this.detectedRF){
+				return tileEntity instanceof cofh.api.energy.IEnergyReceiver && rfConversionTable.containsKey(powerType);
+			}
+		}
+		return false;
+	}
+	
+
+	private void printHackingInfo() {
+		// Object dump all blocks and class dump all tile entities
+		GameData.getBlockRegistry().forEach((Block b)->{
+			FMLLog.info("Block: %s %s",b.getUnlocalizedName(),objectDump(b));
+		});
+		Field[] vars = TileEntity.class.getFields();
+		for(Field f : vars){
+			try{
+				f.setAccessible(true);
+			if(java.util.Map.class.isAssignableFrom(f.getType())){
+				// is either class->name map or name->class map
+				Map m = (java.util.Map)f.get(null);
+				if(m.entrySet().toArray()[0] instanceof String){
+					// name->class map
+					// do TileEntity class dump
+					for(Object o : m.values()){
+						FMLLog.info("TileEntity: %s",classDump((Class)o));
+					}
+				}
+			}
+			}catch(Exception ex){
+				FMLLog.severe("%s: Exception\n%s", MODID, ex);
+			}
+		}
+	}
+	
+	private static String objectDump(Object o){
+		if(o == null) return "null";
+		StringBuilder sb = new StringBuilder("\n");
+		Class c = o.getClass();
+		sb.append(c.getName()).append(" extends ").append(c.getSuperclass()).append("\n\t");
+		
+		Class[] interfaces = c.getInterfaces();
+		if(interfaces != null && interfaces.length > 0){
+			sb.append("\t").append("Interfaces").append("\n\t");
+			for(Class i : interfaces){
+				sb.append(i.getName()).append("\n\t");
+			}
+		}
+		
+		sb.append("\t").append("Variables").append("\n\t");
+		Field[] variables = c.getDeclaredFields();
+		for(Field f : variables){
+			if(!f.isAccessible()) sb.append("secret "); // may be private or protected
+			if(Modifier.isStatic( f.getModifiers())) sb.append("static ");
+			if(Modifier.isFinal( f.getModifiers())) sb.append("final ");
+			sb.append(f.getType().getName()).append(" ");
+			sb.append(f.getName());
+			sb.append(" = ");
+			if(Modifier.isStatic( f.getModifiers())){
+				try {
+					sb.append(f.get(null));
+				} catch (IllegalArgumentException | IllegalAccessException e) {
+					sb.append(e.getMessage());
+				}
+			} else {
+				try {
+					sb.append(f.get(o));
+				} catch (IllegalArgumentException | IllegalAccessException e) {
+					sb.append(e.getMessage());
+				}
+			}
+			sb.append("\n\t");
+		}
+		sb.append("\n\t");
+		sb.append("\t").append("Methods").append("\n\t");
+		Method[] functions = c.getDeclaredMethods();
+		for(Method f : functions){
+			if(!f.isAccessible()) sb.append("secret "); // may be private or protected
+			if(Modifier.isStatic( f.getModifiers())) sb.append("static ");
+			sb.append(f.getReturnType().getName()).append(" ");
+			sb.append(f.getName()).append("(");
+			Parameter[] params = f.getParameters();
+			if(params != null && params.length > 0){
+				for(int i = 0; i < params.length; i++){
+					Parameter p = params[i];
+					if(i > 0) sb.append(", ");
+					sb.append(p.getType().getSimpleName());
+				}
+			}
+			sb.append(")\n\t");
+		}
+		return sb.toString();
+	}
+	
+	private static String classDump(Class c){
+		StringBuilder sb = new StringBuilder("\n");
+		sb.append(c.getName()).append(" extends ").append(c.getSuperclass()).append("\n\t");
+		
+		Class[] interfaces = c.getInterfaces();
+		if(interfaces != null && interfaces.length > 0){
+			sb.append("\t").append("Interfaces").append("\n\t");
+			for(Class i : interfaces){
+				sb.append(i.getName()).append("\n\t");
+			}
+		}
+		
+		sb.append("\t").append("Variables").append("\n\t");
+		Field[] variables = c.getDeclaredFields();
+		for(Field f : variables){
+			if(!f.isAccessible()) sb.append("secret "); // may be private or protected
+			if(Modifier.isStatic( f.getModifiers())) sb.append("static ");
+			if(Modifier.isFinal( f.getModifiers())) sb.append("final ");
+			sb.append(f.getType().getName()).append(" ");
+			sb.append(f.getName()).append("\n\t");
+		}
+		sb.append("\n\t");
+		sb.append("\t").append("Methods").append("\n\t");
+		Method[] functions = c.getDeclaredMethods();
+		for(Method f : functions){
+			if(!f.isAccessible()) sb.append("secret "); // may be private or protected
+			if(Modifier.isStatic( f.getModifiers())) sb.append("static ");
+			sb.append(f.getReturnType().getName()).append(" ");
+			sb.append(f.getName()).append("(");
+			Parameter[] params = f.getParameters();
+			if(params != null && params.length > 0){
+				for(int i = 0; i < params.length; i++){
+					Parameter p = params[i];
+					if(i > 0) sb.append(", ");
+					sb.append(p.getType().getSimpleName());
+				}
+			}
+			sb.append(")\n\t");
+		}
+		return sb.toString();
 	}
 
 }

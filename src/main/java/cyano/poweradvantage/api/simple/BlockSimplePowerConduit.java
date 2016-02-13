@@ -279,8 +279,7 @@ public abstract class BlockSimplePowerConduit extends ConduitBlock{
 			if(PowerAdvantage.enableExtendedModCompatibility){
 				if(LightWeightPowerRegistry.getInstance().isExternalPowerBlock(other.getBlock())){
 					return PowerHelper.areConnectable(w, thisBlock, face);
-				} else if(PowerAdvantage.rfConversionTable.containsKey(this.getType()) 
-						&& w.getTileEntity(otherBlock) instanceof cofh.api.energy.IEnergyReceiver){
+				} else if( PowerAdvantage.getInstance().canConnectToTileEntity(w.getTileEntity(otherBlock),getType(),face.getOpposite())){
 					return true;
 				}
 			}

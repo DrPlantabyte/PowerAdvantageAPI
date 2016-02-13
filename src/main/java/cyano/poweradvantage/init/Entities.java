@@ -2,6 +2,7 @@ package cyano.poweradvantage.init;
 
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import cyano.poweradvantage.PowerAdvantage;
+import cyano.poweradvantage.api.modsupport.rf.TileEntityRFSteamConverter;
 import cyano.poweradvantage.machines.conveyors.*;
 import cyano.poweradvantage.machines.creative.InfiniteEnergyTileEntity;
 import cyano.poweradvantage.machines.fluidmachines.*;
@@ -31,7 +32,6 @@ public abstract class Entities {
 		GameRegistry.registerTileEntity(TileEntityOverflowFilter.class, PowerAdvantage.MODID+"."+"item_filter_overflow");
 		
 		GameRegistry.registerTileEntity(InfiniteEnergyTileEntity.class, PowerAdvantage.MODID+"."+"infinite_energy_source");
-		
 		
 		initDone = true;
 	}

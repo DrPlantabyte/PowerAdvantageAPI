@@ -7,6 +7,7 @@ import cyano.poweradvantage.RecipeMode;
 import cyano.poweradvantage.registry.still.recipe.DistillationRecipeRegistry;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
@@ -57,9 +58,6 @@ public abstract class Recipes {
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Blocks.still,1),"bpb"," f ",'b',net.minecraft.init.Items.bucket,'p',"pipe",'f',net.minecraft.init.Blocks.furnace));
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Blocks.fluid_switch,1)," l ","pfp",'l',net.minecraft.init.Blocks.lever,'p',"pipe",'f',"frameSteel"));
 		
-
-		// fluid recipes
-		DistillationRecipeRegistry.addDistillationRecipe(new FluidStack(Fluids.crude_oil,2), new FluidStack(Fluids.refined_oil,1));
 		
 		// recipe modes
 		if(PowerAdvantage.recipeMode == RecipeMode.NORMAL){
@@ -98,6 +96,26 @@ public abstract class Recipes {
 		
 		
 		initDone = true;
+	}
+	
+	public static void initDistillationRecipes(String[] distillRecipes) {
+		for(String recipe : distillRecipes){
+			String r = recipe.trim();
+			if(r.isEmpty()) continue;
+			try{
+				int numIn, numOut;
+				String fluidIn, fluidOut;
+				String inputStr = r.substring(0,r.indexOf("->")).trim();
+				numIn = Integer.parseInt(inputStr.substring(0, inputStr.indexOf('*')).trim());
+				fluidIn = inputStr.substring(inputStr.indexOf('*')+1).trim();
+				String outputStr = r.substring(inputStr.length()+"->".length()).trim();
+				numOut = Integer.parseInt(outputStr.substring(0, outputStr.indexOf('*')).trim());
+				fluidOut = outputStr.substring(outputStr.indexOf('*')+1).trim();
+				DistillationRecipeRegistry.addDistillationRecipe(fluidIn, numIn, fluidOut, numOut);
+			}catch (Exception ex){
+				FMLLog.severe("%s: Failed to add fluid distillation recipe \"%s\". %s", PowerAdvantage.MODID, r, ex);
+			}
+		}
 	}
 	
 }

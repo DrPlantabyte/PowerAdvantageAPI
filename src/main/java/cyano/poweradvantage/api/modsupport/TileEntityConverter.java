@@ -1,10 +1,13 @@
 package cyano.poweradvantage.api.modsupport;
 
+import java.util.Arrays;
+
 import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.api.PowerRequest;
 import cyano.poweradvantage.api.simple.TileEntitySimplePowerSource;
 import net.minecraft.item.ItemStack;
-import scala.actors.threadpool.Arrays;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.fml.common.FMLLog;
 
 /**
  * This class is a superclass used by machines that convert between other types of power. The way it 
@@ -33,40 +36,47 @@ public abstract class TileEntityConverter extends TileEntitySimplePowerSource{
 	final int[] dataArrayOld = new int[dataArray.length];
 	@Override
 	public void powerUpdate(){
+		super.powerUpdate();
+		FMLLog.info("%s: PA energy is %s/%s, other energy is %s/%s",getClass().getSimpleName(),getEnergy(),getEnergyCapacity(),getOtherEnergy(),getOtherEnergyCapacity());// TODO: remove
 		if(this.getEnergy() > halfFull){
+			FMLLog.info("%s: more than half-full",getClass().getSimpleName());// TODO: remove
 			// convert to other mod energy
-			if(getOtherEnergy().doubleValue() < getOtherEnergyCapacity().doubleValue()){
+			if(getOtherEnergy() < getOtherEnergyCapacity()){
+				FMLLog.info("%s: adding energy to other",getClass().getSimpleName());// TODO: remove
 				this.subtractEnergy(
 						addEnergyToOther(this.getEnergy() - halfFull, getType()), getType());
 			}
 		} else if(this.getEnergy() < halfFull){
+			FMLLog.info("%s: less than half-full",getClass().getSimpleName());// TODO: remove
 			// convert from other mod energy
-			if(getOtherEnergy().doubleValue() > 0){
+			if(getOtherEnergy() > 0){
+				FMLLog.info("%s: getting energy from other",getClass().getSimpleName());// TODO: remove
 				this.addEnergy(
-						subtractEnergyFromOther(halfFull - getEnergy(),getType()), getType());
+						-1 * subtractEnergyFromOther(halfFull - getEnergy(),getType()), getType());
 			}
 		}
+		FMLLog.info("%s: PA energy is now %s/%s, other energy is now %s/%s",getClass().getSimpleName(),getEnergy(),getEnergyCapacity(),getOtherEnergy(),getOtherEnergyCapacity());// TODO: remove
 		if(!Arrays.equals(dataArray, dataArrayOld)){
 			this.sync();
 		}
-		System.arraycopy(dataArrayOld, 0, dataArrayOld, 0, dataArrayOld.length);
+		System.arraycopy(dataArray, 0, dataArrayOld, 0, dataArrayOld.length);
 	}
 
 	/**
 	 * Gets the amount of energy in the non-power-advantage energy buffer 
 	 * @return Energy in non-power-advantage energy buffer
 	 */
-	public abstract Number getOtherEnergy();
+	public abstract double getOtherEnergy();
 	/**
 	 * Gets the energy capacity of the non-power-advantage energy buffer 
 	 * @return Energy capacity
 	 */
-	public abstract Number getOtherEnergyCapacity();
+	public abstract double getOtherEnergyCapacity();
 	/**
 	 * Sets the amount of energy in the non-power-advantage energy buffer 
 	 * @param Energy in non-power-advantage energy buffer
 	 */
-	public abstract void setOtherEnergy(Number value);
+	public abstract void setOtherEnergy(double value);
 	/**
 	 * Determines whether the given Power Advantage energy type can be converted
 	 * @param type Power Advantage energy type
@@ -99,14 +109,14 @@ public abstract class TileEntityConverter extends TileEntitySimplePowerSource{
 	 * @param type Type of Power Advantage energy
 	 * @return Amount of Power Advantage energy equivalent to the input energy.
 	 */
-	public abstract float convertOtherToEnergy(Number amountOfOther, ConduitType type);
+	public abstract float convertOtherToEnergy(double amountOfOther, ConduitType type);
 	/**
 	 * Performs an energy conversion between Power Advantage energy and the other energy type.
 	 * @param amountOfEnergy Amount of Power Advantage energy to convert
 	 * @param type Type of Power Advantage energy
 	 * @return Amount of non-power-advantage energy equivalent to the input energy.
 	 */
-	public abstract Number convertEnergyToOther(float amountOfEnergy, ConduitType type);
+	public abstract double convertEnergyToOther(float amountOfEnergy, ConduitType type);
 	
 	
 	private final ItemStack[] inv = new ItemStack[0];
@@ -124,7 +134,7 @@ public abstract class TileEntityConverter extends TileEntitySimplePowerSource{
 	@Override
 	public void prepareDataFieldsForSync() {
 		dataArray[INDEX_ENERGY] = Float.floatToRawIntBits(getEnergy());
-		long otherBits = Double.doubleToRawLongBits(getOtherEnergy().doubleValue());
+		long otherBits = Double.doubleToRawLongBits(getOtherEnergy());
 		dataArray[INDEX_OTHER_ENERGY_LOWER] = (int)((otherBits      ) & 0xFFFFFFFF);
 		dataArray[INDEX_OTHER_ENERGY_UPPER] = (int)((otherBits >> 32) & 0xFFFFFFFF);
 	}
@@ -152,5 +162,18 @@ public abstract class TileEntityConverter extends TileEntitySimplePowerSource{
 	@Override
 	public byte getMinimumSinkPriority(){
 		return PowerRequest.BACKUP_PRIORITY;
+	}
+	
+	@Override
+	public void readFromNBT(final NBTTagCompound tagRoot) {
+		super.readFromNBT(tagRoot);
+		if(tagRoot.hasKey("Other")){
+			this.setOtherEnergy(tagRoot.getDouble("Other"));
+		}
+	}
+	@Override
+	public void writeToNBT(final NBTTagCompound tagRoot) {
+		super.writeToNBT(tagRoot);
+		tagRoot.setDouble("Other", this.getOtherEnergy());
 	}
 }

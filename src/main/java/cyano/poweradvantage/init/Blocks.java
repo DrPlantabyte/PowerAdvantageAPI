@@ -8,6 +8,7 @@ import cyano.poweradvantage.PowerAdvantage;
 import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.api.GUIBlock;
 import cyano.poweradvantage.api.fluid.InteractiveFluidBlock;
+import cyano.poweradvantage.api.modsupport.rf.BlockRFConverter;
 import cyano.poweradvantage.blocks.BlockFrame;
 import cyano.poweradvantage.blocks.BlockPowerSwitch;
 import cyano.poweradvantage.machines.conveyors.BlockConveyor;
@@ -79,25 +80,9 @@ public abstract class Blocks {
 
 	public static BlockFluidBase crude_oil_block;
 	public static BlockFluidBase refined_oil_block;
-	/* Hope is not lost yet for fluids:
-[20:18:57] [Client thread/ERROR] [FML/]: Model definition for location poweradvantage:crude_oil#level=14 not found
-[20:18:57] [Client thread/ERROR] [FML/]: Model definition for location poweradvantage:crude_oil#level=15 not found
-[20:18:57] [Client thread/ERROR] [FML/]: Model definition for location poweradvantage:crude_oil#level=10 not found
-[20:18:57] [Client thread/ERROR] [FML/]: Model definition for location poweradvantage:crude_oil#level=11 not found
-[20:18:57] [Client thread/ERROR] [FML/]: Model definition for location poweradvantage:crude_oil#level=12 not found
-[20:18:57] [Client thread/ERROR] [FML/]: Model definition for location poweradvantage:crude_oil#level=13 not found
-[20:18:57] [Client thread/ERROR] [FML/]: Model definition for location poweradvantage:crude_oil#inventory not found
-[20:18:57] [Client thread/ERROR] [FML/]: Model definition for location poweradvantage:crude_oil#level=9 not found
-[20:18:57] [Client thread/ERROR] [FML/]: Model definition for location poweradvantage:crude_oil#level=8 not found
-[20:18:57] [Client thread/ERROR] [FML/]: Model definition for location poweradvantage:crude_oil#level=7 not found
-[20:18:57] [Client thread/ERROR] [FML/]: Model definition for location poweradvantage:crude_oil#level=6 not found
-[20:18:57] [Client thread/ERROR] [FML/]: Model definition for location poweradvantage:crude_oil#level=5 not found
-[20:18:57] [Client thread/ERROR] [FML/]: Model definition for location poweradvantage:crude_oil#level=4 not found
-[20:18:57] [Client thread/ERROR] [FML/]: Model definition for location poweradvantage:crude_oil#level=3 not found
-[20:18:57] [Client thread/ERROR] [FML/]: Model definition for location poweradvantage:crude_oil#level=2 not found
-[20:18:57] [Client thread/ERROR] [FML/]: Model definition for location poweradvantage:crude_oil#level=1 not found
-[20:18:57] [Client thread/ERROR] [FML/]: Model definition for location poweradvantage:crude_oil#level=0 not found 
-	 */
+	
+	
+
 	
 	private static boolean initDone = false;
 	public static void init(){
@@ -146,6 +131,7 @@ public abstract class Blocks {
 		crude_oil_block = (BlockFluidBase)addBlock(new InteractiveFluidBlock(Fluids.crude_oil,true,(World w, EntityLivingBase e)->{
 			e.addPotionEffect(new PotionEffect(Potion.moveSlowdown.id,200,2));
 		}),"crude_oil");
+		
 		
 		initDone = true;
 	}

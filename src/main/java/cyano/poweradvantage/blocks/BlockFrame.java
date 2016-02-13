@@ -35,11 +35,11 @@ public class BlockFrame extends Block {
 	}
 	
 
-    
-    @Override
-    public boolean isOpaqueCube() {
-        return false;
-    }
-    
+
+	@Override
+	public boolean isOpaqueCube() {
+		return false;
+	}
+
 
 }
