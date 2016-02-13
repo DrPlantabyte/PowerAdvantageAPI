@@ -162,10 +162,12 @@ public class ConduitNetworkManager {
 					addBlockToNetwork(coord, n);
 					recursiveScan(w,n,type);
 				} else {
-					net.minecraft.tileentity.TileEntity te = w.getTileEntity(n.pos);
-					if(te instanceof cofh.api.energy.IEnergyReceiver){
-						addBlockToNetwork(coord, n);
-						recursiveScan(w,n,type);
+					if(PowerAdvantage.detectedRF){
+						net.minecraft.tileentity.TileEntity te = w.getTileEntity(n.pos);
+						if (te instanceof cofh.api.energy.IEnergyReceiver){
+							addBlockToNetwork(coord, n);
+							recursiveScan(w,n,type);
+						}
 					}
 				}
 			}

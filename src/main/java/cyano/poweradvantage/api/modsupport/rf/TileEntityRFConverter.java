@@ -22,6 +22,7 @@ public class TileEntityRFConverter extends TileEntityConverter implements cofh.a
 
 	@Override
 	public void tickUpdate(boolean isServerWorld) {
+		// TODO: make the conversion blocks work when extended compatibility is disabled
 		if(isServerWorld){
 			World w = getWorld();
 			int sub = ((int)(w.getTotalWorldTime() & 0x0FFFFFFF) % 11);

@@ -47,3 +47,7 @@ tile.poweradvantage.refined_oil.name=精製油
 item.poweradvantage.bucket_refined_oil.name=精製油のバケツ
 tile.poweradvantage.fluid_switch.name=バルブ
 
+
+tile.poweradvantage.converter_rf_steam.name=蒸気-RFトランス
+tile.poweradvantage.converter_rf_electricity.name=電気-RFトランス
+tile.poweradvantage.converter_rf_quantum.name=量子-RFトランス

@@ -45,3 +45,7 @@ tile.poweradvantage.still.name=Distillation Furnace
 tile.poweradvantage.refined_oil.name=Refined Oil
 item.poweradvantage.bucket_refined_oil.name=Bucket of Refined Oil
 tile.poweradvantage.fluid_switch.name=Fluid Switch Valve
+
+tile.poweradvantage.converter_rf_steam.name=Steam-RF Transformer
+tile.poweradvantage.converter_rf_electricity.name=Electricity-RF Transformer
+tile.poweradvantage.converter_rf_quantum.name=Quantum-RF Transformer

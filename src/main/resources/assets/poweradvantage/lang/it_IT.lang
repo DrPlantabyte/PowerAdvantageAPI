@@ -46,3 +46,7 @@ tile.poweradvantage.refined_oil.name=Olio Raffinato
 item.poweradvantage.bucket_refined_oil.name=Secchio di Olio Raffinato
 tile.poweradvantage.fluid_switch.name=Valvola
 
+
+tile.poweradvantage.converter_rf_steam.name=Vapore-RF Trasformatore
+tile.poweradvantage.converter_rf_electricity.name=Elettricità-RF Trasformatore
+tile.poweradvantage.converter_rf_quantum.name=Quantistico-RF Trasformatore

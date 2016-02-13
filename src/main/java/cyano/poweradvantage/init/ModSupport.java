@@ -12,12 +12,14 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.oredict.ShapedOreRecipe;
 
 public abstract class ModSupport {
 	
@@ -44,6 +46,16 @@ public abstract class ModSupport {
 			GameRegistry.registerTileEntity(TileEntityRFSteamConverter.class, PowerAdvantage.MODID+"."+"rf_steam_converter_tileentity");
 			GameRegistry.registerTileEntity(TileEntityRFElectricityConverter.class, PowerAdvantage.MODID+"."+"rf_electricity_converter_tileentity");
 			GameRegistry.registerTileEntity(TileEntityRFQuantumConverter.class, PowerAdvantage.MODID+"."+"rf_quantum_converter_tileentity");
+
+			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(converter_rf_steam,1),
+					"xyz",
+					'x',"governor",'y',"frameSteel",'z',"blockRedstone"));
+			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(converter_rf_electricity,1),
+					"xyz",
+					'x',"PSU",'y',"frameSteel",'z',"blockRedstone"));
+			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(converter_rf_quantum,1),
+					"xyz",
+					'x',net.minecraft.init.Items.ender_pearl,'y',"frameSteel",'z',"blockRedstone"));
 		}
 		initDone = true;
 	}

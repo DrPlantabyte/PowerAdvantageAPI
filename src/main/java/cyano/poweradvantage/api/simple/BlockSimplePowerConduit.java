@@ -16,6 +16,7 @@ import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
@@ -279,13 +280,36 @@ public abstract class BlockSimplePowerConduit extends ConduitBlock{
 			if(PowerAdvantage.enableExtendedModCompatibility){
 				if(LightWeightPowerRegistry.getInstance().isExternalPowerBlock(other.getBlock())){
 					return PowerHelper.areConnectable(w, thisBlock, face);
-				} else if( PowerAdvantage.getInstance().canConnectToTileEntity(w.getTileEntity(otherBlock),getType(),face.getOpposite())){
+				} else if( canConnectToTileEntity(w.getTileEntity(otherBlock),getType(),face.getOpposite())){
 					return true;
 				}
 			}
 			return false;
 		}
 	}
+	
+
+	/**
+	 * Used to check a TileEntity instance to see if it can accept/give energy from/to a power 
+	 * source. This method is not intended for Power Advantage machines.
+	 * @param tileEntity The tile entity to test
+	 * @param powerType The type of power
+	 * @param side
+	 * @return
+	 */
+	protected boolean canConnectToTileEntity(TileEntity tileEntity, ConduitType powerType, EnumFacing side) {
+		if(tileEntity instanceof ITypedConduit) {
+			return ((ITypedConduit)tileEntity).canAcceptType(tileEntity.getWorld().getBlockState(tileEntity.getPos()), powerType, side);
+		}
+		if(PowerAdvantage.enableExtendedModCompatibility){
+			if(PowerAdvantage.detectedRF){
+				return tileEntity instanceof cofh.api.energy.IEnergyReceiver && PowerAdvantage.rfConversionTable.containsKey(powerType);
+			}
+		}
+		return false;
+	}
+	
+
 	
 	/**
 	 * Override of default block behavior

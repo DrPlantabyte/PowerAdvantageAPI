@@ -46,3 +46,7 @@ tile.poweradvantage.still.name=Brennerei
 tile.poweradvantage.refined_oil.name=Raffiniertes Öl
 item.poweradvantage.bucket_refined_oil.name=Eimer für Raffiniertes Öl
 tile.poweradvantage.fluid_switch.name=Ventil
+
+tile.poweradvantage.converter_rf_steam.name=Dampf-RF Leistungstransformator
+tile.poweradvantage.converter_rf_electricity.name=Elektrizität-RF Leistungstransformator
+tile.poweradvantage.converter_rf_quantum.name=Quant-RF Leistungstransformator

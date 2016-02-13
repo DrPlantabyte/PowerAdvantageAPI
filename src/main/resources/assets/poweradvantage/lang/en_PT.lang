@@ -44,3 +44,7 @@ tile.poweradvantage.still.name='Stillery
 tile.poweradvantage.refined_oil.name=Lamp Oil
 item.poweradvantage.bucket_refined_oil.name=Bucket o' Lamp Oil
 tile.poweradvantage.fluid_switch.name=Big Red Valve
+
+tile.poweradvantage.converter_rf_steam.name=Steam-RF Transformer
+tile.poweradvantage.converter_rf_electricity.name=Electricity-RF Transformer
+tile.poweradvantage.converter_rf_quantum.name=Quantum-RF Transformer

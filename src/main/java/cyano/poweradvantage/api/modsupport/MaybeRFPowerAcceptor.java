@@ -4,6 +4,7 @@ import java.util.Map;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import cyano.poweradvantage.PowerAdvantage;
 import cyano.poweradvantage.api.ConduitType;
 
 /**
@@ -26,12 +27,14 @@ public class MaybeRFPowerAcceptor implements ILightWeightPowerAcceptor{
 
 	@Override
 	public float getEnergyDemand(TileEntity te, ConduitType powerType) {
-		if(te instanceof cofh.api.energy.IEnergyReceiver){
-			cofh.api.energy.IEnergyReceiver r = (cofh.api.energy.IEnergyReceiver)te;
-			for(EnumFacing dir : EnumFacing.values()){
-				if(r.canConnectEnergy(dir)){
-					float rfDeficit = r.getMaxEnergyStored(dir) - r.getEnergyStored(dir);
-					return rfDeficit / conversionTable.get(powerType).floatValue();
+		if(PowerAdvantage.detectedRF){
+			if(te instanceof cofh.api.energy.IEnergyReceiver){
+				cofh.api.energy.IEnergyReceiver r = (cofh.api.energy.IEnergyReceiver)te;
+				for(EnumFacing dir : EnumFacing.values()){
+					if(r.canConnectEnergy(dir)){
+						float rfDeficit = r.getMaxEnergyStored(dir) - r.getEnergyStored(dir);
+						return rfDeficit / conversionTable.get(powerType).floatValue();
+					}
 				}
 			}
 		}

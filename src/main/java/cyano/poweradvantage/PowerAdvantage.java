@@ -7,12 +7,17 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.api.ITypedConduit;
+import cyano.poweradvantage.api.modsupport.ILightWeightPowerAcceptor;
+import cyano.poweradvantage.api.modsupport.LightWeightPowerRegistry;
 import cyano.poweradvantage.events.BucketHandler;
 import cyano.poweradvantage.init.WorldGen;
 import cyano.poweradvantage.registry.FuelRegistry;
@@ -224,12 +229,8 @@ public class PowerAdvantage
 	/** The version of this mod, in the format major.minor.update */
 	public static final String VERSION = "1.4.4";
 	
-	// TODO: add oil compatibility with BuildCraft
 	
 	// TODO: add condenser (makes water from steam)
-	
-	// TODO: add electric distillation machine
-	// TODO: add plastic refinery (makes plastic from oil)
 	// TODO: add ice machine (uses water and electricity to make blocks of ice)
 
 	/** singleton instance */
@@ -250,7 +251,7 @@ public class PowerAdvantage
 	public static final Map<ConduitType, Float> rfConversionTable = new HashMap<>();
 	
 
-	public boolean detectedRF = false;
+	public static boolean detectedRF = false;
 
 	
 	private String[] distillRecipes = new String[0]; // used to pass config data to the init() method
@@ -321,29 +322,29 @@ public class PowerAdvantage
 			FMLLog.info("Enabled external power mod interactions. If the server lags when using large power networks, try disabling the 'extended_compatibility' option");
 		}
 		
-		if(enableExtendedModCompatibility){
-			String[] conversions = config.getString("RF_conversions", "Other Power Mods", 
-					"steam=1.5;electricity=0.05;quantum=1.5", 
-					"List of conversions from Power Advantage power types to RF, in units of RF per energy unit")
-					.split(";");
-			for(String c : conversions){
-				if(!c.contains("=")) continue;
-				String name = c.substring(0, c.indexOf('=')).trim().toLowerCase(Locale.US);
-				String val = c.substring(c.indexOf('=')+1).trim();
-				try{
-					Number d;
-					if(val.contains(".")){
-						d = new Double(Double.parseDouble(val));
-					} else {
-						d = Long.parseLong(val);
-					}
-					FMLLog.info("Adding conversion factor of "+d+" units of RF per unit of "+name);
-					rfConversionTable.put(new ConduitType(name), d.floatValue());
-				}catch(NumberFormatException ex){
-					FMLLog.severe("Cannot parse '"+val+"' as number");
+		
+		String[] conversions = config.getString("RF_conversions", "Other Power Mods", 
+				"steam=8;electricity=0.25;quantum=8", 
+				"List of conversions from Power Advantage power types to RF, in units of RF per energy unit")
+				.split(";");
+		for(String c : conversions){
+			if(!c.contains("=")) continue;
+			String name = c.substring(0, c.indexOf('=')).trim().toLowerCase(Locale.US);
+			String val = c.substring(c.indexOf('=')+1).trim();
+			try{
+				Number d;
+				if(val.contains(".")){
+					d = new Double(Double.parseDouble(val));
+				} else {
+					d = Long.parseLong(val);
 				}
+				FMLLog.info("Adding conversion factor of "+d+" units of RF per unit of "+name);
+				rfConversionTable.put(new ConduitType(name), d.floatValue());
+			}catch(NumberFormatException ex){
+				FMLLog.severe("Cannot parse '"+val+"' as number");
 			}
 		}
+		
 
 		
 		Path orespawnFolder = Paths.get(event.getSuggestedConfigurationFile().toPath().getParent().toString(),"orespawn");
@@ -450,12 +451,11 @@ public class PowerAdvantage
 		DistillationRecipeRegistry.clearRecipeCache();
 		
 		// Handle inter-mod action
+		Map<String,Set<Block>> modBlocks = sortBlocksByModID();
 		
 		// hacking
 		//printHackingInfo(); // XXX: hacker stuff
 	}
-
-
 
 	@SideOnly(Side.CLIENT)
 	private void clientPostInit(FMLPostInitializationEvent event){
@@ -465,6 +465,7 @@ public class PowerAdvantage
 	private void serverPostInit(FMLPostInitializationEvent event){
 		// client-only code
 	}
+	
 	/**
 	 * Gets a singleton instance of this mod. Is null until the completion of the 
 	 * pre-initialization step
@@ -474,26 +475,15 @@ public class PowerAdvantage
 		return instance;
 	}
 
-	/**
-	 * Used to check a TileEntity instance to see if it can accept/give energy from/to a power 
-	 * source. This method is not intended for Power Advantage machines.
-	 * @param tileEntity The tile entity to test
-	 * @param powerType The type of power
-	 * @param side
-	 * @return
-	 */
-	public boolean canConnectToTileEntity(TileEntity tileEntity, ConduitType powerType, EnumFacing side) {
-		if(tileEntity instanceof ITypedConduit) {
-			return ((ITypedConduit)tileEntity).canAcceptType(tileEntity.getWorld().getBlockState(tileEntity.getPos()), powerType, side);
-		}
-		if(PowerAdvantage.enableExtendedModCompatibility){
-			if(this.detectedRF){
-				return tileEntity instanceof cofh.api.energy.IEnergyReceiver && rfConversionTable.containsKey(powerType);
-			}
-		}
-		return false;
+	private Map<String, Set<Block>> sortBlocksByModID() {
+		Map<String, Set<Block>> modMap = new HashMap<>();
+		GameData.getBlockRegistry().forEach((Block b)->{
+			final String modid = GameData.getBlockRegistry().getNameForObject(b).getResourceDomain();
+			modMap.computeIfAbsent(modid, (String id)->new HashSet<Block>());
+			modMap.get(modid).add(b);
+		});
+		return Collections.unmodifiableMap(modMap);
 	}
-	
 
 	private void printHackingInfo() {
 		// Object dump all blocks and class dump all tile entities
@@ -504,26 +494,18 @@ public class PowerAdvantage
 			FMLLog.info("Item: %s %s",i.getUnlocalizedName(),objectDump(i));
 		});
 		FMLLog.info("class TileEntity: %s",classDump(TileEntity.class));
-		Field[] vars = TileEntity.class.getDeclaredFields();
-		for(Field f : vars){
 			try{
+				Field f = TileEntity.class.getDeclaredField("field_145853_j");
 				f.setAccessible(true);
-				if(java.util.Map.class.isAssignableFrom(f.getType())){
-					// is either class->name map or name->class map
-					Map m = (java.util.Map)f.get(null);
-					if(m.entrySet().toArray()[0] instanceof String){
-						// name->class map
+				Map m = (Map)f.get(null);
 						// do TileEntity class dump
-						for(Object o : m.values()){
+						for(Object o : m.keySet()){
 							FMLLog.info("TileEntity: %s",classDump((Class)o));
 						}
-						break;
-					}
-				}
 			}catch(Exception ex){
 				FMLLog.severe("%s: Exception\n%s", MODID, ex);
 			}
-		}
+		
 	}
 	
 	private static String objectDump(Object o){
@@ -543,12 +525,15 @@ public class PowerAdvantage
 		sb.append("\t").append("Variables").append("\n\t");
 		Field[] variables = c.getDeclaredFields();
 		for(Field f : variables){
-			if(!f.isAccessible()) sb.append("secret "); // may be private or protected
+			if(Modifier.isPrivate(f.getModifiers())) sb.append("private ");
+			if(Modifier.isProtected(f.getModifiers())) sb.append("protected ");
+			if(Modifier.isPublic(f.getModifiers())) sb.append("public ");
 			if(Modifier.isStatic( f.getModifiers())) sb.append("static ");
 			if(Modifier.isFinal( f.getModifiers())) sb.append("final ");
 			sb.append(f.getType().getName()).append(" ");
 			sb.append(f.getName());
 			sb.append(" = ");
+			f.setAccessible(true);
 			if(Modifier.isStatic( f.getModifiers())){
 				try {
 					sb.append(f.get(null));
@@ -568,7 +553,9 @@ public class PowerAdvantage
 		sb.append("\t").append("Methods").append("\n\t");
 		Method[] functions = c.getDeclaredMethods();
 		for(Method f : functions){
-			if(!f.isAccessible()) sb.append("secret "); // may be private or protected
+			if(Modifier.isPrivate(f.getModifiers())) sb.append("private ");
+			if(Modifier.isProtected(f.getModifiers())) sb.append("protected ");
+			if(Modifier.isPublic(f.getModifiers())) sb.append("public ");
 			if(Modifier.isStatic( f.getModifiers())) sb.append("static ");
 			sb.append(f.getReturnType().getName()).append(" ");
 			sb.append(f.getName()).append("(");
@@ -600,7 +587,9 @@ public class PowerAdvantage
 		sb.append("\t").append("Variables").append("\n\t");
 		Field[] variables = c.getDeclaredFields();
 		for(Field f : variables){
-			if(!f.isAccessible()) sb.append("secret "); // may be private or protected
+			if(Modifier.isPrivate(f.getModifiers())) sb.append("private ");
+			if(Modifier.isProtected(f.getModifiers())) sb.append("protected ");
+			if(Modifier.isPublic(f.getModifiers())) sb.append("public ");
 			if(Modifier.isStatic( f.getModifiers())) sb.append("static ");
 			if(Modifier.isFinal( f.getModifiers())) sb.append("final ");
 			sb.append(f.getType().getName()).append(" ");
@@ -610,7 +599,9 @@ public class PowerAdvantage
 		sb.append("\t").append("Methods").append("\n\t");
 		Method[] functions = c.getDeclaredMethods();
 		for(Method f : functions){
-			if(!f.isAccessible()) sb.append("secret "); // may be private or protected
+			if(Modifier.isPrivate(f.getModifiers())) sb.append("private ");
+			if(Modifier.isProtected(f.getModifiers())) sb.append("protected ");
+			if(Modifier.isPublic(f.getModifiers())) sb.append("public ");
 			if(Modifier.isStatic( f.getModifiers())) sb.append("static ");
 			sb.append(f.getReturnType().getName()).append(" ");
 			sb.append(f.getName()).append("(");
