@@ -37,7 +37,7 @@ group= "cyano.poweradvantage" // http://maven.apache.org/guides/mini/guide-namin
 archivesBaseName = "PowerAdvantage"
 
 minecraft {
-    version = "1.8.9-11.15.0.1705"
+    version = "1.8.9-11.15.1.1726"
     runDir = "run"
 
     mappings = "stable_20"
