@@ -37,17 +37,18 @@ public abstract class TileEntityConverter extends TileEntitySimplePowerSource{
 	@Override
 	public void powerUpdate(){
 		super.powerUpdate();
-		if(this.getEnergy() > halfFull){
+		float delta = getEnergy() - halfFull;
+		if(delta > 0){
 			// convert to other mod energy
 			if(getOtherEnergy() < getOtherEnergyCapacity()){
 				this.subtractEnergy(
-						addEnergyToOther(this.getEnergy() - halfFull, getType()), getType());
+						addEnergyToOther(delta, getType()), getType());
 			}
-		} else if(this.getEnergy() < halfFull){
+		} else if(delta < 0){
 			// convert from other mod energy
 			if(getOtherEnergy() > 0){
 				this.addEnergy(
-						-1 * subtractEnergyFromOther(halfFull - getEnergy(),getType()), getType());
+						-1 * subtractEnergyFromOther(-1 * delta,getType()), getType());
 			}
 		}
 		if(!Arrays.equals(dataArray, dataArrayOld)){
@@ -68,7 +69,7 @@ public abstract class TileEntityConverter extends TileEntitySimplePowerSource{
 	public abstract double getOtherEnergyCapacity();
 	/**
 	 * Sets the amount of energy in the non-power-advantage energy buffer 
-	 * @param Energy in non-power-advantage energy buffer
+	 * @param value Energy in non-power-advantage energy buffer
 	 */
 	public abstract void setOtherEnergy(double value);
 	/**
@@ -148,14 +149,14 @@ public abstract class TileEntityConverter extends TileEntitySimplePowerSource{
 	@Override
 	public PowerRequest getPowerRequest(ConduitType offer){
 		if(ConduitType.areSameType(offer, getType())){
-			return new PowerRequest(PowerRequest.LAST_PRIORITY,this.getEnergyCapacity() - this.getEnergy(), this);
+			return new PowerRequest(PowerRequest.LOW_PRIORITY,this.getEnergyCapacity() - this.getEnergy(), this);
 		}
 		return PowerRequest.REQUEST_NOTHING;
 	}
 	
 	@Override
 	public byte getMinimumSinkPriority(){
-		return PowerRequest.BACKUP_PRIORITY;
+		return PowerRequest.LAST_PRIORITY;
 	}
 	
 	@Override

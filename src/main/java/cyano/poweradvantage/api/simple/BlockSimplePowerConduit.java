@@ -294,8 +294,8 @@ public abstract class BlockSimplePowerConduit extends ConduitBlock{
 	 * source. This method is not intended for Power Advantage machines.
 	 * @param tileEntity The tile entity to test
 	 * @param powerType The type of power
-	 * @param side
-	 * @return
+	 * @param side The side through which we are connecting
+	 * @return true if a connection is appropriate, false otherwise
 	 */
 	protected boolean canConnectToTileEntity(TileEntity tileEntity, ConduitType powerType, EnumFacing side) {
 		if(tileEntity instanceof ITypedConduit) {

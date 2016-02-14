@@ -11,9 +11,10 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class BlockRFConverter extends cyano.poweradvantage.api.simple.BlockSimplePowerSource{
 
-	
-	public BlockRFConverter(Material blockMaterial, float hardness, ConduitType energyType) {
+	private final Class tileEntityClass;
+	public BlockRFConverter(Material blockMaterial, float hardness, ConduitType energyType, Class<? extends TileEntityRFConverter> tileEntityClass) {
 		super(blockMaterial, hardness, energyType);
+		this.tileEntityClass = tileEntityClass;
 	}
 
 	@Override
@@ -22,14 +23,11 @@ public class BlockRFConverter extends cyano.poweradvantage.api.simple.BlockSimpl
 	}
 
 	@Override
-	public PoweredEntity createNewTileEntity(World world, int metaDataValue) {
-		final ConduitType t = this.getType();
-		final String powerName = t.toString();
-		switch(powerName){
-		case "steam": return new TileEntityRFSteamConverter();
-		case "electricity": return new TileEntityRFElectricityConverter();
-		case "quantum": return new TileEntityRFQuantumConverter();
-		default: return null;
+	public TileEntityRFConverter createNewTileEntity(World world, int metaDataValue) {
+		try {
+			return (TileEntityRFConverter)tileEntityClass.newInstance();
+		} catch (InstantiationException | IllegalAccessException e) {
+			return null;
 		}
 	}
 	

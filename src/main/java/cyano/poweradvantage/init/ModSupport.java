@@ -39,9 +39,9 @@ public abstract class ModSupport {
 		
 		if(rfSupport){
 			FMLLog.info("Initializing RF interface content");
-			converter_rf_steam = addBlock(new BlockRFConverter(defaultMachineMaterial,defaultMachineHardness,new ConduitType("steam")),"converter_rf_steam");
-			converter_rf_electricity = addBlock(new BlockRFConverter(defaultMachineMaterial,defaultMachineHardness,new ConduitType("electricity")),"converter_rf_electricity");
-			converter_rf_quantum = addBlock(new BlockRFConverter(defaultMachineMaterial,defaultMachineHardness,new ConduitType("quantum")),"converter_rf_quantum");
+			converter_rf_steam = addBlock(new BlockRFConverter(defaultMachineMaterial,defaultMachineHardness,new ConduitType("steam"),TileEntityRFSteamConverter.class),"converter_rf_steam");
+			converter_rf_electricity = addBlock(new BlockRFConverter(defaultMachineMaterial,defaultMachineHardness,new ConduitType("electricity"),TileEntityRFElectricityConverter.class),"converter_rf_electricity");
+			converter_rf_quantum = addBlock(new BlockRFConverter(defaultMachineMaterial,defaultMachineHardness,new ConduitType("quantum"),TileEntityRFQuantumConverter.class),"converter_rf_quantum");
 
 			GameRegistry.registerTileEntity(TileEntityRFSteamConverter.class, PowerAdvantage.MODID+"."+"rf_steam_converter_tileentity");
 			GameRegistry.registerTileEntity(TileEntityRFElectricityConverter.class, PowerAdvantage.MODID+"."+"rf_electricity_converter_tileentity");

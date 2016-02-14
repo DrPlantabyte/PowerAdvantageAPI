@@ -227,7 +227,7 @@ public class PowerAdvantage
 	/** The display name for this mod */
 	public static final String NAME = "Power Advantage";
 	/** The version of this mod, in the format major.minor.update */
-	public static final String VERSION = "1.4.4";
+	public static final String VERSION = "1.5.0";
 	
 	
 	// TODO: add condenser (makes water from steam)
@@ -317,7 +317,9 @@ public class PowerAdvantage
 		
 		enableExtendedModCompatibility = config.getBoolean("extended_compatibility", "Other Power Mods", enableExtendedModCompatibility, 
 				"If false, then you may have less lag. If true, then some mods that are not Power \n"
-				+ "Advantage add-ons may be able to draw power from Power Advantage power generators.");
+				+ "Advantage add-ons may be able to draw power from Power Advantage power generators.\n"
+				+ "Note that power converter blocks will still work, even when this option is set to \n"
+				+ "false.");
 		if(enableExtendedModCompatibility){
 			FMLLog.info("Enabled external power mod interactions. If the server lags when using large power networks, try disabling the 'extended_compatibility' option");
 		}

@@ -22,32 +22,31 @@ public class TileEntityRFConverter extends TileEntityConverter implements cofh.a
 
 	@Override
 	public void tickUpdate(boolean isServerWorld) {
-		// TODO: make the conversion blocks work when extended compatibility is disabled
 		if(isServerWorld){
 			World w = getWorld();
 			int sub = ((int)(w.getTotalWorldTime() & 0x0FFFFFFF) % 11);
 			EnumFacing[] sides = EnumFacing.values();
-			boolean pull = rfBuffer < halfBuffer;
-			boolean push = rfBuffer > halfBuffer;
-			if(pull){
+			
+			int delta = rfBuffer - halfBuffer;
+			if(delta < 0){
 				if(sub < sides.length){
 					EnumFacing dir = sides[sub];
 					TileEntity te = w.getTileEntity(getPos().offset(dir));
 					if(te instanceof cofh.api.energy.IEnergyProvider){
 						cofh.api.energy.IEnergyProvider rfMachine = (cofh.api.energy.IEnergyProvider)te;
 						if(rfMachine.canConnectEnergy(dir.getOpposite()) && rfMachine.getEnergyStored(dir.getOpposite()) > 0){
-							this.receiveEnergy(dir, rfMachine.extractEnergy(dir.getOpposite(), halfBuffer - rfBuffer,false), false);
+							this.receiveEnergy(dir, rfMachine.extractEnergy(dir.getOpposite(), -1 * delta,false), false);
 						}
 					}
 				}
-			} else if (push){
+			} else if (delta > 0){
 				if(sub < sides.length){
 					EnumFacing dir = sides[sub];
 					TileEntity te = w.getTileEntity(getPos().offset(dir));
 					if(te instanceof cofh.api.energy.IEnergyReceiver){
 						cofh.api.energy.IEnergyReceiver rfMachine = (cofh.api.energy.IEnergyReceiver)te;
 						if(rfMachine.canConnectEnergy(dir.getOpposite()) && rfMachine.getEnergyStored(dir.getOpposite()) < rfMachine.getMaxEnergyStored(dir.getOpposite())){
-							rfMachine.receiveEnergy(dir.getOpposite(), this.extractEnergy(dir, halfBuffer - rfBuffer,false), false);
+							rfMachine.receiveEnergy(dir.getOpposite(), this.extractEnergy(dir, delta,false), false);
 						}
 					}
 				}
