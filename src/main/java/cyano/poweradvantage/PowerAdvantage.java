@@ -227,7 +227,7 @@ public class PowerAdvantage
 	/** The display name for this mod */
 	public static final String NAME = "Power Advantage";
 	/** The version of this mod, in the format major.minor.update */
-	public static final String VERSION = "1.5.0";
+	public static final String VERSION = "1.5.1";
 	
 	
 	// TODO: add condenser (makes water from steam)

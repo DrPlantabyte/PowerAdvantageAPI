@@ -35,10 +35,12 @@ public class ItemGroups {
 		StringBuilder sb = new StringBuilder();
 		Item item = i.getItem();
 		sb.append(GameData.getItemRegistry().getNameForObject(item).getResourceDomain());
-		if(item instanceof ITileEntityProvider){
-			sb.append("A");
-		} else if(item instanceof ItemBlock){
-			sb.append("B");
+		if(item instanceof ItemBlock){
+			if(((ItemBlock)item).getBlock() instanceof ITileEntityProvider){
+				sb.append("A");
+			} else {
+				sb.append("B");
+			}
 		} else {
 			sb.append("I");
 		}
