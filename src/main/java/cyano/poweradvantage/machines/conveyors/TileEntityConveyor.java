@@ -180,17 +180,25 @@ public class TileEntityConveyor extends TileEntity implements ITickable, ISidedI
 			if(item == null) continue;
 			if(src.canExtractItem(srcValidSlots[i], item, srcFace)){
 					int[] destValidSlots = dest.getSlotsForFace(destFace);
+					// First look for stackable items
+					for(int j = 0; j < destValidSlots.length; j++){
+						if(dest.canInsertItem(destValidSlots[j], item, destFace)){
+							ItemStack otherItem = dest.getStackInSlot(destValidSlots[j]);
+							if( ItemStack.areItemsEqual(item, otherItem)
+									&& otherItem.stackSize < dest.getInventoryStackLimit()
+									&& otherItem.stackSize < otherItem.getItem().getItemStackLimit(otherItem)){
+								src.decrStackSize(srcValidSlots[i], 1);
+								otherItem.stackSize++;
+								return true;
+							}
+						}
+					}
+					// then look for empty slots
 					for(int j = 0; j < destValidSlots.length; j++){
 						if(dest.canInsertItem(destValidSlots[j], item, destFace)){
 							ItemStack otherItem = dest.getStackInSlot(destValidSlots[j]);
 							if(otherItem == null){
 								dest.setInventorySlotContents(destValidSlots[j], src.decrStackSize(srcValidSlots[i], 1));
-								return true;
-							}else if( ItemStack.areItemsEqual(item, otherItem)
-									&& otherItem.stackSize < dest.getInventoryStackLimit()
-									&& otherItem.stackSize < otherItem.getItem().getItemStackLimit(otherItem)){
-								src.decrStackSize(srcValidSlots[i], 1);
-								otherItem.stackSize++;
 								return true;
 							}
 						}
