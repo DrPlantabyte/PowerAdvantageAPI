@@ -6,6 +6,7 @@ import cyano.poweradvantage.api.modsupport.rf.TileEntityRFSteamConverter;
 import cyano.poweradvantage.machines.conveyors.*;
 import cyano.poweradvantage.machines.creative.InfiniteEnergyTileEntity;
 import cyano.poweradvantage.machines.fluidmachines.*;
+import cyano.poweradvantage.machines.fluidmachines.modsupport.TerminalFluidPipeTileEntity;
 
 public abstract class Entities {
 
@@ -16,6 +17,7 @@ public abstract class Entities {
 		
 		Blocks.init();
 
+		GameRegistry.registerTileEntity(TerminalFluidPipeTileEntity.class,PowerAdvantage.MODID+".tileentity."+"pipe_terminal");
 		GameRegistry.registerTileEntity(FluidDrainTileEntity.class,PowerAdvantage.MODID+".tileentity."+"fluid_drain");
 		GameRegistry.registerTileEntity(FluidDischargeTileEntity.class,PowerAdvantage.MODID+".tileentity."+"fluid_discharge");
 		GameRegistry.registerTileEntity(StorageTankTileEntity.class,PowerAdvantage.MODID+".tileentity."+"fluid_storage_tank");

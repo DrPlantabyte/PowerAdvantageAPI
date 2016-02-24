@@ -1,11 +1,16 @@
 package cyano.poweradvantage.machines.fluidmachines;
 
-import java.util.Set;
-
-import net.minecraft.block.material.Material;
-import net.minecraft.creativetab.CreativeTabs;
-import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.api.simple.BlockSimpleFluidConduit;
+import cyano.poweradvantage.init.Blocks;
+import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.world.World;
+import net.minecraftforge.fluids.IFluidHandler;
 
 public class FluidPipeBlock extends BlockSimpleFluidConduit{
 
@@ -13,6 +18,27 @@ public class FluidPipeBlock extends BlockSimpleFluidConduit{
 		super(Material.piston, 0.75f, 4f/16f);
 		super.setCreativeTab(CreativeTabs.tabDecorations);
 	}
-
 	
+
+	/**
+	 * Called when a neighboring block changes.
+	 */
+	public void onNeighborBlockChange(World w, BlockPos pos, IBlockState state, Block neighborBlock){
+		if(!w.isRemote){
+			if(numberOfAdjacentFluidHandlers(w,pos) > 0){
+				w.setBlockState(pos, Blocks.fluid_pipe_terminal.getDefaultState());
+			}
+		}
+	}
+
+	protected static int numberOfAdjacentFluidHandlers(World w, BlockPos pos){
+		int sum = 0;
+		for(EnumFacing f : EnumFacing.values()){
+			TileEntity e = w.getTileEntity(pos.offset(f));
+			if(e instanceof IFluidHandler && !(e instanceof cyano.poweradvantage.api.PoweredEntity)){
+				sum++;
+			}
+		}
+		return sum;
+	}
 }

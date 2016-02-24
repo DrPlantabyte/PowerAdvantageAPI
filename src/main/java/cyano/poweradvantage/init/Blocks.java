@@ -28,6 +28,7 @@ import cyano.poweradvantage.machines.fluidmachines.FluidPipeBlock;
 import cyano.poweradvantage.machines.fluidmachines.MetalTankBlock;
 import cyano.poweradvantage.machines.fluidmachines.StillBlock;
 import cyano.poweradvantage.machines.fluidmachines.StorageTankBlock;
+import cyano.poweradvantage.machines.fluidmachines.modsupport.TerminalFluidPipeBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -60,6 +61,7 @@ public abstract class Blocks {
 	public static GUIBlock metal_storage_tank;
 	public static GUIBlock still;
 	public static Block fluid_pipe;
+	public static Block fluid_pipe_terminal;
 	public static Block fluid_switch;
 	public static GUIBlock item_conveyor;
 	public static GUIBlock item_filter_block;
@@ -98,6 +100,9 @@ public abstract class Blocks {
 		metal_storage_tank = (GUIBlock)addBlock(new MetalTankBlock(),"fluid_metal_tank");
 		still = (GUIBlock)addBlock(new StillBlock(),"still");
 		fluid_pipe = addBlock(new FluidPipeBlock(),"fluid_pipe");
+		fluid_pipe_terminal = addBlock(new TerminalFluidPipeBlock(),"fluid_pipe_terminal");
+		fluid_pipe_terminal.setUnlocalizedName("fluid_pipe");
+		fluid_pipe_terminal.setCreativeTab(null);
 		fluid_switch = addBlock(new BlockPowerSwitch(Fluids.fluidConduit_general),"fluid_switch");
 		OreDictionary.registerOre("pipe", fluid_pipe);
 		steel_frame = addBlock(new BlockFrame(net.minecraft.block.material.Material.piston)
