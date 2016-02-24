@@ -9,7 +9,10 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.IFluidHandler;
 
 public class TerminalFluidPipeBlock extends FluidPipeBlock implements ITileEntityProvider{
 
@@ -45,6 +48,24 @@ public class TerminalFluidPipeBlock extends FluidPipeBlock implements ITileEntit
 				w.setBlockState(pos, Blocks.fluid_pipe.getDefaultState());
 			}
 		}
+	}
+	
+	/**
+	 * This method determines whether to connect to a neighboring block. 
+	 * Override this method to change block connection behavior. 
+	 * @param w World instance
+	 * @param thisBlock The block that is checking its neighbor
+	 * @param bs Block state of this block
+	 * @param face The face on the first block through which the connection would happen
+	 * @param otherBlock Coordinate of neighboring block
+	 * @return Default implementation: true if the neighboring block implements 
+	 * ITypedConductor and has the same energy type as this block. Overriding 
+	 * the canConnectTo(ConductorType) method will change the results of this 
+	 * method.
+	 */
+	@Override
+	protected boolean canConnectTo(IBlockAccess w, BlockPos thisBlock, IBlockState bs, EnumFacing face, BlockPos otherBlock){
+		return super.canConnectTo(w, thisBlock, bs, face, otherBlock) || w.getTileEntity(otherBlock) instanceof IFluidHandler;
 	}
 	
 	
