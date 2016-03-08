@@ -5,6 +5,7 @@ import java.util.List;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.FMLLog;
 import cyano.poweradvantage.api.ConduitType;
@@ -28,6 +29,12 @@ public class MetalTankTileEntity  extends TileEntitySimpleFluidSource{
 	 */
 	@Override
 	public FluidRequest getFluidRequest(Fluid offer) {
+		FluidStack filterFluid = FluidContainerRegistry.getFluidForFilledItem(filterInventory[0]);
+		if(filterFluid != null
+				&& !(FluidRegistry.getFluidName(offer).equalsIgnoreCase(FluidRegistry.getFluidName(filterFluid)))){
+			// offer blocked by filter
+			return FluidRequest.REQUEST_NOTHING;
+		}
 		if(getTank().getFluidAmount() > 0 && offer.equals(getTank().getFluid().getFluid())){
 			FluidRequest req = new FluidRequest(FluidRequest.BACKUP_PRIORITY,
 					(getTank().getCapacity() - getTank().getFluidAmount()),
@@ -67,10 +74,17 @@ public class MetalTankTileEntity  extends TileEntitySimpleFluidSource{
 		return true;
 	}
 	
-	private final ItemStack[] noninventory = new ItemStack[0];
+	private final ItemStack[] filterInventory = new ItemStack[1];
 	@Override
 	protected ItemStack[] getInventory() {
-		return noninventory;
+		return filterInventory;
+	}
+	
+	@Override
+	public boolean isItemValidForSlot(final int slot, final ItemStack item) {
+		if(this.getInventory() == null) return false;
+		return slot < this.getInventory().length && FluidContainerRegistry.isFilledContainer(item) 
+				&& FluidContainerRegistry.getFluidForFilledItem(item) != null; 
 	}
 
 	private FluidStack lastTime = null;
