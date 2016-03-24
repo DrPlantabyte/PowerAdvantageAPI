@@ -1,23 +1,6 @@
 package cyano.poweradvantage;
 
-import java.io.IOException;
-import java.lang.reflect.*;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
 import cyano.poweradvantage.api.ConduitType;
-import cyano.poweradvantage.api.ITypedConduit;
-import cyano.poweradvantage.api.modsupport.ILightWeightPowerAcceptor;
-import cyano.poweradvantage.api.modsupport.LightWeightPowerRegistry;
 import cyano.poweradvantage.events.BucketHandler;
 import cyano.poweradvantage.init.WorldGen;
 import cyano.poweradvantage.registry.FuelRegistry;
@@ -26,7 +9,6 @@ import cyano.poweradvantage.registry.still.recipe.DistillationRecipeRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.FMLLog;
@@ -40,6 +22,17 @@ import net.minecraftforge.fml.common.registry.GameData;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.Parameter;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
 
 // NOTE: other mods dependant on this one need to add the following to their @Mod annotation:
 // dependencies = "required-after:poweradvantage" 
@@ -227,7 +220,7 @@ public class PowerAdvantage
 	/** The display name for this mod */
 	public static final String NAME = "Power Advantage";
 	/** The version of this mod, in the format major.minor.update */
-	public static final String VERSION = "1.5.3";
+	public static final String VERSION = "1.5.4";
 	
 	
 	// TODO: add condenser (makes water from steam)

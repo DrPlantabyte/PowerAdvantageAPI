@@ -1,12 +1,12 @@
 package cyano.poweradvantage.gui;
 
-import java.util.List;
-
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.util.List;
 /**
  * Uses java 8 function API to lazily pass an item icon
  * @author DrCyano
@@ -54,7 +54,7 @@ public class FunctionalCreativeTab  extends CreativeTabs {
 
 	/**
 	 * only shows items which have tabToDisplayOn == this
-	 * @param itemList 
+	 * @param itemList  All the items in the tab so you can sort them
 	 */
 	@Override
 	@SideOnly(Side.CLIENT)

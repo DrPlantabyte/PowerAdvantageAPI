@@ -18,7 +18,8 @@ public class InventoryWrapper implements ISidedInventory {
 	
 	private final IInventory inventory;
 	private final int[] slots;
-	private final int[] NO_SLOTS = new int[0];
+	private static final int[] NO_SLOTS = new int[0];
+	private static final InventoryWrapper NULL_INVENTORY = new InventoryWrapper();
 	
 	/**
 	 * Constructs an ISidedInventory wrapper for the given IInventory instance
@@ -32,6 +33,104 @@ public class InventoryWrapper implements ISidedInventory {
 		for(int i = 0; i < slots.length; i++){
 			slots[i] = i;
 		}
+	}
+
+	/**
+	 * Creates an ISidedInventory instance that has no inventory
+	 */
+	protected InventoryWrapper(){
+		slots = NO_SLOTS;
+		inventory = new IInventory() {
+			@Override
+			public int getSizeInventory() {
+				return 0;
+			}
+
+			@Override
+			public ItemStack getStackInSlot(int i) {
+				return null;
+			}
+
+			@Override
+			public ItemStack decrStackSize(int i, int i1) {
+				return null;
+			}
+
+			@Override
+			public ItemStack removeStackFromSlot(int i) {
+				return null;
+			}
+
+			@Override
+			public void setInventorySlotContents(int i, ItemStack itemStack) {
+
+			}
+
+			@Override
+			public int getInventoryStackLimit() {
+				return 0;
+			}
+
+			@Override
+			public void markDirty() {
+
+			}
+
+			@Override
+			public boolean isUseableByPlayer(EntityPlayer entityPlayer) {
+				return false;
+			}
+
+			@Override
+			public void openInventory(EntityPlayer entityPlayer) {
+
+			}
+
+			@Override
+			public void closeInventory(EntityPlayer entityPlayer) {
+
+			}
+
+			@Override
+			public boolean isItemValidForSlot(int i, ItemStack itemStack) {
+				return false;
+			}
+
+			@Override
+			public int getField(int i) {
+				return 0;
+			}
+
+			@Override
+			public void setField(int i, int i1) {
+
+			}
+
+			@Override
+			public int getFieldCount() {
+				return 0;
+			}
+
+			@Override
+			public void clear() {
+
+			}
+
+			@Override
+			public String getName() {
+				return "Inventory";
+			}
+
+			@Override
+			public boolean hasCustomName() {
+				return false;
+			}
+
+			@Override
+			public IChatComponent getDisplayName() {
+				return new net.minecraft.util.ChatComponentText("Inventory");
+			}
+		};
 	}
 	/**
 	 * Gets whether this is a locked container
@@ -52,6 +151,7 @@ public class InventoryWrapper implements ISidedInventory {
 	 * @return An instance of ISidedInventory that forwards all methods to the given IInventory
 	 */
 	public static ISidedInventory wrap(IInventory inv){
+		if(inv == null) return NULL_INVENTORY;
 		if(inv instanceof ISidedInventory) return (ISidedInventory)inv;
 		return new InventoryWrapper(inv);
 	}
