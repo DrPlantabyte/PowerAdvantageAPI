@@ -1,18 +1,10 @@
 package cyano.poweradvantage.conduitnetwork;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-
 import cyano.poweradvantage.PowerAdvantage;
 import cyano.poweradvantage.api.ConduitType;
+import cyano.poweradvantage.api.IPowerMachine;
 import cyano.poweradvantage.api.ITypedConduit;
 import cyano.poweradvantage.api.PowerRequest;
-import cyano.poweradvantage.api.IPowerMachine;
 import cyano.poweradvantage.api.modsupport.ExternalPowerRequest;
 import cyano.poweradvantage.api.modsupport.LightWeightPowerRegistry;
 import cyano.poweradvantage.api.modsupport.RFPowerRequest;
@@ -20,10 +12,13 @@ import cyano.poweradvantage.math.BlockPos4D;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.FMLLog;
+
+import java.util.*;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * This is the master keeper of power networks.
@@ -92,7 +87,7 @@ public class ConduitRegistry {
 	public List<PowerRequest> getRequestsForPower(World w, BlockPos coord, ConduitType conduitType, ConduitType energyType){
 		List<PowerRequest> requests = new ArrayList<>();
 		ConduitNetworkManager manager = getConduitNetworkManager(conduitType);
-		BlockPos4D bp = new BlockPos4D(w.provider.getDimensionId(), coord);
+		BlockPos4D bp = new BlockPos4D(w.provider.getDimension(), coord);
 		if(!manager.isValidatedNetwork(bp)){
 			manager.revalidate(bp, w, conduitType);
 		}
@@ -107,7 +102,8 @@ public class ConduitRegistry {
 				} else if(PowerAdvantage.enableExtendedModCompatibility){
 					if(LightWeightPowerRegistry.getInstance().isExternalPowerBlock(b)){
 						if(e != null ){
-							PowerRequest req = new ExternalPowerRequest(LightWeightPowerRegistry.getInstance().getRequestedPowerAmount(w, pos.pos, energyType),e);
+							PowerRequest req = new ExternalPowerRequest(LightWeightPowerRegistry.getInstance()
+									.getRequestedPowerAmount(w, pos.pos, energyType),e);
 							if(req.amount > 0){
 								requests.add(req);
 							}

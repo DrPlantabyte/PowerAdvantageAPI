@@ -1,23 +1,16 @@
 package cyano.poweradvantage.conduitnetwork;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.locks.ReadWriteLock;
-
-import cyano.poweradvantage.PowerAdvantage;
 import cyano.poweradvantage.api.ConduitType;
-import cyano.poweradvantage.api.ITypedConduit;
-import cyano.poweradvantage.api.modsupport.LightWeightPowerRegistry;
+import cyano.poweradvantage.api.PowerConnectorContext;
 import cyano.poweradvantage.math.BlockPos4D;
 import cyano.poweradvantage.util.PowerHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.FMLLog;
+
+import java.util.*;
+import java.util.concurrent.locks.ReadWriteLock;
 
 /**
  * This class manages a global (trans-dimensional) cache of power networks of a single power type.
@@ -118,7 +111,7 @@ public class ConduitNetworkManager {
 		lock.writeLock().lock();
 		try{
 			invalidate(coord);
-			recursiveScan(w,coord,type);
+			recursiveScan(w,coord,w.getBlockState(coord.pos),type);
 		}finally{
 			lock.writeLock().unlock();
 		}
@@ -143,33 +136,20 @@ public class ConduitNetworkManager {
 	 * scans the world to make a new cached network
 	 * @param w The world instance for the same dimension as the coord
 	 * @param coord The block position to start scanning from
+	 * @param src The block from which we are scanning
 	 * @param type The type of energy that will flow throught the scanned network
 	 */
-	protected void recursiveScan(World w, BlockPos4D coord, ConduitType type){
+	protected void recursiveScan(World w, BlockPos4D coord, IBlockState src, ConduitType type){
 		for(int i = 0; i < EnumFacing.values().length; i++){
 			EnumFacing face = EnumFacing.values()[i];
 			BlockPos4D n = coord.offset(face);
 			if(areInSameNetwork(coord,n)) {continue;}
 			IBlockState blockstate = w.getBlockState(n.pos);
 			Block block = blockstate.getBlock();
-			if(block instanceof ITypedConduit && ((ITypedConduit)block).canAcceptType(blockstate, type, face) && PowerHelper.areConnectable(w,coord.pos,face)){
+			PowerConnectorContext connection = new PowerConnectorContext(type,w,src, coord.pos, face, blockstate, n.pos, face.getOpposite());
+			if(PowerHelper.areConnectable(connection)){
 				addBlockToNetwork(coord, n);
-				recursiveScan(w,n,type);
-			} else if(PowerAdvantage.enableExtendedModCompatibility){
-				if(LightWeightPowerRegistry.getInstance().isExternalPowerBlock(block) 
-						&& LightWeightPowerRegistry.getInstance().canAcceptType(blockstate, type, face) 
-						&& PowerHelper.areConnectable(w,coord.pos,face)){
-					addBlockToNetwork(coord, n);
-					recursiveScan(w,n,type);
-				} else {
-					if(PowerAdvantage.detectedRF){
-						net.minecraft.tileentity.TileEntity te = w.getTileEntity(n.pos);
-						if (te instanceof cofh.api.energy.IEnergyReceiver){
-							addBlockToNetwork(coord, n);
-							recursiveScan(w,n,type);
-						}
-					}
-				}
+				recursiveScan(w,n,blockstate,type);
 			}
 		}
 	}

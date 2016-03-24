@@ -1,8 +1,5 @@
 package cyano.poweradvantage.api;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.util.EnumFacing;
-
 /**
  * Implement this method in every TileEntity and Block that interacts with energy. 
  * This ensures that all relevant Blocks and TileEntities can check the energy 
@@ -11,22 +8,20 @@ import net.minecraft.util.EnumFacing;
  *
  */
 public interface ITypedConduit {
+
 	/**
 	 * Determines whether this conduit is compatible with an adjacent one
-	 * @param blockstate The blockstate of this conduit when this method is invoked.
-	 * @param type The type of energy in the conduit
-	 * @param blockFace The side through-which the energy is flowing
-	 * @return true if this conduit can flow the given energy type through the given face, false 
-	 * otherwise
+	 * @param connection A context object that provides the power type and block direction information
+	 * @return True if power should be allowed to flow through this connection, false otherwise
 	 */
-	public abstract boolean canAcceptType(IBlockState blockstate, ConduitType type, EnumFacing blockFace);
+	public abstract boolean canAcceptConnection(PowerConnectorContext connection);
 	
 	/**
-	 * Gets the energy type of this conduit. Most conduits can only interact 
+	 * Gets the energy type(s) of this conduit. Most conduits can only interact
 	 * with other conduits of the same type. 
-	 * @return The energy type of this conduit
+	 * @return The energy type(s) of this conduit
 	 */
-	public abstract ConduitType getType();
+	public abstract ConduitType[] getTypes();
 	/**
 	 * Determines whether this block/entity should receive energy. If this is not a sink, then it 
 	 * will never be given power by a power source. 
@@ -38,6 +33,5 @@ public interface ITypedConduit {
 	 * @return true if this block/entity can provide energy
 	 */
 	public abstract boolean isPowerSource();
-	
-	
+
 }

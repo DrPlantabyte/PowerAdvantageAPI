@@ -1,7 +1,7 @@
 package cyano.poweradvantage.api.modsupport;
 
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import cyano.poweradvantage.api.PowerRequest;
 
 /**
