@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">
-<refactoring comment="Rename field &apos;ROCK_LAYER_SIZE&apos; in &apos;cyano.mineralogy.Mineralogy&apos; to &apos;ROCK_LAYER_NOISE&apos;&#x0A;- Original project: &apos;Forge-1.8-11.14.0.1281&apos;&#x0A;- Original element: &apos;cyano.mineralogy.Mineralogy.ROCK_LAYER_SIZE&apos;&#x0A;- Renamed element: &apos;cyano.mineralogy.Mineralogy.ROCK_LAYER_NOISE&apos;&#x0A;- Update references to refactored element&#x0A;- Update textual occurrences in comments and strings" delegate="false" deprecate="false" description="Rename field &apos;ROCK_LAYER_SIZE&apos;" flags="589830" getter="false" id="org.eclipse.jdt.ui.rename.field" input="/src\/main\/java&lt;cyano.mineralogy{Mineralogy.java[Mineralogy^ROCK_LAYER_SIZE" name="ROCK_LAYER_NOISE" references="true" setter="false" stamp="1420846340314" textual="false" version="1.0"/>
-</session>

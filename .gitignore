@@ -13,7 +13,9 @@
 *~
 /temp/*
 /build/*
+/.idea/*
 temp/*
 /run/*
 
 /bin/
+/extra/MinecraftModUtils/nbproject/private/
