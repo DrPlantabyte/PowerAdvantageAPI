@@ -1,12 +1,8 @@
 package cyano.poweradvantage.api;
 
-import java.util.Locale;
-
-import net.minecraft.block.Block;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.world.IBlockAccess;
 import cyano.poweradvantage.util.HashCodeHelper;
+
+import java.util.Locale;
 
 /**
  * This class is used to identify different types of power (or other transport). It is optimized for 

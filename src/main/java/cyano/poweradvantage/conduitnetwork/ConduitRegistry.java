@@ -221,6 +221,18 @@ public class ConduitRegistry {
 			manager.invalidate(n);
 		}
 	}
+	/**
+	 * Invoke this method anytime a conduit block enters the world
+	 * @param w The world instance for this dimension
+	 * @param dimension The ID number for this dimension
+	 * @param location The position of the block being added
+	 * @param types The native energy type of the added conduit block
+	 */
+	public void conduitBlockPlacedEvent(World w, int dimension, BlockPos location, ConduitType... types){
+		for(int i = 0; i < types.length; i++){
+			conduitBlockPlacedEvent(w,dimension,location,types[i]);
+		}
+	}
 
 	/**
 	 * Invoke this method anytime a conduit block is removed from the world
@@ -238,6 +250,18 @@ public class ConduitRegistry {
 			EnumFacing face = EnumFacing.values()[i];
 			BlockPos4D n = coord.offset(face);
 			manager.invalidate(n);
+		}
+	}
+	/**
+	 * Invoke this method anytime a conduit block is removed from the world
+	 * @param w The world instance for this dimension
+	 * @param dimension The ID number for this dimension
+	 * @param location The position of the block being removed
+	 * @param types The native energy type of the removed conduit block
+	 */
+	public void conduitBlockRemovedEvent(World w, int dimension, BlockPos location, ConduitType... types){
+		for(int i = 0; i < types.length; i++){
+			conduitBlockRemovedEvent(w,dimension,location,types[i]);
 		}
 	}
 	

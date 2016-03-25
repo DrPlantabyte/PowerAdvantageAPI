@@ -1,22 +1,24 @@
 package cyano.poweradvantage.api;
 
-import cyano.poweradvantage.PowerAdvantage;
-import cyano.poweradvantage.registry.MachineGUIRegistry;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumBlockRenderType;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidHandler;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
+
+import static sun.audio.AudioPlayer.player;
 
 /**
  * <p>
@@ -85,7 +87,7 @@ public abstract class GUIBlock extends net.minecraft.block.BlockContainer{
 	 * Boilerplate code
 	 */
 	@Override
-    public boolean isFullCube() {
+    public boolean isFullCube(IBlockState bs) {
         return false;
     }
     
@@ -93,7 +95,7 @@ public abstract class GUIBlock extends net.minecraft.block.BlockContainer{
 	 * Boilerplate code
 	 */
 	@Override
-    public boolean isOpaqueCube() {
+    public boolean isOpaqueCube(IBlockState bs) {
         return false;
     }
 	
@@ -102,8 +104,8 @@ public abstract class GUIBlock extends net.minecraft.block.BlockContainer{
 	 * -1 = special renderer
 	 */
 	@Override
-    public int getRenderType() {
-        return 3;
+    public EnumBlockRenderType getRenderType(IBlockState bs) {
+        return EnumBlockRenderType.MODEL;
     }
 	
 	/**
@@ -114,9 +116,9 @@ public abstract class GUIBlock extends net.minecraft.block.BlockContainer{
      * otherwise
      */
     @Override
-    public boolean onBlockActivated(final World w, final BlockPos coord, final IBlockState bs, 
-    		final EntityPlayer player, final EnumFacing facing, final float f1, final float f2, 
-    		final float f3) {
+    public boolean onBlockActivated(World w, BlockPos coord, IBlockState bs,
+									EntityPlayer player, EnumHand hand, ItemStack heldItem, EnumFacing facing,
+									float hitX, float hitY, float hitZ) {
         if (w.isRemote) {
             return true;
         }
@@ -125,7 +127,8 @@ public abstract class GUIBlock extends net.minecraft.block.BlockContainer{
         	return false;
         }
         // handle buckets and fluid containers
-        ItemStack item = player.getCurrentEquippedItem();
+		// NOTE: in 1.9, the fluid container registry is being replaced with IFluidContainerItem and the UniversalBucket item
+        ItemStack item = player.getItemStackFromSlot(EntityEquipmentSlot.MAINHAND);
         if(item != null && FluidContainerRegistry.isContainer(item) && tileEntity instanceof IFluidHandler){
         	boolean bucketed = handleBucketInteraction(item,player,facing,(IFluidHandler)tileEntity,w);
         	if(bucketed){
@@ -161,7 +164,7 @@ public abstract class GUIBlock extends net.minecraft.block.BlockContainer{
 				FluidStack drain = target.drain(blockFace, FluidContainerRegistry.BUCKET_VOLUME, true);
 				ItemStack newBucket = FluidContainerRegistry.fillFluidContainer(drain, bucket);
 				if(bucket.stackSize == 1){
-					player.setCurrentItemOrArmor(0, newBucket);
+					player.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, newBucket);
 				} else {
 					bucket.stackSize--;
 					if(newBucket != null)

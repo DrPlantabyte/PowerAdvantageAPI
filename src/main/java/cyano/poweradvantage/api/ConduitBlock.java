@@ -1,12 +1,11 @@
 package cyano.poweradvantage.api;
 
+import cyano.poweradvantage.conduitnetwork.ConduitRegistry;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.util.BlockPos;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.FMLLog;
-import cyano.poweradvantage.conduitnetwork.ConduitRegistry;
 
 /**
  * 
@@ -38,7 +37,7 @@ public abstract class ConduitBlock extends net.minecraft.block.Block implements 
 	@Override
 	public void onBlockAdded(World w, BlockPos coord, IBlockState state){
 		super.onBlockAdded(w, coord, state);
-		ConduitRegistry.getInstance().conduitBlockPlacedEvent(w, w.provider.getDimensionId(), coord, getType());
+		ConduitRegistry.getInstance().conduitBlockPlacedEvent(w, w.provider.getDimension(), coord, getTypes());
 	}
 	
 	/**
@@ -47,7 +46,7 @@ public abstract class ConduitBlock extends net.minecraft.block.Block implements 
 	@Override
 	public void onBlockDestroyedByPlayer(World w, BlockPos coord, IBlockState state){
 		super.onBlockDestroyedByPlayer(w, coord, state);
-		ConduitRegistry.getInstance().conduitBlockRemovedEvent(w, w.provider.getDimensionId(), coord, getType());
+		ConduitRegistry.getInstance().conduitBlockRemovedEvent(w, w.provider.getDimension(), coord, getTypes());
 	}
 	/**
 	 * This method is called when the block is destroyed by an explosion.
@@ -55,7 +54,7 @@ public abstract class ConduitBlock extends net.minecraft.block.Block implements 
 	@Override
 	public void onBlockDestroyedByExplosion(World w, BlockPos coord, Explosion boom){
 		super.onBlockDestroyedByExplosion(w, coord, boom);
-		ConduitRegistry.getInstance().conduitBlockRemovedEvent(w, w.provider.getDimensionId(), coord, getType());
+		ConduitRegistry.getInstance().conduitBlockRemovedEvent(w, w.provider.getDimension(), coord, getTypes());
 	}
 	
 }
