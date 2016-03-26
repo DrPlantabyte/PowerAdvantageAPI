@@ -1,12 +1,12 @@
 package cyano.poweradvantage.api;
 
-import java.util.List;
-
 import cyano.poweradvantage.conduitnetwork.ConduitRegistry;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.math.BlockPos;
+
+import java.util.List;
 /**
  * This class is the superclass for all machines. 
  * If you are making an add-on mod, you probably want to extend the 
@@ -25,16 +25,18 @@ public abstract class PoweredEntity extends TileEntity implements ITickable, IPo
 	
 	/**
 	 * Gets the amount of energy that can be stored in this machine.
+	 * @param energyType The type of energy being polled
 	 * @return Size of the energy buffer
 	 */
 	@Override
-	public abstract float getEnergyCapacity();
+	public abstract float getEnergyCapacity(ConduitType energyType);
 	/**
 	 * Gets the amount of energy stored in this machine
+	 * @param energyType The type of energy being polled
 	 * @return The amount of energy in the energy buffer
 	 */
 	@Override
-	public abstract float getEnergy();
+	public abstract float getEnergy(ConduitType energyType);
 	/**
 	 * Sets the amount of energy in the buffer
 	 * @param energy The amount of energy to be added to the buffer
@@ -49,18 +51,21 @@ public abstract class PoweredEntity extends TileEntity implements ITickable, IPo
 	 * @param energy The amount of energy to add (can be negative to subtract 
 	 * energy).
 	 * @param type The type of energy to be added to the buffer
-	 * @return The actual change to the internal energy buffer.
+	 * @return The actual change to the internal energy buffer. A negative
+	 * number should be returned when subtracting energy and positive when
+	 * adding energy.
 	 */
 	@Override
 	public float addEnergy(float energy, ConduitType type){
-		float newValue = this.getEnergy() + energy;
+		if(this.getEnergyCapacity(type) == 0) return 0;
+		float newValue = this.getEnergy(type) + energy;
 		if(newValue < 0){
-			float delta = -1 * this.getEnergy();
+			float delta = -1 * this.getEnergy(type);
 			this.setEnergy(0,type); 
 			return delta;
-		} else if(newValue > this.getEnergyCapacity()){
-			float delta = this.getEnergyCapacity() - this.getEnergy();
-			this.setEnergy(this.getEnergyCapacity(),type);
+		} else if(newValue > this.getEnergyCapacity(type)){
+			float delta = this.getEnergyCapacity(type) - this.getEnergy(type);
+			this.setEnergy(this.getEnergyCapacity(type),type);
 			return delta;
 		}
 		this.setEnergy(newValue,type);
@@ -73,7 +78,7 @@ public abstract class PoweredEntity extends TileEntity implements ITickable, IPo
 	 * addEnergy(...).  
 	 * @param energy The amount of energy to subtract.
 	 * @param type The type of energy to be subtracted to the buffer
-	 * @return The actual change to the internal energy buffer
+	 * @return The actual change to the internal energy buffer (a negative number)
 	 */
 	@Override
 	public float subtractEnergy(float energy, ConduitType type){
@@ -84,7 +89,6 @@ public abstract class PoweredEntity extends TileEntity implements ITickable, IPo
 	 * Tells Minecraft to synchronize this tile entity
 	 */
 	protected final void sync(){
-		this.getWorld().markBlockForUpdate(getPos());
 		this.markDirty();
 	}
 	
@@ -149,8 +153,11 @@ public abstract class PoweredEntity extends TileEntity implements ITickable, IPo
     public void readFromNBT(final NBTTagCompound tagRoot) {
 		super.readFromNBT(tagRoot);
 		if(tagRoot.hasKey("Energy")){
-			float energy = tagRoot.getFloat("Energy");
-			this.setEnergy(energy,this.getType());
+			int[] data = tagRoot.getIntArray("Energy");
+			for(int i = 0; i < data.length; i++){
+				if(i >= this.getTypes().length)break;
+				this.setEnergy(Float.intBitsToFloat(data[i]),this.getTypes()[i]);
+			}
 		}
 	}
 	/**
@@ -160,7 +167,11 @@ public abstract class PoweredEntity extends TileEntity implements ITickable, IPo
 	@Override
 	public void writeToNBT(final NBTTagCompound tagRoot) {
 		super.writeToNBT(tagRoot);
-		tagRoot.setFloat("Energy", this.getEnergy());
+		int[] data = new int[this.getTypes().length];
+		for(int i = 0; i < data.length; i++){
+			data[i] = Float.floatToIntBits(this.getEnergy(this.getTypes()[i]));
+		}
+		tagRoot.setIntArray("Energy", data);
 	}
 	
 	

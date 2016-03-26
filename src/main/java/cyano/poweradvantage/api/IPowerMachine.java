@@ -12,14 +12,16 @@ package cyano.poweradvantage.api;
 public interface IPowerMachine extends ITypedConduit {
 	/**
 	 * Gets the amount of energy that can be stored in this machine.
+	 * @param energyType The type of energy being polled
 	 * @return Size of the energy buffer
 	 */
-	public abstract float getEnergyCapacity();
+	public abstract float getEnergyCapacity(ConduitType energyType);
 	/**
 	 * Gets the amount of energy stored in this machine
+	 * @param energyType The type of energy being polled
 	 * @return The amount of energy in the energy buffer
 	 */
-	public abstract float getEnergy();
+	public abstract float getEnergy(ConduitType energyType);
 	/**
 	 * Sets the amount of energy in the buffer
 	 * @param energy The amount of energy to be added to the buffer

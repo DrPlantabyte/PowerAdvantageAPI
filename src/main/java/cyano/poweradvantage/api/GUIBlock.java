@@ -10,15 +10,13 @@ import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.IFluidHandler;
+import net.minecraftforge.fluids.*;
 
-import static sun.audio.AudioPlayer.player;
+import static net.minecraft.init.Items.bucket;
 
 /**
  * <p>
@@ -127,15 +125,50 @@ public abstract class GUIBlock extends net.minecraft.block.BlockContainer{
         	return false;
         }
         // handle buckets and fluid containers
-		// NOTE: in 1.9, the fluid container registry is being replaced with IFluidContainerItem and the UniversalBucket item
-        ItemStack item = player.getItemStackFromSlot(EntityEquipmentSlot.MAINHAND);
-        if(item != null && FluidContainerRegistry.isContainer(item) && tileEntity instanceof IFluidHandler){
-        	boolean bucketed = handleBucketInteraction(item,player,facing,(IFluidHandler)tileEntity,w);
-        	if(bucketed){
-        		return true;
-        	}
-        }
-        
+		ItemStack item = player.getItemStackFromSlot(EntityEquipmentSlot.MAINHAND);
+		if(tileEntity instanceof IFluidHandler && item != null) {
+			/// NEW WAY - IFluidContainerItem and the UniversalBucket FTW!
+			IFluidHandler target = (IFluidHandler) tileEntity;
+			if (item.getItem() instanceof IFluidContainerItem){
+				// fill from bucket
+				IFluidContainerItem container = (IFluidContainerItem) item.getItem();
+				if (container.getFluid(item) != null && container.getFluid(item).amount > 0) {
+					if (target.fill(facing,
+							container.drain(item,container.getFluid(item).amount,false),
+							false)
+							== container.getFluid(item).amount){
+						// simulated fill-drain succeeded, do it for real
+						FluidStack drained = container.drain(item,container.getFluid(item).amount,!player.capabilities.isCreativeMode);
+						target.fill(facing,drained,true);
+						return true;
+					}
+				}
+			}else if (item.getItem() == bucket) {
+				// make universal bucket
+				for(FluidTankInfo tank : target.getTankInfo(facing)){
+					if(tank.fluid != null){
+						UniversalBucket bucket = cyano.basemetals.init.Items.universal_bucket;
+						ItemStack filledBucket = new ItemStack(bucket);
+						if(tank.fluid.amount >= bucket.getCapacity(filledBucket)) {
+							FluidStack drain = tank.fluid.copy();
+							drain.amount = bucket.getCapacity(filledBucket);
+							if(target.drain(facing,drain,false).amount == bucket.fill(filledBucket,drain,false)){
+								bucket.fill(filledBucket,target.drain(facing,drain,true),true);
+								if(!player.capabilities.isCreativeMode)player.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, filledBucket);
+								return true;
+							}
+						}
+					}
+				}
+			} else if (item != null && FluidContainerRegistry.isContainer(item) && tileEntity instanceof IFluidHandler) {
+				/// OLD WAY - deprecated (but still might be used by other mods)
+				boolean bucketed = handleBucketInteraction(item, player, facing, (IFluidHandler) tileEntity, w);
+				if (bucketed) {
+					return true;
+				}
+			}
+		}
+
         // open GUI
         if(this.getGuiOwner() == null) return false;
         player.openGui(this.getGuiOwner(), this.getGuiID(), w, coord.getX(), coord.getY(), coord.getZ());
@@ -153,9 +186,12 @@ public abstract class GUIBlock extends net.minecraft.block.BlockContainer{
 	 * @param target The IFluidHandler that the player interacted with
 	 * @param world World instance
 	 * @return true if fluids were transferred, false otherwise
+	 * @deprecated this method will no longer work in later versions of Minecraft Forge 1.9.x
 	 */
+	@Deprecated
     public static boolean handleBucketInteraction(ItemStack bucket,final EntityPlayer player, 
 			final EnumFacing blockFace, IFluidHandler target, final World world) {
+		/// OLD WAY - deprecated (but still might be used by other mods)
 		if(FluidContainerRegistry.isEmptyContainer(bucket)){
 			// pull from tank
 			FluidStack practice = target.drain(blockFace, FluidContainerRegistry.BUCKET_VOLUME, false);
@@ -182,7 +218,7 @@ public abstract class GUIBlock extends net.minecraft.block.BlockContainer{
 				target.fill(blockFace, fluid, true);
 				ItemStack newBucket = FluidContainerRegistry.drainFluidContainer(bucket);
 				if(bucket.stackSize == 1){
-					player.setCurrentItemOrArmor(0, newBucket);
+					player.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, newBucket);
 				} else {
 					bucket.stackSize--;
 					world.spawnEntityInWorld(new EntityItem(world,player.posX,player.posY,player.posZ, newBucket));
