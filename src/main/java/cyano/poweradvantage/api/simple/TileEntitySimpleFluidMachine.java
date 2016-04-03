@@ -129,11 +129,9 @@ public abstract class TileEntitySimpleFluidMachine extends FluidPoweredEntity im
      * </p>
      */
 	public void onDataFieldUpdate() {
-		FMLLog.info("onDataFieldUpdate: world.isRemote == %s",getWorld().isRemote); // TODO: remove
 		// used for server-to-client sync
 		int fluidID = dataFields[DATAFIELD_FLUID_ID];
 		int fluidVolume = dataFields[DATAFIELD_FLUID_VOLUME];
-		FMLLog.info("onDataFieldUpdate: fluid in tank was %sx%s",getTank().getFluidAmount(),(getTank().getFluid() == null ? "null" : getTank().getFluid().getUnlocalizedName())); // TODO: remove
 		if(fluidVolume <= 0){
 			getTank().setFluid(new FluidStack(FluidRegistry.WATER,0));
 		} else {
@@ -163,7 +161,6 @@ public abstract class TileEntitySimpleFluidMachine extends FluidPoweredEntity im
      * </p>
      */
 	public void prepareDataFieldsForSync(){
-		FMLLog.info("prepareDataFieldsForSync: world.isRemote == %s",getWorld().isRemote); // TODO: remove
 		if(getTank().getFluid() == null || getTank().getFluidAmount() <= 0){
 			dataFields[DATAFIELD_FLUID_ID] = FluidRegistry.getFluidID(FluidRegistry.WATER);
 			dataFields[DATAFIELD_FLUID_VOLUME] = 0;

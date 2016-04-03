@@ -9,7 +9,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.FMLLog;
 
 import java.util.List;
 
@@ -95,7 +94,6 @@ public abstract class PoweredEntity extends TileEntity implements ITickable, IPo
 	 * Tells Minecraft to synchronize this tile entity
 	 */
 	protected final void sync(){
-		FMLLog.info("sync: world.isRemote == %s",getWorld().isRemote); // TODO: remove
 		this.markDirty();
 		//this.getWorld().markBlockForUpdate(getPos());
 		Packet packet = this.getDescriptionPacket();
