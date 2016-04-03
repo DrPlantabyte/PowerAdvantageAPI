@@ -1,47 +1,29 @@
 package cyano.poweradvantage.init;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
 import cyano.poweradvantage.PowerAdvantage;
 import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.api.GUIBlock;
 import cyano.poweradvantage.api.fluid.InteractiveFluidBlock;
-import cyano.poweradvantage.api.modsupport.rf.BlockRFConverter;
 import cyano.poweradvantage.blocks.BlockFrame;
 import cyano.poweradvantage.blocks.BlockPowerSwitch;
-import cyano.poweradvantage.machines.conveyors.BlockConveyor;
-import cyano.poweradvantage.machines.conveyors.BlockConveyorFilter;
-import cyano.poweradvantage.machines.conveyors.TileEntityBlockFilter;
-import cyano.poweradvantage.machines.conveyors.TileEntityFoodFilter;
-import cyano.poweradvantage.machines.conveyors.TileEntityFuelFilter;
-import cyano.poweradvantage.machines.conveyors.TileEntityInventoryFilter;
-import cyano.poweradvantage.machines.conveyors.TileEntityOreFilter;
-import cyano.poweradvantage.machines.conveyors.TileEntityOverflowFilter;
-import cyano.poweradvantage.machines.conveyors.TileEntityPlantFilter;
-import cyano.poweradvantage.machines.conveyors.TileEntitySmeltableFilter;
+import cyano.poweradvantage.machines.conveyors.*;
 import cyano.poweradvantage.machines.creative.InfiniteEnergyBlock;
-import cyano.poweradvantage.machines.fluidmachines.FluidDischargeBlock;
-import cyano.poweradvantage.machines.fluidmachines.FluidDrainBlock;
-import cyano.poweradvantage.machines.fluidmachines.FluidPipeBlock;
-import cyano.poweradvantage.machines.fluidmachines.MetalTankBlock;
-import cyano.poweradvantage.machines.fluidmachines.StillBlock;
-import cyano.poweradvantage.machines.fluidmachines.StorageTankBlock;
+import cyano.poweradvantage.machines.fluidmachines.*;
 import cyano.poweradvantage.machines.fluidmachines.modsupport.TerminalFluidPipeBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemMeshDefinition;
+import net.minecraft.client.renderer.block.model.ModelBakery;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
-import net.minecraft.client.resources.model.ModelBakery;
-import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fluids.BlockFluidBase;
@@ -51,6 +33,10 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 public abstract class Blocks {
 	private static final Map<String,Block> allBlocks = new HashMap<>();
@@ -107,8 +93,7 @@ public abstract class Blocks {
 		OreDictionary.registerOre("pipe", fluid_pipe);
 		steel_frame = addBlock(new BlockFrame(net.minecraft.block.material.Material.piston)
 				.setResistance(cyano.basemetals.init.Materials.steel.getBlastResistance())
-				.setHardness(0.75f)
-				.setStepSound(Block.soundTypeMetal),"steel_frame");
+				.setHardness(0.75f),"steel_frame");
 		OreDictionary.registerOre("frameSteel", steel_frame);
 		
 		final float defaultMachineHardness = 0.75f;
@@ -130,11 +115,11 @@ public abstract class Blocks {
 
 		
 		refined_oil_block = (BlockFluidBase)addBlock(new InteractiveFluidBlock(Fluids.refined_oil,true,(World w, EntityLivingBase e)->{
-			e.addPotionEffect(new PotionEffect(Potion.poison.id,40));
+			e.addPotionEffect(new PotionEffect(Potion.potionRegistry.getObject(new ResourceLocation("nausea")),200));
 		}),"refined_oil");
 		
 		crude_oil_block = (BlockFluidBase)addBlock(new InteractiveFluidBlock(Fluids.crude_oil,true,(World w, EntityLivingBase e)->{
-			e.addPotionEffect(new PotionEffect(Potion.moveSlowdown.id,200,2));
+			e.addPotionEffect(new PotionEffect(Potion.potionRegistry.getObject(new ResourceLocation("slowness")),200,2));
 		}),"crude_oil");
 		
 		
@@ -156,7 +141,7 @@ public abstract class Blocks {
 				Item item = Item.getItemFromBlock(block);
 				final ModelResourceLocation fluidModelLocation = new ModelResourceLocation(
 						modID.toLowerCase() + ":" + name, "fluid");
-				ModelBakery.addVariantName(item);
+				ModelBakery.registerItemVariants(item);
 				ModelLoader.setCustomMeshDefinition(item, new ItemMeshDefinition()
 				{
 					public ModelResourceLocation getModelLocation(ItemStack stack)

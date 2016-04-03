@@ -2,7 +2,6 @@ package cyano.poweradvantage.api.modsupport;
 
 import cofh.api.energy.IEnergyReceiver;
 import cyano.poweradvantage.api.PowerRequest;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 
 public class RFPowerRequest extends PowerRequest {

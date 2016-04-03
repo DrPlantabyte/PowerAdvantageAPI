@@ -1,7 +1,6 @@
 package cyano.poweradvantage;
 
 import cyano.poweradvantage.api.ConduitType;
-import cyano.poweradvantage.events.BucketHandler;
 import cyano.poweradvantage.init.WorldGen;
 import cyano.poweradvantage.registry.FuelRegistry;
 import cyano.poweradvantage.registry.MachineGUIRegistry;
@@ -9,7 +8,6 @@ import cyano.poweradvantage.registry.still.recipe.DistillationRecipeRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Mod;
@@ -220,7 +218,7 @@ public class PowerAdvantage
 	/** The display name for this mod */
 	public static final String NAME = "Power Advantage";
 	/** The version of this mod, in the format major.minor.update */
-	public static final String VERSION = "1.5.4";
+	public static final String VERSION = "2.0.0";
 	
 	
 	// TODO: add condenser (makes water from steam)
@@ -238,8 +236,6 @@ public class PowerAdvantage
 	public static float chestLootFactor = 0.5f;
 	/** If true, plastic will be registered as rubber in ore dictionary */
 	public static boolean plasticIsAlsoRubber = true;
-	/** Set to false if all power system mods are add-ons to Power Advantage and you want to improve performance */
-	public static boolean enableExtendedModCompatibility = true;
 	/** used to convert energy to RF types when attempting autmoatic conversion */
 	public static final Map<ConduitType, Float> rfConversionTable = new HashMap<>();
 	
@@ -307,15 +303,7 @@ public class PowerAdvantage
 		useOtherFluids = config.getBoolean("use_other_fluids", "Other Power Mods", useOtherFluids, 
 				"If true, then Power Advantage will use existing fluids added by other mods where possible");
 		
-		
-		enableExtendedModCompatibility = config.getBoolean("extended_compatibility", "Other Power Mods", enableExtendedModCompatibility, 
-				"If false, then you may have less lag. If true, then some mods that are not Power \n"
-				+ "Advantage add-ons may be able to draw power from Power Advantage power generators.\n"
-				+ "Note that power converter blocks will still work, even when this option is set to \n"
-				+ "false.");
-		if(enableExtendedModCompatibility){
-			FMLLog.info("Enabled external power mod interactions. If the server lags when using large power networks, try disabling the 'extended_compatibility' option");
-		}
+
 		
 		
 		String[] conversions = config.getString("RF_conversions", "Other Power Mods", 
@@ -359,6 +347,7 @@ public class PowerAdvantage
 		cyano.poweradvantage.init.Fluids.init(); 
 		cyano.poweradvantage.init.Blocks.init();
 		cyano.poweradvantage.init.Items.init();
+		cyano.poweradvantage.init.TreasureChests.init(event.getSuggestedConfigurationFile().toPath().getParent());
 
 		// keep this next comment, it is useful for finding Vanilla recipes
 		//OreDictionary.initVanillaEntries();
@@ -408,11 +397,9 @@ public class PowerAdvantage
 		cyano.poweradvantage.init.Recipes.initDistillationRecipes(distillRecipes);
 		cyano.poweradvantage.init.Villages.init(); 
 		cyano.poweradvantage.init.GUI.init();
-		cyano.poweradvantage.init.TreasureChests.init();
 		
 		cyano.poweradvantage.init.ModSupport.init(detectedRF);
 
-		MinecraftForge.EVENT_BUS.register(BucketHandler.getInstance());
 
 		if(event.getSide() == Side.CLIENT){
 			clientInit(event);

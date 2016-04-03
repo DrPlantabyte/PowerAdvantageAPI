@@ -1,5 +1,7 @@
 package cyano.poweradvantage.util;
 
+import cofh.api.energy.IEnergyReceiver;
+import cyano.poweradvantage.PowerAdvantage;
 import cyano.poweradvantage.api.ITypedConduit;
 import cyano.poweradvantage.api.PowerConnectorContext;
 
@@ -16,13 +18,15 @@ public abstract class PowerHelper {
 	 * @return True if the two blocks cen send power to (or through) eachother, false otherwise
 	 */
 	public static boolean areConnectable(PowerConnectorContext connection) {
-		if(connection.connectorBlock.getBlock() instanceof ITypedConduit){
-			if(connection.connecteeBlock.getBlock() instanceof ITypedConduit){
+		if(connection.thisBlock.getBlock() instanceof ITypedConduit){
+			if(connection.otherBlock.getBlock() instanceof ITypedConduit){
 				// both blocks are Power Advantage conductors
-				return ((ITypedConduit)connection.connectorBlock.getBlock()).canAcceptConnection(connection)
-						&& ((ITypedConduit)connection.connecteeBlock.getBlock()).canAcceptConnection(connection.reverse());
+				return ((ITypedConduit)connection.thisBlock.getBlock()).canAcceptConnection(connection)
+						&& ((ITypedConduit)connection.otherBlock.getBlock()).canAcceptConnection(connection.reverse());
+			} else if(PowerAdvantage.detectedRF && PowerAdvantage.rfConversionTable.containsKey(connection.powerType)) {
+				// RF cross-mod compatibility
+				return connection.world.getTileEntity(connection.otherBlockPosition) instanceof IEnergyReceiver;
 			}
-			// TODO: reimplement cross-mod support
 		}
 		return false;
 	}

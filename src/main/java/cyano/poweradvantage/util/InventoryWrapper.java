@@ -5,7 +5,9 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentBase;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.ILockableContainer;
 
 /**
@@ -127,8 +129,8 @@ public class InventoryWrapper implements ISidedInventory {
 			}
 
 			@Override
-			public IChatComponent getDisplayName() {
-				return new net.minecraft.util.ChatComponentText("Inventory");
+			public TextComponentBase getDisplayName() {
+				return new TextComponentString("Inventory");
 			}
 		};
 	}
@@ -157,7 +159,7 @@ public class InventoryWrapper implements ISidedInventory {
 	}
 
 	@Override
-	public IChatComponent getDisplayName() {
+	public ITextComponent getDisplayName() {
 		return inventory.getDisplayName();
 	}
 

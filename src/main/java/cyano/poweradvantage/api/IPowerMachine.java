@@ -55,4 +55,6 @@ public interface IPowerMachine extends ITypedConduit {
 	 * @return A PowerRequest instance indicated how much power you'd like to get
 	 */
 	public abstract PowerRequest getPowerRequest(ConduitType energyType);
+
+
 }

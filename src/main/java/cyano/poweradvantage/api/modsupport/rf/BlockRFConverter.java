@@ -1,15 +1,16 @@
 package cyano.poweradvantage.api.modsupport.rf;
 
 import cyano.poweradvantage.api.ConduitType;
-import cyano.poweradvantage.api.PoweredEntity;
+import cyano.poweradvantage.api.simple.BlockSimplePowerMachine;
 import net.minecraft.block.material.Material;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumWorldBlockLayer;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class BlockRFConverter extends cyano.poweradvantage.api.simple.BlockSimplePowerSource{
+public class BlockRFConverter extends BlockSimplePowerMachine {
 
 	private final Class tileEntityClass;
 	public BlockRFConverter(Material blockMaterial, float hardness, ConduitType energyType, Class<? extends TileEntityRFConverter> tileEntityClass) {
@@ -17,10 +18,6 @@ public class BlockRFConverter extends cyano.poweradvantage.api.simple.BlockSimpl
 		this.tileEntityClass = tileEntityClass;
 	}
 
-	@Override
-	public boolean isPowerSink() {
-		return true;
-	}
 
 	@Override
 	public TileEntityRFConverter createNewTileEntity(World world, int metaDataValue) {
@@ -32,29 +29,29 @@ public class BlockRFConverter extends cyano.poweradvantage.api.simple.BlockSimpl
 	}
 	
 	@Override
-	public boolean isNormalCube(){
+	public boolean isNormalCube(IBlockState bs){
 		return false;
 	}
 
 
 	@Override
-	public boolean isOpaqueCube() {
+	public boolean isOpaqueCube(IBlockState bs) {
 		return false;
 	}
 	
 	@SideOnly(Side.CLIENT)
 	@Override
-	public EnumWorldBlockLayer getBlockLayer() {
-		return EnumWorldBlockLayer.CUTOUT;
+	public BlockRenderLayer getBlockLayer() {
+		return BlockRenderLayer.CUTOUT;
 	}
 
 	@Override
-	public boolean hasComparatorInputOverride() {
+	public boolean hasComparatorInputOverride(IBlockState bs) {
 		return false;
 	}
 
 	@Override
-	public int getComparatorInputOverride(World world, BlockPos coord) {
+	public int getComparatorInputOverride(IBlockState bs, World world, BlockPos coord) {
 		return 0;
 	}
 }

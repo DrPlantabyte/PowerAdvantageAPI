@@ -1,24 +1,19 @@
 package cyano.poweradvantage.machines.fluidmachines;
 
 import cyano.poweradvantage.api.fluid.FluidRequest;
-import cyano.poweradvantage.api.simple.TileEntitySimpleFluidSource;
+import cyano.poweradvantage.api.simple.TileEntitySimpleFluidMachine;
 import cyano.poweradvantage.registry.still.recipe.DistillationRecipe;
 import cyano.poweradvantage.registry.still.recipe.DistillationRecipeRegistry;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntityFurnace;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTank;
-import net.minecraftforge.fluids.FluidTankInfo;
+import net.minecraftforge.fluids.*;
 
-public class StillTileEntity extends TileEntitySimpleFluidSource{
+public class StillTileEntity extends TileEntitySimpleFluidMachine {
 
 	
 	private final ItemStack[] inventory = new ItemStack[1];
@@ -183,8 +178,20 @@ public class StillTileEntity extends TileEntitySimpleFluidSource{
 			return FluidRequest.REQUEST_NOTHING;
 		}
 	}
-	
-	
+
+	/**
+	 * Checks whether a given fluid is appropriate for this machine. For example, a water tank would return fallse for
+	 * all Fluids except for <code>FluidRegistry.WATER</code>
+	 *
+	 * @param fluid The fluid to test
+	 * @return True if this machine should accept this fluid type, false to reject it.
+	 */
+	@Override
+	public boolean canAccept(Fluid fluid) {
+		return true;
+	}
+
+
 	/**
 	 * Fills fluid into internal tanks, distribution is left entirely to the IFluidHandler.
 	 * @param from Orientation the Fluid is pumped in from.
@@ -372,17 +379,17 @@ public class StillTileEntity extends TileEntitySimpleFluidSource{
      */
 	public void prepareDataFieldsForSync(){
 		if(inputTank.getFluid() == null || inputTank.getFluidAmount() <= 0){
-			dataFields[DATAFIELD_FLUID_ID1] = FluidRegistry.WATER.getID();
+			dataFields[DATAFIELD_FLUID_ID1] = FluidRegistry.getFluidID(FluidRegistry.WATER);
 			dataFields[DATAFIELD_FLUID_VOLUME1] = 0;
 		} else {
-			dataFields[DATAFIELD_FLUID_ID1] = inputTank.getFluid().getFluid().getID();
+			dataFields[DATAFIELD_FLUID_ID1] = FluidRegistry.getFluidID(inputTank.getFluid().getFluid());
 			dataFields[DATAFIELD_FLUID_VOLUME1] = inputTank.getFluidAmount();
 		}
 		if(getTank().getFluid() == null || getTank().getFluidAmount() <= 0){
-			dataFields[DATAFIELD_FLUID_ID2] = FluidRegistry.WATER.getID();
+			dataFields[DATAFIELD_FLUID_ID2] = FluidRegistry.getFluidID(FluidRegistry.WATER);
 			dataFields[DATAFIELD_FLUID_VOLUME2] = 0;
 		} else {
-			dataFields[DATAFIELD_FLUID_ID2] = getTank().getFluid().getFluid().getID();
+			dataFields[DATAFIELD_FLUID_ID2] = FluidRegistry.getFluidID(getTank().getFluid().getFluid());
 			dataFields[DATAFIELD_FLUID_VOLUME2] = getTank().getFluidAmount();
 		}
 		dataFields[DATAFIELD_BURNTIME]  = this.burnTime;

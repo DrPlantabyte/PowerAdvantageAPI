@@ -1,10 +1,9 @@
 package cyano.poweradvantage.init;
 
+import cyano.poweradvantage.registry.FuelRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fluids.FluidContainerRegistry;
-import cyano.poweradvantage.registry.FuelRegistry;
 
 public abstract class Fuels {
 
@@ -16,8 +15,22 @@ public abstract class Fuels {
 		if(initDone) return;
 
 		addFuel(cyano.basemetals.init.Items.carbon_powder,1600);
-		addFuel(cyano.poweradvantage.init.Items.bucket_crude_oil,CRUDE_OIL_FUEL_PER_FLUID_UNIT * FluidContainerRegistry.BUCKET_VOLUME);
-		addFuel(cyano.poweradvantage.init.Items.bucket_refined_oil,REFINED_OIL_FUEL_PER_FLUID_UNIT * FluidContainerRegistry.BUCKET_VOLUME);
+		ItemStack bucket = new ItemStack(cyano.basemetals.init.Items.universal_bucket);
+
+		/*
+		// Universal Bucket won't work in the fuel registry because it doesn't use item NBT tags
+		ItemStack crudeOilBucket = bucket.copy();
+		cyano.basemetals.init.Items.universal_bucket.fill(crudeOilBucket,
+				new FluidStack(Fluids.crude_oil,cyano.basemetals.init.Items.universal_bucket.getCapacity(bucket)),true);
+
+		ItemStack refinedOilBucket = bucket.copy();
+		cyano.basemetals.init.Items.universal_bucket.fill(refinedOilBucket,
+				new FluidStack(Fluids.refined_oil,cyano.basemetals.init.Items.universal_bucket.getCapacity(bucket)),true);
+
+
+		addFuel(crudeOilBucket,CRUDE_OIL_FUEL_PER_FLUID_UNIT * FluidContainerRegistry.BUCKET_VOLUME);
+		addFuel(refinedOilBucket,REFINED_OIL_FUEL_PER_FLUID_UNIT * FluidContainerRegistry.BUCKET_VOLUME);
+		*/
 		
 		initDone = true;
 	}

@@ -1,6 +1,5 @@
 package cyano.poweradvantage.api.fluid;
 
-import net.minecraftforge.fluids.FluidContainerRegistry;
 import cyano.poweradvantage.api.PowerRequest;
 import cyano.poweradvantage.api.PoweredEntity;
 
@@ -13,7 +12,7 @@ public class FluidRequest extends PowerRequest{
 	/**
 	 * Amount representing a single full bucket or block of fluid
 	 */
-	public static final float BUCKET_VOLUME = FluidContainerRegistry.BUCKET_VOLUME;
+	public static final float BUCKET_VOLUME = 1000; // container registry is going to be removed from Forge
 	/**
 	 * Return this to say "no thanks"
 	 */

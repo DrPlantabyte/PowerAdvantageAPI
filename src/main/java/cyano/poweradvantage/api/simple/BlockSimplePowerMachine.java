@@ -1,12 +1,12 @@
 package cyano.poweradvantage.api.simple;
 
-import java.util.Random;
-
-import net.minecraft.block.Block;
+import com.google.common.base.Predicate;
+import cyano.poweradvantage.api.*;
+import cyano.poweradvantage.conduitnetwork.ConduitRegistry;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyDirection;
-import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.inventory.IInventory;
@@ -14,37 +14,33 @@ import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Mirror;
+import net.minecraft.util.Rotation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
-import com.google.common.base.Predicate;
+import java.util.Random;
 
-import cyano.poweradvantage.api.ConduitType;
-import cyano.poweradvantage.api.GUIBlock;
-import cyano.poweradvantage.api.ITypedConduit;
-import cyano.poweradvantage.api.PoweredEntity;
-import cyano.poweradvantage.conduitnetwork.ConduitRegistry;
 /**
  * This block class provides all of the standard code for creating a machine 
- * block with an inventory and user interface that receives power from connected 
- * power sources.<br>
+ * block with an inventory and user interface that gives power to connected 
+ * machines.<br>
  * Example usage:<br><pre>
 int guiID = cyano.poweradvantage.registry.MachineGUIRegistry.addGUI(new MySimpleMachineGUI());
-Block myMachineBlock = new MyBlockSimplePowerConsumer(guiID,PowerAdvantage.getInstance());
+Block myMachineBlock = new MyBlockSimplePowerSource(guiID,PowerAdvantage.getInstance());
 myMachineBlock.setUnlocalizedName(MODID+"."+"my_machine");
 GameRegistry.registerBlock(myMachineBlock,"my_machine");
  * </pre>
  * @author DrCyano
  *
  */
-public abstract class BlockSimplePowerConsumer  extends GUIBlock implements ITypedConduit {
-	private final ConduitType type;
+public abstract class BlockSimplePowerMachine extends GUIBlock implements ITypedConduit {
+	private final ConduitType[] type;
+
 	/**
-	 * Blockstate property
+	 * Blockstate property indicating which direction the block is facing
 	 */
     public static final PropertyDirection FACING = PropertyDirection.create("facing", (Predicate)EnumFacing.Plane.HORIZONTAL);
     /**
@@ -58,19 +54,29 @@ public abstract class BlockSimplePowerConsumer  extends GUIBlock implements ITyp
      * @param energyType This is the energy type for this block. This is used by 
      * power conduits to determine whether to connect to this block.
      */
-	public BlockSimplePowerConsumer(Material blockMaterial, float hardness, ConduitType energyType){
+	public BlockSimplePowerMachine(Material blockMaterial, float hardness, ConduitType... energyType){
 		super(blockMaterial);
 		this.type = energyType;
     	super.setHardness(hardness);
+		this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
 	}
-	 
+	
+	/**
+	 * Creates a TileEntity for this block when the block is placed into the 
+	 * world.
+	 * @return A new TileEntity instance, probably one that extends 
+	 * <b>TileEntitySimplePowerMachine</b>.
+	 */
+	@Override
+    public abstract PoweredEntity createNewTileEntity(final World world, final int metaDataValue);
+	
 	/**
 	 * Override of default block behavior
 	 */
 	@Override
 	public void onBlockAdded(final World world, final BlockPos coord, final IBlockState state) {
 		this.setDefaultFacing(world, coord, state);
-		ConduitRegistry.getInstance().conduitBlockPlacedEvent(world, world.provider.getDimensionId(), coord, getType());
+		ConduitRegistry.getInstance().conduitBlockPlacedEvent(world, world.provider.getDimension(), coord, getTypes());
 	}
 	/**
 	 * This method is called when the block is removed from the world by an entity.
@@ -78,7 +84,7 @@ public abstract class BlockSimplePowerConsumer  extends GUIBlock implements ITyp
 	@Override
 	public void onBlockDestroyedByPlayer(World w, BlockPos coord, IBlockState state){
 		super.onBlockDestroyedByPlayer(w, coord, state);
-		ConduitRegistry.getInstance().conduitBlockRemovedEvent(w, w.provider.getDimensionId(), coord, getType());
+		ConduitRegistry.getInstance().conduitBlockRemovedEvent(w, w.provider.getDimension(), coord, getTypes());
 	}
 	/**
 	 * This method is called when the block is destroyed by an explosion.
@@ -86,16 +92,8 @@ public abstract class BlockSimplePowerConsumer  extends GUIBlock implements ITyp
 	@Override
 	public void onBlockDestroyedByExplosion(World w, BlockPos coord, Explosion boom){
 		super.onBlockDestroyedByExplosion(w, coord, boom);
-		ConduitRegistry.getInstance().conduitBlockRemovedEvent(w, w.provider.getDimensionId(), coord, getType());
+		ConduitRegistry.getInstance().conduitBlockRemovedEvent(w, w.provider.getDimension(), coord, getTypes());
 	}
-	/**
-	 * Creates a TileEntity for this block when the block is placed into the 
-	 * world.
-	 * @return A new TileEntity instance, probably one that extends 
-	 * <b>TileEntitySimplePowerConsumer</b>.
-	 */
-	@Override
-    public abstract PoweredEntity createNewTileEntity(final World world, final int metaDataValue);
 	
 	/**
 	 * Used to decides whether or not a conduit should connect to this block 
@@ -103,76 +101,41 @@ public abstract class BlockSimplePowerConsumer  extends GUIBlock implements ITyp
 	 * @return The type of energy for this block 
 	 */
 	@Override
-	public ConduitType getType() {
+	public ConduitType[] getTypes() {
 		return type;
 	}
 
 	/**
 	 * Determines whether this conduit is compatible with an adjacent one
-	 * @param type The type of energy in the conduit
-	 * @param blockstate The blockstate of this block
-	 * @param blockFace The side through-which the energy is flowing
-	 * @return true if this conduit can flow the given energy type through the given face, false 
-	 * otherwise
+	 * @param connection A context object that provides the power type and block direction information
+	 * @return True if power should be allowed to flow through this connection, false otherwise
 	 */
 	@Override
-	public boolean canAcceptType(IBlockState blockstate, ConduitType type, EnumFacing blockFace) {
-		return canAcceptType( type, blockFace);
-	}
-	/**
-	 * Determines whether this conduit is compatible with an adjacent one
-	 * @param type The type of energy in the conduit
-	 * @param blockFace The side through-which the energy is flowing
-	 * @return true if this conduit can flow the given energy type through the given face, false 
-	 * otherwise
-	 */
-	@Deprecated
-	public boolean canAcceptType(ConduitType type, EnumFacing blockFace){
-		return canAcceptType( type);
-	}
-	/**
-	 * Determines whether this conduit is compatible with a type of energy through any side
-	 * @param type The type of energy in the conduit
-	 * @return true if this conduit can flow the given energy type through one or more of its block 
-	 * faces, false otherwise
-	 */
-	@Deprecated
-	public boolean canAcceptType(ConduitType type){
-		return ConduitType.areSameType(getType(), type);
+	public boolean canAcceptConnection(PowerConnectorContext connection){
+		ConduitType[] myTypes = getTypes();
+		for(int i = 0; i < myTypes.length; i++){
+			if(ConduitType.areSameType(myTypes[i],connection.powerType)) return true;
+		}
+		return false;
 	}
 	
 	/**
-	 * Determines whether this block/entity should receive energy 
-	 * @return true if this block/entity should receive energy
-	 */
-	public boolean isPowerSink(){
-		return true;
-	}
-	/**
-	 * Determines whether this block/entity can provide energy 
-	 * @return true if this block/entity can provide energy
-	 */
-	public boolean isPowerSource(){
-		return false;
-	}
-
-	/**
 	 * Override of default block behavior
 	 */
-	@Override
+    @Override
     public Item getItemDropped(final IBlockState state, final Random prng, final int i3) {
         return Item.getItemFromBlock(this);
     }
+    
    
+    
 
 	/**
 	 * Creates the blockstate of this block when it is placed in the world
 	 */
     @Override
-    public IBlockState onBlockPlaced(final World world, final BlockPos coord, final EnumFacing facing, 
-    		final float f1, final float f2, final float f3, 
-    		final int meta, final EntityLivingBase player) {
-        return this.getDefaultState().withProperty( FACING, player.getHorizontalFacing().getOpposite());
+    public IBlockState onBlockPlaced(final World p_onBlockPlaced_1_, final BlockPos p_onBlockPlaced_2_, final EnumFacing p_onBlockPlaced_3_, final float p_onBlockPlaced_4_, final float p_onBlockPlaced_5_, final float p_onBlockPlaced_6_, final int p_onBlockPlaced_7_, final EntityLivingBase p_onBlockPlaced_8_) {
+        return this.getDefaultState().withProperty( FACING, p_onBlockPlaced_8_.getHorizontalFacing().getOpposite());
     }
     
     /**
@@ -190,10 +153,6 @@ public abstract class BlockSimplePowerConsumer  extends GUIBlock implements ITyp
         }
     }
     
-    
-    
-    
-    
     /**
      * Destroys the TileEntity associated with this block when this block 
      * breaks.
@@ -201,12 +160,13 @@ public abstract class BlockSimplePowerConsumer  extends GUIBlock implements ITyp
     @Override
     public void breakBlock(final World world, final BlockPos coord, final IBlockState bs) {
         final TileEntity tileEntity = world.getTileEntity(coord);
-        if (tileEntity instanceof TileEntitySimplePowerConsumer) {
+        if (tileEntity instanceof TileEntitySimplePowerMachine) {
             InventoryHelper.dropInventoryItems(world, coord, (IInventory)tileEntity);
             world.updateComparatorOutputLevel(coord, this);
         }
         super.breakBlock(world, coord, bs);
     }
+    
     
     /**
      * Sets the default blockstate
@@ -218,10 +178,10 @@ public abstract class BlockSimplePowerConsumer  extends GUIBlock implements ITyp
         if (w.isRemote) {
             return;
         }
-        final Block block = w.getBlockState(coord.north()).getBlock();
-        final Block block2 = w.getBlockState(coord.south()).getBlock();
-        final Block block3 = w.getBlockState(coord.west()).getBlock();
-        final Block block4 = w.getBlockState(coord.east()).getBlock();
+        final IBlockState block = w.getBlockState(coord.north());
+        final IBlockState block2 = w.getBlockState(coord.south());
+        final IBlockState block3 = w.getBlockState(coord.west());
+        final IBlockState block4 = w.getBlockState(coord.east());
         EnumFacing enumFacing = (EnumFacing)state.getValue(FACING);
         if (enumFacing == EnumFacing.NORTH && block.isFullBlock() && !block2.isFullBlock()) {
             enumFacing = EnumFacing.SOUTH;
@@ -237,23 +197,25 @@ public abstract class BlockSimplePowerConsumer  extends GUIBlock implements ITyp
         }
         w.setBlockState(coord, state.withProperty((IProperty) FACING, (Comparable)enumFacing), 2);
     }
+    
     /**
-     * This method tells Minecraft whether this block has a signal that can be 
-     * measured by a redstone comparator.
-     * <br><br>
-     * You are encouraged to integrate redstone control into your machines. 
-     * This means outputin a redstone signal with the 
-     * <code>getComparatorInputOverride(...)</code> method and (in your 
-     * TileEntity class) reading the redstone input with the 
-     * <code>World.isBlockPowered(...)</code> method.<br><br>
-     * Typically, machines output a redstone value proportional to the amount of 
-     * stuff in their inventory and are disabled when they receive a redstone 
-     * signal.
-     * @return true if this block can be measured by a redstone comparator, 
-     * false otherwise
-     */
+    * This method tells Minecraft whether this block has a signal that can be 
+    * measured by a redstone comparator.
+    * <br><br>
+    * You are encouraged to integrate redstone control into your machines. 
+    * This means outputin a redstone signal with the 
+    * <code>getComparatorInputOverride(...)</code> method and (in your 
+    * TileEntity class) reading the redstone input with the 
+    * <code>World.isBlockPowered(...)</code> method.<br><br>
+    * Typically, machines output a redstone value proportional to the amount of 
+    * stuff in their inventory and are disabled when they receive a redstone 
+    * signal.
+	 * @param state The blockstate of this block
+    * @return true if this block can be measured by a redstone comparator, 
+    * false otherwise
+    */
     @Override
-    public abstract boolean hasComparatorInputOverride();
+    public abstract boolean hasComparatorInputOverride(IBlockState state);
     
     /**
      * This method gets the output for a redstone comparator placed against this 
@@ -267,21 +229,15 @@ public abstract class BlockSimplePowerConsumer  extends GUIBlock implements ITyp
      * Typically, machines output a redstone value proportional to the amount of 
      * stuff in their inventory and are disabled when they receive a redstone 
      * signal.
+	 * @param state The blockstate of this block
      * @param world World object
      * @param coord Coordinates of this block
      * @return a number from 0 to 15
      */
     @Override
-    public  abstract  int getComparatorInputOverride(final World world, final BlockPos coord);
+    public  abstract  int getComparatorInputOverride(IBlockState state, final World world, final BlockPos coord);
     
-    /**
-     * Override of default block behavior
-     */
-    @Override
-    public int getRenderType() {
-        return 3;
-    }
-    
+
     /**
      * Converts metadata into blockstate
      */
@@ -306,28 +262,35 @@ public abstract class BlockSimplePowerConsumer  extends GUIBlock implements ITyp
      * Creates a blockstate
      */
     @Override
-    protected BlockState createBlockState() {
-        return new BlockState(this, new IProperty[] {  FACING });
+    protected BlockStateContainer createBlockState() {
+        return new BlockStateContainer(this, new IProperty[] {  FACING });
     }
-    
-    ///// CLIENT-SIDE CODE /////
 
-    /**
-     * (Client-only) Gets the blockstate used for GUI and such.
-     */
-    @SideOnly(Side.CLIENT)
-    @Override
-    public IBlockState getStateForEntityRender(final IBlockState bs) {
-        return this.getDefaultState().withProperty( FACING, EnumFacing.SOUTH);
-    }
-    
-    /**
-     * (Client-only) Override of default block behavior
-     */
-    @SideOnly(Side.CLIENT)
-    @Override
-    public Item getItem(final World world, final BlockPos coord) {
-        return Item.getItemFromBlock(this);
-    }
+	@Override
+	public IBlockState withRotation(IBlockState state, Rotation rot) {
+		return state.withProperty(FACING, rot.rotate((EnumFacing)state.getValue(FACING)));
+	}
+
+	@Override
+	public IBlockState withMirror(IBlockState state, Mirror mirrorIn) {
+		return state.withRotation(mirrorIn.toRotation((EnumFacing)state.getValue(FACING)));
+	}
+
+
+	@Override
+	public boolean isPowerSink() {
+		return true;
+	}
+
+	/**
+	 * Determines whether this block/entity can provide energy.
+	 *
+	 * @return true if this block/entity can provide energy
+	 */
+	@Override
+	public boolean isPowerSource() {
+		return true;
+	}
+
     
 }

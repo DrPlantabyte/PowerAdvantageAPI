@@ -13,6 +13,11 @@ import java.util.Locale;
  */
 public class ConduitType {
 
+	/**
+	 * Untyped energy is sometimes used for loading and saving data.
+	 */
+	public static final ConduitType UNTYPED = new ConduitType("*");
+
 	/** type identifier */
 	private final String type;
 	/** cached hash-code for high-performance type checking */

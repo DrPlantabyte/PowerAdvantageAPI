@@ -1,26 +1,24 @@
 package cyano.poweradvantage.api.simple;
 
-import java.util.List;
-
-import cyano.poweradvantage.PowerAdvantage;
-import cyano.poweradvantage.api.ITypedConduit;
+import cyano.poweradvantage.api.ConduitType;
+import cyano.poweradvantage.api.PowerConnectorContext;
 import cyano.poweradvantage.api.fluid.FluidConduitBlock;
 import cyano.poweradvantage.util.PowerHelper;
-import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyBool;
-import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.util.List;
 /**
  * <p>
  * This block class implements the cyano.poweradvantage.api.ConduitBlock 
@@ -98,8 +96,8 @@ public abstract class BlockSimpleFluidConduit extends FluidConduitBlock{
 	 * Creates a blockstate instance.
 	 */
 	@Override
-    protected BlockState createBlockState() {
-        return new BlockState(this, new IProperty[] { WEST, DOWN, SOUTH, EAST, UP, NORTH });
+    protected BlockStateContainer createBlockState() {
+        return new BlockStateContainer(this, new IProperty[] { WEST, DOWN, SOUTH, EAST, UP, NORTH });
     }
 	
 	/**
@@ -116,165 +114,165 @@ public abstract class BlockSimpleFluidConduit extends FluidConduitBlock{
         		.withProperty(UP, this.canConnectTo(world,coord,oldBS,EnumFacing.UP, coord.up()))
         		.withProperty(NORTH, this.canConnectTo(world,coord,oldBS,EnumFacing.NORTH, coord.north()));
     }
-    
-	
-    /**
-     * Calculates the collision boxes for this block.
-     */
-	@Override
-    public void setBlockBoundsBasedOnState(final IBlockAccess world, final BlockPos coord) {
-		final IBlockState bs =world.getBlockState(coord); 
-		IBlockState oldBS = bs;
-        final boolean connectNorth = this.canConnectTo(world,coord,oldBS,EnumFacing.NORTH, coord.north());
-        final boolean connectSouth = this.canConnectTo(world,coord,oldBS,EnumFacing.SOUTH, coord.south());
-        final boolean connectWest = this.canConnectTo(world,coord,oldBS,EnumFacing.WEST, coord.west());
-        final boolean connectEast = this.canConnectTo(world,coord,oldBS,EnumFacing.EAST, coord.east());
-        final boolean connectUp = this.canConnectTo(world,coord,oldBS,EnumFacing.UP, coord.up());
-        final boolean connectDown = this.canConnectTo(world,coord,oldBS,EnumFacing.DOWN, coord.down());
-        
-        float radius = pipeRadius;
-        float rminus = 0.5f - radius;
-        float rplus = 0.5f + radius;
-        
-        float x1 = rminus;
-        float x2 = rplus;
-        float y1 = rminus;
-        float y2 = rplus;
-        float z1 = rminus;
-        float z2 = rplus;
-        if (connectNorth) {
-            z1 = 0.0f;
-        }
-        if (connectSouth) {
-            z2 = 1.0f;
-        }
-        if (connectWest) {
-            x1 = 0.0f;
-        }
-        if (connectEast) {
-            x2 = 1.0f;
-        }
-        if(connectDown){
-        	y1 = 0.0f;
-        }
-        if(connectUp){
-        	y2 = 1.0f;
-        }
-        this.setBlockBounds(x1, y1, z1, x2, y2, z2);
-    }
 
-    /**
-     * Calculates the collision boxes for this block.
-     */
-	@Override
-    public void addCollisionBoxesToList(final World world, final BlockPos coord, 
-    		final IBlockState bs, final AxisAlignedBB box, final List collisionBoxList, 
-    		final Entity entity) {
-		IBlockState oldBS = bs;
-        final boolean connectNorth = this.canConnectTo(world,coord,oldBS,EnumFacing.NORTH, coord.north());
-        final boolean connectSouth = this.canConnectTo(world,coord,oldBS,EnumFacing.SOUTH, coord.south());
-        final boolean connectWest = this.canConnectTo(world,coord,oldBS,EnumFacing.WEST, coord.west());
-        final boolean connectEast = this.canConnectTo(world,coord,oldBS,EnumFacing.EAST, coord.east());
-        final boolean connectUp = this.canConnectTo(world,coord,oldBS,EnumFacing.UP, coord.up());
-        final boolean connectDown = this.canConnectTo(world,coord,oldBS,EnumFacing.DOWN, coord.down());
-        
-        float radius = pipeRadius;
-        float rminus = 0.5f - radius;
-        float rplus = 0.5f + radius;
-        
-        this.setBlockBounds(rminus, rminus, rminus, rplus, rplus, rplus);
-        super.addCollisionBoxesToList(world, coord, bs, box, collisionBoxList, entity);
 
-        if(connectUp){
-            this.setBlockBounds(rminus, rminus, rminus, rplus, 1f, rplus);
-            super.addCollisionBoxesToList(world, coord, bs, box, collisionBoxList, entity);
-        }
-        if(connectDown){
-            this.setBlockBounds(rminus, 0f, rminus, rplus, rplus, rplus);
-            super.addCollisionBoxesToList(world, coord, bs, box, collisionBoxList, entity);
-        }
-        if(connectEast){
-            this.setBlockBounds(rminus, rminus, rminus, 1f, rplus, rplus);
-            super.addCollisionBoxesToList(world, coord, bs, box, collisionBoxList, entity);
-        }
-        if(connectWest){
-            this.setBlockBounds(0f, rminus, rminus, rplus, rplus, rplus);
-            super.addCollisionBoxesToList(world, coord, bs, box, collisionBoxList, entity);
-        }
-        if(connectSouth){
-            this.setBlockBounds(rminus, rminus, rminus, rplus, rplus, 1f);
-            super.addCollisionBoxesToList(world, coord, bs, box, collisionBoxList, entity);
-        }
-        if(connectNorth){
-            this.setBlockBounds(rminus, rminus, 0f, rplus, rplus, rplus);
-            super.addCollisionBoxesToList(world, coord, bs, box, collisionBoxList, entity);
-        }
-    }
-	
 	/**
-	 * This method determines whether to connect to a neighboring block. 
-	 * Override this method to change block connection behavior. 
+	 * Calculates the collision boxes for this block.
+	 */
+	@Override
+	public AxisAlignedBB getBoundingBox(final IBlockState bs, final IBlockAccess world, final BlockPos coord) {
+		IBlockState oldBS = bs;
+		final boolean connectNorth = this.canConnectTo(world,coord,oldBS,EnumFacing.NORTH, coord.north());
+		final boolean connectSouth = this.canConnectTo(world,coord,oldBS,EnumFacing.SOUTH, coord.south());
+		final boolean connectWest = this.canConnectTo(world,coord,oldBS,EnumFacing.WEST, coord.west());
+		final boolean connectEast = this.canConnectTo(world,coord,oldBS,EnumFacing.EAST, coord.east());
+		final boolean connectUp = this.canConnectTo(world,coord,oldBS,EnumFacing.UP, coord.up());
+		final boolean connectDown = this.canConnectTo(world,coord,oldBS,EnumFacing.DOWN, coord.down());
+
+		float radius = pipeRadius;
+		float rminus = 0.5f - radius;
+		float rplus = 0.5f + radius;
+
+		float x1 = rminus;
+		float x2 = rplus;
+		float y1 = rminus;
+		float y2 = rplus;
+		float z1 = rminus;
+		float z2 = rplus;
+		if (connectNorth) {
+			z1 = 0.0f;
+		}
+		if (connectSouth) {
+			z2 = 1.0f;
+		}
+		if (connectWest) {
+			x1 = 0.0f;
+		}
+		if (connectEast) {
+			x2 = 1.0f;
+		}
+		if(connectDown){
+			y1 = 0.0f;
+		}
+		if(connectUp){
+			y2 = 1.0f;
+		}
+		return new AxisAlignedBB(x1, y1, z1, x2, y2, z2);
+	}
+
+	/**
+	 * Calculates the collision boxes for this block.
+	 */
+	@Override
+	public void addCollisionBoxToList(final IBlockState bs, final World world, final BlockPos coord,
+									  final AxisAlignedBB box, final List<AxisAlignedBB> collisionBoxList,
+									  final Entity entity) {
+		IBlockState oldBS = bs;
+		final boolean connectNorth = this.canConnectTo(world,coord,oldBS,EnumFacing.NORTH, coord.north());
+		final boolean connectSouth = this.canConnectTo(world,coord,oldBS,EnumFacing.SOUTH, coord.south());
+		final boolean connectWest = this.canConnectTo(world,coord,oldBS,EnumFacing.WEST, coord.west());
+		final boolean connectEast = this.canConnectTo(world,coord,oldBS,EnumFacing.EAST, coord.east());
+		final boolean connectUp = this.canConnectTo(world,coord,oldBS,EnumFacing.UP, coord.up());
+		final boolean connectDown = this.canConnectTo(world,coord,oldBS,EnumFacing.DOWN, coord.down());
+
+		float radius = pipeRadius;
+		float rminus = 0.5f - radius;
+		float rplus = 0.5f + radius;
+
+		AxisAlignedBB newBox;
+		newBox = new AxisAlignedBB(rminus, rminus, rminus, rplus, rplus, rplus);
+		super.addCollisionBoxToList(coord, box, collisionBoxList, newBox);
+
+		if(connectUp){
+			newBox = new AxisAlignedBB(rminus, rminus, rminus, rplus, 1f, rplus);
+			super.addCollisionBoxToList(coord, box, collisionBoxList, newBox);
+		}
+		if(connectDown){
+			newBox = new AxisAlignedBB(rminus, 0f, rminus, rplus, rplus, rplus);
+			super.addCollisionBoxToList(coord, box, collisionBoxList, newBox);
+		}
+		if(connectEast){
+			newBox = new AxisAlignedBB(rminus, rminus, rminus, 1f, rplus, rplus);
+			super.addCollisionBoxToList(coord, box, collisionBoxList, newBox);
+		}
+		if(connectWest){
+			newBox = new AxisAlignedBB(0f, rminus, rminus, rplus, rplus, rplus);
+			super.addCollisionBoxToList(coord, box, collisionBoxList, newBox);
+		}
+		if(connectSouth){
+			newBox = new AxisAlignedBB(rminus, rminus, rminus, rplus, rplus, 1f);
+			super.addCollisionBoxToList(coord, box, collisionBoxList, newBox);
+		}
+		if(connectNorth){
+			newBox = new AxisAlignedBB(rminus, rminus, 0f, rplus, rplus, rplus);
+			super.addCollisionBoxToList(coord, box, collisionBoxList, newBox);
+		}
+	}
+	
+
+	/**
+	 * This method determines whether to connect to a neighboring block.
+	 * Override this method to change block connection behavior.
 	 * @param w World instance
 	 * @param thisBlock The block that is checking its neighbor
 	 * @param bs Block state of this block
 	 * @param face The face on the first block through which the connection would happen
 	 * @param otherBlock Coordinate of neighboring block
-	 * @return Default implementation: true if the neighboring block implements 
-	 * ITypedConductor and has the same energy type as this block. Overriding 
-	 * the canConnectTo(ConductorType) method will change the results of this 
+	 * @return Default implementation: true if the neighboring block implements
+	 * ITypedConductor and has the same energy type as this block. Overriding
+	 * the canConnectTo(ConductorType) method will change the results of this
 	 * method.
 	 */
 	protected boolean canConnectTo(IBlockAccess w, BlockPos thisBlock, IBlockState bs, EnumFacing face, BlockPos otherBlock){
 		IBlockState other = w.getBlockState(otherBlock);
-		if(other.getBlock() instanceof ITypedConduit){
-			if(PowerAdvantage.enableExtendedModCompatibility){
-				return PowerHelper.areConnectable(w, thisBlock, face);
-			}
-			return PowerHelper.areConnectable(bs, face, other);
-		} else {
-			return false;
+		ConduitType[] types = getTypes();
+		for(int i = 0; i < types.length; i++){
+			if (PowerHelper.areConnectable(new PowerConnectorContext(types[i],w, bs, thisBlock, face))) return true;
 		}
+		return false;
 	}
-	
+
+
+
 	/**
 	 * Override of default block behavior
 	 */
-    @Override
-    public boolean isOpaqueCube() {
-        return false;
-    }
-    
-    /**
+	@Override
+	public boolean isOpaqueCube(IBlockState bs) {
+		return false;
+	}
+
+	/**
 	 * Override of default block behavior
 	 */
-    @Override
-    public boolean isFullCube() {
-        return false;
-    }
-    
-    /**
+	@Override
+	public boolean isFullCube(IBlockState bs) {
+		return false;
+	}
+
+	/**
 	 * Override of default block behavior
 	 */
-    @Override
-    public boolean isPassable(final IBlockAccess world, final BlockPos coord) {
-        return false;
-    }
-    
-    
-    /**
+	@Override
+	public boolean isPassable(final IBlockAccess world, final BlockPos coord) {
+		return false;
+	}
+
+
+	/**
 	 * Metadata not used.
 	 */
-    @Override
-    public int getMetaFromState(final IBlockState bs) {
-        return 0;
-    }
+	@Override
+	public int getMetaFromState(final IBlockState bs) {
+		return 0;
+	}
 
-    /**
+	/**
 	 * Override of default block behavior
 	 */
-    @SideOnly(Side.CLIENT)
-    @Override
-    public boolean shouldSideBeRendered(final IBlockAccess world, final BlockPos coord, final EnumFacing face) {
-        return true;
-    }
+	@SideOnly(Side.CLIENT)
+	@Override
+	public boolean shouldSideBeRendered(IBlockState bs, final IBlockAccess world, final BlockPos coord, final EnumFacing face) {
+		return true;
+	}
 }

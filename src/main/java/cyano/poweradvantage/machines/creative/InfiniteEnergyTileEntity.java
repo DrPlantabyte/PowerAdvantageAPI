@@ -3,35 +3,56 @@ package cyano.poweradvantage.machines.creative;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import cyano.poweradvantage.api.ConduitType;
-import cyano.poweradvantage.api.simple.TileEntitySimplePowerSource;
+import cyano.poweradvantage.api.simple.TileEntitySimplePowerMachine;
 
-public class InfiniteEnergyTileEntity extends TileEntitySimplePowerSource{
+public class InfiniteEnergyTileEntity extends TileEntitySimplePowerMachine {
 
 	private final ItemStack[] inventory = new ItemStack[0];
 	private final int[] dataArray = new int[0];
-	private ConduitType type = null;
+	private final ConduitType[] type = new ConduitType[1];
 	
 	public InfiniteEnergyTileEntity(ConduitType energyType) {
 		super(energyType, 1000f, InfiniteEnergyTileEntity.class.getName());
-		this.type = energyType;
+		this.type[0] = energyType;
 	}
 	
 
 	public InfiniteEnergyTileEntity() {
 		super(new ConduitType("power"), 1000f, InfiniteEnergyTileEntity.class.getName());
-		this.type = new ConduitType("power");
+		this.type[0] = new ConduitType("power");
 	}
 	
 	public void setPowerType(ConduitType type){
-		this.type = type;
+		this.type[0] = type;
 	}
 	
 	@Override
-	public ConduitType getType(){
+	public ConduitType[] getTypes(){
 		return type;
 	}
 
-	
+	/**
+	 * Determines whether this block/entity should receive energy. If this is not a sink, then it
+	 * will never be given power by a power source.
+	 *
+	 * @return true if this block/entity should receive energy
+	 */
+	@Override
+	public boolean isPowerSink() {
+		return false;
+	}
+
+	/**
+	 * Determines whether this block/entity can provide energy.
+	 *
+	 * @return true if this block/entity can provide energy
+	 */
+	@Override
+	public boolean isPowerSource() {
+		return true;
+	}
+
+
 	@Override
 	protected ItemStack[] getInventory() {
 		return inventory;
@@ -62,21 +83,21 @@ public class InfiniteEnergyTileEntity extends TileEntitySimplePowerSource{
 	@Override
 	public void powerUpdate(){
 		super.powerUpdate();
-		this.setEnergy(this.getEnergyCapacity(), this.getType());
+		this.setEnergy(this.getEnergyCapacity(this.getTypes()[0]), this.getTypes()[0]);
 	}
 
 
 	@Override
 	public void writeToNBT(final NBTTagCompound tagRoot) {
 		super.writeToNBT(tagRoot);
-		tagRoot.setString("InfType", this.getType().toString());
+		tagRoot.setString("InfType", this.getTypes().toString());
 	}
 
 	@Override
 	public void readFromNBT(final NBTTagCompound tagRoot) {
 		super.readFromNBT(tagRoot);
 		if (tagRoot.hasKey("InfType")) {
-			this.type = new ConduitType(tagRoot.getString("InfType"));
+			this.type[0] = new ConduitType(tagRoot.getString("InfType"));
 		}
 	}
 }

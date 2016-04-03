@@ -1,42 +1,109 @@
 package cyano.poweradvantage.init;
 
 import cyano.poweradvantage.PowerAdvantage;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.WeightedRandomChestContent;
-import net.minecraftforge.common.ChestGenHooks;
+import net.minecraftforge.fml.common.FMLLog;
+import org.apache.logging.log4j.Level;
+
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
 
 public abstract class TreasureChests {
 
 	private static boolean initDone = false;
-	public static void init(){
+	public static void init(Path configFolder){
 		if(initDone)return;
-		Blocks.init();
-		Items.init();
 
-		addChestLoot(new ItemStack(Items.sprocket,1),20f,2,4);
-		addChestLoot(new ItemStack(Blocks.fluid_pipe,1),10f,1,3);
-		addChestLoot(new ItemStack(Blocks.storage_tank,1),3f,1,0);
-		addChestLoot(new ItemStack(Blocks.fluid_discharge,1),2f,1,0);
-		addChestLoot(new ItemStack(Blocks.fluid_drain,1),2f,1,0);
-		addChestLoot(new ItemStack(Blocks.item_conveyor,1),5f,1,0);
+		Path chestFolder = configFolder.resolve(Paths.get("additional-loot-tables",PowerAdvantage.MODID,"chests"));
+		writeLootFile(chestFolder.resolve("abandoned_mineshaft.json"), LOOT_POOL);
+		writeLootFile(chestFolder.resolve("simple_dungeon.json"), LOOT_POOL);
+		writeLootFile(chestFolder.resolve("village_blacksmith.json"), LOOT_POOL);
+		writeLootFile(chestFolder.resolve("stronghold_corridor.json"), LOOT_POOL);
+		writeLootFile(chestFolder.resolve("stronghold_crossing.json"), LOOT_POOL);
 		
 		initDone = true;
 	}
-	
-	private static WeightedRandomChestContent makeChestLootEntry(ItemStack itemStack, int spawnWeight, int minQuantity,int maxQuantity){
-		if(itemStack == null) return null;
-		if(spawnWeight <= 0) return null;
-		return new WeightedRandomChestContent(itemStack,minQuantity,maxQuantity,spawnWeight);
-	}
-	
-	private static void addChestLoot(ItemStack item, float weight, int number, int range){
-		WeightedRandomChestContent loot = makeChestLootEntry(item,(int)(weight*PowerAdvantage.chestLootFactor),number,number+range);
-		if(loot != null){
-			ChestGenHooks.getInfo(ChestGenHooks.VILLAGE_BLACKSMITH).addItem(loot);
-			ChestGenHooks.getInfo(ChestGenHooks.DUNGEON_CHEST).addItem(loot);
-			ChestGenHooks.getInfo(ChestGenHooks.STRONGHOLD_CORRIDOR).addItem(loot);
-			ChestGenHooks.getInfo(ChestGenHooks.STRONGHOLD_CROSSING).addItem(loot);
+
+	private static void writeLootFile(Path file, String content){
+		try {
+			Files.write(file, Arrays.asList(content), Charset.forName("UTF-8"));
+		} catch (IOException e) {
+			FMLLog.log(Level.ERROR,e,"Error writing additional-loot-table files");
 		}
 	}
+
+	static final String LOOT_POOL = "{\n" +
+			"    \"pools\": [\n" +
+			"        {\n" +
+			"            \"__comment\":\"25% chance of a Power Advantage item\",\n" +
+			"            \"rolls\": 1,\n" +
+			"            \"entries\": [\n" +
+			"                {\n" +
+			"                    \"type\": \"empty\",\n" +
+			"                    \"weight\": 60\n" +
+			"                },\n" +
+			"                {\n" +
+			"                    \"type\": \"item\",\n" +
+			"                    \"name\": \"poweradvantage:sprocket\",\n" +
+			"                    \"weight\": 5,\n" +
+			"                    \"functions\": [\n" +
+			"                        {\n" +
+			"                            \"function\": \"set_count\",\n" +
+			"                            \"count\": {\n" +
+			"                                \"min\": 2,\n" +
+			"                                \"max\": 6\n" +
+			"                            }\n" +
+			"                        }\n" +
+			"                    ]\n" +
+			"                },\n" +
+			"                {\n" +
+			"                    \"type\": \"item\",\n" +
+			"                    \"name\": \"poweradvantage:fluid_pipe\",\n" +
+			"                    \"weight\": 5,\n" +
+			"                    \"functions\": [\n" +
+			"                        {\n" +
+			"                            \"function\": \"set_count\",\n" +
+			"                            \"count\": {\n" +
+			"                                \"min\": 1,\n" +
+			"                                \"max\": 4\n" +
+			"                            }\n" +
+			"                        }\n" +
+			"                    ]\n" +
+			"                },\n" +
+			"                {\n" +
+			"                    \"type\": \"item\",\n" +
+			"                    \"name\": \"poweradvantage:fluid_storage_tank\",\n" +
+			"                    \"weight\": 3\n" +
+			"                },\n" +
+			"                {\n" +
+			"                    \"type\": \"item\",\n" +
+			"                    \"name\": \"poweradvantage:fluid_drain\",\n" +
+			"                    \"weight\": 2\n" +
+			"                },\n" +
+			"                {\n" +
+			"                    \"type\": \"item\",\n" +
+			"                    \"name\": \"poweradvantage:fluid_discharge\",\n" +
+			"                    \"weight\": 2\n" +
+			"                },\n" +
+			"                {\n" +
+			"                    \"type\": \"item\",\n" +
+			"                    \"name\": \"poweradvantage:item_conveyor\",\n" +
+			"                    \"weight\": 3,\n" +
+			"                    \"functions\": [\n" +
+			"                        {\n" +
+			"                            \"function\": \"set_count\",\n" +
+			"                            \"count\": {\n" +
+			"                                \"min\": 1,\n" +
+			"                                \"max\": 5\n" +
+			"                            }\n" +
+			"                        }\n" +
+			"                    ]\n" +
+			"                }\n" +
+			"            ]\n" +
+			"        }\n" +
+			"    ]\n" +
+			"}\n";
 }

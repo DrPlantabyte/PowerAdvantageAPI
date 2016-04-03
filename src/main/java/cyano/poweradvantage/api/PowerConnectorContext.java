@@ -3,7 +3,7 @@ package cyano.poweradvantage.api;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.IBlockAccess;
 
 /**
  * This data structure class is used to reduce the parameter list of the ITypedConduit methods to a single pointer.
@@ -12,21 +12,21 @@ import net.minecraft.world.World;
 public class PowerConnectorContext {
 
 	/** World instance */
-	public final World world;
+	public final IBlockAccess world;
 	/** Type of power */
 	public final ConduitType powerType;
 	/** Block that is asking for the connection */
-	public final IBlockState connectorBlock;
+	public final IBlockState thisBlock;
 	/** Position of the block that is asking for the connection */
-	public final BlockPos connectorPosition;
+	public final BlockPos thisBlockPosition;
 	/** Face on the block that is asking for the connection */
-	public final EnumFacing connectorSide;
+	public final EnumFacing thisBlockSide;
 	/** Block that is being asked for the connection */
-	public final IBlockState connecteeBlock;
+	public final IBlockState otherBlock;
 	/** Position of the block that is being asked for the connection */
-	public final BlockPos connecteePosition;
+	public final BlockPos otherBlockPosition;
 	/** Face on the block that is being asked for the connection */
-	public final EnumFacing connecteeSide;
+	public final EnumFacing otherBlockSide;
 
 	/**
 	 * Constructs a data structure instance
@@ -40,7 +40,7 @@ public class PowerConnectorContext {
 	 */
 	public PowerConnectorContext(
 			final ConduitType powerType,
-			final World world,
+			final IBlockAccess world,
 			final IBlockState connectorBlock,
 			final BlockPos connectorPosition,
 			final EnumFacing connectorSide,
@@ -50,29 +50,29 @@ public class PowerConnectorContext {
 	){
 		this.world = world;
 		this.powerType = powerType;
-		this.connectorBlock = connectorBlock;
-		this.connectorPosition = connectorPosition;
-		this.connectorSide = connectorSide;
-		this.connecteeBlock = connecteeBlock;
-		this.connecteePosition = connecteePosition;
-		this.connecteeSide = connecteeSide;
+		this.thisBlock = connectorBlock;
+		this.thisBlockPosition = connectorPosition;
+		this.thisBlockSide = connectorSide;
+		this.otherBlock = connecteeBlock;
+		this.otherBlockPosition = connecteePosition;
+		this.otherBlockSide = connecteeSide;
 	}
 
 	public PowerConnectorContext(
 			final ConduitType powerType,
-			final World world,
+			final IBlockAccess world,
 			final IBlockState connectorBlock,
 			final BlockPos connectorPosition,
 			final EnumFacing connectorSide
 	){
 		this.world = world;
 		this.powerType = powerType;
-		this.connectorBlock = connectorBlock;
-		this.connectorPosition = connectorPosition;
-		this.connectorSide = connectorSide;
-		this.connecteePosition = connectorPosition.offset(connectorSide);
-		this.connecteeSide = connectorSide.getOpposite();
-		this.connecteeBlock = world.getBlockState(connecteePosition);
+		this.thisBlock = connectorBlock;
+		this.thisBlockPosition = connectorPosition;
+		this.thisBlockSide = connectorSide;
+		this.otherBlockPosition = connectorPosition.offset(connectorSide);
+		this.otherBlockSide = connectorSide.getOpposite();
+		this.otherBlock = world.getBlockState(otherBlockPosition);
 	}
 
 	/**
@@ -80,6 +80,6 @@ public class PowerConnectorContext {
 	 * @return A reversed instance of this PowerConnectorContext
 	 */
 	public final PowerConnectorContext reverse(){
-		return new PowerConnectorContext(powerType,world,connecteeBlock,connecteePosition,connecteeSide,connectorBlock,connectorPosition,connectorSide);
+		return new PowerConnectorContext(powerType,world, otherBlock, otherBlockPosition, otherBlockSide, thisBlock, thisBlockPosition, thisBlockSide);
 	}
 }

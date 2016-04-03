@@ -1,17 +1,15 @@
 package cyano.poweradvantage.init;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import cyano.poweradvantage.PowerAdvantage;
 import cyano.poweradvantage.api.ConduitType;
-import cyano.poweradvantage.api.GUIBlock;
-import cyano.poweradvantage.api.modsupport.rf.*;
-import cyano.poweradvantage.api.modsupport.*;
+import cyano.poweradvantage.api.modsupport.rf.BlockRFConverter;
+import cyano.poweradvantage.api.modsupport.rf.TileEntityRFElectricityConverter;
+import cyano.poweradvantage.api.modsupport.rf.TileEntityRFQuantumConverter;
+import cyano.poweradvantage.api.modsupport.rf.TileEntityRFSteamConverter;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fml.common.FMLLog;
@@ -20,6 +18,9 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.ShapedOreRecipe;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public abstract class ModSupport {
 	

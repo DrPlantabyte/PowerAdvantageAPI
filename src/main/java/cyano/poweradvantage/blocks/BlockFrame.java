@@ -1,8 +1,13 @@
 package cyano.poweradvantage.blocks;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
-import net.minecraft.util.EnumWorldBlockLayer;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -16,28 +21,29 @@ public class BlockFrame extends Block {
 
 	public BlockFrame(Material m) {
 		super(m);
+		setStepSound(SoundType.METAL);
 	}
 
 	@SideOnly(Side.CLIENT)
 	@Override
-	public EnumWorldBlockLayer getBlockLayer() {
-		return EnumWorldBlockLayer.CUTOUT;
+	public BlockRenderLayer getBlockLayer() {
+		return BlockRenderLayer.CUTOUT;
 	}
 
 	@Override
-	public boolean isFullCube() {
+	public boolean isFullCube(IBlockState bs) {
 		return false;
 	}
 
 	@Override
-	protected boolean canSilkHarvest() {
+	public boolean canSilkHarvest(World world, BlockPos pos, IBlockState state, EntityPlayer player) {
 		return true;
 	}
 	
 
 
 	@Override
-	public boolean isOpaqueCube() {
+	public boolean isOpaqueCube(IBlockState bs) {
 		return false;
 	}
 

@@ -1,20 +1,17 @@
 package cyano.poweradvantage.api.modsupport;
 
+import cyano.poweradvantage.api.ConduitType;
+import cyano.poweradvantage.api.PoweredEntity;
+import net.minecraft.block.Block;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
+import net.minecraftforge.fml.common.FMLLog;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-
-import cyano.poweradvantage.api.ConduitType;
-import cyano.poweradvantage.api.ITypedConduit;
-import cyano.poweradvantage.api.PoweredEntity;
-import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.world.IBlockAccess;
-import net.minecraftforge.fml.common.FMLLog;
 
 /**
  * <p>This class provides a place to register blocks from other mods as power consumers. Such mods are 
@@ -87,25 +84,7 @@ public class LightWeightPowerRegistry {
 		getInstance().externalPowerSinks.put(machineBlock, powerAcceptorImplementation);
 	}
 	
-	/**
-	 * Determines whether a block usese power, whether from Power Advantage or from an external 
-	 * power mod.
-	 * @param w The World instance
-	 * @param coord The BlockPos being tested
-	 * @param type The type of power that the block might acccept
-	 * @return True if the block is a Power Advantage machine or registered external machine that is 
-	 * compatible with the provided power type.
-	 */
-	public boolean isPowerAcceptor(IBlockAccess w, BlockPos coord, ConduitType type){
-		Block b = w.getBlockState(coord).getBlock();
-		if(b instanceof ITypedConduit){
-			return ((ITypedConduit)b).isPowerSink();
-		}
-		if(externalPowerSinks.containsKey(b)){
-			return externalPowerSinks.get(b).canAcceptEnergyType(type);
-		}
-		return false;
-	}
+
 	/**
 	 * Checks if a block is a registered external powered machine
 	 * @param b The block to test
@@ -158,22 +137,6 @@ public class LightWeightPowerRegistry {
 		return 0;
 		
 	}
-	
-	/**
-	 * Returns whether a block can connect to power sources of the provided type. The block can be 
-	 * either a Power Advantage block or an external machine block.
-	 * @param b A block
-	 * @param energyType The type of power being connected
-	 * @param face the face being connected
-	 * @return true if the block can accept that kind of power, false otherwise.
-	 */
-	public boolean canAcceptType(IBlockState b, ConduitType energyType, EnumFacing face){
-		if(b.getBlock()  instanceof ITypedConduit){
-			return ((ITypedConduit)b.getBlock()).canAcceptType(b,energyType,face);
-		} else if(externalPowerSinks.containsKey(b.getBlock())){
-			return externalPowerSinks.get(b.getBlock()).canAcceptEnergyType(energyType,face);
-		}
-		return false;
-	}
+
 	
 }

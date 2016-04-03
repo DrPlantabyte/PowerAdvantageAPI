@@ -1,9 +1,5 @@
 package cyano.poweradvantage.machines.conveyors;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
-
 import cyano.poweradvantage.util.InventoryWrapper;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockChest;
@@ -17,17 +13,20 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.ChatComponentTranslation;
-import net.minecraft.util.EntitySelectors;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.IChatComponent;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentBase;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.ILockableContainer;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLLog;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
 
 public class TileEntityConveyor extends TileEntity implements ITickable, ISidedInventory {
 
@@ -93,7 +92,7 @@ public class TileEntityConveyor extends TileEntity implements ITickable, ISidedI
 				// grab items sitting on the ground behind the conveyor
 				List<EntityItem> list = w.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(
 						upstreamBlock.getX(), upstreamBlock.getY(), upstreamBlock.getZ(), 
-						upstreamBlock.getX()+1, upstreamBlock.getY()+1, upstreamBlock.getZ()+1), EntitySelectors.selectAnything);
+						upstreamBlock.getX()+1, upstreamBlock.getY()+1, upstreamBlock.getZ()+1));
 				if(!list.isEmpty()){
 					EntityItem e = list.get(0);
 					if(!e.isAirBorne){
@@ -378,11 +377,11 @@ public class TileEntityConveyor extends TileEntity implements ITickable, ISidedI
 	}
 
 	@Override
-	public IChatComponent getDisplayName() {
+	public TextComponentBase getDisplayName() {
 		if (this.hasCustomName()) {
-			return new ChatComponentText(this.getName());
+			return new TextComponentString(this.getName());
 		}
-		return new ChatComponentTranslation(this.getName(), new Object[0]);
+		return new TextComponentTranslation(this.getName(), new Object[0]);
 	}
 
 	private String customName = null;

@@ -1,8 +1,6 @@
 package cyano.poweradvantage.machines.fluidmachines;
 
-import org.apache.logging.log4j.Level;
-
-import cyano.poweradvantage.api.simple.TileEntitySimpleFluidSource;
+import cyano.poweradvantage.api.simple.TileEntitySimpleFluidMachine;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDynamicLiquid;
 import net.minecraft.block.BlockLiquid;
@@ -13,23 +11,12 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraftforge.fluids.BlockFluidBase;
-import net.minecraftforge.fluids.BlockFluidClassic;
-import net.minecraftforge.fluids.BlockFluidFinite;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTank;
-import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidBlock;
-import net.minecraftforge.fluids.IFluidHandler;
-import net.minecraftforge.fml.common.FMLLog;
+import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.fluids.*;
 
 
-public class FluidDrainTileEntity extends TileEntitySimpleFluidSource{
+public class FluidDrainTileEntity extends TileEntitySimpleFluidMachine {
 
 	public FluidDrainTileEntity() {
 		super( FluidContainerRegistry.BUCKET_VOLUME, FluidDrainTileEntity.class.getName());
@@ -95,7 +82,7 @@ public class FluidDrainTileEntity extends TileEntitySimpleFluidSource{
 					}
 	
 					// flowing minecraft fluid block
-					Material m = block.getMaterial();
+					Material m = block.getMaterial(bs);
 					// is flowing block, follow upstream to find source block
 					int limit = 16;
 					BlockPos coord = this.pos.up();
@@ -148,11 +135,11 @@ public class FluidDrainTileEntity extends TileEntitySimpleFluidSource{
 		IBlockState state = getWorld().getBlockState(coord);
 		Block b = state.getBlock();
 		Block upBlock = getWorld().getBlockState(coord.up()).getBlock();
-		if(b instanceof BlockLiquid && b.getMaterial() == fblock.getMaterial()){
+		if(b instanceof BlockLiquid && b.getMaterial(state) == fblock.getMaterial(state)){
 			Integer L = (Integer)getWorld().getBlockState(coord).getValue(BlockDynamicLiquid.LEVEL);
 			if(L == null) return 0;
 			if(L == 0) return 100; // source block
-			if(upBlock instanceof BlockLiquid && upBlock.getMaterial() == fblock.getMaterial()){
+			if(upBlock instanceof BlockLiquid && upBlock.getMaterial(state) == fblock.getMaterial(state)){
 				return 99;
 			}
 			if(L < 8) {
@@ -220,9 +207,20 @@ public class FluidDrainTileEntity extends TileEntitySimpleFluidSource{
 	{
 		super.writeToNBT(root);
 	}
-	
-	
-	
+
+	/**
+	 * Checks whether a given fluid is appropriate for this machine. For example, a water tank would return fallse for
+	 * all Fluids except for <code>FluidRegistry.WATER</code>
+	 *
+	 * @param fluid The fluid to test
+	 * @return True if this machine should accept this fluid type, false to reject it.
+	 */
+	@Override
+	public boolean canAccept(Fluid fluid) {
+		return true;
+	}
+
+
 	///// Boiler Plate /////
 	
 	private String customName = null;
@@ -246,19 +244,27 @@ public class FluidDrainTileEntity extends TileEntitySimpleFluidSource{
 		return this.getTank().getFluidAmount() * 15 / this.getTank().getCapacity();
 	}
 
+	/**
+	 * Determines whether this block/entity should receive energy. If this is not a sink, then it
+	 * will never be given power by a power source.
+	 *
+	 * @return true if this block/entity should receive energy
+	 */
+	@Override
+	public boolean isPowerSink() {
+		return false;
+	}
+
+	/**
+	 * Determines whether this block/entity can provide energy.
+	 *
+	 * @return true if this block/entity can provide energy
+	 */
+	@Override
+	public boolean isPowerSource() {
+		return true;
+	}
 
 
-
-
-
-
-
-
-	
-	
-	
-
-	
-	
 	//////////
 }

@@ -1,19 +1,19 @@
 package cyano.poweradvantage.machines.fluidmachines;
 
 import cyano.poweradvantage.api.PoweredEntity;
-import cyano.poweradvantage.api.simple.BlockSimpleFluidSource;
+import cyano.poweradvantage.api.simple.BlockSimpleFluidMachine;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyBool;
-import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-public class StillBlock extends BlockSimpleFluidSource{
+public class StillBlock extends BlockSimpleFluidMachine {
 
 	
 	/**
@@ -30,8 +30,8 @@ public class StillBlock extends BlockSimpleFluidSource{
 	 * Creates a blockstate
 	 */
 	@Override
-	protected BlockState createBlockState() {
-		return new BlockState(this, new IProperty[] { ACTIVE,FACING });
+	protected BlockStateContainer createBlockState() {
+		return new BlockStateContainer(this, new IProperty[] { ACTIVE,FACING });
 	}
 	/**
 	 * Converts metadata into blockstate
@@ -81,8 +81,7 @@ public class StillBlock extends BlockSimpleFluidSource{
 	}
 
 	@Override
-	public int getLightValue(IBlockAccess world, BlockPos coord){
-		IBlockState bs = world.getBlockState(coord);
+	public int getLightValue(IBlockState bs, IBlockAccess world, BlockPos coord){
 		if(bs instanceof StillBlock){
 			if((Boolean)bs.getValue(ACTIVE)){
 				return 12;
@@ -99,12 +98,12 @@ public class StillBlock extends BlockSimpleFluidSource{
 	}
 
 	@Override
-	public boolean hasComparatorInputOverride() {
+	public boolean hasComparatorInputOverride(IBlockState bs) {
 		return true;
 	}
 
 	@Override
-	public int getComparatorInputOverride(World world, BlockPos coord) {
+	public int getComparatorInputOverride(IBlockState bs, World world, BlockPos coord) {
 		TileEntity te = world.getTileEntity(coord);
 		if(te instanceof StillTileEntity){
 			return ((StillTileEntity)te).getRedstoneOutput();

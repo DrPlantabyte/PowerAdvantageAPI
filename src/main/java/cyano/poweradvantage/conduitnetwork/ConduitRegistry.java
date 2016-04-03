@@ -96,10 +96,10 @@ public class ConduitRegistry {
 			Block b = w.getBlockState(pos.pos).getBlock();
 			if(b  instanceof ITileEntityProvider ){
 				TileEntity e = w.getTileEntity(pos.pos);
-				if(e != null && e instanceof IPowerMachine && ((ITypedConduit)e).isPowerSink()){
+				if(e instanceof IPowerMachine && ((ITypedConduit)e).isPowerSink()){
 					PowerRequest req = ((IPowerMachine)e).getPowerRequest(energyType);
 					if(req != PowerRequest.REQUEST_NOTHING)requests.add(req);
-				} else if(PowerAdvantage.enableExtendedModCompatibility){
+				} else {
 					if(LightWeightPowerRegistry.getInstance().isExternalPowerBlock(b)){
 						if(e != null ){
 							PowerRequest req = new ExternalPowerRequest(LightWeightPowerRegistry.getInstance()
@@ -162,21 +162,21 @@ public class ConduitRegistry {
 			if(req.amount <= 0) continue;
 			if(req.entity == providerInstance) continue;
 			if(req.priority < minimumPriority) continue;
-			if(PowerAdvantage.enableExtendedModCompatibility){
-				if(req instanceof ExternalPowerRequest){
-					e -= LightWeightPowerRegistry.getInstance().addPower(world, ((ExternalPowerRequest)req).pos, 
-							powerType, Math.min(e, req.amount));
-					if(e <= 0) break;
-					continue;
-				} else if(PowerAdvantage.detectedRF 
-						&& PowerAdvantage.rfConversionTable.containsKey(powerType)
-						&& req instanceof RFPowerRequest){
-					int rf = (int)Math.min(req.amount, e * PowerAdvantage.rfConversionTable.get(powerType).floatValue());
-					e -= ((RFPowerRequest)req).fillRequest(rf);
-					if(e <= 0) break;
-					continue;
-				}
+
+			if(req instanceof ExternalPowerRequest){
+				e -= LightWeightPowerRegistry.getInstance().addPower(world, ((ExternalPowerRequest)req).pos,
+						powerType, Math.min(e, req.amount));
+				if(e <= 0) break;
+				continue;
+			} else if(PowerAdvantage.detectedRF
+					&& PowerAdvantage.rfConversionTable.containsKey(powerType)
+					&& req instanceof RFPowerRequest){
+				int rf = (int)Math.min(req.amount, e * PowerAdvantage.rfConversionTable.get(powerType).floatValue());
+				e -= ((RFPowerRequest)req).fillRequest(rf);
+				if(e <= 0) break;
+				continue;
 			}
+
 			if(req.entity == null) continue;
 			if(req.amount < e){
 				e -= req.entity.addEnergy(req.amount,powerType);

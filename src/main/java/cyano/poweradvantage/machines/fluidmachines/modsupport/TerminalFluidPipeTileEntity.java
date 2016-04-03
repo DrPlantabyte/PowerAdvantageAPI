@@ -1,20 +1,20 @@
 package cyano.poweradvantage.machines.fluidmachines.modsupport;
 
-import java.util.List;
-
 import cyano.poweradvantage.api.ConduitType;
+import cyano.poweradvantage.api.PowerConnectorContext;
 import cyano.poweradvantage.api.PowerRequest;
 import cyano.poweradvantage.api.PoweredEntity;
 import cyano.poweradvantage.api.fluid.FluidRequest;
 import cyano.poweradvantage.conduitnetwork.ConduitRegistry;
 import cyano.poweradvantage.init.Fluids;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidHandler;
+
+import java.util.List;
 
 public class TerminalFluidPipeTileEntity extends PoweredEntity{
 
@@ -40,8 +40,8 @@ public class TerminalFluidPipeTileEntity extends PoweredEntity{
 			}
 		}
 	}
-	
-	
+
+
 
 	@Override
 	public boolean isPowerSink(){
@@ -55,26 +55,27 @@ public class TerminalFluidPipeTileEntity extends PoweredEntity{
 
 
 	@Override
-	public boolean canAcceptType(IBlockState blockstate, ConduitType type, EnumFacing blockFace) {
+	public boolean canAcceptConnection(PowerConnectorContext connection){
+		ConduitType type = connection.powerType;
 		return ConduitType.areSameType(type,Fluids.fluidConduit_general) || (Fluids.conduitTypeToFluid(type) != null);
 	}
 
-
+	private final ConduitType[] typeArray = {Fluids.fluidConduit_general};
 	@Override
-	public ConduitType getType() {
-		return Fluids.fluidConduit_general;
+	public ConduitType[] getTypes() {
+		return typeArray;
 	}
 
 
 
 	@Override
-	public float getEnergyCapacity() {
+	public float getEnergyCapacity(ConduitType type) {
 		return 0;
 	}
 
 
 	@Override
-	public float getEnergy() {
+	public float getEnergy(ConduitType type) {
 		int sum = 0;
 		for(int i = 0; i < 6; i++){
 			IFluidHandler f = neighbors[i];

@@ -41,7 +41,9 @@ public abstract class TileEntityConveyorFilter extends TileEntityConveyor {
 						ISidedInventory them;
 						if(target instanceof  TileEntityChest){
 							// special handling for chests in case of double-chest
-							them = InventoryWrapper.wrap(handleChest((TileEntityChest)target));
+							IInventory realChest = handleChest((TileEntityChest)target);
+							if(realChest == null) return; // chest cannot open or is not initialized
+							them = InventoryWrapper.wrap(realChest);
 						} else {
 							them = InventoryWrapper.wrap((IInventory)target);
 						}
@@ -103,7 +105,8 @@ public abstract class TileEntityConveyorFilter extends TileEntityConveyor {
 	
 	private void dropItem(TileEntity target) {
 		World w = getWorld();
-		if(target == null && !(w.getBlockState(getPos().down()).getBlock().getMaterial().blocksMovement())){
+		IBlockState bs = w.getBlockState(getPos().down());
+		if(target == null && !(bs.getBlock().getMaterial(bs).blocksMovement())){
 			// drop item in the air
 			EntityItem ie = new EntityItem(w,getPos().getX()+0.5,getPos().getY()-0.5,getPos().getZ()+0.5,getInventory()[0]);
 			ie.motionX = 0;

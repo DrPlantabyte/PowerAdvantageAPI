@@ -1,20 +1,21 @@
 package cyano.poweradvantage.machines.conveyors;
 
+import cyano.poweradvantage.api.GUIBlock;
+import cyano.poweradvantage.init.ItemGroups;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyDirection;
-import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLLog;
-import cyano.poweradvantage.api.GUIBlock;
-import cyano.poweradvantage.init.ItemGroups;
 
 public class BlockConveyor extends GUIBlock{
 
@@ -24,7 +25,7 @@ public class BlockConveyor extends GUIBlock{
 		super(m);
 		this.setHardness(hardness);
 		this.tileEntityClass = TileEntityConveyor.class; 
-        this.setStepSound(soundTypeMetal);
+        this.setStepSound(SoundType.METAL);
         this.setCreativeTab(ItemGroups.tab_powerAdvantage);
     	this.setDefaultState(this.blockState.getBaseState()
 	    		.withProperty(FACING,EnumFacing.NORTH));
@@ -49,20 +50,20 @@ public class BlockConveyor extends GUIBlock{
 	}
 
 	@Override
-	public boolean isOpaqueCube() {
+	public boolean isOpaqueCube(IBlockState bs) {
 		return false;
 	}
 
 
     @Override
-    public boolean isFullCube() {
+    public boolean isFullCube(IBlockState bs) {
         return false;
     }
     
 	@Override
-	public IBlockState onBlockPlaced(final World w, final BlockPos coord, final EnumFacing face, 
-			final float partialX, final float partialY, final float partialZ, 
-			final int i, final EntityLivingBase placer) {
+	public IBlockState onBlockPlaced(final World w, final BlockPos coord, final EnumFacing face,
+									 final float partialX, final float partialY, final float partialZ,
+									 final int i, final EntityLivingBase placer) {
 		return this.getDefaultState().withProperty(FACING, face.getOpposite());
 	}
 
@@ -78,17 +79,17 @@ public class BlockConveyor extends GUIBlock{
     }
     
     @Override
-    protected BlockState createBlockState() {
-        return new BlockState(this, new IProperty[] { FACING });
+    protected BlockStateContainer createBlockState() {
+        return new BlockStateContainer(this, new IProperty[] { FACING });
     }
     
     @Override
-	public boolean hasComparatorInputOverride() {
+	public boolean hasComparatorInputOverride(IBlockState bs) {
 		return true;
 	}
 
 	@Override
-	public int getComparatorInputOverride(World world, BlockPos coord) {
+	public int getComparatorInputOverride(IBlockState bs, World world, BlockPos coord) {
 		TileEntity te = world.getTileEntity(coord);
 		if(te != null && te instanceof TileEntityConveyor){
 			if(((TileEntityConveyor)te).getStackInSlot(0) == null){

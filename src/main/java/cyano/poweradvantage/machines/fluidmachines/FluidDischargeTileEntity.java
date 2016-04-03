@@ -1,36 +1,22 @@
 package cyano.poweradvantage.machines.fluidmachines;
 
+import cyano.poweradvantage.api.simple.TileEntitySimpleFluidMachine;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDynamicLiquid;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.material.Material;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
-import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.ChatComponentTranslation;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.IChatComponent;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTank;
-import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidBlock;
-import net.minecraftforge.fluids.IFluidHandler;
-import net.minecraftforge.fml.common.FMLLog;
-
-import com.google.common.collect.ImmutableMap;
-
-import cyano.poweradvantage.api.simple.TileEntitySimpleFluidConsumer;
+import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.fluids.*;
 
 
-public class FluidDischargeTileEntity extends TileEntitySimpleFluidConsumer{
+public class FluidDischargeTileEntity extends TileEntitySimpleFluidMachine {
 
 
 	
@@ -78,7 +64,7 @@ public class FluidDischargeTileEntity extends TileEntitySimpleFluidConsumer{
 			} else if(worldObj.getBlockState(coord).getBlock() == fluidBlock){
 				// follow the flow
 				int limit = 16;
-				Material m = fluidBlock.getMaterial();// flowing minecraft fluid block
+				Material m = fluidBlock.getMaterial(fluidBlock.getDefaultState());// flowing minecraft fluid block
 				if(fluidBlock instanceof BlockLiquid || fluidBlock instanceof IFluidBlock){
 					do{
 						while(coord.getY() > 0 && canPlace(coord.down(),fluid)){
@@ -122,8 +108,9 @@ public class FluidDischargeTileEntity extends TileEntitySimpleFluidConsumer{
 	
 	private boolean canPlace(BlockPos coord, Fluid fluid){
 		if(worldObj.isAirBlock(coord)) return true;
-		Block b = worldObj.getBlockState(coord).getBlock();
-		if(b instanceof BlockLiquid && b.getMaterial() == fluid.getBlock().getMaterial()){
+		IBlockState bs = worldObj.getBlockState(coord);
+		Block b = bs.getBlock();
+		if(b instanceof BlockLiquid && b.getMaterial(bs) == fluid.getBlock().getMaterial(bs)){
 			Integer L = (Integer)worldObj.getBlockState(coord).getValue(BlockDynamicLiquid.LEVEL);
 			return L != 0;
 		} if(b instanceof IFluidBlock){
@@ -184,13 +171,13 @@ public class FluidDischargeTileEntity extends TileEntitySimpleFluidConsumer{
     @Override 
     public Packet getDescriptionPacket(){
     	NBTTagCompound nbtTag = createUpdateTag();
-    	return new S35PacketUpdateTileEntity(this.pos, 0, nbtTag);
+    	return new SPacketUpdateTileEntity(this.pos, 0, nbtTag);
     }
     /**
      * Receives the network packet made by <code>getDescriptionPacket()</code>
      */
     @Override
-    public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity packet) {
+    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity packet) {
     	readUpdateTag(packet.getNbtCompound());
     }
 	
@@ -213,10 +200,28 @@ public class FluidDischargeTileEntity extends TileEntitySimpleFluidConsumer{
 	public int getRedstoneOutput() {
 		return this.getTank().getFluidAmount() * 15 / this.getTank().getCapacity();
 	}
-	
-	
 
-	
-	
+	/**
+	 * Determines whether this block/entity should receive energy. If this is not a sink, then it
+	 * will never be given power by a power source.
+	 *
+	 * @return true if this block/entity should receive energy
+	 */
+	@Override
+	public boolean isPowerSink() {
+		return true;
+	}
+
+	/**
+	 * Determines whether this block/entity can provide energy.
+	 *
+	 * @return true if this block/entity can provide energy
+	 */
+	@Override
+	public boolean isPowerSource() {
+		return false;
+	}
+
+
 	//////////
 }

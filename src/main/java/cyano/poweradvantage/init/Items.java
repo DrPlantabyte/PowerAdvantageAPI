@@ -1,23 +1,19 @@
 package cyano.poweradvantage.init;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-
 import cyano.poweradvantage.PowerAdvantage;
-import cyano.poweradvantage.events.BucketHandler;
 import cyano.poweradvantage.items.RotationTool;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBucket;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 public abstract class Items {
 
@@ -26,8 +22,6 @@ public abstract class Items {
 	public static Item sprocket;
 	public static Item rotator_tool;
 
-	public static ItemBucket bucket_crude_oil;
-	public static ItemBucket bucket_refined_oil;
 	public static final Map<String,Item> allItems = new HashMap<>();
 	
 	
@@ -45,18 +39,7 @@ public abstract class Items {
 		}
 		sprocket = addItem("sprocket", new Item(),"sprocket","gear","sprocketSteel","gearSteel");
 		rotator_tool = addItem("rotator_tool", new RotationTool());
-		
-		
-		bucket_crude_oil = (ItemBucket)addItem("bucket_crude_oil",new ItemBucket(Blocks.crude_oil_block),"bucketOil","bucketCrudeOil");
-		bucket_crude_oil.setContainerItem(net.minecraft.init.Items.bucket);
-		FluidContainerRegistry.registerFluidContainer(Fluids.crude_oil, new ItemStack(bucket_crude_oil), new ItemStack(net.minecraft.init.Items.bucket));
-		BucketHandler.getInstance().buckets.put(Blocks.crude_oil_block, bucket_crude_oil);
-		
-		bucket_refined_oil = (ItemBucket)addItem("bucket_refined_oil",new ItemBucket(Blocks.refined_oil_block),"bucketOil","bucketRefinedOil");
-		bucket_refined_oil.setContainerItem(net.minecraft.init.Items.bucket);
-		FluidContainerRegistry.registerFluidContainer(Fluids.refined_oil, new ItemStack(bucket_refined_oil), new ItemStack(net.minecraft.init.Items.bucket));
-		BucketHandler.getInstance().buckets.put(Blocks.refined_oil_block, bucket_refined_oil);
-		
+
 		initDone = true;
 	}
 

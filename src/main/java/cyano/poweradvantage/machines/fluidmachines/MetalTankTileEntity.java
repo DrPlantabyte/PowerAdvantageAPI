@@ -1,20 +1,15 @@
 package cyano.poweradvantage.machines.fluidmachines;
 
-import java.util.List;
-
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fml.common.FMLLog;
-import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.api.PowerRequest;
 import cyano.poweradvantage.api.fluid.FluidRequest;
-import cyano.poweradvantage.api.simple.TileEntitySimpleFluidSource;
-import cyano.poweradvantage.init.Fluids;
+import cyano.poweradvantage.api.simple.TileEntitySimpleFluidMachine;
 
-public class MetalTankTileEntity  extends TileEntitySimpleFluidSource{
+public class MetalTankTileEntity  extends TileEntitySimpleFluidMachine {
 
 	public MetalTankTileEntity() {
 		super(FluidContainerRegistry.BUCKET_VOLUME * 10, MetalTankTileEntity.class.getName());

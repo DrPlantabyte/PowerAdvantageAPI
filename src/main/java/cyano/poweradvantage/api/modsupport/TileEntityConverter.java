@@ -1,13 +1,12 @@
 package cyano.poweradvantage.api.modsupport;
 
-import java.util.Arrays;
-
 import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.api.PowerRequest;
-import cyano.poweradvantage.api.simple.TileEntitySimplePowerSource;
+import cyano.poweradvantage.api.simple.TileEntitySimplePowerMachine;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.fml.common.FMLLog;
+
+import java.util.Arrays;
 
 /**
  * This class is a superclass used by machines that convert between other types of power. The way it 
@@ -18,7 +17,7 @@ import net.minecraftforge.fml.common.FMLLog;
  * @author DrCyano
  *
  */
-public abstract class TileEntityConverter extends TileEntitySimplePowerSource{
+public abstract class TileEntityConverter extends TileEntitySimplePowerMachine {
 
 	private final float halfFull;
 	
@@ -26,29 +25,30 @@ public abstract class TileEntityConverter extends TileEntitySimplePowerSource{
 	final int INDEX_ENERGY = 0;
 	final int INDEX_OTHER_ENERGY_LOWER = 1;
 	final int INDEX_OTHER_ENERGY_UPPER = 2;
-	
+	private final ConduitType type;
 	
 	public TileEntityConverter(ConduitType type, float powerAdvantageEnergyBuffer, String unlocalizedName) {
 		super(type, powerAdvantageEnergyBuffer, unlocalizedName);
 		halfFull = powerAdvantageEnergyBuffer * 0.5f;
+		this.type = type;
 	}
 
 	final int[] dataArrayOld = new int[dataArray.length];
 	@Override
 	public void powerUpdate(){
 		super.powerUpdate();
-		float delta = getEnergy() - halfFull;
+		float delta = getEnergy(type) - halfFull;
 		if(delta > 0){
 			// convert to other mod energy
 			if(getOtherEnergy() < getOtherEnergyCapacity()){
 				this.subtractEnergy(
-						addEnergyToOther(delta, getType()), getType());
+						addEnergyToOther(delta, type), type);
 			}
 		} else if(delta < 0){
 			// convert from other mod energy
 			if(getOtherEnergy() > 0){
 				this.addEnergy(
-						-1 * subtractEnergyFromOther(-1 * delta,getType()), getType());
+						-1 * subtractEnergyFromOther(-1 * delta,type), type);
 			}
 		}
 		if(!Arrays.equals(dataArray, dataArrayOld)){
@@ -128,7 +128,7 @@ public abstract class TileEntityConverter extends TileEntitySimplePowerSource{
 
 	@Override
 	public void prepareDataFieldsForSync() {
-		dataArray[INDEX_ENERGY] = Float.floatToRawIntBits(getEnergy());
+		dataArray[INDEX_ENERGY] = Float.floatToRawIntBits(getEnergy(type));
 		long otherBits = Double.doubleToRawLongBits(getOtherEnergy());
 		dataArray[INDEX_OTHER_ENERGY_LOWER] = (int)((otherBits      ) & 0xFFFFFFFF);
 		dataArray[INDEX_OTHER_ENERGY_UPPER] = (int)((otherBits >> 32) & 0xFFFFFFFF);
@@ -136,20 +136,16 @@ public abstract class TileEntityConverter extends TileEntitySimplePowerSource{
 
 	@Override
 	public void onDataFieldUpdate() {
-		this.setEnergy(Float.intBitsToFloat(dataArray[INDEX_ENERGY]), getType());
+		this.setEnergy(Float.intBitsToFloat(dataArray[INDEX_ENERGY]), type);
 		long otherBits = ((long)dataArray[INDEX_OTHER_ENERGY_UPPER] << 32) | ((long)dataArray[INDEX_OTHER_ENERGY_LOWER]);
 		this.setOtherEnergy(Double.longBitsToDouble(otherBits));
 	}
 
-	@Override
-	public boolean isPowerSink() {
-		return true;
-	}
 	
 	@Override
 	public PowerRequest getPowerRequest(ConduitType offer){
-		if(ConduitType.areSameType(offer, getType())){
-			return new PowerRequest(PowerRequest.LOW_PRIORITY,this.getEnergyCapacity() - this.getEnergy(), this);
+		if(ConduitType.areSameType(offer, type)){
+			return new PowerRequest(PowerRequest.LOW_PRIORITY,this.getEnergyCapacity(type) - this.getEnergy(type), this);
 		}
 		return PowerRequest.REQUEST_NOTHING;
 	}
@@ -170,5 +166,16 @@ public abstract class TileEntityConverter extends TileEntitySimplePowerSource{
 	public void writeToNBT(final NBTTagCompound tagRoot) {
 		super.writeToNBT(tagRoot);
 		tagRoot.setDouble("Other", this.getOtherEnergy());
+	}
+
+
+	@Override
+	public boolean isPowerSink() {
+		return true;
+	}
+
+	@Override
+	public boolean isPowerSource() {
+		return true;
 	}
 }

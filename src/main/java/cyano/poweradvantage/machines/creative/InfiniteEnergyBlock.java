@@ -1,13 +1,14 @@
 package cyano.poweradvantage.machines.creative;
 
-import net.minecraft.block.material.Material;
-import net.minecraft.util.BlockPos;
-import net.minecraft.world.World;
 import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.api.PoweredEntity;
-import cyano.poweradvantage.api.simple.BlockSimplePowerConsumer;
+import cyano.poweradvantage.api.simple.BlockSimplePowerMachine;
+import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 
-public class InfiniteEnergyBlock extends BlockSimplePowerConsumer{
+public class InfiniteEnergyBlock extends BlockSimplePowerMachine {
 
 	public InfiniteEnergyBlock(ConduitType energyType) {
 		super(Material.iron, 0.75f, energyType);
@@ -15,17 +16,37 @@ public class InfiniteEnergyBlock extends BlockSimplePowerConsumer{
 
 	@Override
 	public PoweredEntity createNewTileEntity(World world, int metaDataValue) {
-		return new InfiniteEnergyTileEntity(this.getType());
+		return new InfiniteEnergyTileEntity(this.getTypes()[0]);
 	}
 
 	@Override
-	public boolean hasComparatorInputOverride() {
+	public boolean hasComparatorInputOverride(IBlockState bs) {
 		return false;
 	}
 
 	@Override
-	public int getComparatorInputOverride(World world, BlockPos coord) {
+	public int getComparatorInputOverride(IBlockState bs, World world, BlockPos coord) {
 		return 0;
 	}
 
+	/**
+	 * Determines whether this block/entity should receive energy. If this is not a sink, then it
+	 * will never be given power by a power source.
+	 *
+	 * @return true if this block/entity should receive energy
+	 */
+	@Override
+	public boolean isPowerSink() {
+		return false;
+	}
+
+	/**
+	 * Determines whether this block/entity can provide energy.
+	 *
+	 * @return true if this block/entity can provide energy
+	 */
+	@Override
+	public boolean isPowerSource() {
+		return true;
+	}
 }

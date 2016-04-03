@@ -1,14 +1,10 @@
 package cyano.poweradvantage.api.fluid;
 
-import java.util.Set;
-
-import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.util.EnumFacing;
-import net.minecraftforge.fml.common.FMLLog;
 import cyano.poweradvantage.api.ConduitBlock;
 import cyano.poweradvantage.api.ConduitType;
+import cyano.poweradvantage.api.PowerConnectorContext;
 import cyano.poweradvantage.init.Fluids;
+import net.minecraft.block.material.Material;
 
 /**
  * <p>
@@ -35,40 +31,27 @@ public abstract class FluidConduitBlock extends ConduitBlock{
 		super(mat);
 	}
 
+
 	/**
-	 * This default implementation assumes that all sides are valid for fluid input/output and that 
-	 * this block does not handle power in addition to fluids. Override this method if that is not 
-	 * true.
-	 * @param blockstate The blockstate of this conduit when this method is invoked.
-	 * @param type The type of energy in the conduit
-	 * @param blockFace The side through-which the energy is flowing
-	 * @return true if this conduit can flow the given energy type through the given face, false 
-	 * otherwise
+	 * Determines whether this conduit is compatible with an adjacent one
+	 *
+	 * @param connection A context object that provides the power type and block direction information
+	 * @return True if the power type represents a fluid, false otherwise.
 	 */
 	@Override
-	public boolean canAcceptType(IBlockState blockstate, ConduitType type, EnumFacing blockFace) {
-		return canAcceptType(type);
+	public boolean canAcceptConnection(PowerConnectorContext connection) {
+		return Fluids.isFluidType(connection.powerType);
 	}
 
-	/**
-	 * This default implementation assumes that this block does not handle power in addition to 
-	 * fluids. Override this method if that is not true.
-	 * @param type The type of energy in the conduit
-	 * @return true if this conduit can flow the given type through one or more of its block faces, 
-	 * false otherwise
-	 */
-	@Deprecated
-	protected final boolean canAcceptType(ConduitType type) {
-		return ConduitType.areSameType(type, Fluids.fluidConduit_general) ;
-	}
 
+	private final ConduitType[] typeArray = {Fluids.fluidConduit_general};
 	/**
 	 * Fluid conduits return <code>Fluids.fluidConduit_general</code> as their type.
 	 * @return returns <code>Fluids.fluidConduit_general</code>
 	 */
 	@Override
-	public ConduitType getType() {
-		return Fluids.fluidConduit_general;
+	public ConduitType[] getTypes() {
+		return typeArray;
 	}
 
 

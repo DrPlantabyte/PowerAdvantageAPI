@@ -1,6 +1,11 @@
 package cyano.poweradvantage.api.simple;
 
-import net.minecraft.block.state.IBlockState;
+import cyano.poweradvantage.api.ConduitType;
+import cyano.poweradvantage.api.PowerConnectorContext;
+import cyano.poweradvantage.api.PowerRequest;
+import cyano.poweradvantage.api.fluid.FluidPoweredEntity;
+import cyano.poweradvantage.api.fluid.FluidRequest;
+import cyano.poweradvantage.init.Fluids;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
@@ -8,49 +13,63 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
-import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.ChatComponentTranslation;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fml.common.FMLLog;
-import cyano.poweradvantage.api.ConduitType;
-import cyano.poweradvantage.api.PowerRequest;
-import cyano.poweradvantage.api.PoweredEntity;
 
+import java.util.List;
 
 /**
- * This block implements the cyano.poweradvantage.api.PowerSinkEntity 
+ * This block implements the cyano.poweradvantage.api.PowerSourceEntity 
  * class and handles most of the mundane details for you. You just need to 
  * implement your machine logic in the <b>tickUpdate()</b> method and provide a 
- * few methods for inventory handling. <br>
+ * few methods for inventory handling. So long as you use 
+ * <code>this.addEnergy(...)</code> to generate your energy, the power 
+ * transmission will be handled for you automatically.<br>
  * <b>Remember to override the readFromNBT(...) and writeToNBT(...) methods</b>     
  * @author DrCyano
  *
  */
-public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implements ISidedInventory {
-
-	private final ConduitType type;
-	private final float energyBufferSize;
-	private float energyBuffer = 0;
+public abstract class TileEntitySimpleFluidMachine extends FluidPoweredEntity implements ISidedInventory{
+	/**
+	 * This FluidTank holds the fluids for this machine
+	 */
+	protected final FluidTank tank;
 	
 	private String customName = null;
     
     private final String unlocalizedName;
+	/**
+	 * Precomputed value for improved performance
+	 */
+	private boolean isEmpty = true;
+	
 
-    /**
-     * Constructor for TileEntitySimplePowerConsumer. 
-     * @param type The type of power used by this machine
-     * @param energyBufferSize The amount of energy that this machine can store 
-     * internally
-     * @param unlocalizedName The string used for language look-up and 
-     * entity registration. 
-     */
-    public TileEntitySimplePowerConsumer(ConduitType type,float energyBufferSize, String unlocalizedName){
-    	this.type = type;
-    	this.energyBufferSize = energyBufferSize;
-    	this.unlocalizedName = unlocalizedName;
-    }
+	private int[] dataFields = new int[2];
+	private static final int DATAFIELD_FLUID_ID = 0; // index in the dataFields array
+	private static final int DATAFIELD_FLUID_VOLUME = 1; // index in the dataFields array
+    
+	
+	/**
+	 * Main constructor for this abstract class. Your implementing class <b>must have a no-argument 
+	 * constructor</b> or else Minecraft will crash when it tries to load your entity from a saved 
+	 * game file.
+	 * @param fluidTankCapacity How much fluid can be stored in this entity
+	 * @param unlocalizedName The default name for this TileEntity, should the player interact with 
+	 * the TileEntity in a way that gets the TileEntity's name (if in doubt, use the class name).
+	 */
+	public TileEntitySimpleFluidMachine(int fluidTankCapacity, String unlocalizedName){
+		this.tank = new FluidTank(fluidTankCapacity);
+		this.unlocalizedName = unlocalizedName;
+	}
+    
     /**
      * Gets the unlocalized String passed to the constructor
      * @return A String used in name localization by client GUI 
@@ -58,6 +77,7 @@ public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implem
     public String getUnlocalizedName(){
     	return unlocalizedName;
     }
+    
     /**
      * Gets the inventory for this machine. If this machine does not have an 
      * inventory, return null; 
@@ -86,28 +106,9 @@ public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implem
      * <code>prepareDataFieldsForSync()</code> is called and read from to update 
      * local variables when <code>onDataFieldUpdate()</code> is called.
      */
-	public abstract  int[] getDataFieldArray();
-
-	/**
-     * This method is invoked before sending an update packet to the server. 
-     * After this method returns, the array returned by 
-     * <code>getDataFieldArray()</code> should hold the updated variable values.
-     * <p>
-     * Data fields are used for server-client synchronization of specific 
-     * variables. When this TileEntity is marked for synchronization, the 
-     * server executes the <code>prepareDataFieldsForSync()</code> method and 
-     * then transmits the contents of the array returned by 
-     * <code>getDataFieldArray()</code> to the clients in an update packet. When 
-     * the client receives this packet, it sets the values in the array from 
-     * <code>getDataFieldArray()</code> (not executed on the client-side) and 
-     * then executes the <code>onDataFieldUpdate()</code> method.
-     * </p><p>
-     * For this to work, you should store values that you want sync'd in an int 
-     * array in the <code>prepareDataFieldsForSync()</code> method and read them 
-     * back in the <code> onDataFieldUpdate()</code> method.
-     * </p>
-     */
-	public abstract void prepareDataFieldsForSync();
+	public int[] getDataFieldArray() {
+		return dataFields;
+	}
 	/**
      * This method is invoked after receiving an update packet from the server. 
      * At the time that this method is invoked, the array returned by 
@@ -127,8 +128,49 @@ public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implem
      * back in the <code> onDataFieldUpdate()</code> method.
      * </p>
      */
-	public abstract void onDataFieldUpdate();
-    /**
+	public void onDataFieldUpdate() {
+		// used for server-to-client sync
+		int fluidID = dataFields[DATAFIELD_FLUID_ID];
+		int fluidVolume = dataFields[DATAFIELD_FLUID_VOLUME];
+		if(fluidVolume <= 0){
+			getTank().setFluid(new FluidStack(FluidRegistry.WATER,0));
+		} else {
+			FluidStack fs = new FluidStack(FluidRegistry.getFluid(fluidID),fluidVolume);
+			getTank().setFluid(fs);
+		}
+	}
+	
+	/**
+     * This method is invoked before sending an update packet to the server. 
+     * After this method returns, the array returned by 
+     * <code>getDataFieldArray()</code> should hold the updated variable values.
+     * <p>
+     * Data fields are used for server-client synchronization of specific 
+     * variables. When this TileEntity is marked for synchronization, the 
+     * server executes the <code>prepareDataFieldsForSync()</code> method and 
+     * then transmits the contents of the array returned by 
+     * <code>getDataFieldArray()</code> to the clients in an update packet. When 
+     * the client receives this packet, it sets the values in the array from 
+     * <code>getDataFieldArray()</code> (not executed on the client-side) and 
+     * then executes the <code>onDataFieldUpdate()</code> method.
+     * </p><p>
+     * For this to work, you should store values that you want sync'd in an int 
+     * array in the <code>prepareDataFieldsForSync()</code> method and read them 
+     * back in the <code> onDataFieldUpdate()</code> method.
+     * </p>
+     */
+	public void prepareDataFieldsForSync(){
+		if(getTank().getFluid() == null || getTank().getFluidAmount() <= 0){
+			dataFields[DATAFIELD_FLUID_ID] = FluidRegistry.getFluidID(FluidRegistry.WATER);
+			dataFields[DATAFIELD_FLUID_VOLUME] = 0;
+		} else {
+			dataFields[DATAFIELD_FLUID_ID] = FluidRegistry.getFluidID(getTank().getFluid().getFluid());
+			dataFields[DATAFIELD_FLUID_VOLUME] = getTank().getFluidAmount();
+		}
+	}
+    
+    
+	/**
      * This method is called once every world tick. Implement your machine logic 
      * here, but make sure that you don't do any processing that will consume 
      * large amounts of computer CPU time. If you do have a comuptationally 
@@ -138,6 +180,12 @@ public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implem
     @Override
     public abstract void tickUpdate(boolean isServerWorld);
     
+    
+    /** implementation detail for the powerUpdate() method. Do not touch! */
+    private static final EnumFacing[] faces = {EnumFacing.UP,EnumFacing.SOUTH,EnumFacing.EAST,EnumFacing.NORTH,EnumFacing.WEST,EnumFacing.DOWN};
+	
+    
+    private int oldLevel = -1;
     /**
      * This method is called when the power transmission is computed (not every 
      * tick). You do not need to override this method, but if you do, be sure to 
@@ -145,24 +193,54 @@ public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implem
      */
     @Override
 	public void powerUpdate() {
-    	// do nothing
-	}
-	
-
-	/**
-	 * Specify how much energy this power sink wants from a power generator. If this tile entity is 
-	 * not a sink, then simply return <code>PowerRequest.REQUEST_NOTHING</code>
-	 * @param type The type of energy available upon request
-	 * @return A PowerRequest instance indicated how much power you'd like to get
-	 */
-	public PowerRequest getPowerRequest(ConduitType type){
-		float space = this.getEnergyCapacity() - this.getEnergy(); 
-		if(this.canAcceptType(type) && space > 0){
-			return new PowerRequest(PowerRequest.MEDIUM_PRIORITY,space,this);
-		} else {
-			return PowerRequest.REQUEST_NOTHING;
+		if(getTank().getFluidAmount() > 0){
+			this.getTank().drain(this.transmitFluidToConsumers(getTank().getFluid(),getMinimumSinkPriority()),true);
+		}
+		if(this.getTank().getFluidAmount() != oldLevel){
+			oldLevel = this.getTank().getFluidAmount();
+			this.sync();
 		}
 	}
+    /**
+     * Specifies the minimum priority of power sinks whose requests for power will be filled. Power 
+     * storage tile entities should override this method and return 
+     * <code>PowerRequest.BACKUP_PRIORITY+1</code> to avoid needlessly transferring power between 
+     * storage devices.
+     * @return The lowest priority of power request that will be filled.
+     */
+    protected byte getMinimumSinkPriority(){
+    	return PowerRequest.LAST_PRIORITY;
+    }
+    /**
+     * This class distributes fluids to connected fluid consumers using the standard power network 
+     * registry.
+     * @param available The available fluid to distribute
+     * @param minumimPriority The lowest priority of power request that will be filled.
+     * @return How much fluid was sent out
+     */
+    protected int transmitFluidToConsumers(FluidStack available, byte minumimPriority){
+		ConduitType type = Fluids.fluidToConduitType(available.getFluid());
+    	List<PowerRequest> requests = this.getRequestsForFluid(type);
+    	int bucket = available.amount;
+    	for(PowerRequest req : requests){
+    		if(req.entity == this) continue;
+    		if(req.priority < minumimPriority)break; // relies on list being sorted properly
+    		if(req.amount <= 0)continue;
+    		if(req.amount < bucket){
+    			bucket -= req.entity.addEnergy(req.amount,type);
+    		} else {
+    			req.entity.addEnergy(bucket,type);
+    			bucket = 0;
+    			break;
+    		}
+    		
+    	}
+    	return available.amount - bucket;
+    }
+    
+
+	
+    
     
     /**
      * You must override this method and call super.readFromNBT(...).<br><br>
@@ -216,14 +294,14 @@ public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implem
         }
     }
     
-
+private final ConduitType[] types = {Fluids.fluidConduit_general};
     /**
 	 * Gets the energy type for this block.
 	 * @return The type of energy/power for this block
 	 */
 	@Override
-	public ConduitType getType() {
-		return type;
+	public ConduitType[] getTypes() {
+		return types;
 	}
 
 	/**
@@ -231,8 +309,12 @@ public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implem
 	 * @return Maximum energy storage
 	 */
 	@Override
-	public float getEnergyCapacity() {
-		return energyBufferSize;
+	public float getEnergyCapacity(ConduitType type) {
+		if(ConduitType.areSameType(Fluids.fluidConduit_general, type)
+				|| Fluids.isFluidType(type) ) {
+			return tank.getCapacity();
+		}
+		return 0;
 	}
 
 	/**
@@ -240,8 +322,13 @@ public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implem
 	 * @return Current energy level
 	 */
 	@Override
-	public float getEnergy() {
-		return energyBuffer;
+	public float getEnergy(ConduitType type){
+		if(tank.getFluidAmount() > 0)
+			if(ConduitType.areSameType(Fluids.fluidConduit_general, type)
+					|| ConduitType.areSameType(Fluids.fluidToConduitType(tank.getFluid().getFluid()), type) ) {
+				return tank.getFluidAmount();
+			}
+		return 0;
 	}
 
 	/**
@@ -250,52 +337,22 @@ public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implem
 	 */
 	@Override
 	public void setEnergy(float energy,ConduitType type) {
-		energyBuffer = energy;
-		
+		FMLLog.severe("%s.%s(%s, \"%s\") was invoked. This is an error state!",this.getClass().getName(),"setEnergy",energy,type);
 	}
-	
-	
+
 
 	/**
 	 * Determines whether this conduit is compatible with an adjacent one
-	 * @param type The type of energy in the conduit
-	 * @param blockstate The blockstate of this block
-	 * @param blockFace The side through-which the energy is flowing
-	 * @return true if this conduit can flow the given energy type through the given face, false 
-	 * otherwise
+	 * @param connection A context object that provides the power type and block direction information
+	 * @return True if power should be allowed to flow through this connection, false otherwise
 	 */
 	@Override
-	public boolean canAcceptType(IBlockState blockstate, ConduitType type, EnumFacing blockFace) {
-		return canAcceptType(type);
-	}
-	/**
-	 * Determines whether this conduit is compatible with a type of energy through any side
-	 * @param type The type of energy in the conduit
-	 * @return true if this conduit can flow the given energy type through one or more of its block 
-	 * faces, false otherwise
-	 */
-	public boolean canAcceptType(ConduitType type) {
-		return ConduitType.areSameType(getType(), type);
+	public boolean canAcceptConnection(PowerConnectorContext connection){
+		return ConduitType.areSameType(Fluids.fluidConduit_general,connection.powerType)
+				|| Fluids.isFluidType(connection.powerType);
+
 	}
 
-	/**
-	 * Returns true because this is a machine that wants to make power requests
-	 * @return true
-	 */
-	@Override
-	public boolean isPowerSink() {
-		return true;
-	}
-	/**
-	 * Returns false because this is a machine that does not produce power
-	 * @return false
-	 */
-	@Override
-	public boolean isPowerSource() {
-		return false;
-	}
-
-	
 
 	/**
 	 * This method is called when a block is renamed (e.g. with an anvil) and 
@@ -307,8 +364,7 @@ public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implem
     }
 
 
-    
-    // SYNCHRONIZATION OF DATA FIELDS
+ /// SYNCHRONIZATION OF DATA FIELDS
     /**
      * Creates a NBT to send a synchronization update using this block's data 
      * field array (see <code>getDataFieldArray()</code>). Before this method 
@@ -323,6 +379,7 @@ public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implem
     	nbtTag.setIntArray("[]", dataFields);
     	return nbtTag;
     }
+
     /**
      * Reads a synchronization update NBT and stores it in this blocks data 
      * field array (see <code>getDataFieldArray()</code>). After this method 
@@ -335,23 +392,24 @@ public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implem
     	System.arraycopy(newData, 0, this.getDataFieldArray(), 0, Math.min(newData.length, this.getDataFieldArray().length));
     	this.onDataFieldUpdate();
     }
-
+    
+    
     /**
      * Turns the data field NBT into a network packet
      */
     @Override 
     public Packet getDescriptionPacket(){
     	NBTTagCompound nbtTag = createDataFieldUpdateTag();
-    	return new S35PacketUpdateTileEntity(this.pos, 0, nbtTag);
+    	return new SPacketUpdateTileEntity(this.pos, 0, nbtTag);
     }
+
     /**
      * Receives the network packet made by <code>getDescriptionPacket()</code>
      */
     @Override
-    public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity packet) {
+    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity packet) {
     	readDataFieldUpdateTag(packet.getNbtCompound());
     }
-
     
 ///// ISidedInventory methods /////
     /**
@@ -366,6 +424,7 @@ public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implem
 		
 	}
 
+	
 	/**
 	 * executes when a player right-clicks and opens the inventory GUI
 	 */
@@ -374,6 +433,7 @@ public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implem
 		// do nothing
 		
 	}
+	
 	/**
 	 * executes when a player stops interacting with this machine 
 	 */
@@ -403,6 +463,7 @@ public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implem
         return itemstack;
 	}
 
+	
 	/**
 	 * gets a field from the data array
 	 */
@@ -414,6 +475,7 @@ public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implem
         	return 0;
         }
     }
+	
 	/**
 	 * sets a field in the data array
 	 */
@@ -425,6 +487,7 @@ public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implem
         	// do nothing
         }
     }
+	
 	/**
 	 * Gets the number of data fields
 	 * @return The size of the data array
@@ -473,7 +536,7 @@ public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implem
 			return null;
 		}
 	}
-
+	
 	/**
 	 * boilerplate inventory code
 	 * @param slot inventory slot index
@@ -490,6 +553,8 @@ public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implem
 		}
 	}
 	
+	
+	
 
 	/**
 	 * Determines whether a given item is allowed to be added to a given 
@@ -505,7 +570,7 @@ public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implem
 		if(this.getInventory() == null) return false;
 		return slot < this.getInventory().length; 
 	}
-	
+
 	/**
 	 * boilerplate inventory code
 	 */
@@ -536,11 +601,11 @@ public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implem
 	 * boilerplate inventory code
 	 */
 	@Override
-    public IChatComponent getDisplayName() {
+    public ITextComponent getDisplayName() {
         if (this.hasCustomName()) {
-            return new ChatComponentText(this.getName());
+            return new TextComponentString(this.getName());
         }
-        return new ChatComponentTranslation(this.getName(), new Object[0]);
+        return new TextComponentTranslation(this.getName(), new Object[0]);
     }
 
 	/**
@@ -550,7 +615,7 @@ public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implem
 	 */
 	@Override
 	public String getName() {
-        return this.hasCustomName() ? this.customName : this.getUnlocalizedName();
+        return this.hasCustomName() ? this.customName : unlocalizedName;
 	}
 
 	/**
@@ -575,6 +640,7 @@ public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implem
 		if(this.getInventory() == null) return false;
 		return slot < this.getInventory().length;
     }
+
 	/**
 	 * Determines whether another block (such as a Hopper) is allowed to put an 
 	 * item into this block through a given face
@@ -591,6 +657,7 @@ public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implem
 
 	/** cache for default implementation of getSlotsForFace(...)*/
 	private int[] slotAccessCache = null;
+
 	/**
 	 * This method is used to tell other blocks (such as a hopper) which 
 	 * inventory slots they are allowed to interact with, based on which face of 
@@ -618,5 +685,58 @@ public abstract class TileEntitySimplePowerConsumer extends PoweredEntity implem
 		return slotAccessCache;
 	}
 
+	/**
+	 * Generates a request for fluid based on what is being offered. 
+	 * @param type The type of fluid being offered by a fluid producer
+	 * @return returns <code>FluidRequest.REQUEST_NOTHING</code> because we don't want any
+	 */
+	@Override
+	public FluidRequest getFluidRequest(Fluid type) {
+		if(this.canAccept(type)){
+			if(this.getTank().getFluidAmount() > 0 && this.getTank().getFluid().getFluid().equals(type)){
+				// partially filled tank
+				return new FluidRequest(
+						(this.isPowerSource() ? this.getMinimumSinkPriority() - 1 : FluidRequest.MEDIUM_PRIORITY),
+						Math.min(getMaximumFluidFlux(),this.getTank().getCapacity() - this.getTank().getFluidAmount()),
+						this
+				);
+			} else {
+				// empty tank
+				return new FluidRequest(
+						(this.isPowerSource() ? this.getMinimumSinkPriority() - 1 : FluidRequest.MEDIUM_PRIORITY),
+						Math.min(getMaximumFluidFlux(),this.getTank().getCapacity()),
+						this
+				);
+			}
+		}
+		return FluidRequest.REQUEST_NOTHING;
+	}
+
+	/**
+	 * Override this method to limit the flow of fluid to or from this machine. By default, power flow is practically
+	 * infinite.
+	 * @return The maximum amount of fluid that can flow from or to this machine per power update (per 8 game ticks).
+	 */
+	public int getMaximumFluidFlux(){
+		return 1000000;
+	}
+
+	/**
+	 * Checks whether a given fluid is appropriate for this machine. For example, a water tank would return fallse for
+	 * all Fluids except for <code>FluidRegistry.WATER</code>
+	 * @param fluid The fluid to test
+	 * @return True if this machine should accept this fluid type, false to reject it.
+	 */
+	public abstract boolean canAccept(Fluid fluid);
+
+	/**
+	 * Gets the tank used to store fluids in this machine
+	 * @return an instance of FluidTank
+	 */
+	@Override
+	public FluidTank getTank(){
+		return tank;
+	}
+	
 	
 }
