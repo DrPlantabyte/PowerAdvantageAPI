@@ -1,5 +1,6 @@
 {
-    "textures": {
+  "parent": "block/block",
+  "textures": {
         "top": "poweradvantage:blocks/fluid_metal_tank_top",
         "bottom": "poweradvantage:blocks/fluid_metal_tank_top",
         "side": "poweradvantage:blocks/fluid_metal_tank_side",

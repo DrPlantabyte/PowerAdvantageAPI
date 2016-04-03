@@ -253,6 +253,7 @@ public class PowerAdvantage
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event)
 	{
+		FMLLog.info("%s: loading config file", MODID);
 		instance = this;
 		Configuration config = new Configuration(event.getSuggestedConfigurationFile());
 		config.load();
@@ -327,8 +328,11 @@ public class PowerAdvantage
 				FMLLog.severe("Cannot parse '"+val+"' as number");
 			}
 		}
-		
 
+
+		config.save();
+
+		FMLLog.info("%s: creating orespawn file (if it doesn't already exist)", MODID);
 		
 		Path orespawnFolder = Paths.get(event.getSuggestedConfigurationFile().toPath().getParent().toString(),"orespawn");
 		Path orespawnFile = Paths.get(orespawnFolder.toString(),MODID+".json");
@@ -341,9 +345,9 @@ public class PowerAdvantage
 				FMLLog.severe(MODID+": Error: Failed to write file "+orespawnFile);
 			}
 		}
-		
-		config.save();
 
+
+		FMLLog.info("%s: initializing fluids, blocks, items, and loot tables", MODID);
 		cyano.poweradvantage.init.Fluids.init(); 
 		cyano.poweradvantage.init.Blocks.init();
 		cyano.poweradvantage.init.Items.init();
@@ -357,6 +361,8 @@ public class PowerAdvantage
 		if(event.getSide() == Side.SERVER){
 			serverPreInit(event);
 		}
+
+		FMLLog.info("%s: preinit complete", MODID);
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -378,7 +384,9 @@ public class PowerAdvantage
 	public void init(FMLInitializationEvent event)
 	{
 
+		FMLLog.info("%s: starting main inititalization", MODID);
 		try {
+			FMLLog.info("%s: testing whether we have to support redstone flux", MODID);
 			Class rfClass = Class.forName("cofh.api.energy.IEnergyReceiver", false, getClass().getClassLoader());
 			detectedRF = rfClass != null;
 			FMLLog.info("%s: RF class detected: %s", MODID, rfClass);
@@ -386,18 +394,21 @@ public class PowerAdvantage
 			detectedRF = false;
 			FMLLog.info("%s: did not detect RF classes: %s", MODID, e.getMessage());
 		}
-		
-		
+
+
+		FMLLog.info("%s: adding GUI handler", MODID);
 		NetworkRegistry.INSTANCE.registerGuiHandler(PowerAdvantage.getInstance(), MachineGUIRegistry.getInstance());
 		GameRegistry.registerFuelHandler(FuelRegistry.getInstance());
 
+		FMLLog.info("%s: initializing more content", MODID);
 		cyano.poweradvantage.init.Fuels.init();
 		cyano.poweradvantage.init.Entities.init();
 		cyano.poweradvantage.init.Recipes.init();
 		cyano.poweradvantage.init.Recipes.initDistillationRecipes(distillRecipes);
 		cyano.poweradvantage.init.Villages.init(); 
 		cyano.poweradvantage.init.GUI.init();
-		
+
+		FMLLog.info("%s: mod support data registries", MODID);
 		cyano.poweradvantage.init.ModSupport.init(detectedRF);
 
 
@@ -407,12 +418,15 @@ public class PowerAdvantage
 		if(event.getSide() == Side.SERVER){
 			serverInit(event);
 		}
+
+		FMLLog.info("%s: initialize phase complete", MODID);
 	}
 
 
 	@SideOnly(Side.CLIENT)
 	private void clientInit(FMLInitializationEvent event){
 		// client-only code
+		FMLLog.info("%s: initializing renders", MODID);
 		cyano.poweradvantage.init.Items.registerItemRenders(event);
 		cyano.poweradvantage.init.Blocks.registerItemRenders(event);
 		cyano.poweradvantage.init.ModSupport.registerItemRenders(event);
@@ -429,6 +443,10 @@ public class PowerAdvantage
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event)
 	{
+		FMLLog.info("%s: starting post-inititalization phase", MODID);
+
+
+		FMLLog.info("%s: clearing cached data", MODID);
 		// Clear caches
 		DistillationRecipeRegistry.clearRecipeCache();
 		
@@ -437,6 +455,13 @@ public class PowerAdvantage
 		
 		// hacking
 		//printHackingInfo(); // XXX: hacker stuff
+		if(event.getSide() == Side.CLIENT){
+			clientPostInit(event);
+		}
+		if(event.getSide() == Side.SERVER){
+			serverPostInit(event);
+		}
+		FMLLog.info("%s: post-init phase complete", MODID);
 	}
 
 	@SideOnly(Side.CLIENT)

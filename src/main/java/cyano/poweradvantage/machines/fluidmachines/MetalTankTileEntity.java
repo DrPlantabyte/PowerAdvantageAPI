@@ -1,10 +1,7 @@
 package cyano.poweradvantage.machines.fluidmachines;
 
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.*;
 import cyano.poweradvantage.api.PowerRequest;
 import cyano.poweradvantage.api.fluid.FluidRequest;
 import cyano.poweradvantage.api.simple.TileEntitySimpleFluidMachine;
@@ -24,7 +21,7 @@ public class MetalTankTileEntity  extends TileEntitySimpleFluidMachine {
 	 */
 	@Override
 	public FluidRequest getFluidRequest(Fluid offer) {
-		FluidStack filterFluid = FluidContainerRegistry.getFluidForFilledItem(filterInventory[0]);
+		FluidStack filterFluid = getFilter();
 		if(filterFluid != null
 				&& !(FluidRegistry.getFluidName(offer).equalsIgnoreCase(FluidRegistry.getFluidName(filterFluid)))){
 			// offer blocked by filter
@@ -44,8 +41,23 @@ public class MetalTankTileEntity  extends TileEntitySimpleFluidMachine {
 			return FluidRequest.REQUEST_NOTHING;
 		}
 	}
-	
-	 /**
+
+	private FluidStack getFilter() {
+		ItemStack item = filterInventory[0];
+		if(item == null) return null;
+		if(item.getItem() instanceof UniversalBucket){
+			UniversalBucket bucket = (UniversalBucket)item.getItem();
+			FluidStack drain = bucket.drain(item,bucket.getCapacity(item),false);
+			if(drain != null && drain.amount > 0){
+				return drain;
+			} else {
+				return null;
+			}
+		}
+		return FluidContainerRegistry.getFluidForFilledItem(item);
+	}
+
+	/**
      * Specifies the minimum priority of power sinks whose requests for power will be filled. Power 
      * storage tile entities should override this method and return 
      * <code>PowerRequest.BACKUP_PRIORITY+1</code> to avoid needlessly transferring power between 

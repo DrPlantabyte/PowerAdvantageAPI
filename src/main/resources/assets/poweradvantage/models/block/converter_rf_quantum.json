@@ -1,5 +1,6 @@
 {
-    "textures": {
+  "parent": "block/block",
+  "textures": {
         "face": "poweradvantage:blocks/steel_frame",
         "core": "minecraft:blocks/ice_packed",
         "plug": "poweradvantage:blocks/filter_bottom",

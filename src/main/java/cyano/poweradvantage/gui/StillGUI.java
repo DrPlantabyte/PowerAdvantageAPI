@@ -1,12 +1,8 @@
 package cyano.poweradvantage.gui;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import cyano.poweradvantage.api.simple.SimpleMachineGUI;
 import cyano.poweradvantage.machines.fluidmachines.StillTileEntity;
 import cyano.poweradvantage.math.Integer2D;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -33,13 +29,13 @@ public class StillGUI extends SimpleMachineGUI{
 			if(fs1 != null && ((StillTileEntity)srcEntity).getInputTank().getFluidAmount() > 0){
 				FluidTankGUI.drawFluidBar(fs1, 
 						(float)((StillTileEntity)srcEntity).getInputTank().getFluidAmount()/(float)((StillTileEntity)srcEntity).getInputTank().getCapacity(), 
-						40, 9, guiDisplayImage, guiContainer, x, y);
+						40, 9, guiDisplayImage, guiContainer, x, y, z);
 			}
 			FluidStack fs2 = ((StillTileEntity)srcEntity).getTank().getFluid();
 			if(fs2 != null && ((StillTileEntity)srcEntity).getTank().getFluidAmount() > 0){
 				FluidTankGUI.drawFluidBar(fs2, 
 						(float)((StillTileEntity)srcEntity).getTank().getFluidAmount()/(float)((StillTileEntity)srcEntity).getTank().getCapacity(), 
-						120, 9, guiDisplayImage, guiContainer, x, y);
+						120, 9, guiDisplayImage, guiContainer, x, y, z);
 			}
 		}
 	}

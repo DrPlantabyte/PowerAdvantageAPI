@@ -37,11 +37,11 @@ tile.poweradvantage.infinite_electricity.name=Unlimited Electrical Power
 tile.poweradvantage.infinite_quantum.name=Unlimited Quantum Power
 
 tile.poweradvantage.crude_oil.name=Crude Oil
-item.poweradvantage.bucket_crude_oil.name=Bucket of Crude Oil
+item.bucket.crude_oil=Bucket of Crude Oil
 
 tile.poweradvantage.still.name=Distillation Furnace
 tile.poweradvantage.refined_oil.name=Refined Oil
-item.poweradvantage.bucket_refined_oil.name=Bucket of Refined Oil
+item.bucket.refined_oil=Bucket of Refined Oil
 tile.poweradvantage.fluid_switch.name=Fluid Switch Valve
 
 tile.poweradvantage.converter_rf_steam.name=Steam-RF Transformer

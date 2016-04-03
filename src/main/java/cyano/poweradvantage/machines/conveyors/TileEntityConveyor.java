@@ -279,6 +279,19 @@ public class TileEntityConveyor extends TileEntity implements ITickable, ISidedI
 			tagRoot.setString("CustomName", this.customName);
 		}
 	}
+
+	/**
+	 * Override to keep the tile entity from being deleted each time the blockstate is updated
+	 * @param world world instance
+	 * @param pos coordinate
+	 * @param oldState State before change
+	 * @param newSate State after change
+	 * @return true if this TileEntity should be invalidated (deleted and recreated), false otherwise
+	 */
+	@Override
+	public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newSate) {
+		return oldState.getBlock() != newSate.getBlock();
+	}
 	
 	///// ISidedInventory METHODS /////
 	@Override

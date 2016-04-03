@@ -129,15 +129,18 @@ public abstract class TileEntitySimpleFluidMachine extends FluidPoweredEntity im
      * </p>
      */
 	public void onDataFieldUpdate() {
+		FMLLog.info("onDataFieldUpdate: world.isRemote == %s",getWorld().isRemote); // TODO: remove
 		// used for server-to-client sync
 		int fluidID = dataFields[DATAFIELD_FLUID_ID];
 		int fluidVolume = dataFields[DATAFIELD_FLUID_VOLUME];
+		FMLLog.info("onDataFieldUpdate: fluid in tank was %sx%s",getTank().getFluidAmount(),(getTank().getFluid() == null ? "null" : getTank().getFluid().getUnlocalizedName())); // TODO: remove
 		if(fluidVolume <= 0){
 			getTank().setFluid(new FluidStack(FluidRegistry.WATER,0));
 		} else {
 			FluidStack fs = new FluidStack(FluidRegistry.getFluid(fluidID),fluidVolume);
 			getTank().setFluid(fs);
 		}
+		FMLLog.info("onDataFieldUpdate: fluid in tank is now %sx%s",getTank().getFluidAmount(),(getTank().getFluid() == null ? "null" : getTank().getFluid().getUnlocalizedName())); // TODO: remove
 	}
 	
 	/**
@@ -160,6 +163,7 @@ public abstract class TileEntitySimpleFluidMachine extends FluidPoweredEntity im
      * </p>
      */
 	public void prepareDataFieldsForSync(){
+		FMLLog.info("prepareDataFieldsForSync: world.isRemote == %s",getWorld().isRemote); // TODO: remove
 		if(getTank().getFluid() == null || getTank().getFluidAmount() <= 0){
 			dataFields[DATAFIELD_FLUID_ID] = FluidRegistry.getFluidID(FluidRegistry.WATER);
 			dataFields[DATAFIELD_FLUID_VOLUME] = 0;
@@ -337,7 +341,9 @@ private final ConduitType[] types = {Fluids.fluidConduit_general};
 	 */
 	@Override
 	public void setEnergy(float energy,ConduitType type) {
-		FMLLog.severe("%s.%s(%s, \"%s\") was invoked. This is an error state!",this.getClass().getName(),"setEnergy",energy,type);
+		if(Fluids.conduitTypeToFluid(type) != null){
+			this.getTank().setFluid(new FluidStack(Fluids.conduitTypeToFluid(type),(int)energy));
+		}
 	}
 
 

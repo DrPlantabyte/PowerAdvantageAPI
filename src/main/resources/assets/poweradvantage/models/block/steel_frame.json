@@ -1,5 +1,6 @@
 {
-    "textures": {
+  "parent": "block/block",
+  "textures": {
         "face": "poweradvantage:blocks/steel_frame",
         "particle": "poweradvantage:materials/steel"
     },

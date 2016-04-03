@@ -89,6 +89,7 @@ public abstract class Fluids {
 		f.setUnlocalizedName(modID+"."+name);
 		FluidRegistry.registerFluid(f);
 		registerNewFluid(f);
+		FluidRegistry.addBucketForFluid(f);
 		return f;
 	}
 	/**

@@ -1,12 +1,18 @@
 package cyano.poweradvantage.api;
 
 import cyano.poweradvantage.conduitnetwork.ConduitRegistry;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.Packet;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+import net.minecraftforge.fml.common.FMLLog;
 
 import java.util.List;
+
 /**
  * This class is the superclass for all machines. 
  * If you are making an add-on mod, you probably want to extend the 
@@ -89,7 +95,28 @@ public abstract class PoweredEntity extends TileEntity implements ITickable, IPo
 	 * Tells Minecraft to synchronize this tile entity
 	 */
 	protected final void sync(){
+		FMLLog.info("sync: world.isRemote == %s",getWorld().isRemote); // TODO: remove
 		this.markDirty();
+		//this.getWorld().markBlockForUpdate(getPos());
+		Packet packet = this.getDescriptionPacket();
+		if(packet == null) return;
+		List<EntityPlayerMP> players = this.getWorld().getPlayers(EntityPlayerMP.class, (EntityPlayerMP p) -> p.getPosition().distanceSq(getPos()) < 256);
+		for(EntityPlayerMP player : players){
+			player.playerNetServerHandler.sendPacket(packet);
+		}
+	}
+
+	/**
+	 * Override to keep the tile entity from being deleted each time the blockstate is updated
+	 * @param world world instance
+	 * @param pos coordinate
+	 * @param oldState State before change
+	 * @param newSate State after change
+	 * @return true if this TileEntity should be invalidated (deleted and recreated), false otherwise
+	 */
+	@Override
+	public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newSate) {
+		return oldState.getBlock() != newSate.getBlock();
 	}
 	
 	/**

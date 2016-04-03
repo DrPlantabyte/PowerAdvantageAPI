@@ -153,6 +153,7 @@ public abstract class BlockSimplePowerConduit extends ConduitBlock{
         final boolean connectEast = this.canConnectTo(world,coord,oldBS,EnumFacing.EAST, coord.east());
         final boolean connectUp = this.canConnectTo(world,coord,oldBS,EnumFacing.UP, coord.up());
         final boolean connectDown = this.canConnectTo(world,coord,oldBS,EnumFacing.DOWN, coord.down());
+		final boolean allFalse = !(connectNorth || connectSouth || connectWest || connectEast || connectUp || connectDown);
         
         float radius = pipeRadius;
         float rminus = 0.5f - radius;
@@ -182,6 +183,13 @@ public abstract class BlockSimplePowerConduit extends ConduitBlock{
         if(connectUp){
         	y2 = 1.0f;
         }
+		if(allFalse){ // Horizontal '+' when making no connections
+			z1 = 0.0f;
+			z2 = 1.0f;
+			x1 = 0.0f;
+			x2 = 1.0f;
+		}
+
         return new AxisAlignedBB(x1, y1, z1, x2, y2, z2);
     }
 
@@ -199,8 +207,10 @@ public abstract class BlockSimplePowerConduit extends ConduitBlock{
         final boolean connectEast = this.canConnectTo(world,coord,oldBS,EnumFacing.EAST, coord.east());
         final boolean connectUp = this.canConnectTo(world,coord,oldBS,EnumFacing.UP, coord.up());
         final boolean connectDown = this.canConnectTo(world,coord,oldBS,EnumFacing.DOWN, coord.down());
-        
-        float radius = pipeRadius;
+		final boolean allFalse = !(connectNorth || connectSouth || connectWest || connectEast || connectUp || connectDown);
+// Horizontal '+' when making no connections
+
+		float radius = pipeRadius;
         float rminus = 0.5f - radius;
         float rplus = 0.5f + radius;
 
@@ -216,19 +226,19 @@ public abstract class BlockSimplePowerConduit extends ConduitBlock{
 			newBox = new AxisAlignedBB(rminus, 0f, rminus, rplus, rplus, rplus);
 			super.addCollisionBoxToList(coord, box, collisionBoxList, newBox);
         }
-        if(connectEast){
+        if(allFalse || connectEast){
 			newBox = new AxisAlignedBB(rminus, rminus, rminus, 1f, rplus, rplus);
 			super.addCollisionBoxToList(coord, box, collisionBoxList, newBox);
         }
-        if(connectWest){
+        if(allFalse || connectWest){
 			newBox = new AxisAlignedBB(0f, rminus, rminus, rplus, rplus, rplus);
 			super.addCollisionBoxToList(coord, box, collisionBoxList, newBox);
         }
-        if(connectSouth){
+        if(allFalse || connectSouth){
 			newBox = new AxisAlignedBB(rminus, rminus, rminus, rplus, rplus, 1f);
 			super.addCollisionBoxToList(coord, box, collisionBoxList, newBox);
         }
-        if(connectNorth){
+        if(allFalse || connectNorth){
 			newBox = new AxisAlignedBB(rminus, rminus, 0f, rplus, rplus, rplus);
 			super.addCollisionBoxToList(coord, box, collisionBoxList, newBox);
         }

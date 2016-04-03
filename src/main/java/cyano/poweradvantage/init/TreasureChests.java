@@ -29,6 +29,7 @@ public abstract class TreasureChests {
 
 	private static void writeLootFile(Path file, String content){
 		try {
+			Files.createDirectories(file.getParent());
 			Files.write(file, Arrays.asList(content), Charset.forName("UTF-8"));
 		} catch (IOException e) {
 			FMLLog.log(Level.ERROR,e,"Error writing additional-loot-table files");
