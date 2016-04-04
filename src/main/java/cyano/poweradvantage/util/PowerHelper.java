@@ -4,6 +4,7 @@ import cofh.api.energy.IEnergyReceiver;
 import cyano.poweradvantage.PowerAdvantage;
 import cyano.poweradvantage.api.ITypedConduit;
 import cyano.poweradvantage.api.PowerConnectorContext;
+import net.minecraft.block.ITileEntityProvider;
 
 /**
  * Collection of utility methods
@@ -23,7 +24,9 @@ public abstract class PowerHelper {
 				// both blocks are Power Advantage conductors
 				return ((ITypedConduit)connection.thisBlock.getBlock()).canAcceptConnection(connection)
 						&& ((ITypedConduit)connection.otherBlock.getBlock()).canAcceptConnection(connection.reverse());
-			} else if(PowerAdvantage.detectedRF && PowerAdvantage.rfConversionTable.containsKey(connection.powerType)) {
+			} else if(connection.otherBlock.getBlock() instanceof ITileEntityProvider
+					&& PowerAdvantage.detectedRF
+					&& PowerAdvantage.rfConversionTable.containsKey(connection.powerType)) {
 				// RF cross-mod compatibility
 				return connection.world.getTileEntity(connection.otherBlockPosition) instanceof IEnergyReceiver;
 			}
