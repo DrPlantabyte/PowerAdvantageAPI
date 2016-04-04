@@ -1,9 +1,11 @@
 package cyano.poweradvantage.init;
 
 import cyano.poweradvantage.registry.FuelRegistry;
-import net.minecraft.block.Block;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.UniversalBucket;
+
+import static cyano.basemetals.init.Items.universal_bucket;
 
 public abstract class Fuels {
 
@@ -14,36 +16,26 @@ public abstract class Fuels {
 	public static void init(){
 		if(initDone) return;
 
-		addFuel(cyano.basemetals.init.Items.carbon_powder,1600);
-		ItemStack bucket = new ItemStack(cyano.basemetals.init.Items.universal_bucket);
-
-		/*
-		// Universal Bucket won't work in the fuel registry because it doesn't use item NBT tags
-		ItemStack crudeOilBucket = bucket.copy();
-		cyano.basemetals.init.Items.universal_bucket.fill(crudeOilBucket,
-				new FluidStack(Fluids.crude_oil,cyano.basemetals.init.Items.universal_bucket.getCapacity(bucket)),true);
-
-		ItemStack refinedOilBucket = bucket.copy();
-		cyano.basemetals.init.Items.universal_bucket.fill(refinedOilBucket,
-				new FluidStack(Fluids.refined_oil,cyano.basemetals.init.Items.universal_bucket.getCapacity(bucket)),true);
+		FuelRegistry.getInstance().registerFuel(cyano.basemetals.init.Items.carbon_powder,(short)1600);
+		ItemStack bucket = new ItemStack(universal_bucket);
 
 
-		addFuel(crudeOilBucket,CRUDE_OIL_FUEL_PER_FLUID_UNIT * FluidContainerRegistry.BUCKET_VOLUME);
-		addFuel(refinedOilBucket,REFINED_OIL_FUEL_PER_FLUID_UNIT * FluidContainerRegistry.BUCKET_VOLUME);
-		*/
+		FuelRegistry.getInstance().registerFuel(universal_bucket,(ItemStack ub)->{
+			if(ub.getItem() instanceof UniversalBucket){
+				UniversalBucket ubItem = (UniversalBucket) ub.getItem();
+				FluidStack fs = ubItem.getFluid(ub);
+				if (fs != null && fs.amount > 0){
+					if(fs.getFluid() == Fluids.crude_oil) return (short)(fs.amount * CRUDE_OIL_FUEL_PER_FLUID_UNIT);
+					if(fs.getFluid() == Fluids.refined_oil) return (short)(fs.amount * REFINED_OIL_FUEL_PER_FLUID_UNIT);
+				}
+			}
+			return (short)0;
+		});
+
+		FuelRegistry.getInstance().registerPostBurnItem(universal_bucket,(ItemStack sb)->new ItemStack(net.minecraft.init.Items.bucket));
+
 		
 		initDone = true;
 	}
-	
-	private static void addFuel(Item fuelItem, Number fuelValue){
-		FuelRegistry.getInstance().registerFuel(fuelItem, fuelValue);
-	}
-	
-	private static void addFuel(Block fuelItem, Number fuelValue){
-		FuelRegistry.getInstance().registerFuel(fuelItem, fuelValue);
-	}
-	
-	private static void addFuel(ItemStack fuelItem, Number fuelValue){
-		FuelRegistry.getInstance().registerFuel(fuelItem, fuelValue);
-	}
+
 }

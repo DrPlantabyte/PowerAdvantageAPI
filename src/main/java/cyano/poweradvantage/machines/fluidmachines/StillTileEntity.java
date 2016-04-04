@@ -3,12 +3,12 @@ package cyano.poweradvantage.machines.fluidmachines;
 import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.api.fluid.FluidRequest;
 import cyano.poweradvantage.api.simple.TileEntitySimpleFluidMachine;
+import cyano.poweradvantage.registry.FuelRegistry;
 import cyano.poweradvantage.registry.still.recipe.DistillationRecipe;
 import cyano.poweradvantage.registry.still.recipe.DistillationRecipeRegistry;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -129,16 +129,11 @@ public class StillTileEntity extends TileEntitySimpleFluidMachine {
 	}
 	
 	private static short getFuelBurnTime(ItemStack item) {
-		if(item == null) return 0;
-		return (short)TileEntityFurnace.getItemBurnTime(item);
+		return FuelRegistry.getActualBurntimeForItem(item);
 	}
 	
 	private void decrementFuel() {
-		if(inventory[0].stackSize == 1 && inventory[0].getItem().getContainerItem(inventory[0]) != null){
-			inventory[0] = inventory[0].getItem().getContainerItem(inventory[0]);
-		} else {
-			this.decrStackSize(0, 1);
-		}
+		inventory[0] = FuelRegistry.decrementFuelItem(inventory[0]);
 	}
 	
 
