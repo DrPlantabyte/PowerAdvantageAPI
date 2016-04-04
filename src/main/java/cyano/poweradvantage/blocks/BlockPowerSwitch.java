@@ -91,11 +91,11 @@ public class BlockPowerSwitch extends Block implements ITypedConduit {
 		return powerType;
 	}
 	@Override
-	public boolean isPowerSink() {
+	public boolean isPowerSink(ConduitType powerType) {
 		return false;
 	}
 	@Override
-	public boolean isPowerSource() {
+	public boolean isPowerSource(ConduitType powerType) {
 		return false;
 	}
 

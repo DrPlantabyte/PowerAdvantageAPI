@@ -695,18 +695,19 @@ private final ConduitType[] types = {Fluids.fluidConduit_general};
 	 */
 	@Override
 	public FluidRequest getFluidRequest(Fluid type) {
+		if(type == null) return FluidRequest.REQUEST_NOTHING;
 		if(this.canAccept(type)){
 			if(this.getTank().getFluidAmount() > 0 && this.getTank().getFluid().getFluid().equals(type)){
 				// partially filled tank
 				return new FluidRequest(
-						(this.isPowerSource() ? this.getMinimumSinkPriority() - 1 : FluidRequest.MEDIUM_PRIORITY),
+						(this.isPowerSource(Fluids.fluidToConduitType(type)) ? this.getMinimumSinkPriority() - 1 : FluidRequest.MEDIUM_PRIORITY),
 						Math.min(getMaximumFluidFlux(),this.getTank().getCapacity() - this.getTank().getFluidAmount()),
 						this
 				);
 			} else {
 				// empty tank
 				return new FluidRequest(
-						(this.isPowerSource() ? this.getMinimumSinkPriority() - 1 : FluidRequest.MEDIUM_PRIORITY),
+						(this.isPowerSource(Fluids.fluidToConduitType(type)) ? this.getMinimumSinkPriority() - 1 : FluidRequest.MEDIUM_PRIORITY),
 						Math.min(getMaximumFluidFlux(),this.getTank().getCapacity()),
 						this
 				);

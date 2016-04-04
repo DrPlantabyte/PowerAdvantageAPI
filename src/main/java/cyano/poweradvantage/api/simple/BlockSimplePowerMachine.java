@@ -276,21 +276,22 @@ public abstract class BlockSimplePowerMachine extends GUIBlock implements ITyped
 		return state.withRotation(mirrorIn.toRotation((EnumFacing)state.getValue(FACING)));
 	}
 
-
+	/**
+	 * Determines whether this block/entity should receive energy of this type. If this is not a sink, then it
+	 * will never be given power by a power source.
+	 * @param powerType Type of power
+	 * @return true if this block/entity should receive energy
+	 */
 	@Override
-	public boolean isPowerSink() {
-		return true;
-	}
+	public abstract boolean isPowerSink(ConduitType powerType) ;
 
 	/**
-	 * Determines whether this block/entity can provide energy.
-	 *
+	 * Determines whether this block/entity can provide energy of this type.
+	 * @param powerType Type of power
 	 * @return true if this block/entity can provide energy
 	 */
 	@Override
-	public boolean isPowerSource() {
-		return true;
-	}
+	public abstract boolean isPowerSource(ConduitType powerType) ;
 
     
 }

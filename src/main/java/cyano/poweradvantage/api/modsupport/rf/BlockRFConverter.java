@@ -54,4 +54,27 @@ public class BlockRFConverter extends BlockSimplePowerMachine {
 	public int getComparatorInputOverride(IBlockState bs, World world, BlockPos coord) {
 		return 0;
 	}
+
+	/**
+	 * Determines whether this block/entity should receive energy of this type. If this is not a sink, then it
+	 * will never be given power by a power source.
+	 *
+	 * @param powerType Type of power
+	 * @return true if this block/entity should receive energy
+	 */
+	@Override
+	public boolean isPowerSink(ConduitType powerType) {
+		return true;
+	}
+
+	/**
+	 * Determines whether this block/entity can provide energy of this type.
+	 *
+	 * @param powerType Type of power
+	 * @return true if this block/entity can provide energy
+	 */
+	@Override
+	public boolean isPowerSource(ConduitType powerType) {
+		return true;
+	}
 }

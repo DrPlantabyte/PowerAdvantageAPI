@@ -24,14 +24,16 @@ public interface ITypedConduit {
 	public abstract ConduitType[] getTypes();
 	/**
 	 * Determines whether this block/entity should receive energy. If this is not a sink, then it 
-	 * will never be given power by a power source. 
+	 * will never be given power by a power source.
+	 * @param powerType Type of power
 	 * @return true if this block/entity should receive energy
 	 */
-	public abstract boolean isPowerSink();
+	public abstract boolean isPowerSink(ConduitType powerType);
 	/**
-	 * Determines whether this block/entity can provide energy. 
+	 * Determines whether this block/entity can provide energy.
+	 * @param powerType Type of power
 	 * @return true if this block/entity can provide energy
 	 */
-	public abstract boolean isPowerSource();
+	public abstract boolean isPowerSource(ConduitType powerType);
 
 }

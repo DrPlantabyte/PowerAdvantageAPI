@@ -1,5 +1,6 @@
 package cyano.poweradvantage.machines.fluidmachines;
 
+import cyano.poweradvantage.api.ConduitType;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
@@ -86,19 +87,21 @@ public class StorageTankTileEntity  extends TileEntitySimpleFluidMachine {
 	}
 	
 	/**
-	 * Determines whether this block/entity should receive energy 
+	 * Determines whether this block/entity should receive energy
+	 * @param powerType Type of power
 	 * @return true if this block/entity should receive energy
 	 */
 	@Override
-	public boolean isPowerSink(){
+	public boolean isPowerSink(ConduitType powerType){
 		return true;
 	}
 	/**
-	 * Determines whether this block/entity can provide energy 
+	 * Determines whether this block/entity can provide energy
+	 * @param powerType Type of power
 	 * @return true if this block/entity can provide energy
 	 */
 	@Override
-	public boolean isPowerSource(){
+	public boolean isPowerSource(ConduitType powerType){
 		return true;
 	}
 

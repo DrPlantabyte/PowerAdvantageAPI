@@ -44,12 +44,12 @@ public class TerminalFluidPipeTileEntity extends PoweredEntity{
 
 
 	@Override
-	public boolean isPowerSink(){
+	public boolean isPowerSink(ConduitType powerType){
 		return true;
 	}
 	
 	@Override
-	public boolean isPowerSource(){
+	public boolean isPowerSource(ConduitType powerType){
 		return true;
 	}
 

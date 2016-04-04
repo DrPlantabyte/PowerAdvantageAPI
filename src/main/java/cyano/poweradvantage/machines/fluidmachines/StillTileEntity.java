@@ -1,5 +1,6 @@
 package cyano.poweradvantage.machines.fluidmachines;
 
+import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.api.fluid.FluidRequest;
 import cyano.poweradvantage.api.simple.TileEntitySimpleFluidMachine;
 import cyano.poweradvantage.registry.still.recipe.DistillationRecipe;
@@ -277,19 +278,21 @@ public class StillTileEntity extends TileEntitySimpleFluidMachine {
 	}
 	
 	/**
-	 * Determines whether this block/entity should receive energy 
+	 * Determines whether this block/entity should receive energy
+	 * @param powerType Type of power
 	 * @return true if this block/entity should receive energy
 	 */
 	@Override
-	public boolean isPowerSink(){
+	public boolean isPowerSink(ConduitType powerType){
 		return true;
 	}
 	/**
-	 * Determines whether this block/entity can provide energy 
+	 * Determines whether this block/entity can provide energy
+	 * @param powerType Type of power
 	 * @return true if this block/entity can provide energy
 	 */
 	@Override
-	public boolean isPowerSource(){
+	public boolean isPowerSource(ConduitType powerType){
 		return true;
 	}
 	

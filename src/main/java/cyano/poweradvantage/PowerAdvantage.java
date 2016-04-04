@@ -35,7 +35,7 @@ import java.util.*;
 // NOTE: other mods dependant on this one need to add the following to their @Mod annotation:
 // dependencies = "required-after:poweradvantage" 
 
-/* TODO list
+/* IDEA list
  * drain block ✓
  * fluid pipes ✓
  * portable tank block ✓
@@ -218,11 +218,20 @@ public class PowerAdvantage
 	/** The display name for this mod */
 	public static final String NAME = "Power Advantage";
 	/** The version of this mod, in the format major.minor.update */
-	public static final String VERSION = "2.0.0";
+	public static final String VERSION = "2.0.1";
 	
 	
 	// TODO: add condenser (makes water from steam)
 	// TODO: add ice machine (uses water and electricity to make blocks of ice)
+
+	/* TODO: new tutorial:
+	1. Download and setup IDE (IntelliJ)
+	2. Simple steam-powered food oven
+	3. Add animated GUI to steam-powered food oven
+	4. Redstone-powered steam boiler
+	5.
+
+	*/
 
 	/** singleton instance */
 	private static PowerAdvantage instance;

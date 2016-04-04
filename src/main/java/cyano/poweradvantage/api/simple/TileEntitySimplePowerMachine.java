@@ -41,10 +41,6 @@ public abstract class TileEntitySimplePowerMachine extends PoweredEntity impleme
 	
 	private final String unlocalizedName;
 
-	/**
-	 * Precomputed value for improved performance
-	 */
-	private boolean isEmpty = true;
 	
 	/**
 	 * Constructor for TileEntitySimplePowerMachine.
@@ -221,11 +217,10 @@ public abstract class TileEntitySimplePowerMachine extends PoweredEntity impleme
 	 */
 	@Override
 	public void powerUpdate() {
-		if(this.isPowerSource()) {
-			if (isEmpty) return;
-			ConduitType[] types = this.getTypes();
-			for(int i = 0; i < types.length; i++) {
-				ConduitType type = types[i];
+		ConduitType[] types = this.getTypes();
+		for(int i = 0; i < types.length; i++) {
+			ConduitType type = types[i];
+			if(this.isPowerSource(type)) {
 				float availableEnergy = this.getEnergy(type);
 				if(availableEnergy > 0)
 					this.subtractEnergy(this.transmitPowerToConsumers(availableEnergy, type, getMinimumSinkPriority()), type);
@@ -272,13 +267,13 @@ public abstract class TileEntitySimplePowerMachine extends PoweredEntity impleme
 	 * @return A PowerRequest instance indicated how much power you'd like to get
 	 */
 	public PowerRequest getPowerRequest(ConduitType type){
-		if(this.isPowerSink()){
+		if(this.isPowerSink(type)){
 			ConduitType[] types = this.getTypes();
 			for(int i = 0; i < types.length; i++){
 				if(ConduitType.areSameType(types[i],type)
 						&& this.getEnergyCapacity(type) > this.getEnergy(type)){
 					return new PowerRequest(
-							(this.isPowerSource() ? this.getMinimumSinkPriority() - 1 : PowerRequest.MEDIUM_PRIORITY),
+							(this.isPowerSource(type) ? this.getMinimumSinkPriority() - 1 : PowerRequest.MEDIUM_PRIORITY),
 							Math.min(getMaximumPowerFlux(),this.getEnergyCapacity(type) - this.getEnergy(type)),
 							this);
 				}
@@ -378,7 +373,6 @@ public abstract class TileEntitySimplePowerMachine extends PoweredEntity impleme
 				energyBuffers[i] = energy;
 			}
 		}
-		isEmpty = energy <= 0;
 	}
 	
 

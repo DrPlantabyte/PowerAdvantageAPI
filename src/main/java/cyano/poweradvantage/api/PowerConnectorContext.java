@@ -35,6 +35,7 @@ public class PowerConnectorContext {
 	 * @param connectorBlock The block that is testing its neighbors
 	 * @param connectorPosition The position of the block that is testing its neighbors
 	 * @param connectorSide The side of the block that is testing its neighbors
+	 * @param connectorBlock The neighboring block being tested
 	 * @param connecteePosition The neighboring block's position
 	 * @param connecteeSide The neighboring block's side
 	 */

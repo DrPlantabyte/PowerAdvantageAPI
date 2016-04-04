@@ -1,5 +1,6 @@
 package cyano.poweradvantage.machines.fluidmachines.modsupport;
 
+import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.init.Blocks;
 import cyano.poweradvantage.machines.fluidmachines.FluidPipeBlock;
 import net.minecraft.block.Block;
@@ -23,7 +24,12 @@ public class TerminalFluidPipeBlock extends FluidPipeBlock implements ITileEntit
 
 
 	@Override
-	public boolean isPowerSink(){
+	public boolean isPowerSink(ConduitType powerType){
+		return true;
+	}
+
+	@Override
+	public boolean isPowerSource(ConduitType powerType){
 		return true;
 	}
 	

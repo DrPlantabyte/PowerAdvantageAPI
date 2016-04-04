@@ -96,7 +96,7 @@ public class ConduitRegistry {
 			Block b = w.getBlockState(pos.pos).getBlock();
 			if(b  instanceof ITileEntityProvider ){
 				TileEntity e = w.getTileEntity(pos.pos);
-				if(e instanceof IPowerMachine && ((ITypedConduit)e).isPowerSink()){
+				if(e instanceof IPowerMachine && ((ITypedConduit)e).isPowerSink(energyType)){
 					PowerRequest req = ((IPowerMachine)e).getPowerRequest(energyType);
 					if(req != PowerRequest.REQUEST_NOTHING)requests.add(req);
 				} else {

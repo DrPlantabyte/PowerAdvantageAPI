@@ -79,17 +79,21 @@ public abstract class BlockSimpleFluidConduit extends FluidConduitBlock{
 	
 	
 	/**
-	 * Determines whether this block/entity should receive energy 
+	 * Determines whether this block/entity should receive energy
+	 * @param powerType Type of power
 	 * @return true if this block/entity should receive energy
 	 */
-	public boolean isPowerSink(){
+	@Override
+	public boolean isPowerSink(ConduitType powerType){
 		return false;
 	}
 	/**
-	 * Determines whether this block/entity can provide energy 
+	 * Determines whether this block/entity can provide energy
+	 * @param powerType Type of power
 	 * @return true if this block/entity can provide energy
 	 */
-	public boolean isPowerSource(){
+	@Override
+	public boolean isPowerSource(ConduitType powerType){
 		return false;
 	}
 	/**
