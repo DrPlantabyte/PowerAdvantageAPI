@@ -301,6 +301,25 @@ public abstract class BlockSimplePowerConduit extends ConduitBlock{
         return 0;
     }
 
+	/**
+	 * Checks wheter this block consumes or produces power
+	 * @param conduitType power type
+	 * @return Returns false because this block neither consumes nor produces power
+	 */
+	@Override
+	public boolean isPowerSink(ConduitType conduitType) {
+		return false;
+	}
+
+	/**
+	 * Checks wheter this block consumes or produces power
+	 * @param conduitType power type
+	 * @return Returns false because this block neither consumes nor produces power
+	 */
+	@Override
+	public boolean isPowerSource(ConduitType conduitType) {
+		return false;
+	}
     /**
 	 * Override of default block behavior
 	 */

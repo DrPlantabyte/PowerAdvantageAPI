@@ -228,8 +228,9 @@ public class PowerAdvantage
 	1. Download and setup IDE (IntelliJ)
 	2. Simple steam-powered food oven ("pressure cooker")
 	3. Add animated GUI to steam-powered food oven
-	4. Steam battery
-	5. Redstone-powered steam boiler (dual-energy machine)
+	4. Bucket filler (with universal bucket)
+	5. Steam battery
+	6. Redstone-powered steam boiler (dual-energy machine)
 	*/
 
 	/** singleton instance */
