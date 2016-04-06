@@ -22,7 +22,6 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
-import net.minecraftforge.fml.common.FMLLog;
 
 import java.util.List;
 
@@ -138,7 +137,6 @@ public abstract class TileEntitySimpleFluidMachine extends FluidPoweredEntity im
 			FluidStack fs = new FluidStack(FluidRegistry.getFluid(fluidID),fluidVolume);
 			getTank().setFluid(fs);
 		}
-		FMLLog.info("onDataFieldUpdate: fluid in tank is now %sx%s",getTank().getFluidAmount(),(getTank().getFluid() == null ? "null" : getTank().getFluid().getUnlocalizedName())); // TODO: remove
 	}
 	
 	/**

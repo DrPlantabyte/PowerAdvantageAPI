@@ -1,8 +1,8 @@
 package cyano.poweradvantage.api.simple;
 
-import com.google.common.base.Predicate;
 import cyano.poweradvantage.api.*;
 import cyano.poweradvantage.conduitnetwork.ConduitRegistry;
+import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyDirection;
@@ -42,7 +42,7 @@ public abstract class BlockSimplePowerMachine extends GUIBlock implements ITyped
 	/**
 	 * Blockstate property indicating which direction the block is facing
 	 */
-    public static final PropertyDirection FACING = PropertyDirection.create("facing", (Predicate)EnumFacing.Plane.HORIZONTAL);
+    public static final PropertyDirection FACING = BlockHorizontal.FACING;
     /**
      * Standard constructor for a machine block. Remember to set the GUI ID so that a GUI can pop-up 
      * when the player interacts with this block.

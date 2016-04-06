@@ -32,7 +32,6 @@ import java.util.Arrays;
  *
  */
 public abstract class TileEntitySimplePowerMachine extends PoweredEntity implements ISidedInventory{
-
 	private final ConduitType[] types;
 	private final float[] energyBufferSizes;
 	private final float[] energyBuffers;
