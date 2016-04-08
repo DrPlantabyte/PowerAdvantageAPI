@@ -220,7 +220,9 @@ public class PowerAdvantage
 	/** The version of this mod, in the format major.minor.update */
 	public static final String VERSION = "2.0.1";
 	
-	
+
+	// TODO: compatibility with TechReborn
+
 	// TODO: add condenser (makes water from steam)
 	// TODO: add ice machine (uses water and electricity to make blocks of ice)
 
