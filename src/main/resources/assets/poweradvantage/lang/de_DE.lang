@@ -50,3 +50,4 @@ tile.poweradvantage.fluid_switch.name=Ventil
 tile.poweradvantage.converter_rf_steam.name=Dampf-RF Leistungstransformator
 tile.poweradvantage.converter_rf_electricity.name=Elektrizität-RF Leistungstransformator
 tile.poweradvantage.converter_rf_quantum.name=Quant-RF Leistungstransformator
+tile.poweradvantage.converter_tr_electricity.name=Elektrizität-EU Leistungstransformator

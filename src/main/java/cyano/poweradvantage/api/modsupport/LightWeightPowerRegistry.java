@@ -1,7 +1,7 @@
 package cyano.poweradvantage.api.modsupport;
 
 import cyano.poweradvantage.api.ConduitType;
-import cyano.poweradvantage.api.PoweredEntity;
+import cyano.poweradvantage.api.IPowerMachine;
 import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -107,8 +107,8 @@ public class LightWeightPowerRegistry {
 		Block b = w.getBlockState(coord).getBlock();
 		TileEntity te = w.getTileEntity(coord);
 		if(te == null) return 0;
-		if(te instanceof PoweredEntity){
-			return ((PoweredEntity)te).getPowerRequest(energyType).amount;
+		if(te instanceof IPowerMachine){
+			return ((IPowerMachine)te).getPowerRequest(energyType).amount;
 		} else if(externalPowerSinks.containsKey(b) && externalPowerSinks.get(b).canAcceptEnergyType(energyType)){
 			return externalPowerSinks.get(b).getEnergyDemand(te, energyType);
 		}
@@ -129,8 +129,8 @@ public class LightWeightPowerRegistry {
 		Block b = w.getBlockState(coord).getBlock();
 		TileEntity te = w.getTileEntity(coord);
 		if(te == null) return 0;
-		if(te instanceof PoweredEntity){
-			return ((PoweredEntity)te).addEnergy(amount, energyType);
+		if(te instanceof IPowerMachine){
+			return ((IPowerMachine)te).addEnergy(amount, energyType);
 		} else if(externalPowerSinks.containsKey(b) && externalPowerSinks.get(b).canAcceptEnergyType(energyType)){
 			return externalPowerSinks.get(b).addEnergy(te, amount, energyType);
 		}

@@ -50,3 +50,4 @@ tile.poweradvantage.fluid_switch.name=Valvola
 tile.poweradvantage.converter_rf_steam.name=Vapore-RF Trasformatore
 tile.poweradvantage.converter_rf_electricity.name=Elettricità-RF Trasformatore
 tile.poweradvantage.converter_rf_quantum.name=Quantistico-RF Trasformatore
+tile.poweradvantage.converter_tr_electricity.name=Elettricità-EU Trasformatore

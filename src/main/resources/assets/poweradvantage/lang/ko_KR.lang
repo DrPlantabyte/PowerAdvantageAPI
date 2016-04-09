@@ -51,3 +51,4 @@ tile.poweradvantage.fluid_switch.name=판막
 tile.poweradvantage.converter_rf_steam.name=증기-RF 전원 트랜스
 tile.poweradvantage.converter_rf_electricity.name=전기-RF 전원 트랜스
 tile.poweradvantage.converter_rf_quantum.name=양자-RF 전원 트랜스
+tile.poweradvantage.converter_tr_electricity.name=전기-EU 전원 트랜스

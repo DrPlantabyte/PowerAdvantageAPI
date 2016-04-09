@@ -20,6 +20,7 @@ import net.minecraftforge.fml.common.registry.GameData;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.apache.logging.log4j.Level;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -221,7 +222,6 @@ public class PowerAdvantage
 	public static final String VERSION = "2.0.1";
 	
 
-	// TODO: compatibility with TechReborn
 
 	// TODO: add condenser (makes water from steam)
 	// TODO: add ice machine (uses water and electricity to make blocks of ice)
@@ -249,9 +249,12 @@ public class PowerAdvantage
 	public static boolean plasticIsAlsoRubber = true;
 	/** used to convert energy to RF types when attempting autmoatic conversion */
 	public static final Map<ConduitType, Float> rfConversionTable = new HashMap<>();
-	
+	/** used to convert energy to Tech Reborn types when attempting automatic conversion */
+	public static final Map<ConduitType, Float> trConversionTable = new HashMap<>();
+
 
 	public static boolean detectedRF = false;
+	public static boolean detectedTechReborn = false;
 
 	
 	private String[] distillRecipes = new String[0]; // used to pass config data to the init() method
@@ -340,6 +343,28 @@ public class PowerAdvantage
 			}
 		}
 
+		String[] conversions2 = config.getString("TechReborn_conversions", "Other Power Mods",
+				"electricity=0.25",
+				"List of conversions from Power Advantage power types to EU, in units of EU per energy unit")
+				.split(";");
+		for(String c : conversions2){
+			if(!c.contains("=")) continue;
+			String name = c.substring(0, c.indexOf('=')).trim().toLowerCase(Locale.US);
+			String val = c.substring(c.indexOf('=')+1).trim();
+			try{
+				Number d;
+				if(val.contains(".")){
+					d = new Double(Double.parseDouble(val));
+				} else {
+					d = Long.parseLong(val);
+				}
+				FMLLog.info("Adding conversion factor of "+d+" EU per unit of "+name);
+				trConversionTable.put(new ConduitType(name), d.floatValue());
+			}catch(NumberFormatException ex){
+				FMLLog.severe("Cannot parse '"+val+"' as number");
+			}
+		}
+
 
 		config.save();
 
@@ -405,6 +430,15 @@ public class PowerAdvantage
 			detectedRF = false;
 			FMLLog.info("%s: did not detect RF classes: %s", MODID, e.getMessage());
 		}
+		try {
+			FMLLog.info("%s: testing whether we have to support Tech Reborn", MODID);
+			Class trClass = Class.forName("reborncore.api.power.IEnergyInterfaceTile", false, getClass().getClassLoader());
+			detectedTechReborn = trClass != null;
+			FMLLog.info("%s: Tech Reborn class detected: %s", MODID, trClass);
+		} catch (ClassNotFoundException e) {
+			detectedTechReborn = false;
+			FMLLog.info("%s: did not detect Tech Reborn classes: %s", MODID, e.getMessage());
+		}
 
 
 		FMLLog.info("%s: adding GUI handler", MODID);
@@ -420,7 +454,7 @@ public class PowerAdvantage
 		cyano.poweradvantage.init.GUI.init();
 
 		FMLLog.info("%s: mod support data registries", MODID);
-		cyano.poweradvantage.init.ModSupport.init(detectedRF);
+		cyano.poweradvantage.init.ModSupport.init(detectedRF,detectedTechReborn);
 
 
 		if(event.getSide() == Side.CLIENT){
@@ -504,26 +538,29 @@ public class PowerAdvantage
 	}
 
 	private void printHackingInfo() {
-		// Object dump all blocks and class dump all tile entities
-		GameData.getBlockRegistry().forEach((Block b)->{
-			FMLLog.info("Block: %s %s",b.getUnlocalizedName(),objectDump(b));
-		});
-		GameData.getItemRegistry().forEach((Item i)->{
-			FMLLog.info("Item: %s %s",i.getUnlocalizedName(),objectDump(i));
-		});
-		FMLLog.info("class TileEntity: %s",classDump(TileEntity.class));
-			try{
+		try {
+			// Object dump all blocks and class dump all tile entities
+			GameData.getBlockRegistry().forEach((Block b) -> {
+				FMLLog.info("Block: %s %s", b.getUnlocalizedName(), objectDump(b));
+			});
+			GameData.getItemRegistry().forEach((Item i) -> {
+				FMLLog.info("Item: %s %s", i.getUnlocalizedName(), objectDump(i));
+			});
+			FMLLog.info("class TileEntity: %s", superDump(null, TileEntity.class));
+			try {
 				Field f = TileEntity.class.getDeclaredField("field_145853_j");
 				f.setAccessible(true);
-				Map m = (Map)f.get(null);
-						// do TileEntity class dump
-						for(Object o : m.keySet()){
-							FMLLog.info("TileEntity: %s",classDump((Class)o));
-						}
-			}catch(Exception ex){
+				Map m = (Map) f.get(null);
+				// do TileEntity class dump
+				for (Object o : m.keySet()) {
+					FMLLog.info("TileEntity: %s", superDump(null, (Class) o));
+				}
+			} catch (Exception ex) {
 				FMLLog.severe("%s: Exception\n%s", MODID, ex);
 			}
-		
+		}catch(Exception ex){
+			FMLLog.log(Level.INFO,ex,"Java reflection error during dump operation");
+		}
 	}
 	
 	private static String objectDump(Object o){
@@ -589,51 +626,95 @@ public class PowerAdvantage
 		}
 		return sb.toString();
 	}
-	
-	private static String classDump(Class c){
-		StringBuilder sb = new StringBuilder("\n");
-		sb.append(c.getName()).append(" extends ").append(c.getSuperclass()).append("\n\t");
-		
-		Class[] interfaces = c.getInterfaces();
-		if(interfaces != null && interfaces.length > 0){
-			sb.append("\t").append("Interfaces").append("\n\t");
-			for(Class i : interfaces){
-				sb.append(i.getName()).append("\n\t");
+
+	private static String dumpField(Field f, Object inst) throws IllegalAccessException {
+		StringBuilder sb = new StringBuilder();
+		if(Modifier.isPrivate(f.getModifiers())) sb.append("private ");
+		if(Modifier.isProtected(f.getModifiers())) sb.append("protected ");
+		if(Modifier.isPublic(f.getModifiers())) sb.append("public ");
+		if(Modifier.isStatic( f.getModifiers())) sb.append("static ");
+		if(Modifier.isFinal( f.getModifiers())) sb.append("final ");
+		sb.append(f.getType().getCanonicalName()).append(" ");
+		if(inst != null || Modifier.isStatic(f.getModifiers())) {
+			f.setAccessible(true);
+			sb.append(f.getName()).append(" = ");
+			if (Modifier.isStatic(f.getModifiers())) {
+				sb.append(String.valueOf(f.get(null)));
+			} else {
+				sb.append(String.valueOf(f.get(inst)));
 			}
 		}
-		
-		sb.append("\t").append("Variables").append("\n\t");
-		Field[] variables = c.getDeclaredFields();
-		for(Field f : variables){
-			if(Modifier.isPrivate(f.getModifiers())) sb.append("private ");
-			if(Modifier.isProtected(f.getModifiers())) sb.append("protected ");
-			if(Modifier.isPublic(f.getModifiers())) sb.append("public ");
-			if(Modifier.isStatic( f.getModifiers())) sb.append("static ");
-			if(Modifier.isFinal( f.getModifiers())) sb.append("final ");
-			sb.append(f.getType().getName()).append(" ");
-			sb.append(f.getName()).append("\n\t");
-		}
-		sb.append("\n\t");
-		sb.append("\t").append("Methods").append("\n\t");
-		Method[] functions = c.getDeclaredMethods();
-		for(Method f : functions){
-			if(Modifier.isPrivate(f.getModifiers())) sb.append("private ");
-			if(Modifier.isProtected(f.getModifiers())) sb.append("protected ");
-			if(Modifier.isPublic(f.getModifiers())) sb.append("public ");
-			if(Modifier.isStatic( f.getModifiers())) sb.append("static ");
-			sb.append(f.getReturnType().getName()).append(" ");
-			sb.append(f.getName()).append("(");
-			Parameter[] params = f.getParameters();
-			if(params != null && params.length > 0){
-				for(int i = 0; i < params.length; i++){
-					Parameter p = params[i];
-					if(i > 0) sb.append(", ");
-					sb.append(p.getType().getSimpleName());
-				}
-			}
-			sb.append(")\n\t");
-		}
+
 		return sb.toString();
 	}
+
+
+	private static String dumpMethod(Method m) throws IllegalAccessException {
+		StringBuilder sb = new StringBuilder();
+		if(Modifier.isPrivate(m.getModifiers())) sb.append("private ");
+		if(Modifier.isProtected(m.getModifiers())) sb.append("protected ");
+		if(Modifier.isPublic(m.getModifiers())) sb.append("public ");
+		if(Modifier.isStatic( m.getModifiers())) sb.append("static ");
+		if(Modifier.isFinal( m.getModifiers())) sb.append("final ");
+		sb.append(m.getReturnType().getCanonicalName()).append(" ");
+		sb.append(m.getName()).append("(");
+		boolean b = false;
+		for(Class p : m.getParameterTypes()){
+			if(b) sb.append(", ");
+			if(p.isArray()){
+				sb.append(p.getComponentType().getSimpleName()).append("[]");
+			} else {
+				sb.append(p.getSimpleName());
+			}
+			b = true;
+		}
+		sb.append(")");
+
+		return sb.toString();
+	}
+
+	public static String superDump(Object o) throws IllegalAccessException {
+		Class c = o.getClass();
+		StringBuilder sb = new StringBuilder();
+		sb.append(c.getCanonicalName()).append(" ")
+				.append(String.valueOf(o))
+				.append(" {");
+		sb.append("\n\t").append( superDump(o, c));
+
+		sb.append("}");
+		return sb.toString();
+	}
+	public static String superDump(Object o, Class c) throws IllegalAccessException {
+		StringBuilder sb = new StringBuilder();
+		sb.append("class ").append(c.getCanonicalName());
+		if(c.getInterfaces().length > 0) sb.append(" implements ");
+		boolean b = false;
+		for(Class i : c.getInterfaces()){
+			if(b) sb.append(", ");
+			sb.append(i.getSimpleName());
+			b = true;
+		}
+		sb.append(":\n");
+		for(Field f : c.getDeclaredFields()){
+			sb.append("\t").append(dumpField(f,o)).append("\n");
+		}
+		for(Method m : c.getDeclaredMethods()){
+			sb.append("\t").append(dumpMethod(m)).append("\n");
+		}
+		for(Class i : c.getInterfaces()){
+			for(Method m : i.getDeclaredMethods()){
+				sb.append("\t@Implementation(").append(i.getCanonicalName()).append(") ")
+						.append(dumpMethod(m)).append("\n");
+			}
+		}
+
+
+		if(c.getSuperclass() != null && !c.equals(Object.class)){
+			sb.append("\nextends ").append(superDump(o,c.getSuperclass()));
+		}
+
+		return sb.toString();
+	}
+
 
 }

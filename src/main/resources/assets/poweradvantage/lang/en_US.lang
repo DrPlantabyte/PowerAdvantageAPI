@@ -47,3 +47,4 @@ tile.poweradvantage.fluid_switch.name=Fluid Switch Valve
 tile.poweradvantage.converter_rf_steam.name=Steam-RF Transformer
 tile.poweradvantage.converter_rf_electricity.name=Electricity-RF Transformer
 tile.poweradvantage.converter_rf_quantum.name=Quantum-RF Transformer
+tile.poweradvantage.converter_tr_electricity.name=Electricity-EU Transformer

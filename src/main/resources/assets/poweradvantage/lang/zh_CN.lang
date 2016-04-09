@@ -52,3 +52,4 @@ tile.poweradvantage.fluid_switch.name=閥
 tile.poweradvantage.converter_rf_steam.name=蒸汽-RF 變壓器
 tile.poweradvantage.converter_rf_electricity.name=電力-RF 變壓器
 tile.poweradvantage.converter_rf_quantum.name=量子-RF 變壓器
+tile.poweradvantage.converter_tr_electricity.name=電力-EU 變壓器

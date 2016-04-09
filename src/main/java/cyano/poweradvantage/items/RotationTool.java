@@ -21,25 +21,28 @@ public class RotationTool extends net.minecraft.item.Item{
 	public EnumActionResult onItemUse(final ItemStack item, final EntityPlayer player, final World w,
 									  final BlockPos coord, final EnumHand hand, final EnumFacing facing,
 									  final float partialX, final float partialY, final float partialZ) {
-		IBlockState block = w.getBlockState(coord);
-		// new way
-		boolean changed = w.setBlockState(coord, block.withRotation(Rotation.COUNTERCLOCKWISE_90));
-		if(changed) return EnumActionResult.SUCCESS;
-		/* // Old way
-		for(Object o : block.getProperties().entrySet()){
-			Map.Entry e = (Map.Entry)o;
-			if(e.getKey() instanceof PropertyDirection){
-				final TileEntity save = w.getTileEntity(coord);
-				w.setBlockState(coord, block.cycleProperty((PropertyDirection)e.getKey()),3);
-				if(save != null){
-					w.removeTileEntity(coord);
-					save.validate();
-					w.setTileEntity(coord, save);
-				}
-				return EnumActionResult.SUCCESS;
-			}
+		IBlockState bs = w.getBlockState(coord);
+		/*  // comment this line to turn the wrench into a hacker tool
+		try { // hacker info
+			FMLLog.info("%s",new StringBuilder()
+					.append("Hacker output:\n")
+					.append("\nBlockstate = ").append(block)
+					.append("\n\nBlock class dump:\n").append(superDump(block.getBlock()))
+					.append("\n\nTileEntity class dump:\n")
+					.append(w.getTileEntity(coord) == null ? "null" : superDump(w.getTileEntity(coord)))
+			.toString());
+		} catch (IllegalAccessException e) {
+			FMLLog.log(Level.WARN,e,"Hacker fail!");
 		}
-		*/
+		//*/
+
+		if(bs.withRotation(Rotation.COUNTERCLOCKWISE_90) != bs) {
+			w.setBlockState(coord, bs.withRotation(Rotation.COUNTERCLOCKWISE_90));
+			return EnumActionResult.SUCCESS;
+		}
+		if(bs.getBlock().rotateBlock(w,coord, facing)) return EnumActionResult.SUCCESS;
+
+
 		return EnumActionResult.PASS;
 	}
 }

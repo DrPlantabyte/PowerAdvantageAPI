@@ -7,7 +7,7 @@ import cyano.poweradvantage.api.ITypedConduit;
 import cyano.poweradvantage.api.PowerRequest;
 import cyano.poweradvantage.api.modsupport.ExternalPowerRequest;
 import cyano.poweradvantage.api.modsupport.LightWeightPowerRegistry;
-import cyano.poweradvantage.api.modsupport.RFPowerRequest;
+import cyano.poweradvantage.api.modsupport.Wrappers;
 import cyano.poweradvantage.math.BlockPos4D;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
@@ -15,6 +15,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.FMLLog;
 
 import java.util.*;
 import java.util.concurrent.locks.Lock;
@@ -108,11 +109,22 @@ public class ConduitRegistry {
 								requests.add(req);
 							}
 						}
-					} else if(PowerAdvantage.detectedRF && PowerAdvantage.rfConversionTable.containsKey(conduitType)){
-						if(e instanceof cofh.api.energy.IEnergyReceiver){
-							float RFDemand = getRFDemand((cofh.api.energy.IEnergyReceiver)e);
-							if(RFDemand > 0){
-								requests.add( new RFPowerRequest(RFDemand,(cofh.api.energy.IEnergyReceiver)e));
+					} else {
+						if (PowerAdvantage.detectedRF && PowerAdvantage.rfConversionTable.containsKey(conduitType)) {
+							if (e instanceof cofh.api.energy.IEnergyReceiver) {
+								requests.add(Wrappers.wrapRFPowerRequest(
+										(cofh.api.energy.IEnergyReceiver) e, energyType, PowerAdvantage.rfConversionTable.get(conduitType)
+								));
+							}
+						}
+						if (PowerAdvantage.detectedTechReborn && PowerAdvantage.trConversionTable.containsKey(conduitType)) {
+							FMLLog.info("%s", e.getClass());// TODO: remove
+							if (e instanceof reborncore.api.power.IEnergyInterfaceTile) {
+								FMLLog.info("can get power", e.getClass());// TODO: remove
+								requests.add(Wrappers.wrapTRPowerRequest(
+										(reborncore.api.power.IEnergyInterfaceTile) e, energyType, PowerAdvantage.trConversionTable.get(conduitType)
+								));
+								FMLLog.info("added power request %s", requests.get(requests.size() - 1));// TODO: remove
 							}
 						}
 					}
@@ -168,13 +180,6 @@ public class ConduitRegistry {
 						powerType, Math.min(e, req.amount));
 				if(e <= 0) break;
 				continue;
-			} else if(PowerAdvantage.detectedRF
-					&& PowerAdvantage.rfConversionTable.containsKey(powerType)
-					&& req instanceof RFPowerRequest){
-				int rf = (int)Math.min(req.amount, e * PowerAdvantage.rfConversionTable.get(powerType).floatValue());
-				e -= ((RFPowerRequest)req).fillRequest(rf);
-				if(e <= 0) break;
-				continue;
 			}
 
 			if(req.entity == null) continue;
@@ -189,20 +194,7 @@ public class ConduitRegistry {
 		return availableEnergy - e;
 	}
 	
-	
-	private static float getRFDemand(Object o){
-		if(PowerAdvantage.detectedRF){
-			if(o instanceof cofh.api.energy.IEnergyReceiver){
-				cofh.api.energy.IEnergyReceiver er = (cofh.api.energy.IEnergyReceiver) o;
-				for(EnumFacing f : EnumFacing.values()){
-					if(er.canConnectEnergy(f)){
-						return er.getMaxEnergyStored(f) - er.getEnergyStored(f);
-					}
-				}
-			}
-		}
-		return 0;
-	}
+
 	/**
 	 * Invoke this method anytime a conduit block enters the world
 	 * @param w The world instance for this dimension

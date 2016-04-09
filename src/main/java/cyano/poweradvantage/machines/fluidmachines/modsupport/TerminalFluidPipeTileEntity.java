@@ -79,7 +79,8 @@ public class TerminalFluidPipeTileEntity extends PoweredEntity{
 		int sum = 0;
 		for(int i = 0; i < 6; i++){
 			IFluidHandler f = neighbors[i];
-			if(f != null) sum += neighbors[i].drain(faces[i].getOpposite(), Integer.MAX_VALUE, false).amount;
+			FluidStack drain = neighbors[i].drain(faces[i].getOpposite(), Integer.MAX_VALUE, false);
+			if(f != null && drain != null) sum += drain.amount;
 		}
 		return sum;
 	}

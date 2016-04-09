@@ -51,3 +51,4 @@ tile.poweradvantage.fluid_switch.name=バルブ
 tile.poweradvantage.converter_rf_steam.name=蒸気-RFトランス
 tile.poweradvantage.converter_rf_electricity.name=電気-RFトランス
 tile.poweradvantage.converter_rf_quantum.name=量子-RFトランス
+tile.poweradvantage.converter_tr_electricity.name=電気-EUトランス

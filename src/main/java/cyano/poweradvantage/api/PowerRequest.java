@@ -24,7 +24,7 @@ public class PowerRequest implements Comparable<PowerRequest>, Cloneable{
 	/** priority level of the request */
 	public final byte priority;
 	/** the TileEntity that filed this request */
-	public final PoweredEntity entity;
+	public final IPowerMachine entity;
 
 	/**
 	 * Lowest possible priority
@@ -62,7 +62,7 @@ public class PowerRequest implements Comparable<PowerRequest>, Cloneable{
 	 * @param requestSize How much to ask for of the given energy type.
 	 * @param requestSource The TileEntity that created this PowerRequest
 	 */
-	public PowerRequest(byte priority, float requestSize, PoweredEntity requestSource){
+	public PowerRequest(byte priority, float requestSize, IPowerMachine requestSource){
 		this.priority = priority;
 		this.amount = requestSize;
 		this.entity = requestSource;
@@ -75,7 +75,7 @@ public class PowerRequest implements Comparable<PowerRequest>, Cloneable{
 	 * @param requestSize How much to ask for of the given energy type.
 	 * @param requestSource The TileEntity that created this PowerRequest
 	 */
-	public PowerRequest(int priority, float requestSize, PoweredEntity requestSource){
+	public PowerRequest(int priority, float requestSize, IPowerMachine requestSource){
 		this.priority = (byte)priority;
 		this.amount = requestSize;
 		this.entity = requestSource;
