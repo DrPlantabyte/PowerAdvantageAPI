@@ -20,7 +20,6 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.ShapedOreRecipe;
-import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -63,13 +62,13 @@ public abstract class ModSupport {
 					'x',net.minecraft.init.Items.ender_pearl,'y',"frameSteel",'z',"blockRedstone"));
 		}
 		if(techRebornSupport){
+			FMLLog.info("Initializing Tech Reborn interface content");
 			// first, register transformers in Ore Dictionary
-
 
 			converter_tr_electricity = addBlock(new BlockTRConverter(defaultMachineMaterial,defaultMachineHardness,new ConduitType("electricity"), TileEntityTRElectricityConverter.class),"converter_tr_electricity");
 			GameRegistry.registerTileEntity(TileEntityTRElectricityConverter.class, PowerAdvantage.MODID+"."+"tr_electricity_converter_tileentity");
-			GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(converter_tr_electricity,1),
-					"PSU","transformerEU"));
+			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(converter_tr_electricity,1),"XXX","XZX","XXX",
+					'Z',"PSU",'X',"ingotRefinedIron"));
 		}
 		initDone = true;
 	}
