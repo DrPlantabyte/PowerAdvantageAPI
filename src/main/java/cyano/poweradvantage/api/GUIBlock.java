@@ -4,6 +4,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryHelper;
@@ -147,6 +148,32 @@ public abstract class GUIBlock extends net.minecraft.block.BlockContainer{
 				// make universal bucket
 				for(FluidTankInfo tank : target.getTankInfo(facing)){
 					if(tank.fluid != null){
+						// special handling for water and lava (no universal bucket)
+						if(tank.fluid.getFluid() == FluidRegistry.WATER){
+							ItemStack filledBucket = new ItemStack(Items.water_bucket);
+							if(tank.fluid.amount >= 1000) {
+								FluidStack drain = tank.fluid.copy();
+								drain.amount = 1000;
+								if(target.drain(facing,drain,false).amount == drain.amount){
+									target.drain(facing,drain,true);
+									if(!player.capabilities.isCreativeMode)player.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, filledBucket);
+								}
+							}
+							return true;
+						}
+						if(tank.fluid.getFluid() == FluidRegistry.LAVA){
+							ItemStack filledBucket = new ItemStack(Items.lava_bucket);
+							if(tank.fluid.amount >= 1000) {
+								FluidStack drain = tank.fluid.copy();
+								drain.amount = 1000;
+								if(target.drain(facing,drain,false).amount == drain.amount){
+									target.drain(facing,drain,true);
+									if(!player.capabilities.isCreativeMode)player.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, filledBucket);
+								}
+							}
+							return true;
+						}
+						// back to your regularly scheduled algorithm...
 						UniversalBucket bucket = cyano.basemetals.init.Items.universal_bucket;
 						ItemStack filledBucket = new ItemStack(bucket);
 						if(tank.fluid.amount >= bucket.getCapacity(filledBucket)) {

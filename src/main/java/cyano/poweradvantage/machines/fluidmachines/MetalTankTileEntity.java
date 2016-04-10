@@ -121,6 +121,27 @@ public class MetalTankTileEntity  extends TileEntitySimpleFluidMachine {
 	public boolean isPowerSink(ConduitType powerType){
 		return true;
 	}
+
+	/**
+	 * Checks whether this fluid machine should send out its fluid to other fluid machines
+	 *
+	 * @return true to send fluids to other machines
+	 */
+	@Override
+	public boolean isFluidSource() {
+		return true;
+	}
+
+	/**
+	 * Checks whether this fluid machine should receive fluids from other fluid machines
+	 *
+	 * @return true to receive fluids from other machines
+	 */
+	@Override
+	public boolean isFluidSink() {
+		return true;
+	}
+
 	/**
 	 * Determines whether this block/entity can provide energy
 	 * @param powerType Type of power

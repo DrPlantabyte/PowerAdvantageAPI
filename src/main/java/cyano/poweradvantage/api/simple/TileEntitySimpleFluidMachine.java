@@ -192,7 +192,7 @@ public abstract class TileEntitySimpleFluidMachine extends FluidPoweredEntity im
      */
     @Override
 	public void powerUpdate() {
-		if(getTank().getFluidAmount() > 0){
+		if(this.isFluidSource() && getTank().getFluidAmount() > 0){
 			this.getTank().drain(this.transmitFluidToConsumers(getTank().getFluid(),getMinimumSinkPriority()),true);
 		}
 		if(this.getTank().getFluidAmount() != oldLevel){
@@ -208,6 +208,7 @@ public abstract class TileEntitySimpleFluidMachine extends FluidPoweredEntity im
      * @return The lowest priority of power request that will be filled.
      */
     protected byte getMinimumSinkPriority(){
+		if(this.isFluidSink() && this.isFluidSource()) return PowerRequest.BACKUP_PRIORITY; // don't transmit to other fluid storage tanks
     	return PowerRequest.LAST_PRIORITY;
     }
     /**

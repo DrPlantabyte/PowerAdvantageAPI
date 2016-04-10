@@ -1,13 +1,12 @@
 package cyano.poweradvantage.machines.fluidmachines;
 
-import cyano.poweradvantage.api.ConduitType;
+import cyano.poweradvantage.api.PowerRequest;
+import cyano.poweradvantage.api.fluid.FluidRequest;
+import cyano.poweradvantage.api.simple.TileEntitySimpleFluidMachine;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
-import cyano.poweradvantage.api.PowerRequest;
-import cyano.poweradvantage.api.fluid.FluidRequest;
-import cyano.poweradvantage.api.simple.TileEntitySimpleFluidMachine;
 
 public class StorageTankTileEntity  extends TileEntitySimpleFluidMachine {
 
@@ -85,24 +84,25 @@ public class StorageTankTileEntity  extends TileEntitySimpleFluidMachine {
 	public int getRedstoneOutput() {
 		return this.getTank().getFluidAmount() * 15 / this.getTank().getCapacity();
 	}
-	
+
+
 	/**
-	 * Determines whether this block/entity should receive energy
-	 * @param powerType Type of power
-	 * @return true if this block/entity should receive energy
+	 * Checks whether this fluid machine should send out its fluid to other fluid machines
+	 *
+	 * @return true to send fluids to other machines
 	 */
 	@Override
-	public boolean isPowerSink(ConduitType powerType){
-		return true;
-	}
-	/**
-	 * Determines whether this block/entity can provide energy
-	 * @param powerType Type of power
-	 * @return true if this block/entity can provide energy
-	 */
-	@Override
-	public boolean isPowerSource(ConduitType powerType){
+	public boolean isFluidSource() {
 		return true;
 	}
 
+	/**
+	 * Checks whether this fluid machine should receive fluids from other fluid machines
+	 *
+	 * @return true to receive fluids from other machines
+	 */
+	@Override
+	public boolean isFluidSink() {
+		return true;
+	}
 }

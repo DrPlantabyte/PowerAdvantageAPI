@@ -1,6 +1,5 @@
 package cyano.poweradvantage.machines.fluidmachines;
 
-import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.api.fluid.FluidRequest;
 import cyano.poweradvantage.api.simple.TileEntitySimpleFluidMachine;
 import cyano.poweradvantage.registry.FuelRegistry;
@@ -271,25 +270,7 @@ public class StillTileEntity extends TileEntitySimpleFluidMachine {
 			this.totalBurnTime = tagRoot.getShort("totalBurnTime");
 		}
 	}
-	
-	/**
-	 * Determines whether this block/entity should receive energy
-	 * @param powerType Type of power
-	 * @return true if this block/entity should receive energy
-	 */
-	@Override
-	public boolean isPowerSink(ConduitType powerType){
-		return true;
-	}
-	/**
-	 * Determines whether this block/entity can provide energy
-	 * @param powerType Type of power
-	 * @return true if this block/entity can provide energy
-	 */
-	@Override
-	public boolean isPowerSource(ConduitType powerType){
-		return true;
-	}
+
 	
 	/**
      * Gets the integer array used to pass synchronization data from the server 
@@ -400,4 +381,25 @@ public class StillTileEntity extends TileEntitySimpleFluidMachine {
 		return inputTank.getFluidAmount() * 15 / inputTank.getCapacity();
 	}
 
+
+
+	/**
+	 * Checks whether this fluid machine should send out its fluid to other fluid machines
+	 *
+	 * @return true to send fluids to other machines
+	 */
+	@Override
+	public boolean isFluidSource() {
+		return true;
+	}
+
+	/**
+	 * Checks whether this fluid machine should receive fluids from other fluid machines
+	 *
+	 * @return true to receive fluids from other machines
+	 */
+	@Override
+	public boolean isFluidSink() {
+		return true;
+	}
 }

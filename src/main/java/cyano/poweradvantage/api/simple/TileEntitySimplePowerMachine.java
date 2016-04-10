@@ -112,7 +112,8 @@ public abstract class TileEntitySimplePowerMachine extends PoweredEntity impleme
 	@Override
 	public float getEnergy(ConduitType energyType) {
 		ConduitType[] types = getTypes();
-		for(int i = 0; i < types.length; i++){
+		int limit = Math.min(types.length, energyBuffers.length);
+		for(int i = 0; i < limit; i++){
 			ConduitType t = types[i];
 			if(ConduitType.areSameType(t,energyType)){
 				return energyBuffers[i];

@@ -11,7 +11,7 @@ import reborncore.api.power.EnumPowerTier;
 /**
  * Created by Chris on 4/9/2016.
  */
-public class TileEntityTRConverter extends TileEntityConverter implements reborncore.api.power.IEnergyInterfaceTile {
+public abstract class TileEntityTRConverter extends TileEntityConverter implements reborncore.api.power.IEnergyInterfaceTile {
 
 	private final double MAX_INPUT = 2048;
 	private final double euBufferMax = MAX_INPUT;
@@ -19,8 +19,8 @@ public class TileEntityTRConverter extends TileEntityConverter implements reborn
 	private double euBuffer = 0;
 	private final ConduitType powerAdvantageType;
 
-	public TileEntityTRConverter(ConduitType powerAdvantageType){
-		super(powerAdvantageType,1024F,TileEntityTRConverter.class.getSimpleName());
+	public TileEntityTRConverter(ConduitType powerAdvantageType, String unlocalizedName){
+		super(powerAdvantageType,1024F,unlocalizedName);
 		this.powerAdvantageType = powerAdvantageType;
 	}
 

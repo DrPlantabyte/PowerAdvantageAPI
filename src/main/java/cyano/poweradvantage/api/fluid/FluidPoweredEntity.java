@@ -1,20 +1,15 @@
 package cyano.poweradvantage.api.fluid;
 
-import java.util.List;
-
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTank;
-import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidHandler;
-import net.minecraftforge.fml.common.FMLLog;
 import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.api.PowerRequest;
 import cyano.poweradvantage.api.PoweredEntity;
 import cyano.poweradvantage.conduitnetwork.ConduitRegistry;
 import cyano.poweradvantage.init.Fluids;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
+import net.minecraftforge.fluids.*;
+
+import java.util.List;
 
 /**
  * <p>
@@ -44,7 +39,8 @@ public abstract class FluidPoweredEntity extends PoweredEntity implements IFluid
 	public PowerRequest getPowerRequest(ConduitType type) {
 		// Type will be lava or water or other specific fluid
 		// implementation of getFluidRequest() decides whether this machine wants it
-		if(Fluids.isFluidType(type)){
+		if(this.isFluidSink() && Fluids.isFluidType(type)){
+			if(type.equals(Fluids.fluidConduit_general)) return PowerRequest.REQUEST_NOTHING; // not a specific fluid type
 			return getFluidRequest(Fluids.conduitTypeToFluid(type));
 		}else{
 			return PowerRequest.REQUEST_NOTHING;
@@ -232,4 +228,42 @@ public abstract class FluidPoweredEntity extends PoweredEntity implements IFluid
 		return arr;
 	}
 
+	/**
+	 * checks whether this machine should transmit a given power type to power consumers
+	 * @param type The type of power
+	 * @return true to transmit energy, false otherwise
+	 */
+	@Override
+	public boolean isPowerSource(ConduitType type){
+		if(Fluids.isFluidType(type)) {
+			return isFluidSource();
+		} else {
+			return false;
+		}
+	}
+	/**
+	 * checks whether this machine should consume a given power type
+	 * @param type The type of power
+	 * @return true to receive energy, false otherwise
+	 */
+	@Override
+	public boolean isPowerSink(ConduitType type){
+		if(Fluids.isFluidType(type)) {
+			return isFluidSink();
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * Checks whether this fluid machine should send out its fluid to other fluid machines
+	 * @return true to send fluids to other machines
+	 */
+	public abstract boolean isFluidSource();
+
+	/**
+	 * Checks whether this fluid machine should receive fluids from other fluid machines
+	 * @return true to receive fluids from other machines
+	 */
+	public abstract boolean isFluidSink();
 }

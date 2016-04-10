@@ -7,6 +7,8 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.FMLLog;
+import org.apache.logging.log4j.Level;
 
 /**
  * Created by Chris on 4/9/2016.
@@ -14,20 +16,12 @@ import net.minecraft.world.World;
 public class BlockTRConverter extends BlockSimplePowerMachine {
 
 	private final ConduitType powerAdvantageType;
-	/**
-	 * Standard constructor for a machine block. Remember to set the GUI ID so that a GUI can pop-up
-	 * when the player interacts with this block.
-	 *
-	 * @param blockMaterial This is the material for the block. Typically is set
-	 *                      to net.minecraft.block.material.Material.piston, though any material can
-	 *                      be used.
-	 * @param hardness      This affects how long it takes to break the block. 0.5 is
-	 *                      a good value if you want it to be easy to break.
-	 * @param energyType    This is the energy type for this block. This is used by
-	 */
-	public BlockTRConverter(Material blockMaterial, float hardness, ConduitType energyType) {
+	private final Class<? extends PoweredEntity> tileEntity;
+
+	public BlockTRConverter(Material blockMaterial, float hardness, ConduitType energyType, Class<? extends PoweredEntity> tileEntity) {
 		super(blockMaterial, hardness, energyType);
 		powerAdvantageType = energyType;
+		this.tileEntity = tileEntity;
 	}
 
 	/**
@@ -41,7 +35,12 @@ public class BlockTRConverter extends BlockSimplePowerMachine {
 	 */
 	@Override
 	public PoweredEntity createNewTileEntity(World world, int metaDataValue) {
-		return new TileEntityTRConverter(powerAdvantageType);
+		try {
+			return tileEntity.newInstance();
+		} catch (InstantiationException | IllegalAccessException e) {
+			FMLLog.log(Level.ERROR,e,"Failed to initialize TileEntity instance for block %s",this.getUnlocalizedName());
+			return null;
+		}
 	}
 
 	/**

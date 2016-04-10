@@ -7,7 +7,7 @@ import cyano.poweradvantage.api.modsupport.rf.TileEntityRFElectricityConverter;
 import cyano.poweradvantage.api.modsupport.rf.TileEntityRFQuantumConverter;
 import cyano.poweradvantage.api.modsupport.rf.TileEntityRFSteamConverter;
 import cyano.poweradvantage.api.modsupport.techreborn.BlockTRConverter;
-import cyano.poweradvantage.api.modsupport.techreborn.TileEntityTRConverter;
+import cyano.poweradvantage.api.modsupport.techreborn.TileEntityTRElectricityConverter;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
@@ -19,12 +19,10 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 public abstract class ModSupport {
@@ -66,21 +64,10 @@ public abstract class ModSupport {
 		}
 		if(techRebornSupport){
 			// first, register transformers in Ore Dictionary
-			Iterator<Block> blockIterator = Block.blockRegistry.iterator();
-			while(blockIterator.hasNext()){
-				Block b = blockIterator.next();
-				if(b == null) continue;
-				if(b.getClass().getPackage() == null) continue; // air block is an anonymous class?
-				if(b.getClass().getPackage().getName().equals("techreborn.blocks.transformers")
-						&& b.getClass().getSimpleName().equals("BlockTransformer")){
-					// is a transformer block from Tech Reborn
-					OreDictionary.registerOre("transformerEU",b);
-					FMLLog.info("%s: registerring block %s as '%s' in the Ore Dictionary", PowerAdvantage.MODID, b.getUnlocalizedName(),"transformerEU");
-				}
-			}
 
-			converter_tr_electricity = addBlock(new BlockTRConverter(defaultMachineMaterial,defaultMachineHardness,new ConduitType("electricity")),"converter_tr_electricity");
-			GameRegistry.registerTileEntity(TileEntityTRConverter.class, PowerAdvantage.MODID+"."+"tr_electricity_converter_tileentity");
+
+			converter_tr_electricity = addBlock(new BlockTRConverter(defaultMachineMaterial,defaultMachineHardness,new ConduitType("electricity"), TileEntityTRElectricityConverter.class),"converter_tr_electricity");
+			GameRegistry.registerTileEntity(TileEntityTRElectricityConverter.class, PowerAdvantage.MODID+"."+"tr_electricity_converter_tileentity");
 			GameRegistry.addRecipe(new ShapelessOreRecipe(new ItemStack(converter_tr_electricity,1),
 					"PSU","transformerEU"));
 		}

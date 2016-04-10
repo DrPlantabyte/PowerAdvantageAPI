@@ -227,4 +227,24 @@ public class FluidDischargeTileEntity extends TileEntitySimpleFluidMachine {
 
 
 	//////////
+
+	/**
+	 * Checks whether this fluid machine should send out its fluid to other fluid machines
+	 *
+	 * @return true to send fluids to other machines
+	 */
+	@Override
+	public boolean isFluidSource() {
+		return false;
+	}
+
+	/**
+	 * Checks whether this fluid machine should receive fluids from other fluid machines
+	 *
+	 * @return true to receive fluids from other machines
+	 */
+	@Override
+	public boolean isFluidSink() {
+		return true;
+	}
 }

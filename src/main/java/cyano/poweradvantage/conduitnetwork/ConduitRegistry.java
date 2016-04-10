@@ -15,7 +15,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.FMLLog;
 
 import java.util.*;
 import java.util.concurrent.locks.Lock;
@@ -118,13 +117,10 @@ public class ConduitRegistry {
 							}
 						}
 						if (PowerAdvantage.detectedTechReborn && PowerAdvantage.trConversionTable.containsKey(conduitType)) {
-							FMLLog.info("%s", e.getClass());// TODO: remove
 							if (e instanceof reborncore.api.power.IEnergyInterfaceTile) {
-								FMLLog.info("can get power", e.getClass());// TODO: remove
 								requests.add(Wrappers.wrapTRPowerRequest(
 										(reborncore.api.power.IEnergyInterfaceTile) e, energyType, PowerAdvantage.trConversionTable.get(conduitType)
 								));
-								FMLLog.info("added power request %s", requests.get(requests.size() - 1));// TODO: remove
 							}
 						}
 					}
