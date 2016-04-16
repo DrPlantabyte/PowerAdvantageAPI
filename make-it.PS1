@@ -35,7 +35,7 @@ rm -Recurse $PROJECT_FOLDER/build/dev/extract/assets/*
 rmdir "$PROJECT_FOLDER/build/dev/extract/assets"
 rm "$PROJECT_FOLDER/build/dev/$myfile"
 $myAPIfile=$myFile -replace "-","-API-"
-[IO.Compression.ZipFile]::CreateFromDirectory("$PROJECT_FOLDER/build/dev/extract", "$PROJECT_FOLDER/build/dev/$myAPIfile")
+& $env:JAVA_HOME\bin\jar.exe c0f "$PROJECT_FOLDER/build/dev/$myAPIfile"  -C "$PROJECT_FOLDER/build/dev/extract" .
 rm -Recurse $PROJECT_FOLDER/build/dev/extract
 
 # copy final files to dist folder

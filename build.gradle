@@ -32,7 +32,7 @@ javadoc {
     failOnError = false
 }
 
-version = "1.5.4"
+version = "1.5.5"
 group= "cyano.poweradvantage" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "PowerAdvantage"
 

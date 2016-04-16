@@ -1,7 +1,5 @@
 package cyano.poweradvantage.machines.fluidmachines.modsupport;
 
-import java.util.List;
-
 import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.api.PowerRequest;
 import cyano.poweradvantage.api.PoweredEntity;
@@ -15,6 +13,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidHandler;
+
+import java.util.List;
 
 public class TerminalFluidPipeTileEntity extends PoweredEntity{
 
@@ -77,6 +77,7 @@ public class TerminalFluidPipeTileEntity extends PoweredEntity{
 	public float getEnergy() {
 		int sum = 0;
 		for(int i = 0; i < 6; i++){
+			if(neighbors[i] == null) continue;
 			IFluidHandler f = neighbors[i];
 			if(f != null) sum += neighbors[i].drain(faces[i].getOpposite(), Integer.MAX_VALUE, false).amount;
 		}
@@ -87,14 +88,13 @@ public class TerminalFluidPipeTileEntity extends PoweredEntity{
 	@Override
 	public void powerUpdate() {
 		for(int i = 0; i < 6; i++){
+			if(neighbors[i] == null) continue;
 			IFluidHandler n = neighbors[i];
 			EnumFacing face = faces[i].getOpposite();
-			if(n != null){
-				FluidStack available = n.drain(face, Integer.MAX_VALUE, false);
-				if(available != null && available.getFluid() != null && available.amount > 0){
-					int delta = transmitFluidToConsumers(available,PowerRequest.LOW_PRIORITY);
-					n.drain(face, delta, true);
-				}
+			FluidStack available = n.drain(face, Integer.MAX_VALUE, false);
+			if(available != null && available.getFluid() != null && available.amount > 0){
+				int delta = transmitFluidToConsumers(available,PowerRequest.LOW_PRIORITY);
+				n.drain(face, delta, true);
 			}
 		}
 	}
