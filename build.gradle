@@ -32,7 +32,7 @@ javadoc {
     failOnError = false
 }
 
-version = "2.0.2"
+version = "2.0.4"
 group= "cyano.poweradvantage"
 archivesBaseName = "PowerAdvantage_1.9.0"
 

@@ -6,6 +6,7 @@ import cyano.poweradvantage.api.simple.BlockSimpleFluidMachine;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -73,9 +74,12 @@ public class StorageTankBlock extends BlockSimpleFluidMachine {
     }
 	
 
-    
-    
-    public void doItemDrop(final World world, final BlockPos coord, TileEntity te ) {
+    @Override
+	public void harvestBlock(World w, EntityPlayer player, BlockPos pos, IBlockState bs, TileEntity te, ItemStack stack){
+		doItemDrop(w,pos,te);
+	}
+
+    private void doItemDrop(final World world, final BlockPos coord, TileEntity te ) {
         if (!world.isRemote && !world.restoringBlockSnapshots) {
 			if(te instanceof StorageTankTileEntity){
         		ItemStack item = createItem((StorageTankTileEntity)te);
