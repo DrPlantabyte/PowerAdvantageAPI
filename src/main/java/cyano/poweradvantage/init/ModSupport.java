@@ -39,7 +39,7 @@ public abstract class ModSupport {
 		if(initDone) return;
 		
 		final float defaultMachineHardness = 0.75f;
-		final Material defaultMachineMaterial = Material.piston;
+		final Material defaultMachineMaterial = Material.PISTON;
 		
 		if(rfSupport){
 			FMLLog.info("Initializing RF interface content");
@@ -59,7 +59,7 @@ public abstract class ModSupport {
 					'x',"PSU",'y',"frameSteel",'z',"blockRedstone"));
 			GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(converter_rf_quantum,1),
 					"xyz",
-					'x',net.minecraft.init.Items.ender_pearl,'y',"frameSteel",'z',"blockRedstone"));
+					'x',net.minecraft.init.Items.ENDER_PEARL,'y',"frameSteel",'z',"blockRedstone"));
 		}
 		if(techRebornSupport){
 			FMLLog.info("Initializing Tech Reborn interface content");

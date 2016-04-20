@@ -69,10 +69,10 @@ public class FluidDrainTileEntity extends TileEntitySimpleFluidMachine {
 				if(bs.getBlock() instanceof BlockLiquid || bs.getBlock() instanceof IFluidBlock){
 					Block block = bs.getBlock();
 					Fluid fluid;
-					if(block == Blocks.water || block == Blocks.flowing_water){
+					if(block == Blocks.WATER || block == Blocks.FLOWING_WATER){
 						// Minecraft fluid
 						fluid = FluidRegistry.WATER;
-					} else if(block == Blocks.lava || block == Blocks.flowing_lava){
+					} else if(block == Blocks.LAVA || block == Blocks.FLOWING_LAVA){
 						// Minecraft fluid
 						fluid = FluidRegistry.LAVA;
 					} else if(block instanceof IFluidBlock){

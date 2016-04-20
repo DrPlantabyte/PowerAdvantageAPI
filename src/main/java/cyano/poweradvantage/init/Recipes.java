@@ -6,7 +6,6 @@ import cyano.poweradvantage.PowerAdvantage;
 import cyano.poweradvantage.RecipeMode;
 import cyano.poweradvantage.registry.still.recipe.DistillationRecipeRegistry;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
@@ -28,26 +27,26 @@ public abstract class Recipes {
 		Blocks.init();
 		Items.init();
 
-		OreDictionary.registerOre("bread", net.minecraft.init.Items.bread);
-		OreDictionary.registerOre("coal", net.minecraft.init.Items.coal);
-		OreDictionary.registerOre("furnace", net.minecraft.init.Blocks.furnace);
+		OreDictionary.registerOre("bread", net.minecraft.init.Items.BREAD);
+		OreDictionary.registerOre("coal", net.minecraft.init.Items.COAL);
+		OreDictionary.registerOre("furnace", net.minecraft.init.Blocks.FURNACE);
 
-		OreDictionary.registerOre("potato", net.minecraft.init.Items.poisonous_potato);
-		OreDictionary.registerOre("potato", net.minecraft.init.Items.potato);
+		OreDictionary.registerOre("potato", net.minecraft.init.Items.POISONOUS_POTATO);
+		OreDictionary.registerOre("potato", net.minecraft.init.Items.POTATO);
 		CrusherRecipeRegistry.addNewCrusherRecipe("potato", new ItemStack(Items.starch,1));
 		GameRegistry.addSmelting(Items.starch, new ItemStack(Items.bioplastic_ingot,1), 0.1f);
 
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Items.rotator_tool,1),"xx","x*"," x",'x',"ingotIron",'*',"sprocket"));
 		
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Blocks.item_conveyor,5),"xxx","ghg","xxx",'x',"plateSteel",'g',"sprocket",'h',net.minecraft.init.Blocks.hopper));
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Blocks.item_filter_block,1),"x","y","z",'y',"stone",'x',Blocks.item_conveyor,'z',net.minecraft.init.Blocks.wooden_pressure_plate));
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Blocks.item_filter_food,1),"x","y","z",'y',"bread",'x',Blocks.item_conveyor,'z',net.minecraft.init.Blocks.wooden_pressure_plate));
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Blocks.item_filter_fuel,1),"x","y","z",'y',"coal",'x',Blocks.item_conveyor,'z',net.minecraft.init.Blocks.wooden_pressure_plate));
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Blocks.item_filter_inventory,1),"x","y","z",'y',"chest",'x',Blocks.item_conveyor,'z',net.minecraft.init.Blocks.wooden_pressure_plate));
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Blocks.item_filter_ore,1),"x","y","z",'y',"ingotGold",'x',Blocks.item_conveyor,'z',net.minecraft.init.Blocks.wooden_pressure_plate));
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Blocks.item_filter_plant,1),"x","y","z",'y',"treeSapling",'x',Blocks.item_conveyor,'z',net.minecraft.init.Blocks.wooden_pressure_plate));
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Blocks.item_filter_smelt,1),"x","y","z",'y',"furnace",'x',Blocks.item_conveyor,'z',net.minecraft.init.Blocks.wooden_pressure_plate));
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Blocks.item_filter_overflow,1),"x","z",'x',Blocks.item_conveyor,'z',net.minecraft.init.Blocks.wooden_pressure_plate));
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Blocks.item_conveyor,5),"xxx","ghg","xxx",'x',"plateSteel",'g',"sprocket",'h',net.minecraft.init.Blocks.HOPPER));
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Blocks.item_filter_block,1),"x","y","z",'y',"stone",'x',Blocks.item_conveyor,'z',net.minecraft.init.Blocks.WOODEN_PRESSURE_PLATE));
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Blocks.item_filter_food,1),"x","y","z",'y',"bread",'x',Blocks.item_conveyor,'z',net.minecraft.init.Blocks.WOODEN_PRESSURE_PLATE));
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Blocks.item_filter_fuel,1),"x","y","z",'y',"coal",'x',Blocks.item_conveyor,'z',net.minecraft.init.Blocks.WOODEN_PRESSURE_PLATE));
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Blocks.item_filter_inventory,1),"x","y","z",'y',"chest",'x',Blocks.item_conveyor,'z',net.minecraft.init.Blocks.WOODEN_PRESSURE_PLATE));
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Blocks.item_filter_ore,1),"x","y","z",'y',"ingotGold",'x',Blocks.item_conveyor,'z',net.minecraft.init.Blocks.WOODEN_PRESSURE_PLATE));
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Blocks.item_filter_plant,1),"x","y","z",'y',"treeSapling",'x',Blocks.item_conveyor,'z',net.minecraft.init.Blocks.WOODEN_PRESSURE_PLATE));
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Blocks.item_filter_smelt,1),"x","y","z",'y',"furnace",'x',Blocks.item_conveyor,'z',net.minecraft.init.Blocks.WOODEN_PRESSURE_PLATE));
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Blocks.item_filter_overflow,1),"x","z",'x',Blocks.item_conveyor,'z',net.minecraft.init.Blocks.WOODEN_PRESSURE_PLATE));
 		
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Blocks.steel_frame,1),"xxx","x x","xxx",'x',"barsSteel"));
 
@@ -55,8 +54,8 @@ public abstract class Recipes {
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Blocks.metal_storage_tank,1),"xxx","xpx","xxx",'x',"ingotSteel",'p',"pipe"));
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Blocks.fluid_drain,1)," x ","w#w","ppp",'x',"bars",'w',"plateSteel",'#',"frameSteel",'p',"pipe"));
 		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Blocks.fluid_discharge,1),"ppp","w#w"," x ",'x',"bars",'w',"plateSteel",'#',"frameSteel",'p',"pipe"));
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Blocks.still,1),"bpb"," f ",'b',net.minecraft.init.Items.bucket,'p',"pipe",'f',net.minecraft.init.Blocks.furnace));
-		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Blocks.fluid_switch,1)," l ","pfp",'l',net.minecraft.init.Blocks.lever,'p',"pipe",'f',"frameSteel"));
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Blocks.still,1),"bpb"," f ",'b',net.minecraft.init.Items.BUCKET,'p',"pipe",'f',net.minecraft.init.Blocks.FURNACE));
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(Blocks.fluid_switch,1)," l ","pfp",'l',net.minecraft.init.Blocks.LEVER,'p',"pipe",'f',"frameSteel"));
 		
 		
 		// recipe modes

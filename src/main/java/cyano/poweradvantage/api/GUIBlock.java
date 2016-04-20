@@ -17,7 +17,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.*;
 
-import static net.minecraft.init.Items.bucket;
+import static net.minecraft.init.Items.BUCKET;
 
 /**
  * <p>
@@ -144,13 +144,13 @@ public abstract class GUIBlock extends net.minecraft.block.BlockContainer{
 						return true;
 					}
 				}
-			}else if (item.getItem() == bucket) {
+			}else if (item.getItem() == BUCKET) {
 				// make universal bucket
 				for(FluidTankInfo tank : target.getTankInfo(facing)){
 					if(tank.fluid != null){
 						// special handling for water and lava (no universal bucket)
 						if(tank.fluid.getFluid() == FluidRegistry.WATER){
-							ItemStack filledBucket = new ItemStack(Items.water_bucket);
+							ItemStack filledBucket = new ItemStack(Items.WATER_BUCKET);
 							if(tank.fluid.amount >= 1000) {
 								FluidStack drain = tank.fluid.copy();
 								drain.amount = 1000;
@@ -162,7 +162,7 @@ public abstract class GUIBlock extends net.minecraft.block.BlockContainer{
 							return true;
 						}
 						if(tank.fluid.getFluid() == FluidRegistry.LAVA){
-							ItemStack filledBucket = new ItemStack(Items.lava_bucket);
+							ItemStack filledBucket = new ItemStack(Items.LAVA_BUCKET);
 							if(tank.fluid.amount >= 1000) {
 								FluidStack drain = tank.fluid.copy();
 								drain.amount = 1000;

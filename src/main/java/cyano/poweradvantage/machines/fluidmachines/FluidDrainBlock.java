@@ -22,7 +22,7 @@ public class FluidDrainBlock extends BlockSimpleFluidMachine {
 	
 	
 	public FluidDrainBlock() {
-		super(Material.piston, 3f);
+		super(Material.PISTON, 3f);
 		super.setCreativeTab(ItemGroups.tab_powerAdvantage);
 	}
 

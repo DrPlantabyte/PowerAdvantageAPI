@@ -1,6 +1,5 @@
 package cyano.poweradvantage.init;
 
-import net.minecraft.block.material.*;
 
 public class Materials {
 

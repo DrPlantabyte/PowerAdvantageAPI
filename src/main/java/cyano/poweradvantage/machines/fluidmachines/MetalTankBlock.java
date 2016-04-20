@@ -12,7 +12,7 @@ import net.minecraft.world.World;
 public class MetalTankBlock extends BlockSimpleFluidMachine {
 
 	public MetalTankBlock() {
-		super(Material.piston, 3f);
+		super(Material.PISTON, 3f);
 	}
 
 	@Override

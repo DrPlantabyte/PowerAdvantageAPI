@@ -32,7 +32,7 @@ public abstract class Fuels {
 			return (short)0;
 		});
 
-		FuelRegistry.getInstance().registerPostBurnItem(universal_bucket,(ItemStack sb)->new ItemStack(net.minecraft.init.Items.bucket));
+		FuelRegistry.getInstance().registerPostBurnItem(universal_bucket,(ItemStack sb)->new ItemStack(net.minecraft.init.Items.BUCKET));
 
 		
 		initDone = true;

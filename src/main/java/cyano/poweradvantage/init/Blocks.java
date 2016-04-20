@@ -91,13 +91,13 @@ public abstract class Blocks {
 		fluid_pipe_terminal.setCreativeTab(null);
 		fluid_switch = addBlock(new BlockPowerSwitch(Fluids.fluidConduit_general),"fluid_switch");
 		OreDictionary.registerOre("pipe", fluid_pipe);
-		steel_frame = addBlock(new BlockFrame(net.minecraft.block.material.Material.piston)
+		steel_frame = addBlock(new BlockFrame(net.minecraft.block.material.Material.PISTON)
 				.setResistance(cyano.basemetals.init.Materials.steel.getBlastResistance())
 				.setHardness(0.75f),"steel_frame");
 		OreDictionary.registerOre("frameSteel", steel_frame);
 		
 		final float defaultMachineHardness = 0.75f;
-		final Material defaultMachineMaterial = Material.piston;
+		final Material defaultMachineMaterial = Material.PISTON;
 		item_conveyor = (GUIBlock)addBlock(new BlockConveyor(defaultMachineMaterial,defaultMachineHardness),"item_conveyor");
 		item_filter_block = (GUIBlock)addBlock(new BlockConveyorFilter(defaultMachineMaterial,defaultMachineHardness,TileEntityBlockFilter.class),"item_filter_block");
 		item_filter_food = (GUIBlock)addBlock(new BlockConveyorFilter(defaultMachineMaterial,defaultMachineHardness,TileEntityFoodFilter.class),"item_filter_food");
@@ -115,11 +115,11 @@ public abstract class Blocks {
 
 		
 		refined_oil_block = (BlockFluidBase)addBlock(new InteractiveFluidBlock(Fluids.refined_oil,true,(World w, EntityLivingBase e)->{
-			e.addPotionEffect(new PotionEffect(Potion.potionRegistry.getObject(new ResourceLocation("nausea")),200));
+			e.addPotionEffect(new PotionEffect(Potion.REGISTRY.getObject(new ResourceLocation("nausea")),200));
 		}),"refined_oil");
 		
 		crude_oil_block = (BlockFluidBase)addBlock(new InteractiveFluidBlock(Fluids.crude_oil,true,(World w, EntityLivingBase e)->{
-			e.addPotionEffect(new PotionEffect(Potion.potionRegistry.getObject(new ResourceLocation("slowness")),200,2));
+			e.addPotionEffect(new PotionEffect(Potion.REGISTRY.getObject(new ResourceLocation("slowness")),200,2));
 		}),"crude_oil");
 		
 		
