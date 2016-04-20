@@ -7,6 +7,7 @@ import cyano.poweradvantage.registry.MachineGUIRegistry;
 import cyano.poweradvantage.registry.still.recipe.DistillationRecipeRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.FMLLog;
@@ -20,6 +21,7 @@ import net.minecraftforge.fml.common.registry.GameData;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.oredict.OreDictionary;
 import org.apache.logging.log4j.Level;
 
 import java.io.IOException;
@@ -219,7 +221,7 @@ public class PowerAdvantage
 	/** The display name for this mod */
 	public static final String NAME = "Power Advantage";
 	/** The version of this mod, in the format major.minor.update */
-	public static final String VERSION = "2.0.2";
+	public static final String VERSION = "2.0.4";
 	
 
 
@@ -489,6 +491,10 @@ public class PowerAdvantage
 	public void postInit(FMLPostInitializationEvent event)
 	{
 		FMLLog.info("%s: starting post-inititalization phase", MODID);
+		List<ItemStack> steelGears = OreDictionary.getOres("gearSteel");
+		for(ItemStack s : steelGears){
+			OreDictionary.registerOre("sprocket",s);
+		}
 
 
 		FMLLog.info("%s: clearing cached data", MODID);
