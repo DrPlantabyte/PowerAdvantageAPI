@@ -17,8 +17,8 @@ import net.minecraftforge.fluids.IFluidHandler;
 public class FluidPipeBlock extends BlockSimpleFluidConduit{
 
 	public FluidPipeBlock() {
-		super(Material.piston, 0.75f, 4f/16f);
-		super.setCreativeTab(CreativeTabs.tabDecorations);
+		super(Material.PISTON, 0.75f, 4f/16f);
+		super.setCreativeTab(CreativeTabs.DECORATIONS);
 	}
 	
 

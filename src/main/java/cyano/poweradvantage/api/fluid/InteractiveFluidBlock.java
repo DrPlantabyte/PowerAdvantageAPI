@@ -28,7 +28,7 @@ public class InteractiveFluidBlock extends BlockFluidClassic{
 	 * @param immersionEffect A function to define what happens to swimming entities. Can be null.
 	 */
 	public InteractiveFluidBlock(Fluid fluid, boolean flammable, java.util.function.BiConsumer<net.minecraft.world.World, net.minecraft.entity.EntityLivingBase> immersionEffect) {
-		super(fluid, Material.water);
+		super(fluid, Material.WATER);
 		this.isFlammable = flammable;
 		this.immersionEffect = immersionEffect;
 	}
@@ -50,7 +50,7 @@ public class InteractiveFluidBlock extends BlockFluidClassic{
 
 	
 	@Override
-	public void onEntityCollidedWithBlock( World world, BlockPos coord, Entity entity ) {
+	public void onEntityCollidedWithBlock( World world, BlockPos coord, IBlockState state, Entity entity ) {
 		if (immersionEffect != null && entity instanceof EntityLivingBase 
 				) {
 			immersionEffect.accept(world,(EntityLivingBase)entity);
@@ -100,7 +100,7 @@ public class InteractiveFluidBlock extends BlockFluidClassic{
 
 	@Override // Block override
 	public boolean isPassable(IBlockAccess worldIn, BlockPos pos) {
-		return this.blockMaterial != Material.lava;
+		return this.blockMaterial != Material.LAVA;
 	}
 
 	@Override // Block override
@@ -121,6 +121,6 @@ public class InteractiveFluidBlock extends BlockFluidClassic{
 	@Override // Block override
 	public boolean isBlockSolid(IBlockAccess worldIn, BlockPos pos, EnumFacing side) {
 		Material material = worldIn.getBlockState(pos).getMaterial();
-		return material == this.blockMaterial?false:(side == EnumFacing.UP?true:(material == Material.ice?false:super.isBlockSolid(worldIn, pos, side)));
+		return material == this.blockMaterial?false:(side == EnumFacing.UP?true:(material == Material.ICE?false:super.isBlockSolid(worldIn, pos, side)));
 	}
 }

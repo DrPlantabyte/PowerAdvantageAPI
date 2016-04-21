@@ -11,7 +11,7 @@ import net.minecraft.world.World;
 public class InfiniteEnergyBlock extends BlockSimplePowerMachine {
 
 	public InfiniteEnergyBlock(ConduitType energyType) {
-		super(Material.iron, 0.75f, energyType);
+		super(Material.IRON, 0.75f, energyType);
 	}
 
 	@Override

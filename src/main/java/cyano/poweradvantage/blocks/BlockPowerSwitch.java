@@ -44,7 +44,7 @@ public class BlockPowerSwitch extends Block implements ITypedConduit {
 	 * @param powerType Type of power to switch
 	 */
 	public BlockPowerSwitch(ConduitType powerType){
-		this(powerType,Material.piston,0.75f,MapColor.ironColor);
+		this(powerType,Material.PISTON,0.75f,MapColor.IRON);
 	}
 	
 	/**

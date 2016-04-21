@@ -1,7 +1,6 @@
 package cyano.poweradvantage.machines.conveyors;
 
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.IPlantable;
 
 public class TileEntityInventoryFilter extends TileEntityConveyorFilter{
 

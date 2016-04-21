@@ -6,7 +6,6 @@ import cyano.poweradvantage.api.modsupport.TileEntityConverter;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.FMLLog;
 
 public class TileEntityRFConverter extends TileEntityConverter implements cofh.api.energy.IEnergyProvider, cofh.api.energy.IEnergyReceiver{
 

@@ -24,7 +24,7 @@ import java.util.Random;
 public class FluidDischargeBlock extends BlockSimpleFluidMachine {
 	
 	public FluidDischargeBlock() {
-		super(Material.piston, 3f);
+		super(Material.PISTON, 3f);
 		super.setCreativeTab(ItemGroups.tab_powerAdvantage);
 	}
 

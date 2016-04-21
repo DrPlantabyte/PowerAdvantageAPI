@@ -3,7 +3,6 @@ package cyano.poweradvantage.machines.conveyors;
 import cyano.poweradvantage.util.InventoryWrapper;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
-import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;

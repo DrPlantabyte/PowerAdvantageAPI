@@ -26,7 +26,7 @@ public class BlockConveyorFilter extends GUIBlock{
 		super(m);
 		this.setHardness(hardness);
 		this.tileEntityClass = tileEntityClass; 
-        this.setStepSound(SoundType.METAL);
+        this.setSoundType(SoundType.METAL);
         this.setCreativeTab(ItemGroups.tab_powerAdvantage);
     	this.setDefaultState(this.blockState.getBaseState()
 	    		.withProperty(FACING,EnumFacing.NORTH));

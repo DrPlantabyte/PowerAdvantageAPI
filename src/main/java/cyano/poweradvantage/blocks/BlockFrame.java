@@ -21,7 +21,7 @@ public class BlockFrame extends Block {
 
 	public BlockFrame(Material m) {
 		super(m);
-		setStepSound(SoundType.METAL);
+		setSoundType(SoundType.METAL);
 	}
 
 	@SideOnly(Side.CLIENT)

@@ -2,7 +2,6 @@ package cyano.poweradvantage.init;
 
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import cyano.poweradvantage.PowerAdvantage;
-import cyano.poweradvantage.api.modsupport.rf.TileEntityRFSteamConverter;
 import cyano.poweradvantage.machines.conveyors.*;
 import cyano.poweradvantage.machines.creative.InfiniteEnergyTileEntity;
 import cyano.poweradvantage.machines.fluidmachines.*;

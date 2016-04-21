@@ -22,7 +22,7 @@ import net.minecraftforge.fluids.FluidStack;
 public class StorageTankBlock extends BlockSimpleFluidMachine {
 
 	public StorageTankBlock() {
-		super(Material.piston, 3f);
+		super(Material.PISTON, 3f);
 	}
 
 	@Override

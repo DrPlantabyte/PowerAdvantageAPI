@@ -23,7 +23,7 @@ public class StillBlock extends BlockSimpleFluidMachine {
 	public static final PropertyBool ACTIVE = PropertyBool.create("active");
 	
 	public StillBlock() {
-		super(Material.piston, 3f);
+		super(Material.PISTON, 3f);
 		this.setDefaultState(getDefaultState().withProperty(ACTIVE, false));
 	}
 	
