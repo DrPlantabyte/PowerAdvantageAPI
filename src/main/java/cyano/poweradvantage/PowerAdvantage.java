@@ -6,6 +6,7 @@ import cyano.poweradvantage.registry.FuelRegistry;
 import cyano.poweradvantage.registry.MachineGUIRegistry;
 import cyano.poweradvantage.registry.still.recipe.DistillationRecipeRegistry;
 import net.minecraft.block.Block;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -221,7 +222,7 @@ public class PowerAdvantage
 	/** The display name for this mod */
 	public static final String NAME = "Power Advantage";
 	/** The version of this mod, in the format major.minor.update */
-	public static final String VERSION = "2.0.4";
+	public static final String VERSION = "2.1.0";
 	
 
 
@@ -491,9 +492,21 @@ public class PowerAdvantage
 	public void postInit(FMLPostInitializationEvent event)
 	{
 		FMLLog.info("%s: starting post-inititalization phase", MODID);
-		List<ItemStack> steelGears = OreDictionary.getOres("gearSteel");
-		for(ItemStack s : steelGears){
+
+		// alternative sprockets and other recipe adjustments (there may or may not be rods, depending on Base Metals version
+		for(ItemStack s : OreDictionary.getOres("gearSteel")){
 			OreDictionary.registerOre("sprocket",s);
+		}
+
+		if(recipeMode == RecipeMode.NORMAL){
+			for(ItemStack s : OreDictionary.getOres("gear")){
+				OreDictionary.registerOre("sprocket",s);
+			}
+			OreDictionary.registerOre("rod", Items.STICK);
+		}
+		if(recipeMode == RecipeMode.TECH_PROGRESSION && OreDictionary.getOres("rod").isEmpty()){
+			// no rod items, need substitute
+			OreDictionary.getOres("barsSteel").stream().forEach((ItemStack i)->OreDictionary.registerOre("rod",i));
 		}
 
 
