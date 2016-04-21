@@ -1,6 +1,9 @@
 package cyano.poweradvantage.api.simple;
 
 
+import cyano.poweradvantage.PowerAdvantage;
+import cyano.poweradvantage.math.Integer2D;
+import cyano.poweradvantage.registry.ITileEntityGUI;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -11,12 +14,11 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
 import org.lwjgl.opengl.GL11;
 
-import cyano.poweradvantage.PowerAdvantage;
-import cyano.poweradvantage.math.Integer2D;
-import cyano.poweradvantage.registry.ITileEntityGUI;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Function;
 
 /**
  * This class provides a simple way to add a GUI for a machine. Instances of 
@@ -41,6 +43,11 @@ public class SimpleMachineGUI implements ITileEntityGUI {
 	/** List of pixel coordinates for the upper-left corner of each inventory 
 	 * slot that should appear on the screen */
 	protected final Integer2D[] inventorySlotCoordinates;
+	/**
+	 * This map is used to specify which slots are not standard slots. The key for the map is the inventory index of the
+	 * item slot.
+	 */
+	protected final Map<Integer,Function<SlotContext,Slot>> specialSlots = new HashMap<>();
 	/**
 	 * Standard constructor for SimpleMachineGUI. You must provide a texture 
 	 * resource location for the GUI background image. The inventory slots are 
@@ -141,7 +148,12 @@ guiContainer.drawTexturedModalRect(x+79, y+35, 0, 0, arrowLength, 17); // x, y, 
 			this.entity = entity;
 			int index = 0;
 			for(Integer2D pt : inventorySlotCoordinates){
-				this.addSlotToContainer(new net.minecraft.inventory.Slot(entity,index,pt.X,pt.Y));
+				if(specialSlots.containsKey(index)){
+					SlotContext params = new SlotContext(playerItems,entity,index, pt.X, pt.Y);
+					this.addSlotToContainer(specialSlots.get(index).apply(params));
+				} else {
+					this.addSlotToContainer(new Slot(entity, index, pt.X, pt.Y));
+				}
 				index++;
 			}
 			bindPlayerInventory(playerItems, 140);
@@ -267,5 +279,39 @@ guiContainer.drawTexturedModalRect(x+79, y+35, 0, 0, arrowLength, 17); // x, y, 
 			return this.guiTop;
 		}
 		
+	}
+
+	/**
+	 * This class is a simple data structure used for passing all knowable parameters to the constructor of a custom
+	 * inventory slot
+	 */
+	public static class SlotContext{
+		public final InventoryPlayer playerInventory;
+		public final IInventory machineInventory;
+		public final int slotIndex;
+		public final int screenPositionX;
+		public final int screenPositionY;
+
+		/**
+		 * Creates a slot context object for use in making custom inventory slots
+		 * @param playerInventory player's inventory
+		 * @param machineInventory inventory (of the machine) that the player is interacting with
+		 * @param slotIndex index of slot in inventory of the machine
+		 * @param screenPositionX coordinate position on screen
+		 * @param screenPositionY coordinate position on screen
+		 */
+		public SlotContext(
+				 final InventoryPlayer playerInventory,
+				 final IInventory machineInventory,
+				 final int slotIndex,
+				 final int screenPositionX,
+				 final int screenPositionY){
+			this. playerInventory=playerInventory;
+			this. machineInventory=machineInventory;
+			this. slotIndex=slotIndex;
+			this. screenPositionX=screenPositionX;
+			this. screenPositionY=screenPositionY;
+		}
+
 	}
 }
