@@ -1,10 +1,9 @@
 package cyano.poweradvantage.machines.creative;
 
-import cyano.poweradvantage.conduitnetwork.ConduitRegistry;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.api.simple.TileEntitySimplePowerMachine;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 
 public class InfiniteEnergyTileEntity extends TileEntitySimplePowerMachine {
 
@@ -93,16 +92,14 @@ public class InfiniteEnergyTileEntity extends TileEntitySimplePowerMachine {
 	@Override
 	public void writeToNBT(final NBTTagCompound tagRoot) {
 		super.writeToNBT(tagRoot);
-		tagRoot.setString("InfType", this.getTypes().toString());
+		tagRoot.setString("InfType", this.type[0].toString());
 	}
 
 	@Override
 	public void readFromNBT(final NBTTagCompound tagRoot) {
 		super.readFromNBT(tagRoot);
 		if (tagRoot.hasKey("InfType")) {
-			ConduitRegistry.getInstance().conduitBlockRemovedEvent(getWorld(), getWorld().provider.getDimension(), getPos(), type[0]);
 			this.type[0] = new ConduitType(tagRoot.getString("InfType"));
-			ConduitRegistry.getInstance().conduitBlockPlacedEvent(getWorld(), getWorld().provider.getDimension(), getPos(), type[0]);
 		}
 	}
 }
