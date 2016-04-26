@@ -39,14 +39,14 @@ archivesBaseName = "PowerAdvantage_1.9.0"
 minecraft {
 	version = "1.9-12.16.0.1865-1.9"
 	runDir = "run"
-	mappings = "snapshot_20160419"
+	mappings = "snapshot_20160425"
 }
 
 dependencies {
 	compile files(
-			'lib/NEI/CodeChickenCore-1.8-1.0.5.34-dev.jar',
-			'lib/NEI/NotEnoughItems-1.8-1.0.5.84-dev.jar',
-			'lib/BaseMetals/BaseMetals_1.9-API-2.1.1.jar',
+			'lib/NEI/CodeChickenCore-1.8-1.0.5.36-dev.jar',
+			'lib/NEI/NotEnoughItems-1.8-1.0.5.104-dev.jar',
+			'lib/BaseMetals/BaseMetals_1.9-API-2.2.1.jar',
 			'lib/RF/RF-API.jar',
 			'lib/TechReborn/RebornCore-1.9-API.jar'
     )
