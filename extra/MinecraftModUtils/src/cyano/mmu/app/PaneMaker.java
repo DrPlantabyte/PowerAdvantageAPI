@@ -10,12 +10,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import javax.swing.JFileChooser;
 
 /**
@@ -108,47 +104,47 @@ public class PaneMaker {
 
 		Path blockstate = Paths.get(blockstateDir.toString(),blockName+".json");
 		if(!Files.exists(blockstate)){
-			Logger.getLogger(PaneMaker.class.getName()).log(Level.INFO,"Writing file "+blockstate);
+			Logger.getLogger(PaneMaker.class.getName()).log(Level.INFO, "Writing file {0}", blockstate);
 			Files.newBufferedWriter(blockstate).append(TEMPLATE_BLOCKSTATE.replace(KEY_MODID, modid).replace(KEY_NAME, blockName)).close();
 		}
 		Path itemmodel = Paths.get(itemModelsDir.toString(), blockName + ".json");
 		if (!Files.exists(itemmodel)) {
-			Logger.getLogger(PaneMaker.class.getName()).log(Level.INFO,"Writing file "+itemmodel);
+			Logger.getLogger(PaneMaker.class.getName()).log(Level.INFO, "Writing file {0}", itemmodel);
 			Files.newBufferedWriter(itemmodel).append(
 					TEMPLATE_ITEMMODEL.replace(KEY_NAME, blockName).replace(KEY_MODID, modid))
 					.close();
 		}
 		Path blockmodel = Paths.get(modelsDir.toString(), blockName + "_n.json");
 		if (!Files.exists(blockmodel)) {
-			Logger.getLogger(PaneMaker.class.getName()).log(Level.INFO,"Writing file "+blockmodel);
+			Logger.getLogger(PaneMaker.class.getName()).log(Level.INFO, "Writing file {0}", blockmodel);
 			Files.newBufferedWriter(blockmodel).append(
 					TEMPLATE_BLOCKMODEL.replace(KEY_DIR, "n").replace(KEY_NAME, blockName).replace(KEY_MODID, modid))
 					.close();
 		}
 		blockmodel = Paths.get(modelsDir.toString(), blockName + "_ns.json");
 		if (!Files.exists(blockmodel)) {
-			Logger.getLogger(PaneMaker.class.getName()).log(Level.INFO,"Writing file "+blockmodel);
+			Logger.getLogger(PaneMaker.class.getName()).log(Level.INFO, "Writing file {0}", blockmodel);
 			Files.newBufferedWriter(blockmodel).append(
 					TEMPLATE_BLOCKMODEL.replace(KEY_DIR, "ns").replace(KEY_NAME, blockName).replace(KEY_MODID, modid))
 					.close();
 		}
 		blockmodel = Paths.get(modelsDir.toString(), blockName + "_ne.json");
 		if (!Files.exists(blockmodel)) {
-			Logger.getLogger(PaneMaker.class.getName()).log(Level.INFO,"Writing file "+blockmodel);
+			Logger.getLogger(PaneMaker.class.getName()).log(Level.INFO, "Writing file {0}", blockmodel);
 			Files.newBufferedWriter(blockmodel).append(
 					TEMPLATE_BLOCKMODEL.replace(KEY_DIR, "ne").replace(KEY_NAME, blockName).replace(KEY_MODID, modid))
 					.close();
 		}
 		blockmodel = Paths.get(modelsDir.toString(), blockName + "_nse.json");
 		if (!Files.exists(blockmodel)) {
-			Logger.getLogger(PaneMaker.class.getName()).log(Level.INFO,"Writing file "+blockmodel);
+			Logger.getLogger(PaneMaker.class.getName()).log(Level.INFO, "Writing file {0}", blockmodel);
 			Files.newBufferedWriter(blockmodel).append(
 					TEMPLATE_BLOCKMODEL.replace(KEY_DIR, "nse").replace(KEY_NAME, blockName).replace(KEY_MODID, modid))
 					.close();
 		}
 		blockmodel = Paths.get(modelsDir.toString(), blockName + "_nsew.json");
 		if (!Files.exists(blockmodel)) {
-			Logger.getLogger(PaneMaker.class.getName()).log(Level.INFO,"Writing file "+blockmodel);
+			Logger.getLogger(PaneMaker.class.getName()).log(Level.INFO, "Writing file {0}", blockmodel);
 			Files.newBufferedWriter(blockmodel).append(
 					TEMPLATE_BLOCKMODEL.replace(KEY_DIR, "nsew").replace(KEY_NAME, blockName).replace(KEY_MODID, modid))
 					.close();

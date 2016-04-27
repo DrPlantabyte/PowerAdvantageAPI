@@ -115,15 +115,15 @@ public class Recolorizer {
 			System.exit(0);
 		});
 		ok.addActionListener((ActionEvent ae)->{
-			for(BufferedImage in : imageSet.keySet()){
-				BufferedImage out = setColor(in,cc.getColor(),brightness.get(),contrast.get());
-				try {
-					ImageIO.write(out, "png", imageSet.get(in));
-				} catch (IOException ex) {
-					Logger.getLogger(Recolorizer.class.getName()).log(Level.SEVERE, "Failed to write to image file "+imageSet.get(in), ex);
-				}
-			}
-			System.exit(0);
+                    imageSet.keySet().stream().forEach((in) -> {
+                        BufferedImage out = setColor(in,cc.getColor(),brightness.get(),contrast.get());
+                        try {
+                            ImageIO.write(out, "png", imageSet.get(in));
+                        } catch (IOException ex) {
+                            Logger.getLogger(Recolorizer.class.getName()).log(Level.SEVERE, "Failed to write to image file "+imageSet.get(in), ex);
+                        }
+                    });
+                    System.exit(0);
 		});
 		row5.add(cancel);
 		row5.add(ok);

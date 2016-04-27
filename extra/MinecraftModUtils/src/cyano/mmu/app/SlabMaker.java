@@ -18,9 +18,7 @@ package cyano.mmu.app;
 
 import cyano.mmu.util.FormGUI;
 import cyano.mmu.util.GUIHelper;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -38,7 +36,7 @@ import java.util.logging.Logger;
  */
 public class SlabMaker {
 
-	final static String template_blockstate = "{\n" +
+	final static String TEMPLATE_BLOCKSTATE = "{\n" +
 "    \"variants\": {\n" +
 "        \"position=bottom\": { \"model\": \"mineralogy:andesite_halfslab\" },\n" +
 "        \"position=top\": { \"model\": \"mineralogy:andesite_halfslab\", \"x\":180 },\n" +
@@ -46,7 +44,7 @@ public class SlabMaker {
 "    }\n" +
 "}";
 	
-	final static String template_half = "{\n" +
+	final static String TEMPLATE_HALF = "{\n" +
 "    \"parent\": \"mineralogy:block/slab_half\",\n" +
 "    \"textures\": {\n" +
 "        \"bottom\": \"mineralogy:blocks/andesite\",\n" +
@@ -54,7 +52,7 @@ public class SlabMaker {
 "        \"side\": \"mineralogy:blocks/andesite\"\n" +
 "    }\n" +
 "}";
-	final static String template_double = "{\n" +
+	final static String TEMPLATE_DOUBLE = "{\n" +
 "    \"parent\": \"mineralogy:block/slab_double\",\n" +
 "    \"textures\": {\n" +
 "        \"bottom\": \"mineralogy:blocks/andesite\",\n" +
@@ -62,7 +60,7 @@ public class SlabMaker {
 "        \"side\": \"mineralogy:blocks/andesite\"\n" +
 "    }\n" +
 "}";
-	final static String template_item = "{\n" +
+	final static String TEMPLATE_ITEM = "{\n" +
 "    \"parent\": \"mineralogy:block/andesite_halfslab\",\n" +
 "    \"display\": {\n" +
 "        \"thirdperson\": {\n" +
@@ -105,25 +103,25 @@ public class SlabMaker {
 		Path blockModelDoubleslabFile = Paths.get(rootDir.toString(), "models","block",texName+"_doubleslab.json");
 		Path itemModelFile = Paths.get(rootDir.toString(), "models","item",texName+"_slab.json");
 		
-		writeStringToFile(template_blockstate
+		writeStringToFile(TEMPLATE_BLOCKSTATE
 				.replace("mineralogy", modID)
 				.replace("andesite", texName),
 				blockstateFile);
 		
 		
-		writeStringToFile(template_half
+		writeStringToFile(TEMPLATE_HALF
 				.replace("mineralogy", modID)
 				.replace("andesite", texName),
 				blockModelHalfslabFile);
 		
 		
-		writeStringToFile(template_double
+		writeStringToFile(TEMPLATE_DOUBLE
 				.replace("mineralogy", modID)
 				.replace("andesite", texName),
 				blockModelDoubleslabFile);
 		
 		
-		writeStringToFile(template_item
+		writeStringToFile(TEMPLATE_ITEM
 				.replace("mineralogy", modID)
 				.replace("andesite", texName),
 				itemModelFile);

@@ -10,12 +10,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import javax.swing.JFileChooser;
 
 /**
@@ -61,7 +57,7 @@ public class StandardBlockMaker {
 
 		Path blockstate = Paths.get(blockstateDir.toString(),blockName+".json");
 		if(!Files.exists(blockstate)){
-			Logger.getLogger(StandardBlockMaker.class.getName()).log(Level.INFO,"Writing file "+blockstate);
+			Logger.getLogger(StandardBlockMaker.class.getName()).log(Level.INFO, "Writing file {0}", blockstate);
 			Files.newBufferedWriter(blockstate).append("{\n"
 					+ "    \"variants\": {\n"
 					+ "        \"normal\": { \"model\": \"").append(modid).append(":").append(blockName).append("\" }\n"
@@ -70,7 +66,7 @@ public class StandardBlockMaker {
 		}
 		Path blockmodel = Paths.get(modelsDir.toString(), blockName + ".json");
 		if (!Files.exists(blockmodel)) {
-			Logger.getLogger(StandardBlockMaker.class.getName()).log(Level.INFO,"Writing file "+blockmodel);
+			Logger.getLogger(StandardBlockMaker.class.getName()).log(Level.INFO, "Writing file {0}", blockmodel);
 			Files.newBufferedWriter(blockmodel).append("{\n"
 					+ "    \"parent\": \"block/cube_all\",\n"
 					+ "    \"textures\": {\n"
@@ -80,7 +76,7 @@ public class StandardBlockMaker {
 		}
 		Path itemmodel = Paths.get(itemModelsDir.toString(), blockName + ".json");
 		if (!Files.exists(itemmodel)) {
-			Logger.getLogger(StandardBlockMaker.class.getName()).log(Level.INFO,"Writing file "+itemmodel);
+			Logger.getLogger(StandardBlockMaker.class.getName()).log(Level.INFO, "Writing file {0}", itemmodel);
 			Files.newBufferedWriter(itemmodel).append("{\n" +
 "    \"parent\": \"").append(modid).append(":block/").append(blockName).append("\",\n" +
 "    \"display\": {\n" +
