@@ -19,23 +19,16 @@ package cyano.mmu.app;
 import cyano.mmu.util.FormGUI;
 import cyano.mmu.util.GUIHelper;
 import java.io.File;
-import java.io.IOException;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 /**
  *
  * @author Christopher Collin Hall
  */
 public class PipeRootModelMaker {
-	final static Charset charset = Charset.forName("UTF-8");
+	final static Charset CHARSET = Charset.forName("UTF-8");
 	
 	final String[] orientations = {"0","densuw","desuw","dnu","ensuw","n","ns","nsuw","nsw","nuw","nw"};
 

@@ -36,7 +36,7 @@ import java.util.logging.Logger;
  */
 public class TextReplacer {
 
-	final static Charset charset = Charset.forName("UTF-8");
+	final static Charset CHARSET = Charset.forName("UTF-8");
 	/**
 	 * @param args the command line arguments
 	 */
@@ -47,13 +47,13 @@ public class TextReplacer {
 		final String replacementText = data.get("replacement");
 		Arrays.stream(files).forEach((File input)->{
 			try{
-				List<String> content = Files.readAllLines(input.toPath(),charset);
+				List<String> content = Files.readAllLines(input.toPath(),CHARSET);
 				for(int i = 0; i < content.size(); i++){
 					content.set(i, content.get(i).replace(inputText, replacementText));
 				}
 				Path inputPath = input.toPath();
 				Path outputPath = Paths.get(input.getParent(),input.getName().replace(inputText, replacementText));
-				Files.write(outputPath, content, charset);
+				Files.write(outputPath, content, CHARSET);
 				if(inputPath.equals(outputPath) == false){
 					Files.deleteIfExists(inputPath);
 				}
