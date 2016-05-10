@@ -18,9 +18,7 @@ package cyano.mmu.app;
 
 import cyano.mmu.util.FormGUI;
 import cyano.mmu.util.GUIHelper;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -38,7 +36,7 @@ import java.util.logging.Logger;
  */
 public class StairMaker {
 
-	final static String template_blockstate = "{\n" +
+	final static String TEMPLATE_BLOCKSTATE = "{\n" +
 "    \"variants\": {\n" +
 "        \"facing=east,half=bottom,shape=straight\":  { \"model\": \"brick_stairs\" },\n" +
 "        \"facing=west,half=bottom,shape=straight\":  { \"model\": \"brick_stairs\", \"y\": 180, \"uvlock\": true },\n" +
@@ -83,7 +81,7 @@ public class StairMaker {
 "    }\n" +
 "}";
 	
-	final static String template_brick_stairs = "{\n" +
+	final static String TEMPLATE_BRICK_STAIRS = "{\n" +
 "    \"parent\": \"block/stairs\",\n" +
 "    \"textures\": {\n" +
 "        \"bottom\": \"blocks/brick\",\n" +
@@ -91,7 +89,7 @@ public class StairMaker {
 "        \"side\": \"blocks/brick\"\n" +
 "    }\n" +
 "}";
-	final static String template_brick_inner_stairs = "{\n" +
+	final static String TEMPLATE_BRICK_INNER_STAIRS = "{\n" +
 "    \"parent\": \"block/inner_stairs\",\n" +
 "    \"textures\": {\n" +
 "        \"bottom\": \"blocks/brick\",\n" +
@@ -99,7 +97,7 @@ public class StairMaker {
 "        \"side\": \"blocks/brick\"\n" +
 "    }\n" +
 "}";
-	final static String template_brick_outer_stairs = "{\n" +
+	final static String TEMPLATE_BRICK_OUTER_STAIRS = "{\n" +
 "    \"parent\": \"block/outer_stairs\",\n" +
 "    \"textures\": {\n" +
 "        \"bottom\": \"blocks/brick\",\n" +
@@ -107,7 +105,7 @@ public class StairMaker {
 "        \"side\": \"blocks/brick\"\n" +
 "    }\n" +
 "}";
-	final static String template_stair_item = "{\n" +
+	final static String TEMPLATE_STAIR_ITEM = "{\n" +
 "    \"parent\": \"block/brick_stairs\",\n" +
 "    \"display\": {\n" +
 "        \"thirdperson\": {\n" +
@@ -156,20 +154,20 @@ public class StairMaker {
 		
 		String replacementKey_bs = "brick_";
 		String replacementValue_bs = modID+":"+texName+"_";
-		writeStringToFile(template_blockstate.replace(replacementKey_bs, replacementValue_bs),blockstateFile);
+		writeStringToFile(TEMPLATE_BLOCKSTATE.replace(replacementKey_bs, replacementValue_bs),blockstateFile);
 		
 		String replacementKey_model = "blocks/brick";
 		String replacementValue_model = modID+":blocks/"+texName;
-		writeStringToFile(template_brick_stairs.replace(replacementKey_model, replacementValue_model),
+		writeStringToFile(TEMPLATE_BRICK_STAIRS.replace(replacementKey_model, replacementValue_model),
 				blockModelNormalFile);
-		writeStringToFile(template_brick_inner_stairs.replace(replacementKey_model, replacementValue_model),
+		writeStringToFile(TEMPLATE_BRICK_INNER_STAIRS.replace(replacementKey_model, replacementValue_model),
 				blockModelInnerFile);
-		writeStringToFile(template_brick_outer_stairs.replace(replacementKey_model, replacementValue_model),
+		writeStringToFile(TEMPLATE_BRICK_OUTER_STAIRS.replace(replacementKey_model, replacementValue_model),
 				blockModelOuterFile);
 		
 		String replacementKey_item = "block/brick_stairs";
 		String replacementValue_item = modID+":block/"+texName+"_stairs";
-		writeStringToFile(template_stair_item.replace(replacementKey_item, replacementValue_item),
+		writeStringToFile(TEMPLATE_STAIR_ITEM.replace(replacementKey_item, replacementValue_item),
 				itemModelFile);
 	}
 	

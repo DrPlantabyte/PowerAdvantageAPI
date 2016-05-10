@@ -10,12 +10,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import javax.swing.JFileChooser;
 
 /**
@@ -78,7 +74,7 @@ public class ItemMaker {
 		
 		Path itemmodel = Paths.get(itemModelsDir.toString(), blockName + ".json");
 		if (!Files.exists(itemmodel)) {
-			Logger.getLogger(ItemMaker.class.getName()).log(Level.INFO,"Writing file "+itemmodel);
+			Logger.getLogger(ItemMaker.class.getName()).log(Level.INFO, "Writing file {0}", itemmodel);
 			Files.newBufferedWriter(itemmodel).append(
 					TEMPLATE_ITEMMODEL.replace(KEY_NAME, blockName).replace(KEY_MODID, modid))
 					.close();

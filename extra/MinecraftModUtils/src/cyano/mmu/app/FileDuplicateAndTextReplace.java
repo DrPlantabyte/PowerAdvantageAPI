@@ -36,7 +36,7 @@ import java.util.logging.Logger;
  */
 public class FileDuplicateAndTextReplace {
 
-	final static Charset charset = Charset.forName("UTF-8");
+	final static Charset CHARSET = Charset.forName("UTF-8");
 	/**
 	 * @param args the command line arguments
 	 */
@@ -55,11 +55,11 @@ public class FileDuplicateAndTextReplace {
 				}
 				Path output = Paths.get(dir.toString(), newName);
 				try{
-					List<String> content = Files.readAllLines(input.toPath(),charset);
+					List<String> content = Files.readAllLines(input.toPath(),CHARSET);
 					for(int i = 0; i < content.size(); i++){
 						content.set(i, content.get(i).replace(inputText, replacementText));
 					}
-					Files.write(output, content, charset);
+					Files.write(output, content, CHARSET);
 				}catch(IOException ex){
 					Logger.getLogger(TextReplacer.class.getName()).log(Level.SEVERE, "Error", ex);
 				}

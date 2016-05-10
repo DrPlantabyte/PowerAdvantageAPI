@@ -35,7 +35,7 @@ import java.util.logging.Logger;
  */
 public class FileDuplicator {
 
-	final static Charset charset = Charset.forName("UTF-8");
+	final static Charset CHARSET = Charset.forName("UTF-8");
 	/**
 	 * @param args the command line arguments
 	 */
