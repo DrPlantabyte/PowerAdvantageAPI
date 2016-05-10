@@ -13,6 +13,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
+import net.minecraft.tileentity.TileEntityHopper;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -67,7 +68,7 @@ public class TileEntityConveyor extends TileEntity implements ITickable, ISidedI
 			TileEntity target = w.getTileEntity(getPos().offset(myDir));
 			if(target != null) {
 				if( target instanceof IInventory){
-					ISidedInventory them;
+					ISidedInventory them;TileEntityHopper p;
 					if(target instanceof  TileEntityChest){
 						// special handling for chests in case of double-chest
 						IInventory realChest = handleChest((TileEntityChest)target);

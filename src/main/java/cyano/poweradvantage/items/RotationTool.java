@@ -36,11 +36,11 @@ public class RotationTool extends net.minecraft.item.Item{
 		}
 		//*/
 
+		if(bs.getBlock().rotateBlock(w,coord, facing)) return EnumActionResult.SUCCESS;
 		if(bs.withRotation(Rotation.COUNTERCLOCKWISE_90) != bs) {
 			w.setBlockState(coord, bs.withRotation(Rotation.COUNTERCLOCKWISE_90));
 			return EnumActionResult.SUCCESS;
 		}
-		if(bs.getBlock().rotateBlock(w,coord, facing)) return EnumActionResult.SUCCESS;
 
 
 		return EnumActionResult.PASS;
