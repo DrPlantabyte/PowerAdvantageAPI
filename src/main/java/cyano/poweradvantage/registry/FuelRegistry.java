@@ -13,7 +13,7 @@ import java.util.function.Function;
 
 /**
  * The fuel registry keeps track of the cooking time for new burnables added by PowerAdvantage. The 
- * actual registration of these burnables occurs in <code>cyano.poweradvantage.init.Fluels</code>
+ * actual registration of these burnables occurs in <code>cyano.poweradvantage.init.Fuels</code>
  * @author DrCyano
  *
  */
