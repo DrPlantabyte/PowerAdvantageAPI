@@ -6,6 +6,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
@@ -14,7 +15,23 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.IFluidHandler;
 
+import java.util.Random;
+
 public class TerminalFluidPipeBlock extends FluidPipeBlock implements ITileEntityProvider{
+
+	private final Block parentBlock;
+
+	public TerminalFluidPipeBlock(Block parent){
+		this.parentBlock = parent;
+	}
+
+	/**
+	 * Get the Item that this Block should drop when harvested.
+	 */
+	@Override public Item getItemDropped(IBlockState state, Random rand, int fortune)
+	{
+		return Item.getItemFromBlock(parentBlock);
+	}
 
 	@Override
 	public TileEntity createNewTileEntity(World worldIn, int meta) {

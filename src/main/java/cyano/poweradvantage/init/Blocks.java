@@ -1,33 +1,14 @@
 package cyano.poweradvantage.init;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
 import cyano.poweradvantage.PowerAdvantage;
 import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.api.GUIBlock;
 import cyano.poweradvantage.api.fluid.InteractiveFluidBlock;
-import cyano.poweradvantage.api.modsupport.rf.BlockRFConverter;
 import cyano.poweradvantage.blocks.BlockFrame;
 import cyano.poweradvantage.blocks.BlockPowerSwitch;
-import cyano.poweradvantage.machines.conveyors.BlockConveyor;
-import cyano.poweradvantage.machines.conveyors.BlockConveyorFilter;
-import cyano.poweradvantage.machines.conveyors.TileEntityBlockFilter;
-import cyano.poweradvantage.machines.conveyors.TileEntityFoodFilter;
-import cyano.poweradvantage.machines.conveyors.TileEntityFuelFilter;
-import cyano.poweradvantage.machines.conveyors.TileEntityInventoryFilter;
-import cyano.poweradvantage.machines.conveyors.TileEntityOreFilter;
-import cyano.poweradvantage.machines.conveyors.TileEntityOverflowFilter;
-import cyano.poweradvantage.machines.conveyors.TileEntityPlantFilter;
-import cyano.poweradvantage.machines.conveyors.TileEntitySmeltableFilter;
+import cyano.poweradvantage.machines.conveyors.*;
 import cyano.poweradvantage.machines.creative.InfiniteEnergyBlock;
-import cyano.poweradvantage.machines.fluidmachines.FluidDischargeBlock;
-import cyano.poweradvantage.machines.fluidmachines.FluidDrainBlock;
-import cyano.poweradvantage.machines.fluidmachines.FluidPipeBlock;
-import cyano.poweradvantage.machines.fluidmachines.MetalTankBlock;
-import cyano.poweradvantage.machines.fluidmachines.StillBlock;
-import cyano.poweradvantage.machines.fluidmachines.StorageTankBlock;
+import cyano.poweradvantage.machines.fluidmachines.*;
 import cyano.poweradvantage.machines.fluidmachines.modsupport.TerminalFluidPipeBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -51,6 +32,10 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 public abstract class Blocks {
 	private static final Map<String,Block> allBlocks = new HashMap<>();
@@ -100,7 +85,7 @@ public abstract class Blocks {
 		metal_storage_tank = (GUIBlock)addBlock(new MetalTankBlock(),"fluid_metal_tank");
 		still = (GUIBlock)addBlock(new StillBlock(),"still");
 		fluid_pipe = addBlock(new FluidPipeBlock(),"fluid_pipe");
-		fluid_pipe_terminal = addBlock(new TerminalFluidPipeBlock(),"fluid_pipe_terminal");
+		fluid_pipe_terminal = addBlock(new TerminalFluidPipeBlock(fluid_pipe),"fluid_pipe_terminal");
 		fluid_pipe_terminal.setUnlocalizedName("fluid_pipe");
 		fluid_pipe_terminal.setCreativeTab(null);
 		fluid_switch = addBlock(new BlockPowerSwitch(Fluids.fluidConduit_general),"fluid_switch");
