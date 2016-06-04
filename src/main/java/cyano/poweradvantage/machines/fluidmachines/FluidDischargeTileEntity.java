@@ -3,17 +3,15 @@ package cyano.poweradvantage.machines.fluidmachines;
 import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.api.simple.TileEntitySimpleFluidMachine;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockDynamicLiquid;
-import net.minecraft.block.BlockLiquid;
-import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.fluids.*;
 
 
@@ -37,7 +35,7 @@ public class FluidDischargeTileEntity extends TileEntitySimpleFluidMachine {
 		FluidTank tank = getTank();
 		// push fluid to below
 		BlockPos space = this.pos.down();
-		// from fluid container
+		// to fluid container
 		if(tank.getFluidAmount() > 0 && worldObj.getTileEntity(space) instanceof IFluidHandler){
 			IFluidHandler other = (IFluidHandler) worldObj.getTileEntity(space);
 			FluidTankInfo[] tanks = other.getTankInfo(EnumFacing.DOWN);
@@ -64,34 +62,16 @@ public class FluidDischargeTileEntity extends TileEntitySimpleFluidMachine {
 				this.drain(EnumFacing.DOWN, FluidContainerRegistry.BUCKET_VOLUME, true);
 			} else if(worldObj.getBlockState(coord).getBlock() == fluidBlock){
 				// follow the flow
-				int limit = 16;
-				Material m = fluidBlock.getMaterial(fluidBlock.getDefaultState());// flowing minecraft fluid block
-				if(fluidBlock instanceof BlockLiquid || fluidBlock instanceof IFluidBlock){
-					do{
-						while(coord.getY() > 0 && canPlace(coord.down(),fluid)){
-							coord = coord.down();
-						}
-						int num = 0;
-						BlockPos[] neighbors = new BlockPos[4];
-						if(canPlace(coord.north(),fluid)){neighbors[num] = coord.north(); num++;}
-						if(canPlace(coord.east(),fluid)){neighbors[num] = coord.east(); num++;}
-						if(canPlace(coord.south(),fluid)){neighbors[num] = coord.south(); num++;}
-						if(canPlace(coord.west(),fluid)){neighbors[num] = coord.west(); num++;}
-						if(num == 0){
-							break;
-						}
-						coord = neighbors[worldObj.rand.nextInt(num)];
-						limit--;
-					}while(limit > 0);
-					if(canPlace(coord,fluid)){
-						// not a source block
-						worldObj.setBlockState(coord, fluidBlock.getDefaultState());
-						worldObj.notifyBlockOfStateChange(coord, fluidBlock);
-						this.drain(EnumFacing.DOWN, FluidContainerRegistry.BUCKET_VOLUME, true);
-					}
-				} 
+				coord = scanFluidSpaceForNonsourceBlock(getWorld(),coord,fluid,32);
 
+				if(coord != null){
+					// not a source block
+					worldObj.setBlockState(coord, fluidBlock.getDefaultState());
+					worldObj.notifyBlockOfStateChange(coord, fluidBlock);
+					this.drain(EnumFacing.DOWN, FluidContainerRegistry.BUCKET_VOLUME, true);
+				}
 			}
+
 
 		}
 		if(this.getTank().getFluidAmount() != oldLevel){
@@ -111,10 +91,11 @@ public class FluidDischargeTileEntity extends TileEntitySimpleFluidMachine {
 		if(worldObj.isAirBlock(coord)) return true;
 		IBlockState bs = worldObj.getBlockState(coord);
 		Block b = bs.getBlock();
-		if(b instanceof BlockLiquid && b.getMaterial(bs) == fluid.getBlock().getMaterial(bs)){
-			Integer L = (Integer)worldObj.getBlockState(coord).getValue(BlockDynamicLiquid.LEVEL);
-			return L != 0;
-		} if(b instanceof IFluidBlock){
+		if(fluid == FluidRegistry.WATER && b == Blocks.FLOWING_WATER){
+			return true;
+		} else if(fluid == FluidRegistry.LAVA && b == Blocks.FLOWING_LAVA){
+			return true;
+		} else if(b instanceof IFluidBlock && ((IFluidBlock)b).getFluid().equals(fluid)){
 			return ((IFluidBlock)b).getFilledPercentage(worldObj, coord) < 1.0f;
 		}
 		return false;
@@ -138,9 +119,9 @@ public class FluidDischargeTileEntity extends TileEntitySimpleFluidMachine {
 		super.readFromNBT(root);
 	}
 	
-	@Override public void writeToNBT(NBTTagCompound root)
+	@Override public NBTTagCompound writeToNBT(NBTTagCompound root)
 	{
-		super.writeToNBT(root);
+		return super.writeToNBT(root);
 	}
 	
 	/**
@@ -170,7 +151,7 @@ public class FluidDischargeTileEntity extends TileEntitySimpleFluidMachine {
      * Turns the data field NBT into a network packet
      */
     @Override 
-    public Packet getDescriptionPacket(){
+    public SPacketUpdateTileEntity getUpdatePacket(){
     	NBTTagCompound nbtTag = createUpdateTag();
     	return new SPacketUpdateTileEntity(this.pos, 0, nbtTag);
     }
@@ -246,5 +227,51 @@ public class FluidDischargeTileEntity extends TileEntitySimpleFluidMachine {
 	@Override
 	public boolean isFluidSink() {
 		return true;
+	}
+
+
+	public static BlockPos scanFluidSpaceForNonsourceBlock(World w, BlockPos initial, Fluid fluid, int range){
+		final EnumFacing[] dirs = {EnumFacing.DOWN,EnumFacing.NORTH,EnumFacing.WEST,EnumFacing.SOUTH,EnumFacing.EAST};
+		BlockPos pos = initial;
+		final BlockPos[] next = new BlockPos[5];
+		final Block[] neighborBlocks = new Block[5];
+		Block currentBlock = w.getBlockState(pos).getBlock();
+		while (range > 0){
+			if(!isFluidSourceBlock(currentBlock,fluid,w,pos)) return pos;
+			int count = 0;
+			for(int i = 0; i < 5; i++){
+				BlockPos p = pos.offset(dirs[i]);
+				Block bb = w.getBlockState(p).getBlock();
+				if(bb == Blocks.AIR || isFluidBlock(bb,fluid)){
+					next[count] = p;
+					neighborBlocks[count] = bb;
+					count++;
+				}
+			}
+			if(count == 0) break; // dead end
+
+			int r = (count < 2 ? 0 : w.rand.nextInt(count));
+			pos = next[r];
+			currentBlock = neighborBlocks[r];
+
+			range--;
+		}
+		return null;
+	}
+
+	public static boolean isFluidBlock(Block block, Fluid f){
+		return FluidDrainTileEntity.isFluidBlock(block,f);
+	}
+
+	public static boolean isFluidSourceBlock(Block block, Fluid f, World w, BlockPos p){
+		return FluidDrainTileEntity.isFluidSourceBlock(block,f,w,p);
+	}
+
+	private static boolean areEqual(Object o1, Object o2) {
+		if( o1 != null){
+			return o1.equals(o2);
+		} else {
+			return o2 == null;
+		}
 	}
 }

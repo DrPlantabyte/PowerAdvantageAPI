@@ -39,13 +39,13 @@ tile.poweradvantage.fluid_metal_tank.name=金属製貯蔵タンク
 item.poweradvantage.rotator_tool.name=回転ツール
 
 tile.poweradvantage.crude_oil.name=原油
-fluid.poweradvantage.crude_oil.name=原油
+fluid.poweradvantage.crude_oil=原油
 item.bucket.crude_oil.name=原油のバケット
 
 
 tile.poweradvantage.still.name=蒸留酒製造所
 tile.poweradvantage.refined_oil.name=精製油
-fluid.poweradvantage.refined_oil.name=精製油
+fluid.poweradvantage.refined_oil=精製油
 item.bucket.refined_oil.name=精製油のバケツ
 tile.poweradvantage.fluid_switch.name=バルブ
 

@@ -163,9 +163,10 @@ public abstract class TileEntityConverter extends TileEntitySimplePowerMachine {
 		}
 	}
 	@Override
-	public void writeToNBT(final NBTTagCompound tagRoot) {
+	public NBTTagCompound writeToNBT(final NBTTagCompound tagRoot) {
 		super.writeToNBT(tagRoot);
 		tagRoot.setDouble("Other", this.getOtherEnergy());
+		return tagRoot;
 	}
 
 

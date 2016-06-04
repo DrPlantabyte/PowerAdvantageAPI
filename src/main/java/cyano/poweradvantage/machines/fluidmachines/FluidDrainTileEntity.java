@@ -3,10 +3,8 @@ package cyano.poweradvantage.machines.fluidmachines;
 import cyano.poweradvantage.api.ConduitType;
 import cyano.poweradvantage.api.simple.TileEntitySimpleFluidMachine;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockDynamicLiquid;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.ITileEntityProvider;
-import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -14,6 +12,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.fluids.*;
 
 
@@ -66,9 +65,9 @@ public class FluidDrainTileEntity extends TileEntitySimpleFluidMachine {
 			BlockPos space = this.pos.up();
 			if(tank.getFluidAmount() <= 0){
 				IBlockState bs = getWorld().getBlockState(space);
-				if(bs.getBlock() instanceof BlockLiquid || bs.getBlock() instanceof IFluidBlock){
-					Block block = bs.getBlock();
-					Fluid fluid;
+				Block block = bs.getBlock();
+				if(block instanceof BlockLiquid || block instanceof IFluidBlock){
+					Fluid fluid = null;
 					if(block == Blocks.WATER || block == Blocks.FLOWING_WATER){
 						// Minecraft fluid
 						fluid = FluidRegistry.WATER;
@@ -81,48 +80,15 @@ public class FluidDrainTileEntity extends TileEntitySimpleFluidMachine {
 						// Minecraft fluid?
 						fluid = FluidRegistry.lookupFluidForBlock(block);
 					}
-	
-					// flowing minecraft fluid block
-					Material m = block.getMaterial(bs);
-					// is flowing block, follow upstream to find source block
-					int limit = 16;
-					BlockPos coord = this.pos.up();
-					do{
-						int Q = getFluidLevel(coord,fluid);
-						if(Q == 100){
-							// source block
-							break;
-						} else if(Q == 0){
-							// non-liquid block (shouldn't happen)
-							limit = 0;
-							break;
-						} else {
-							if(getFluidLevel(coord.up(),fluid) > 0){
-								// go up, regardless
-								coord = coord.up();
-								continue;
-							}
-							if(getFluidLevel(coord.north(),fluid) > Q){
-								coord = coord.north();
-							} else if(getFluidLevel(coord.east(),fluid) > Q){
-								coord = coord.east();
-							} else if(getFluidLevel(coord.south(),fluid) > Q){
-								coord = coord.south();
-							} else if(getFluidLevel(coord.west(),fluid) > Q){
-								coord = coord.west();
-							} else {
-								// failed to find upstream block
-								limit = 0;
-							}
-	
+
+					if(fluid != null){
+						BlockPos srcPos = scanFluidSpaceForSourceBlock(getWorld(),space,fluid,32);
+						if(srcPos != null) {
+							// found source block
+							tank.fill(new FluidStack(fluid, FluidContainerRegistry.BUCKET_VOLUME), true);
+							getWorld().setBlockToAir(srcPos);
+							break fluidScan;
 						}
-						limit--;
-					}while(limit > 0);
-					if(getFluidLevel(coord,fluid) == 100){
-						// found source block
-						tank.fill(new FluidStack(fluid,FluidContainerRegistry.BUCKET_VOLUME), true);
-						getWorld().setBlockToAir(coord);
-						break fluidScan;
 					}
 	
 				}
@@ -130,50 +96,7 @@ public class FluidDrainTileEntity extends TileEntitySimpleFluidMachine {
 		}
 		super.powerUpdate();
 	}
-	
-	private int getFluidLevel(BlockPos coord, Fluid fluid){
-		Block fblock = fluid.getBlock();
-		IBlockState state = getWorld().getBlockState(coord);
-		Block b = state.getBlock();
-		Block upBlock = getWorld().getBlockState(coord.up()).getBlock();
-		if(b instanceof BlockLiquid && b.getMaterial(state) == fblock.getMaterial(state)){
-			Integer L = (Integer)getWorld().getBlockState(coord).getValue(BlockDynamicLiquid.LEVEL);
-			if(L == null) return 0;
-			if(L == 0) return 100; // source block
-			if(upBlock instanceof BlockLiquid && upBlock.getMaterial(state) == fblock.getMaterial(state)){
-				return 99;
-			}
-			if(L < 8) {
-				return (8 - L) * 10; // 1-7 are horizontal flow blocks with increasing value per decreasing level
-			} else {
-				return -1; // 8 or greator means vertical falling liquid blocks
-			} 
-		} else if(b instanceof BlockFluidClassic && ((IFluidBlock)b).getFluid() == fluid){
-			if(((BlockFluidClassic)b).isSourceBlock(getWorld(), coord)){
-				// is source block
-				return 100;
-			} else {
-				// not source block
-				if(upBlock instanceof IFluidBlock && ((IFluidBlock)upBlock).getFluid() == fluid){
-					return 99;
-				}
-				return (int)(80 * ((IFluidBlock)b).getFilledPercentage(worldObj, coord));
-			}
-		} else if(b instanceof BlockFluidFinite && ((IFluidBlock)b).getFluid() == fluid){
-			return ((BlockFluidFinite)b).getQuantaValue(getWorld(), coord);
-		} else if(b instanceof IFluidBlock && ((IFluidBlock)b).getFluid() == fluid){
-			if(((IFluidBlock)b).canDrain(getWorld(), coord)){
-				// source block?
-				return 100;
-			} else if(upBlock instanceof IFluidBlock && ((IFluidBlock)upBlock).getFluid() == fluid){
-				return 99;
-			} else {
-				return (int)(80 * ((IFluidBlock)b).getFilledPercentage(worldObj, coord));
-			}
-		}
-		// non-liquid block (or wrong liquid)
-		return 0;
-	}
+
 	
 	private void tryPushFluid(BlockPos coord, EnumFacing otherFace){
 		TileEntity e = getWorld().getTileEntity(coord);
@@ -204,9 +127,9 @@ public class FluidDrainTileEntity extends TileEntitySimpleFluidMachine {
 		super.readFromNBT(root);
 	}
 	
-	@Override public void writeToNBT(NBTTagCompound root)
+	@Override public NBTTagCompound writeToNBT(NBTTagCompound root)
 	{
-		super.writeToNBT(root);
+		return super.writeToNBT(root);
 	}
 
 	/**
@@ -290,5 +213,69 @@ public class FluidDrainTileEntity extends TileEntitySimpleFluidMachine {
 	@Override
 	public boolean isFluidSink() {
 		return false;
+	}
+
+
+	public static BlockPos scanFluidSpaceForSourceBlock(World w, BlockPos initial, Fluid fluid, int range){
+		final EnumFacing[] dirs = {EnumFacing.UP,EnumFacing.NORTH,EnumFacing.WEST,EnumFacing.SOUTH,EnumFacing.EAST};
+		BlockPos pos = initial;
+		final BlockPos[] next = new BlockPos[5];
+		final Block[] neighborBlocks = new Block[5];
+		Block currentBlock = w.getBlockState(pos).getBlock();
+		while (range > 0){
+			if(isFluidSourceBlock(currentBlock,fluid,w,pos)) return pos;
+			int count = 0;
+			for(int i = 0; i < 5; i++){
+				BlockPos p = pos.offset(dirs[i]);
+				Block bb = w.getBlockState(p).getBlock();
+				if(isFluidBlock(bb,fluid)){
+					next[count] = p;
+					neighborBlocks[count] = bb;
+					count++;
+				}
+			}
+			if(count == 0) break; // dead end
+
+			int r = (count < 2 ? 0 : w.rand.nextInt(count));
+			pos = next[r];
+			currentBlock = neighborBlocks[r];
+
+			range--;
+		}
+		return null;
+	}
+
+	public static boolean isFluidBlock(Block block, Fluid f){
+		if(f == FluidRegistry.WATER){
+			return block.equals(Blocks.FLOWING_WATER) || block.equals(Blocks.WATER);
+		} else if(f == FluidRegistry.LAVA){
+			return block.equals(Blocks.FLOWING_LAVA) || block.equals(Blocks.LAVA);
+		} else if(block instanceof IFluidBlock){
+			IFluidBlock fb = (IFluidBlock)block;
+			return areEqual(fb.getFluid(),f);
+		} else {
+			return false;
+		}
+	}
+
+	public static boolean isFluidSourceBlock(Block block, Fluid f, World w, BlockPos p){
+		if(f == FluidRegistry.WATER){
+			return block.equals(Blocks.WATER);
+		} else if(f == FluidRegistry.LAVA){
+			return block.equals(Blocks.LAVA);
+		} else if(block instanceof IFluidBlock){
+			IFluidBlock fb = (IFluidBlock)block;
+			return fb.canDrain(w,p);
+		} else {
+			return false;
+		}
+	}
+
+	private static boolean areEqual(Object o1, Object o2) {
+		if( o1 != null){
+			return o1.equals(o2);
+		} else {
+			return o2 == null;
+		}
 	}
 }

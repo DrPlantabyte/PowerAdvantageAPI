@@ -37,13 +37,13 @@ tile.poweradvantage.infinite_electricity.name=Unlimited Electrical Power
 tile.poweradvantage.infinite_quantum.name=Unlimited Quantum Power
 
 tile.poweradvantage.crude_oil.name=Black Gold
-fluid.poweradvantage.crude_oil.name=Black Gold
+fluid.poweradvantage.crude_oil=Black Gold
 item.bucket.crude_oil=Bucket o' Black Gold
 
 tile.poweradvantage.still.name='Stillery
 
 tile.poweradvantage.refined_oil.name=Lamp Oil
-fluid.poweradvantage.refined_oil.name=Lamp Oil
+fluid.poweradvantage.refined_oil=Lamp Oil
 item.bucket.refined_oil=Bucket o' Lamp Oil
 tile.poweradvantage.fluid_switch.name=Big Red Valve
 

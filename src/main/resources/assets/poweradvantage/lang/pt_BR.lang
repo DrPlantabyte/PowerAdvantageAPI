@@ -38,13 +38,13 @@ tile.poweradvantage.infinite_electricity.name=Energia Elétrica Infinito
 tile.poweradvantage.infinite_quantum.name=Energia Quantum Infinito
 
 tile.poweradvantage.crude_oil.name=Óleo Cru
-fluid.poweradvantage.crude_oil.name=Óleo Cru
+fluid.poweradvantage.crude_oil=Óleo Cru
 item.bucket.crude_oil.name=Balde de Óleo Cru
 
 
 tile.poweradvantage.still.name=Destilaria
 tile.poweradvantage.refined_oil.name=Óleo Refinado
-fluid.poweradvantage.refined_oil.name=Óleo Refinado
+fluid.poweradvantage.refined_oil=Óleo Refinado
 item.bucket.refined_oil.name=Balde de Óleo Refinado
 tile.poweradvantage.fluid_switch.name=Válvula
 

@@ -96,11 +96,11 @@ public abstract class PoweredEntity extends TileEntity implements ITickable, IPo
 	protected final void sync(){
 		this.markDirty();
 		//this.getWorld().markBlockForUpdate(getPos());
-		Packet packet = this.getDescriptionPacket();
+		Packet packet = this.getUpdatePacket();
 		if(packet == null) return;
 		List<EntityPlayerMP> players = this.getWorld().getPlayers(EntityPlayerMP.class, (EntityPlayerMP p) -> p.getPosition().distanceSq(getPos()) < 256);
 		for(EntityPlayerMP player : players){
-			player.playerNetServerHandler.sendPacket(packet);
+			player.connection.sendPacket(packet);
 		}
 	}
 
@@ -166,8 +166,8 @@ public abstract class PoweredEntity extends TileEntity implements ITickable, IPo
 	private final int getTickOffset(){
 		BlockPos coord = this.getPos();
 		int x = coord.getX();
-		int y = coord.getX();
-		int z = coord.getX();
+		int y = coord.getY();
+		int z = coord.getZ();
 		return ((z & 1) << 2) | ((x & 1) << 1) | ((y & 1) );
 	}
 	/**
@@ -190,13 +190,14 @@ public abstract class PoweredEntity extends TileEntity implements ITickable, IPo
 	 * the network.
 	 */
 	@Override
-	public void writeToNBT(final NBTTagCompound tagRoot) {
+	public NBTTagCompound writeToNBT(final NBTTagCompound tagRoot) {
 		super.writeToNBT(tagRoot);
 		int[] data = new int[this.getTypes().length];
 		for(int i = 0; i < data.length; i++){
 			data[i] = Float.floatToIntBits(this.getEnergy(this.getTypes()[i]));
 		}
 		tagRoot.setIntArray("Energy", data);
+		return tagRoot;
 	}
 	
 	

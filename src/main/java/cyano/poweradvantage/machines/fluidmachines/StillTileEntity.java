@@ -239,13 +239,14 @@ public class StillTileEntity extends TileEntitySimpleFluidMachine {
 	 * @param tagRoot An NBT tag
 	 */
 	@Override
-	public void writeToNBT(final NBTTagCompound tagRoot) {
+	public NBTTagCompound writeToNBT(final NBTTagCompound tagRoot) {
 		super.writeToNBT(tagRoot);
 		NBTTagCompound tankTag2 = new NBTTagCompound();
 		inputTank.writeToNBT(tankTag2);
 		tagRoot.setTag("InputTank", tankTag2);
 		tagRoot.setShort("burnTime", this.burnTime);
 		tagRoot.setShort("totalBurnTime", this.totalBurnTime);
+		return tagRoot;
 	}
 	
 	/**

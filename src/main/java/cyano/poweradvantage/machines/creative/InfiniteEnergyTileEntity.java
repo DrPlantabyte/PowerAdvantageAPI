@@ -90,9 +90,10 @@ public class InfiniteEnergyTileEntity extends TileEntitySimplePowerMachine {
 
 
 	@Override
-	public void writeToNBT(final NBTTagCompound tagRoot) {
+	public NBTTagCompound writeToNBT(final NBTTagCompound tagRoot) {
 		super.writeToNBT(tagRoot);
 		tagRoot.setString("InfType", this.type[0].toString());
+		return tagRoot;
 	}
 
 	@Override

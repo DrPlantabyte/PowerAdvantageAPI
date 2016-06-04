@@ -11,7 +11,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.text.ITextComponent;
@@ -314,7 +313,7 @@ public abstract class TileEntitySimplePowerMachine extends PoweredEntity impleme
 	 * @param tagRoot The root of the NBT
 	 */
 	@Override
-	public void writeToNBT(final NBTTagCompound tagRoot) {
+	public NBTTagCompound writeToNBT(final NBTTagCompound tagRoot) {
 		super.writeToNBT(tagRoot);
 		ItemStack[] inventory = this.getInventory();
 		if(inventory != null ){
@@ -332,6 +331,7 @@ public abstract class TileEntitySimplePowerMachine extends PoweredEntity impleme
 		if (this.hasCustomName()) {
 			tagRoot.setString("CustomName", this.customName);
 		}
+		return tagRoot;
 	}
 	
 
@@ -424,7 +424,7 @@ public abstract class TileEntitySimplePowerMachine extends PoweredEntity impleme
 	 * Turns the data field NBT into a network packet
 	 */
 	@Override 
-	public Packet getDescriptionPacket(){
+	public SPacketUpdateTileEntity getUpdatePacket(){
 		NBTTagCompound nbtTag = createDataFieldUpdateTag();
 		return new SPacketUpdateTileEntity(this.pos, 0, nbtTag);
 	}

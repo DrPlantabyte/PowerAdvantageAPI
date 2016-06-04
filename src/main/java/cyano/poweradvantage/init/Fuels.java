@@ -2,10 +2,11 @@ package cyano.poweradvantage.init;
 
 import cyano.poweradvantage.registry.FuelRegistry;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.UniversalBucket;
 
-import static cyano.basemetals.init.Items.universal_bucket;
+
 
 public abstract class Fuels {
 
@@ -17,10 +18,10 @@ public abstract class Fuels {
 		if(initDone) return;
 
 		FuelRegistry.getInstance().registerFuel(cyano.basemetals.init.Items.carbon_powder,(short)1600);
-		ItemStack bucket = new ItemStack(universal_bucket);
+		ItemStack bucket = new ItemStack(ForgeModContainer.getInstance().universalBucket);
 
 
-		FuelRegistry.getInstance().registerFuel(universal_bucket,(ItemStack ub)->{
+		FuelRegistry.getInstance().registerFuel(ForgeModContainer.getInstance().universalBucket,(ItemStack ub)->{
 			if(ub.getItem() instanceof UniversalBucket){
 				UniversalBucket ubItem = (UniversalBucket) ub.getItem();
 				FluidStack fs = ubItem.getFluid(ub);
@@ -32,7 +33,7 @@ public abstract class Fuels {
 			return (short)0;
 		});
 
-		FuelRegistry.getInstance().registerPostBurnItem(universal_bucket,(ItemStack sb)->new ItemStack(net.minecraft.init.Items.BUCKET));
+		FuelRegistry.getInstance().registerPostBurnItem(ForgeModContainer.getInstance().universalBucket,(ItemStack sb)->new ItemStack(net.minecraft.init.Items.BUCKET));
 
 		
 		initDone = true;

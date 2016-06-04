@@ -38,14 +38,14 @@ tile.poweradvantage.infinite_electricity.name=Unendliche Elektrische Leistung
 tile.poweradvantage.infinite_quantum.name=Unendliche Quanten Leistung
 
 tile.poweradvantage.crude_oil.name=Rohöl
-fluid.poweradvantage.crude_oil.name=Rohöl
+fluid.poweradvantage.crude_oil=Rohöl
 item.bucket.crude_oil=Eimer Rohöl
 
 
 tile.poweradvantage.still.name=Brennerei
 
 tile.poweradvantage.refined_oil.name=Raffiniertes Öl
-fluid.poweradvantage.refined_oil.name=Raffiniertes Öl
+fluid.poweradvantage.refined_oil=Raffiniertes Öl
 item.bucket.refined_oil=Eimer für Raffiniertes Öl
 tile.poweradvantage.fluid_switch.name=Ventil
 

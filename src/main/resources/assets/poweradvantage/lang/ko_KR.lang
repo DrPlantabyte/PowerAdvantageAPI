@@ -39,13 +39,13 @@ tile.poweradvantage.infinite_electricity.name=무한 전력
 tile.poweradvantage.infinite_quantum.name=무한 양자 전력
 
 tile.poweradvantage.crude_oil.name=원유
-fluid.poweradvantage.crude_oil.name=원유
+fluid.poweradvantage.crude_oil=원유
 item.bucket.crude_oil.name=원유의 버킷
 
 
 tile.poweradvantage.still.name=증류소
 tile.poweradvantage.refined_oil.name=정유
-fluid.poweradvantage.refined_oil.name=정유
+fluid.poweradvantage.refined_oil=정유
 item.bucket.refined_oil.name=정유의 통
 tile.poweradvantage.fluid_switch.name=판막
 

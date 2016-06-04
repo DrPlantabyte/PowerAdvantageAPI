@@ -39,14 +39,14 @@ tile.poweradvantage.infinite_electricity.name=无限电力
 tile.poweradvantage.infinite_quantum.name=无限量子动力
 
 tile.poweradvantage.crude_oil.name=原油
-fluid.poweradvantage.crude_oil.name=原油
+fluid.poweradvantage.crude_oil=原油
 item.bucket.crude_oil.name=原油桶
 
 
 tile.poweradvantage.still.name=酒廠
 
 tile.poweradvantage.refined_oil.name=成品油
-fluid.poweradvantage.refined_oil.name=成品油
+fluid.poweradvantage.refined_oil=成品油
 item.bucket.refined_oil.name=成品油的桶
 tile.poweradvantage.fluid_switch.name=閥
 

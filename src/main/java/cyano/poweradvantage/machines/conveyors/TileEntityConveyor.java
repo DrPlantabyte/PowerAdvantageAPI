@@ -261,7 +261,7 @@ public class TileEntityConveyor extends TileEntity implements ITickable, ISidedI
 	 * @param tagRoot The root of the NBT
 	 */
 	@Override
-	public void writeToNBT(final NBTTagCompound tagRoot) {
+	public NBTTagCompound writeToNBT(final NBTTagCompound tagRoot) {
 		super.writeToNBT(tagRoot);
 		ItemStack[] inventory = this.getInventory();
 		if(inventory != null ){
@@ -279,6 +279,7 @@ public class TileEntityConveyor extends TileEntity implements ITickable, ISidedI
 		if (this.hasCustomName()) {
 			tagRoot.setString("CustomName", this.customName);
 		}
+		return tagRoot;
 	}
 
 	/**

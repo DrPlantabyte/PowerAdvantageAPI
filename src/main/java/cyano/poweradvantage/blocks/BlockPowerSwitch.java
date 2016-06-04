@@ -13,6 +13,7 @@ import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 /**
@@ -141,15 +142,18 @@ public class BlockPowerSwitch extends Block implements ITypedConduit {
 	 * Called when a neighboring block changes.
 	 */
 	@Override
-	public void onNeighborBlockChange(World world, BlockPos pos, IBlockState state, Block neighborBlock)
+	public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor)
 	{
 		// redstone power given or taken
-		boolean activated = world.isBlockPowered(pos);
-		world.setBlockState(pos, state.withProperty(ACTIVE, activated), 2);
-		if(activated){
-			ConduitRegistry.getInstance().conduitBlockPlacedEvent(world, world.provider.getDimension(), pos, getTypes());
-		} else {
-			ConduitRegistry.getInstance().conduitBlockRemovedEvent(world, world.provider.getDimension(), pos, getTypes());
+		if (world instanceof World) {
+			boolean activated = ((World) world).isBlockPowered(pos);
+			IBlockState state = ((World) world).getBlockState(pos);
+			((World) world).setBlockState(pos, state.withProperty(ACTIVE, activated), 2);
+			if (activated) {
+				ConduitRegistry.getInstance().conduitBlockPlacedEvent(((World) world), ((World) world).provider.getDimension(), pos, getTypes());
+			} else {
+				ConduitRegistry.getInstance().conduitBlockRemovedEvent(((World) world), ((World) world).provider.getDimension(), pos, getTypes());
+			}
 		}
 	}
 
