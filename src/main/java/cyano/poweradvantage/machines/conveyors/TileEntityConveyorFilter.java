@@ -7,8 +7,9 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityChest;
+import net.minecraft.tileentity.TileEntityHopper;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLLog;
 
@@ -35,18 +36,11 @@ public abstract class TileEntityConveyorFilter extends TileEntityConveyor {
 				// not holding item, get item
 				EnumFacing myDir = dir.getOpposite();
 				EnumFacing theirDir = dir;
-				TileEntity target = w.getTileEntity(getPos().offset(myDir));
+				BlockPos targetPos = getPos().offset(myDir);
+				TileEntity target = w.getTileEntity(targetPos);
 				if(target != null){
 					if( target instanceof IInventory){
-						ISidedInventory them;
-						if(target instanceof  TileEntityChest){
-							// special handling for chests in case of double-chest
-							IInventory realChest = handleChest((TileEntityChest)target);
-							if(realChest == null) return; // chest cannot open or is not initialized
-							them = InventoryWrapper.wrap(realChest);
-						} else {
-							them = InventoryWrapper.wrap((IInventory)target);
-						}
+						ISidedInventory them = InventoryWrapper.wrap(TileEntityHopper.getInventoryAtPosition(getWorld(),targetPos.getX(), targetPos.getY(), targetPos.getZ()));
 						if(transferItem(them,theirDir,this,myDir)){
 							transferCooldown = transferInvterval;
 							this.markDirty();
@@ -56,7 +50,8 @@ public abstract class TileEntityConveyorFilter extends TileEntityConveyor {
 			} else {
 				EnumFacing myDir = dir;
 				EnumFacing theirDir = dir.getOpposite();
-				TileEntity target = w.getTileEntity(getPos().offset(myDir));
+				BlockPos targetPos = getPos().offset(myDir);
+				TileEntity target = w.getTileEntity(targetPos);
 				TileEntity dropTarget = w.getTileEntity(getPos().offset(EnumFacing.DOWN));
 				if(matchesFilter(this.getInventory()[0])){
 					if(isValidItemFor(getInventory()[0],dropTarget,EnumFacing.UP)){
@@ -68,13 +63,7 @@ public abstract class TileEntityConveyorFilter extends TileEntityConveyor {
 					}
 				}
 				if( target instanceof IInventory){
-					ISidedInventory them;
-					if(target instanceof  TileEntityChest){
-						// special handling for chests in case of double-chest
-						them = InventoryWrapper.wrap(handleChest((TileEntityChest)target));
-					} else {
-						them = InventoryWrapper.wrap((IInventory)target);
-					}
+					ISidedInventory them = InventoryWrapper.wrap(TileEntityHopper.getInventoryAtPosition(getWorld(),targetPos.getX(), targetPos.getY(), targetPos.getZ()));
 					if(transferItem(this,myDir,them,theirDir)){
 						transferCooldown = transferInvterval;
 						this.markDirty();
@@ -89,7 +78,8 @@ public abstract class TileEntityConveyorFilter extends TileEntityConveyor {
 	protected boolean isValidItemFor(ItemStack item, TileEntity target, EnumFacing side){
 		if(item == null) return false;
 		if(target instanceof IInventory){
-			ISidedInventory dt = InventoryWrapper.wrap((IInventory)target);
+			BlockPos targetPos = target.getPos();
+			ISidedInventory dt = InventoryWrapper.wrap(TileEntityHopper.getInventoryAtPosition(getWorld(),targetPos.getX(), targetPos.getY(), targetPos.getZ()));
 			int[] slots = dt.getSlotsForFace(side);
 			for(int i = 0; i < slots.length; i++){
 				int slot = slots[i];
@@ -106,7 +96,7 @@ public abstract class TileEntityConveyorFilter extends TileEntityConveyor {
 	private void dropItem(TileEntity target) {
 		World w = getWorld();
 		IBlockState bs = w.getBlockState(getPos().down());
-		if(target == null && !(bs.getBlock().getMaterial(bs).blocksMovement())){
+		if(target == null && !(bs.getMaterial().blocksMovement())){
 			// drop item in the air
 			EntityItem ie = new EntityItem(w,getPos().getX()+0.5,getPos().getY()-0.5,getPos().getZ()+0.5,getInventory()[0]);
 			ie.motionX = 0;
@@ -120,7 +110,9 @@ public abstract class TileEntityConveyorFilter extends TileEntityConveyor {
 			// add item to inventory
 			EnumFacing myDir = EnumFacing.DOWN;
 			EnumFacing theirDir = EnumFacing.UP;
-			if(transferItem(this,myDir,InventoryWrapper.wrap((IInventory)target),theirDir)){
+			BlockPos targetPos = target.getPos();
+			ISidedInventory targetInv = InventoryWrapper.wrap(TileEntityHopper.getInventoryAtPosition(getWorld(),targetPos.getX(), targetPos.getY(), targetPos.getZ()));
+			if(transferItem(this,myDir,targetInv,theirDir)){
 				transferCooldown = transferInvterval;
 				this.markDirty();
 			}
