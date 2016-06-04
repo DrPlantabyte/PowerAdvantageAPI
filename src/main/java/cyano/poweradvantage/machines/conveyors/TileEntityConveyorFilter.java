@@ -22,8 +22,7 @@ public abstract class TileEntityConveyorFilter extends TileEntityConveyor {
 	
 
 	public abstract boolean matchesFilter(ItemStack item);
-	
-	private boolean extractFlag = false;
+
 	@Override
 	public void update() {
 		World w = getWorld();
@@ -42,7 +41,6 @@ public abstract class TileEntityConveyorFilter extends TileEntityConveyor {
 					if( target instanceof IInventory){
 						ISidedInventory them = InventoryWrapper.wrap(TileEntityHopper.getInventoryAtPosition(getWorld(),targetPos.getX(), targetPos.getY(), targetPos.getZ()));
 						if(transferItem(them,theirDir,this,myDir)){
-							transferCooldown = transferInvterval;
 							this.markDirty();
 						}
 					}
@@ -57,21 +55,17 @@ public abstract class TileEntityConveyorFilter extends TileEntityConveyor {
 					if(isValidItemFor(getInventory()[0],dropTarget,EnumFacing.UP)){
 						dropItem(dropTarget);
 						return;
-					} else {
-						// flag safe extraction of invalid item
-						extractFlag = true;
 					}
-				}
+				} else
 				if( target instanceof IInventory){
 					ISidedInventory them = InventoryWrapper.wrap(TileEntityHopper.getInventoryAtPosition(getWorld(),targetPos.getX(), targetPos.getY(), targetPos.getZ()));
 					if(transferItem(this,myDir,them,theirDir)){
-						transferCooldown = transferInvterval;
 						this.markDirty();
 					}
 				}
-				// end of safe extraction section
-				extractFlag = false;
 			}
+
+			transferCooldown = transferInvterval;
 		}
 	}
 	
@@ -150,11 +144,12 @@ public abstract class TileEntityConveyorFilter extends TileEntityConveyor {
 	 */
 	@Override
 	public boolean canExtractItem(final int slot, final ItemStack targetItem, final EnumFacing side) {
+		boolean filterMatch =  matchesFilter(targetItem);
+		if(slot != 0) return false;
 		if(side == EnumFacing.DOWN) {
-			return slot == 0 && matchesFilter(targetItem);
+			return filterMatch;
 		} else {
-			return slot == 0 && super.canExtractItem(slot, targetItem, side) 
-					&& (extractFlag || !matchesFilter(targetItem));
+			return (!filterMatch) && super.canExtractItem(slot, targetItem, side) ;
 		}
 	}
 }
