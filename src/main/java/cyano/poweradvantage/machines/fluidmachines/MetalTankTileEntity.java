@@ -1,11 +1,12 @@
 package cyano.poweradvantage.machines.fluidmachines;
 
 import cyano.poweradvantage.api.ConduitType;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.fluids.*;
 import cyano.poweradvantage.api.PowerRequest;
 import cyano.poweradvantage.api.fluid.FluidRequest;
 import cyano.poweradvantage.api.simple.TileEntitySimpleFluidMachine;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.ForgeModContainer;
+import net.minecraftforge.fluids.*;
 
 public class MetalTankTileEntity  extends TileEntitySimpleFluidMachine {
 
@@ -91,19 +92,26 @@ public class MetalTankTileEntity  extends TileEntitySimpleFluidMachine {
 	@Override
 	public boolean isItemValidForSlot(final int slot, final ItemStack item) {
 		if(this.getInventory() == null) return false;
-		return slot < this.getInventory().length && FluidContainerRegistry.isFilledContainer(item) 
+		if(slot >= this.getInventory().length) return false;
+		if(item.getItem() == ForgeModContainer.getInstance().universalBucket) return true;
+		return FluidContainerRegistry.isFilledContainer(item)
 				&& FluidContainerRegistry.getFluidForFilledItem(item) != null; 
 	}
 
-	private FluidStack lastTime = null;
+	private Fluid lastFluid = null;
+	private int lastFluidAmount = -1;
 	@Override
 	public void tickUpdate(boolean isServerWorld) {
 		if(isServerWorld && this.getWorld().getTotalWorldTime() % 11 == 0){
 			// send update
-			if((this.getTank().getFluid() != null && !this.getTank().getFluid().isFluidStackIdentical(lastTime))
-					|| (this.getTank().getFluid() == null && lastTime != null)){
+			FluidStack current = getTank().getFluid();
+			Fluid currentFluid = (current != null ? current.getFluid() : null);
+			int currentAmount = getTank().getFluidAmount();
+			if(lastFluid != currentFluid
+					|| lastFluidAmount != currentAmount){
 				this.sync();
-				lastTime = (this.getTank().getFluid() == null) ? null : this.getTank().getFluid().copy();
+				lastFluid = currentFluid;
+				lastFluidAmount = currentAmount;
 			}
 		}
 	}

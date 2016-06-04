@@ -46,7 +46,7 @@ dependencies {
 	compile files(
 			'lib/NEI/CodeChickenCore-1.8-1.0.5.36-dev.jar',
 			'lib/NEI/NotEnoughItems-1.8-1.0.5.104-dev.jar',
-			'lib/BaseMetals/BaseMetals_1.9.4-API-2.3.0.4.jar',
+			'lib/BaseMetals/BaseMetals_1.9.4-API-2.3.1.5.jar',
 			'lib/RF/RF-API.jar',
 			'lib/TechReborn/RebornCore-1.9-API.jar'
     )

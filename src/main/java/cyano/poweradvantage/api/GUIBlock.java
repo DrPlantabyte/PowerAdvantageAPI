@@ -15,6 +15,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.fluids.*;
 
 import static net.minecraft.init.Items.BUCKET;
@@ -174,7 +175,7 @@ public abstract class GUIBlock extends net.minecraft.block.BlockContainer{
 							return true;
 						}
 						// back to your regularly scheduled algorithm...
-						UniversalBucket bucket = cyano.basemetals.init.Items.universal_bucket;
+						UniversalBucket bucket = ForgeModContainer.getInstance().universalBucket;
 						ItemStack filledBucket = new ItemStack(bucket);
 						if(tank.fluid.amount >= bucket.getCapacity(filledBucket)) {
 							FluidStack drain = tank.fluid.copy();

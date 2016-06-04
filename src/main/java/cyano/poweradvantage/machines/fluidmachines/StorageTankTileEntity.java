@@ -68,15 +68,21 @@ public class StorageTankTileEntity  extends TileEntitySimpleFluidMachine {
 		return noninventory;
 	}
 
-	private FluidStack lastTime = null;
+
+	private Fluid lastFluid = null;
+	private int lastFluidAmount = -1;
 	@Override
 	public void tickUpdate(boolean isServerWorld) {
 		if(isServerWorld && this.getWorld().getTotalWorldTime() % 11 == 0){
 			// send update
-			if((this.getTank().getFluid() != null && !this.getTank().getFluid().isFluidStackIdentical(lastTime))
-					|| (this.getTank().getFluid() == null && lastTime != null)){
+			FluidStack current = getTank().getFluid();
+			Fluid currentFluid = (current != null ? current.getFluid() : null);
+			int currentAmount = getTank().getFluidAmount();
+			if(lastFluid != currentFluid
+					|| lastFluidAmount != currentAmount){
 				this.sync();
-				lastTime = (this.getTank().getFluid() == null) ? null : this.getTank().getFluid().copy();
+				lastFluid = currentFluid;
+				lastFluidAmount = currentAmount;
 			}
 		}
 	}
