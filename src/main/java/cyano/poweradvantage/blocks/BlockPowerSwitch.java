@@ -5,6 +5,7 @@ import cyano.poweradvantage.api.ITypedConduit;
 import cyano.poweradvantage.api.PowerConnectorContext;
 import cyano.poweradvantage.conduitnetwork.ConduitRegistry;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockTrapDoor;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
@@ -142,19 +143,25 @@ public class BlockPowerSwitch extends Block implements ITypedConduit {
 	 * Called when a neighboring block changes.
 	 */
 	@Override
-	public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor)
-	{
-		// redstone power given or taken
-		if (world instanceof World) {
-			boolean activated = ((World) world).isBlockPowered(pos);
-			IBlockState state = ((World) world).getBlockState(pos);
-			((World) world).setBlockState(pos, state.withProperty(ACTIVE, activated), 2);
+	public void onNeighborChange(IBlockAccess w, BlockPos pos, BlockPos neighbor) {
+		BlockTrapDoor k;
+		if (w instanceof World) {
+			World world = (World)w;
+			IBlockState state = world.getBlockState(pos);
+			// redstone power given or taken
+			boolean activated = world.isBlockPowered(pos);
+			world.setBlockState(pos, state.withProperty(ACTIVE, activated), 2);
 			if (activated) {
-				ConduitRegistry.getInstance().conduitBlockPlacedEvent(((World) world), ((World) world).provider.getDimension(), pos, getTypes());
+				ConduitRegistry.getInstance().conduitBlockPlacedEvent(world, world.provider.getDimension(), pos, getTypes());
 			} else {
-				ConduitRegistry.getInstance().conduitBlockRemovedEvent(((World) world), ((World) world).provider.getDimension(), pos, getTypes());
+				ConduitRegistry.getInstance().conduitBlockRemovedEvent(world, world.provider.getDimension(), pos, getTypes());
 			}
 		}
+	}
+
+	@Override
+	public void neighborChanged(IBlockState state, World world, BlockPos pos, Block block){
+		onNeighborChange(world,pos,pos);
 	}
 
 }
