@@ -260,9 +260,9 @@ public class FluidDrainTileEntity extends TileEntitySimpleFluidMachine {
 
 	public static boolean isFluidSourceBlock(Block block, Fluid f, World w, BlockPos p){
 		if(f == FluidRegistry.WATER){
-			return block.equals(Blocks.WATER);
+			return block.equals(Blocks.WATER) && w.getBlockState(p).getValue(BlockLiquid.LEVEL) == 0;
 		} else if(f == FluidRegistry.LAVA){
-			return block.equals(Blocks.LAVA);
+			return block.equals(Blocks.LAVA) && w.getBlockState(p).getValue(BlockLiquid.LEVEL) == 0;
 		} else if(block instanceof IFluidBlock){
 			IFluidBlock fb = (IFluidBlock)block;
 			return fb.canDrain(w,p);
