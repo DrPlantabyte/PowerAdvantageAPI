@@ -179,7 +179,7 @@ public abstract class FluidPoweredEntity extends PoweredEntity implements IFluid
 		if(getTank().getFluidAmount() > 0 && getTank().getFluid().getFluid().equals(fluid.getFluid())){
 			return getTank().drain(fluid.amount,forReal);
 		} else {
-			return new FluidStack(getTank().getFluid().getFluid(),0);
+			return new FluidStack(fluid.getFluid(),0);
 		}
 	}
 	/**
