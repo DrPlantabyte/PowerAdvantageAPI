@@ -5,7 +5,6 @@ import cyano.poweradvantage.api.ITypedConduit;
 import cyano.poweradvantage.api.PowerConnectorContext;
 import cyano.poweradvantage.conduitnetwork.ConduitRegistry;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockTrapDoor;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
@@ -144,12 +143,11 @@ public class BlockPowerSwitch extends Block implements ITypedConduit {
 	 */
 	@Override
 	public void onNeighborChange(IBlockAccess w, BlockPos pos, BlockPos neighbor) {
-		BlockTrapDoor k;
 		if (w instanceof World) {
 			World world = (World)w;
 			IBlockState state = world.getBlockState(pos);
 			// redstone power given or taken
-			boolean activated = world.isBlockPowered(pos);
+			boolean activated = !world.isBlockPowered(pos);
 			world.setBlockState(pos, state.withProperty(ACTIVE, activated), 2);
 			if (activated) {
 				ConduitRegistry.getInstance().conduitBlockPlacedEvent(world, world.provider.getDimension(), pos, getTypes());
